@@ -1,0 +1,56 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Teacher
+ *
+ * @ORM\Table(name="teacher", indexes={@ORM\Index(name="fk_teacher_academic_ranck1_idx", columns={"academic_ranck_id"})})
+ * @ORM\Entity
+ */
+class Teacher
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="surname", type="string", length=45, nullable=true)
+     */
+    private $surname;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="academic rank", type="string", length=45, nullable=true)
+     */
+    private $academicRank;
+
+    /**
+     * @var \AcademicRanck
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicRanck")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_ranck_id", referencedColumnName="id")
+     * })
+     */
+    private $academicRanck;
+
+
+}

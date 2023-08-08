@@ -1,0 +1,66 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Department
+ *
+ * @ORM\Table(name="department", indexes={@ORM\Index(name="fk_department_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_department_person_in_charge1_idx", columns={"person_in_charge_id"})})
+ * @ORM\Entity
+ */
+class Department
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="status", type="boolean", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
+
+    /**
+     * @var \PersonInCharge
+     *
+     * @ORM\ManyToOne(targetEntity="PersonInCharge")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="person_in_charge_id", referencedColumnName="id")
+     * })
+     */
+    private $personInCharge;
+
+
+}

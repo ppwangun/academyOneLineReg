@@ -1,0 +1,12 @@
+:root {
+    --brand-color: #581845;
+}
+
+.navbar {
+    background-color: #581845;
+}
+
+.btn-primary {
+    background-color: var(--brand-color);
+    border-color: var(--brand-color);
+}
