@@ -21,7 +21,6 @@ return [
     'Laminas\InputFilter',
     'Laminas\Filter',
     'Laminas\Hydrator',
-    'Laminas\Di',
     'Laminas\Router',
     'Laminas\Validator',
     'Laminas\Diactoros',
@@ -30,4 +29,7 @@ return [
     'Laminas\Cache\Storage\Adapter\Memory',
     'DoctrineORMModule',
     'Application',
+    'User',
+    'Registration',
+    'Payment',
 ];

@@ -1,0 +1,571 @@
+
+<style>
+    #std-main-content{
+        margin-left: -30px;
+        margin-right: -30px;
+        
+    }
+
+    
+    md-tabs.md-no-animation md-ink-bar {
+    transition: none;
+}
+    .tabsdemoDynamicHeight md-content {
+  background-color: transparent !important; 
+    width: fit-content;}
+  .tabsdemoDynamicHeight md-content md-tabs {
+    background: #f6f6f6;
+    border: 1px solid #e1e1e1; }
+    .tabsdemoDynamicHeight md-content md-tabs md-tabs-wrapper {
+      background: white; }
+  .tabsdemoDynamicHeight md-content h1:first-child {
+    margin-top: 0; }
+</style>
+<div ng-app="myApp" ng>
+    <md-content id="std-main-content">
+      <!-- Display workflow bar -->
+        <div style="text-align:right; height:10px; margin-bottom: 30px;">
+            Draft<img src="img/icons8-forward-50.png" style="height:30px;">
+            Attente payment<img src="img/icons8-forward-50.png" style="height:30px;">
+            Attente validation<img src="img/icons8-forward-50.png" style="height:30px;">
+            Terminer<img src="img/icons8-forward-50.png" style="height:30px;">
+        </div>
+      <!-- End -->
+
+      <!--Showing tabs -->
+        <md-tabs md-dynamic-height md-border-bottom class="md-no-animation" >
+            <!--First tab -->
+            <md-tab label="Inscription Administrative">
+                <md-content >
+    
+                    <form  ng-submit=""  name="stdRegistrationForm" novalidate>
+                        <div class="well" ng-init="$ctrl.init()">
+                            <div class="row">
+                                <div class='col-lg-2'>
+                                    <button  type="button" class="btn btn-danger" ng-click="$ctrl.updateDegree()" ng-show="$ctrl.isUpdate" ng-disabled="acadForm.$invalid">Modifier</button>
+                                    <button  type="button" ng-click="$ctrl.addDegree()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="acadForm.$invalid">Enrégistrer</button>
+                                    <span> <a href="#!/students">Annuler</a></span>
+                                </div>
+                                <div class="col-lg-4"></div>
+                                <div class="col-lg-2">
+
+                                    <button  type="button" ng-show="$ctrl.isUpdate" ng-click="$ctrl.deleteDegree()" ng-disabled="acadForm.$invalid" class="btn btn-default">Supprimer</button>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        
+        <div class="form-view-main">
+            <div class="form-view">
+       
+                <div  layout="column" ng-cloak class="md-inline-form">
+                    <md-content layout-padding >
+                    <div>
+                      <form name="degreeForm">
+                          <div layout='column'>
+                          <md-input-container class="md-block" >
+                              <div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>IDENTIFICATION DE L'ETUDIANT</strong></div>
+                      
+                            <md-input-container class="md-block" flex-gt-sm flex='40'>
+                                  <label>Classe:</label>
+                                  <md-autocomplete  md-search-text="$ctrl.searchText" 
+                                                   md-selected-item="$ctrl.selectedItem"  
+                                                   md-items="item in $ctrl.querySearch($ctrl.searchText)" 
+                                                   md-item-text="item.name" 
+                                                   md-min-length="0"
+                                                   placeholder="Faites de la classe" 
+                                                   md-selected-item-change="$ctrl.selectedItemChange(item)"
+                                                   md-input-name="classe"
+                                                   md-no-asterisk
+                                                   required>
+                                      <md-item-template>
+                                        <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+
+                                      </md-item-template>
+                                      <md-not-found>
+                                        No states matching "{{$ctrl.searchText}}" were found.
+                                        <a ng-click="">Create a new one!</a>
+                                      </md-not-found>
+                                </md-autocomplete>
+                                      <div ng-messages="teachingUnitForm.classe.$error">
+                                          <div ng-message="required">Ce champ est obligatoire</div>
+                                      </div> 
+                            </md-input-container>
+                              
+                          </md-input-container>
+                          </div>
+                          <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom:</label>
+                            <input name="name" ng-model="$ctrl.student.name" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Prénom:</label>
+                            <input name="prenom" ng-model="$ctrl.student.prenom" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    
+                                </div> 
+                          </md-input-container>
+                        </div>
+                          <div layout-gt-sm="row" style='margin-top: -15px;' >
+                                <md-input-container>
+                                    <label>Sexe</label>
+                                    <md-select ng-model="$ctrl.student.gender"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                          
+     
+                                <md-input-container>
+                                    <label>Langue d'études</label>
+                                    <md-select ng-model="$ctrl.student.language"  >
+                                        <md-option value="EN">Anglais</md-option>
+                                        <md-option value="FR">Français</md-option>
+                                      </md-select>
+                                </md-input-container>
+   
+                        </div>
+
+
+                          <div layout-gt-sm="row" style='margin-top: 10px;' >
+                                <md-input-container>
+                                    <label>Nationalité</label>
+                                    <md-select ng-model="$ctrl.student.nationality"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Région d'origine</label>
+                                    <md-select ng-model="$ctrl.student.region"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+
+                          </div>
+                          <div layout-gt-sm="row" style='margin-top: 10px;' >
+                          <md-input-container class="md-block" flex-gt-sm>
+                                <label>Réligion:</label>
+                                <input name="religion" ng-model="$ctrl.student.religion" required />
+                                    <div ng-messages="stdRegistrationForm.prenom.$error">
+                                        <div ng-message="required">le champ religionest obligatoire</div>
+                                        <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                    </div> 
+                              </md-input-container>
+                          </div>
+                          
+                          <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Numéro de téléphone:</label>
+                            <input name="stdPhoneNum" ng-model="$ctrl.student.stdPhoneNum" ng-pattern="/^[(][0-9]{3}[)] [0-9]{3}-[0-9]{4}$/" required />
+                                <div ng-messages="stdRegistrationForm.stdPhoneNum.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+                                    <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']"> Numéro de téléphone invalide
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email:</label>
+                            <input name="stdEmail" ng-model="$ctrl.student.stdEmail" type='email' 
+                                    maxlength="100" ng-pattern="/^.+@.+\..+$/" required />
+                                <div ng-messages="stdRegistrationForm.stdEmail.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                              <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                                                  Adresse email invalide </div>
+          </div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div>                          
+                          
+ <!-- identification du père --><div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>IDENTIFICATION DU PERE </strong></div>
+                           <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom et Prénoms:</label>
+                            <input name="name" ng-model="$ctrl.student.fathername" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Profession</label>
+                            <input name="prenom" ng-model="$ctrl.student.fatherProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+                           <div layout-gt-sm="row" style='margin-top: -15px;' >
+                                <md-input-container>
+                                    <label>Pays de Résidence</label>
+                                    <md-select ng-model="$ctrl.student.fatherCountry"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Région</label>
+                                    <md-select ng-model="$ctrl.student.fatherRegion"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                <label>Ville de résidence</label>
+                                    <md-select ng-model="$ctrl.student.fatherCity"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+
+                          </div>
+                           <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Numéro de téléphone:</label>
+                            <input name="name" ng-model="$ctrl.student.fatherPhoneNum" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email:</label>
+                            <input name="prenom" ng-model="$ctrl.student.fatherEmail" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+ <!-- FIn identification du père -->
+ 
+  <!-- identification de la mère -->
+  <div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>IDENTIFICATION DE LA MERE</strong></div>
+                             <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom et Prénoms:</label>
+                            <input name="name" ng-model="$ctrl.student.motherName" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Profession</label>
+                            <input name="prenom" ng-model="$ctrl.student.motherProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+                           <div layout-gt-sm="row" style='margin-top: -15px;' >
+                                <md-input-container>
+                                    <label>Pays de Résidence</label>
+                                    <md-select ng-model="$ctrl.student.motherCountry"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Région</label>
+                                    <md-select ng-model="$ctrl.student.motherRegion"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                <label>Ville de résidence</label>
+                                    <md-select ng-model="$ctrl.student.motherCity"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+
+                          </div>
+                           <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Numéro de téléphone:</label>
+                            <input name="name" ng-model="$ctrl.student.motherPhoneNum" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email:</label>
+                            <input name="prenom" ng-model="$ctrl.student.motherEmail" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+ <!-- FIn identification de la mère -->
+ 
+   <!-- identification du tuteur -->
+   <div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>IDENTIFICATION DU TUTEUR</strong></div>
+                             <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom et Prénoms:</label>
+                            <input name="name" ng-model="$ctrl.student.tutorName" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Profession</label>
+                            <input name="prenom" ng-model="$ctrl.student.tutorProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+                           <div layout-gt-sm="row" style='margin-top: -15px;' >
+                                <md-input-container>
+                                    <label>Pays de Résidence</label>
+                                    <md-select ng-model="$ctrl.student.tutorCountry"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Région</label>
+                                    <md-select ng-model="$ctrl.student.tutorRegion"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                <label>Ville de résidence</label>
+                                    <md-select ng-model="$ctrl.student.tutorCity"  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="sword">Féminin</md-option>
+                                      </md-select>
+                                </md-input-container>
+
+                          </div>
+                           <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Numéro de téléphone:</label>
+                            <input name="name" ng-model="$ctrl.student.tutorPhoneNum" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Email:</label>
+                            <input name="prenom" ng-model="$ctrl.student.tutorEmail" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+ <!-- FIn identification du tuteur -->
+ 
+   <!-- information du baccalauréat -->
+   <div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>ETUDES ANTERIEURES</strong></div>
+                        <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Etablissement:</label>
+                            <input name="name" ng-model="$ctrl.student.lastSchool" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Intitulé du Dimplome</label>
+                            <input name="prenom" ng-model="$ctrl.student.motherProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+                        <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Matricule:</label>
+                            <input name="name" ng-model="$ctrl.student.lastSchool" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Centre d'examen:</label>
+                            <input name="prenom" ng-model="$ctrl.student.motherProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                         
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Jury:</label>
+                            <input name="name" ng-model="$ctrl.student.motherPhoneNum" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                               </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Reférence:</label>
+                            <input name="prenom" ng-model="$ctrl.student.motherEmail" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+ <!-- FIn identification du baccalauréat -->
+ 
+ 
+<!-- informations complémentaire -->
+<div class="bg-primary font-weight-bold" flex-gt-sm flex='100' style='margin-bottom:25px;'><strong>INFORMATIONS COMPLEMENTAIRES</strong></div>
+                         <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Activités sportives:</label>
+                            <input name="name" ng-model="$ctrl.student.tutorName" required />
+                                <div ng-messages="stdRegistrationForm.name.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+                          </div> 
+                          <div layout-gt-sm="row" >
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Activités associatives:</label>
+                            <input name="prenom" ng-model="$ctrl.student.tutorProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                        </div> 
+                           <div layout-gt-sm="row" style='margin-top: -15px;' >
+                           <md-input-container class="md-block" flex-gt-sm>
+                            <label>Activités culturelles:</label>
+                            <input name="prenom" ng-model="$ctrl.student.tutorProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                           </div>
+                           <div layout-gt-sm="row" >
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Connaissances informatique:</label>
+                            <input name="prenom" ng-model="$ctrl.student.tutorProfession" required />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                                </div> 
+                          </md-input-container>
+                          </div>
+
+ <!-- FIn informations complémentaires -->
+                      </form>
+                    </div>
+                  </md-content>
+
+                </div>
+                <!-- End First tab -->
+
+
+
+                <!--End tab-->
+            </div>  
+        </div>
+                              </md-content>
+      </md-tab>
+      <!-- EN TAB --> 
+       
+
+            <md-tab label="Inscription pédagogique">
+                <md-content class="md-padding">
+                    <br />
+                    <button  type="button" ng-click="$ctrl.addSubject()" class="btn btn-primary btn" ><i class="fa fa-plus" ></i> Ajouter</button></span>
+                                <br />
+                                <br />
+                                <br />
+                                
+                    <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-primary">
+                                                    <th style='width:30%;'>Code</th>
+                                                    <th>Intitulé UE</th>
+                                                    <th>Classe</th>
+                                                    <th>Semestre</th>
+
+                                                    <th style='width:12%;'></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="subject in $ctrl.subjects">
+                                                  
+                                                  <td ng-bind="subject.codeUe"></td>
+                                                  <td ng-bind="subject.nomUe"></td>
+                                                  <td ng-bind="subject.classe"></td>
+                                                  <td ng-bind="subject.semester"></td>
+                                                  <td>
+                                                      
+                                                      
+                                                      <button  type="button" ng-click="$ctrl.deleteSubject(subject)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                                    
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                </md-content>
+            </md-tab>
+            
+            <md-tab label="Historique des inscritpions">
+                <md-content class="md-padding">
+                    hello
+                </md-content>
+            </md-tab>
+            
+            
+            <md-tab label="Discipline">
+                <md-content class="md-padding">
+                    hello
+                </md-content>
+            </md-tab>
+            
+            <md-tab label="Notes">
+                <md-content class="md-padding">
+                    hello
+                </md-content>
+            </md-tab>
+ 
+        
+        </md-tabs>       
+    </md-content>
+</div>
+

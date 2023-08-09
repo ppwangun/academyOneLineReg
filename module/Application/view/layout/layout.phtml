@@ -20,8 +20,13 @@
                                 'type' => 'image/vnd.microsoft.icon',
                                 'href' => $this->basePath() . '/img/favicon.ico'
                             ])
-            ->prependStylesheet($this->basePath('css/style.css'))
-            ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('css/style.css'))
+        ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
+        ->prependStylesheet($this->basePath('css/fas/css/brands.css'))
+        ->prependStylesheet($this->basePath('css/fas/css/regular.css'))
+        
+        ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        
 ?>
 
         <!-- Scripts -->
@@ -70,11 +75,12 @@
             <footer>
                 <p>
                     &copy; <?= date('Y') ?>
-                    <a href="https://getlaminas.org/">Laminas Project</a> a Series of LF Projects, LLC.
+                    <a href="#"></a> 
                 </p>
             </footer>
         </div>
         <?= $this->inlineScript()
-            ->prependFile($this->basePath('js/bootstrap.min.js')) ?>
+            ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ?>
     </body>
 </html>

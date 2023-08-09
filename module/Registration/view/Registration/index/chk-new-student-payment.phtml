@@ -1,0 +1,44 @@
+
+            <div class="col-lg-12 row" style="margin-top:50px;">
+                    <h1 class="page-header">Bienvenue</h1>
+            </div>
+
+            <!-- /.row -->
+            <div class="row">
+                <div >
+                    <p>
+                        <br /><br /><br /><br /><br /><br /><br /><br />
+                    </p>
+                    <form method="POST" action="">
+
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">Vérification des informations de paiement</div>
+                      <div class="panel-body">
+                          <p class='text-primary text-justify'>
+                          Les inscriptions administrative et pédagogique  sont obligatoires.
+                          Tout nouveau étudiant avant de s'inscrire est tenu de  s'acquitter du paiement d'une somme au moins égale à <span class="text-danger">150000FCFA</span> <br />
+                          Pour poursuivre avec le processus, rassurez vous que vous avez règlé cette somme auprès de la banque et cliquez sur suivant.
+                          </p>
+                          
+                          <?php if($this->paymentError) {?>
+                          
+                          <div class='alert alert-danger'>
+                              <p>
+                              <i class='fa fa-warning'></i> Erreur: Paiement non  effectué ou non encore pris en compte par le système!!! 
+                              Vous devez attendre au moins 48h (jours ouvrables) pour que votre paiement soit pris en compte dans notre base de donnée.
+                              </p>
+                          </div>
+                          <?php }?>
+                          <br /> <br />
+                          <input type="hidden" name='' value='<?php$this->amountPaid;?>'>
+                          <button type="submit" class="btn btn-danger btn-xl pull-right"> Suivant ></button>
+                      </div>
+                    </div>
+                    </form>
+                </div>
+                
+            </div>
+
+
+
+        
