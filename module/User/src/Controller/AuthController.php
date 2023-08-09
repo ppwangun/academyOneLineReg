@@ -69,6 +69,11 @@ class AuthController extends AbstractActionController
     {
         return new ViewModel();
     }    
+    
+    public function applyAction()
+    {
+        return new ViewModel();
+    }     
     /**
      * Authenticates user given email address and password credentials.     
      */

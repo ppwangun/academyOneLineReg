@@ -74,7 +74,17 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ],            
+            ],       
+            'apply' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/apply',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'apply',
+                    ],
+                ],
+            ],             
                'logout' => [
                 'type' => Literal::class,
                 'options' => [
