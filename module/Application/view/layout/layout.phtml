@@ -24,23 +24,23 @@
         ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
         ->prependStylesheet($this->basePath('css/fas/css/brands.css'))
         ->prependStylesheet($this->basePath('css/fas/css/regular.css'))
-        
         ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('css/angular-material.css'))
+        
+        
         
 ?>
 
         <!-- Scripts -->
         <?= $this->headScript() ?>
     </head>
-    <body>
-        <div class="container">
+    <body ng-app="myApp" ng-cloak>
 
-        </div>
         <nav class="navbar navbar-expand-md navbar-dark " role="navigation">
             <div class="container">
-                            <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                <img src="<?= $this->basePath('img/logo_agenla_2.ico') ?>" alt="Agenla academy">
-            </a>
+                <a class="navbar-brand" href="<?= $this->url('home') ?>">
+                    <img src="<?= $this->basePath('img/logo_agenla_2.ico') ?>" alt="Agenla academy">
+                </a>
                 <div class="navbar-header">
                     <button
                         class="navbar-toggler"
@@ -80,7 +80,16 @@
             </footer>
         </div>
         <?= $this->inlineScript()
+        ->prependFile($this->basePath('js/app/app.js'))
+        
+            ->prependFile($this->basePath('js/angular-material.min.js'))
+        
+        ->prependFile($this->basePath('js/angular-messages.min.js'))
+        ->prependFile($this->basePath('js/angular-aria.min.js'))
+        ->prependFile($this->basePath('js/angular-animate.min.js'))
+        ->prependFile($this->basePath('js/angular.min.js'))
             ->prependFile($this->basePath('js/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/jquery-3.7.0.min.js'))
         ?>
     </body>
 </html>

@@ -3,7 +3,7 @@
 }
 
 .navbar {
-    background-color: #581845;
+    background-color: var(--brand-color);
 }
 
 .btn-primary {
