@@ -6,191 +6,67 @@
 
 
 <style>
-* {
-	margin: 0;
-	padding: 0
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none;
 }
 
-html {
-	height: 100%
-}
-
-h2{
-	color: #2F8D46;
-}
-#form {
-	text-align: left;
-	position: relative;
-	margin-top: 20px
-}
-
-#form fieldset {
-	background: white;
-	border: 0 none;
-	border-radius: 0.5rem;
-	box-sizing: border-box;
+.submitForm {
 	width: 100%;
-	margin: 0;
-	padding-bottom: 20px;
-	position: relative
 }
 
-.finish {
-	text-align: center
+.validation{
+	padding-top: 5px;
+	display: none;
+	color: red;
 }
 
-#form fieldset:not(:first-of-type) {
-	display: none
-}
-
-#form .previous-step, .next-step {
-	width: 100px;
-	font-weight: bold;
-	color: white;
-	border: 0 none;
-	border-radius: 0px;
-	cursor: pointer;
-	padding: 10px 5px;
-	margin: 10px 5px 10px 0px;
-	float: right
-}
-
-.form, .previous-step {
-	background: #616161;
-}
-
-.form, .next-step {
-	background: #2F8D46;
-}
-
-#form .previous-step:hover,
-#form .previous-step:focus {
-	background-color: #000000
-}
-
-#form .next-step:hover,
-#form .next-step:focus {
-	background-color: #581845;
-}
-
-.text {
-	color: #2F8D46;
-	font-weight: normal
-}
-
-#progressbar {
-	margin-bottom: 10px;
-	overflow: hidden;
-	color: lightgrey
-}
-
-#progressbar .active {
-	color: #581845;
-}
-
-#progressbar li {
-	list-style-type: none;
-	font-size: 15px;
-	width: 25%;
-	float: left;
-	position: relative;
-	font-weight: 400
-}
-
-#progressbar #step1:before {
-	content: "1"
-}
-
-#progressbar #step2:before {
-	content: "2"
-}
-
-#progressbar #step3:before {
-	content: "3"
-}
-
-#progressbar #step4:before {
-	content: "4"
-}
-
-#progressbar li:before {
-	width: 25px;
-	height: 25px;
-	line-height: 22px;
-	display: block;
-	font-size: 10px;
-	color: #ffffff;
-	background: lightgray;
-	border-radius: 50%;
-	margin: 0 auto 0px auto;
-	padding: 2px
-}
-
-#progressbar li:after {
-	content: '';
-	width: 100%;
-	height: 2px;
-	background: lightgray;
-	position: absolute;
-	left: 0;
-	top: 25px;
-	z-index: -1
-}
-
-#progressbar li.active:before,
-#progressbar li.active:after {
-	background: #581845;
-}
-
-.progress {
-	height: 1px;
-            margin-top:-43px;
-}
-
-.progress-bar {
-	background-color: #581845;
+.input-error {
+  display: block;
+  font-size: 12px;
 }
 
 </style>
 <div class=" bg-light  rounded-3 "      );
             background-size: cover;
             color: #581845;
-">
+" ng-controller="formCtrl as $ctrl">
     <br /><br />
 <!DOCTYPE html>
 
 	<div class="container">
             <div class="row">
             <div class="col-8">
-
-		<div class="row justify-content-center">
-			<div class="col-11  text-center p-0 mt-1 mb-1">
-				<div class="px-0 pt-1 pb-0 mt-1 mb-1">
-					<form id="form">
-						<ul id="progressbar">
-							<li class="active" id="step1">
-								<strong>Step 1</strong>
-							</li>
-							<li id="step2"><strong>Step 2</strong></li>
-							<li id="step3"><strong>Step 3</strong></li>
-							<li id="step4"><strong>Step 4</strong></li>
-						</ul>
-						<div class="progress">
-							<div class="progress-bar"></div>
-						</div> <br>
-						<fieldset>
-							<h2>Identification du candidat</h2>
+					
             <div class="row p-3" style=' color:#636e72;'>
+                
+
+		<md-progress-linear md-mode="determinate" class="md-accent" value="{{progressValue}}"></md-progress-linear>                
 
                 <div class="col-md-9">
+        <md-content class="md-padding" layout-xs="column" >
+            <form name="stdRegistrationForm" id="submitForm" class="submitForm form-validation" role="form" novalidate>
+                <div class="animate-switch-container" ng-switch on="stage" ng-class="{forward: direction, backward:!direction}">
+<!--|==========================================================================
+					| Stag0
+|==========================================================================   -->                 
+	    <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-default ng-class="{forward: direction, backward:!direction}">
+		<md-card-title>
+		  <md-card-title-text>
+			<span class="md-headline">Identification du candidat</span>                
+								<!-- first name -->
+                <md-card-content>
+                    <div layout="row">                
+                <div class="animate-switch-container" ng-switch on="stage" ng-class="{forward: direction, backward:!direction}">
 
                           <div layout-gt-sm="row"  style='margin-top: 0px;'>
                           <md-input-container class="md-block" flex-gt-sm>
                             <label>Nom:</label>
                             <input name="nom" ng-model="$ctrl.student.nom" required />
-                                <div ng-messages="stdRegistrationForm.nom.$error">
-                                    <div ng-message="required">le champ nom est obligatoire</div>
-
+                              <div ng-messages="stdRegistrationForm.nom.$error">
+                                <div ng-message="required">le champ nom est obligatoire</div>
+                              </div>                            
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.nom.$error.required}">
+                                    Le champ nom est obligatoire
                                 </div>   
                           </md-input-container>
                         </div>
@@ -198,22 +74,21 @@ h2{
                           <md-input-container class="md-block" flex-gt-sm>
                             <label>Prénom:</label>
                             <input name="prenom" ng-model="$ctrl.student.prenom"   />
-                                <div ng-messages="stdRegistrationForm.prenom.$error">
-                                    <div ng-message="required">le champ Prénom est obligatoire</div>
-                                    
-                                </div> 
+
                           </md-input-container>
-                        </div>
+                    </div>
                         <div layout-gt-sm="row" style='margin-top: -35px;'>
                             <md-input-container class="md-block" flex-gt-sm>
                               <label>Date de naissance</label>
-                              <md-datepicker   ng-model="$ctrl.student.dateOfBirth" ng-change="dateChanged()"  required ></md-datepicker>
+                              <md-datepicker   ng-model="$ctrl.student.dateOfBirth" ng-change="dateChanged()" required ></md-datepicker>
                               <input type="hidden" name="dateOfBirth"  value={{$ctrl.student.dateOfBirth}}   />
                               <div ng-messages="stdRegistrationForm.dateOfBirth.$error">
                                 <div ng-message="valid">Format de date invalide</div>
                                 <div ng-message="required">le champ date de naissance est obligatoire</div>
-
                               </div>
+                                <div class="validation" ng-class="{'input-error': formValidation && !$ctrl.student.dateOfBirth}">
+                                    Le champ date de naissance est obligatoire
+                                </div>                              
                             </md-input-container>
 
                           <md-input-container class="md-block" flex-gt-sm>
@@ -221,8 +96,10 @@ h2{
                             <input name="bornAt" ng-model="$ctrl.student.bornAt" required />
                                 <div ng-messages="stdRegistrationForm.bornAt.$error">
                                     <div ng-message="required">le champ Prénom est obligatoire</div>
-                                    
                                 </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.bornAt.$error.required}">
+                                    Le champ lieu de naissance est obligatoire
+                                </div>                            
                           </md-input-container>
                         </div>
                           <div layout-gt-sm="row" style='margin-top: -35px;' >
@@ -235,7 +112,10 @@ h2{
                                     <div ng-messages="stdRegistrationForm.gender.$error">
                                         <div ng-message="required">le champ Sexe est obligatoire</div>
 
-                                    </div>                                    
+                                    </div>    
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.gender.$error.required}">
+                                    Le champ genre est obligatoire
+                                </div>                                    
                                 </md-input-container>
                           
      
@@ -245,8 +125,13 @@ h2{
                                     <div ng-messages="stdRegistrationForm.phoneNumber.$error">
                                         <div ng-message="required">le champ numéro de téléphone est obligatoire</div>
                                         <div ng-message="pattern">Numéro de téléphone invalid</div>
-                         
                                     </div>
+                                <div class="validation" ng-class="{'input-error': formValidation &&  stdRegistrationForm.phoneNumber.$error.required }">
+                                    Numéro de téléphone obligatoire
+                                </div>                                    
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.phoneNumber.$dirty && stdRegistrationForm.phoneNumber.$error.pattern }">
+                                    format du numéro de téléphone incorrect
+                                </div>                                    
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Email</label>
@@ -256,6 +141,12 @@ h2{
                                           votre email doit contenir au moins 10 et être semblable à un email.
                                         </div>
                                     </div>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.email.$error.required}">
+                                    email est obligatoire
+                                </div>   
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.email.$dirty&& stdRegistrationForm.email.$error.pattern}">
+                                    format email incorrect
+                                </div>                                     
                                 </md-input-container>
    
                         </div>
@@ -271,27 +162,36 @@ h2{
                                     <div ng-messages="stdRegistrationForm.language.$error">
                                         <div ng-message="required">le champ Langue est obligatoire</div>
                                     </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.language.$error.required}">
+                                    langue obligatoire
+                                </div>                                     
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Nationalité</label>
-                                    <md-select name='nationality' ng-model="$ctrl.student.nationality" required  >
+                                    <md-select name='nationality' ng-model="$ctrl.student.nationality"   >
                                         <md-option ng-repeat="country in $ctrl.countries" ng-value="country.sortname" >
                                           {{country.name}}
                                         </md-option>
                                       </md-select>
                                     <div ng-messages="stdRegistrationForm.nationality.$error">
                                         <div ng-message="required">le champ Nationalité est obligatoire</div>
-                                    </div>                                     
+                                    </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.nationality.$error.required}">
+                                    nationalité obligatoire
+                                </div>                                    
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Région d'origine</label>
-                                    <md-select name='regionOfOrigin' ng-model="$ctrl.student.regionOfOrigin" md-on-open="$ctrl.getRegions($ctrl.student.nationality)" required >
+                                    <md-select name='regionOfOrigin' ng-model="$ctrl.student.regionOfOrigin" md-on-open="$ctrl.getRegions($ctrl.student.nationality)"  >
                                         <md-option ng-repeat="region in $ctrl.regions" ng-value="region.name" >
                                           {{region.name}}
                                         </md-select>
                                     <div ng-messages="stdRegistrationForm.regionOfOrigin.$error">
                                         <div ng-message="required">le champ Religion est obligatoire</div>
-                                    </div> 
+                                    </div>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.regionOfOrigin.$error.required}">
+                                    region d'aorigine obligatoire
+                                </div>                                    
                                 </md-input-container>
 
                           </div>
@@ -309,6 +209,9 @@ h2{
                                     <div ng-messages="stdRegistrationForm.religion.$error">
                                         <div ng-message="required">le champ Religion est obligatoire</div>
                                     </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.religion.$error.required}">
+                                    religion obligatoire
+                                </div>                                    
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Situation matrimoniale</label>
@@ -322,6 +225,9 @@ h2{
                                     <div ng-messages="stdRegistrationForm.maritalStatus.$error">
                                         <div ng-message="required">le champ Situation matrimoniale est obligatoire</div>
                                     </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.maritalStatus.$error.required}">
+                                    situation matrimoniale obligatoire
+                                </div>                                    
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Situation d'emploi</label>
@@ -333,9 +239,92 @@ h2{
                                     <div ng-messages="stdRegistrationForm.workingStatus.$error">
                                         <div ng-message="required">le champ Situation d'emploi est obligatoire</div>
                                     </div> 
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.workingStatus.$error.required}">
+                                    situation d'emploi obligatoire
+                                </div>                                    
                                 </md-input-container>                              
 
-                          </div>                        
+                          </div> 
+                    </div>
+                    </div>
+                    <!-- comment --></md-card-content>
+                    <!-- navigation -->
+                        <md-card-title-media></md-card-title-media>   
+                    </md-card-title>
+                                <!-- buttons -->
+                        <md-card-actions layout="row" layout-align="end center">
+                                <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('')">
+                                        Back
+                                </button>
+                                <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage1')">		Next
+                                </button>
+                        </md-card-actions>  
+                                </md-card>
+                    
+					<!--
+					|==========================================================================
+					| Stage 1
+					|==========================================================================
+					-->
+					<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage1">
+						<md-card-title>
+							<md-card-title-text>
+								<span class="md-headline">Enter your personal details</span>
+
+								<!-- first name -->
+								<md-card-content>
+									<div layout="row">
+
+										<!-- First Name -->
+										<md-input-container flex="50" >
+											<label>First Name</label>
+											<input required name="firstName" ng-model="formParams.firstName">
+											<div class="validation" ng-class="{'input-error': formValidation && multiStepForm.firstName.$error.required}">This is required.</div>
+										</md-input-container>
+
+										<!-- Last Name -->
+										<md-input-container flex="50" >
+											<label>Last Name</label>
+											<input required name="lastName" ng-model="formParams.lastName">
+											<div class="validation" ng-class="{'input-error': formValidation && multiStepForm.lastName.$error.required}">This is required.</div>
+										</md-input-container>
+
+									</div>
+
+									<div layout="row">
+										<!-- Gender -->
+										<md-input-container flex="100">
+								          <label>Gender </label>
+
+								          	<md-select name="genderValue" ng-model="formParams.genderValue" required>
+									            <md-option><em>None</em></md-option>
+									            <md-option ng-repeat="sexe in genders" ng-value="sexe">
+									              {{sexe}}
+									            </md-option>
+									        </md-select>
+									        <div class="validation" ng-class="{'input-error': formValidation && multiStepForm.genderValue.$error.required}">This is required.</div>
+								        </md-input-container>
+									</div>
+								</md-card-content>
+
+								<!-- navigation -->
+								<md-card-title-media></md-card-title-media>
+
+						</md-card-title>
+
+						<!-- buttons -->
+						<md-card-actions layout="row" layout-align="end center">
+				        	<button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('')">
+				        		Back
+				        	</button>
+				        	<button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage2')">		Next
+				        	</button>
+				        </md-card-actions>
+
+					</md-card>                    
+                </div>
+                </form>
+                </md-content>
 
                         </div>                        
                         <div class="col-md-3">
@@ -351,46 +340,16 @@ h2{
                                 </div> 
                           </md-input-container>                            
    
-                        </div>
+        
                                                             
-
+              
                     </div>
 
-                                                                                
-							<input type="button" name="next-step"
-								class="next-step" value="Next Step" />
-						</fieldset>
-						<fieldset>
-							<h2>Welcome To GFG Step 2</h2>
-							<input type="button" name="next-step"
-								class="next-step" value="Next Step" />
-							<input type="button" name="previous-step"
-								class="previous-step"
-								value="Previous Step" />
-						</fieldset>
-						<fieldset>
-							<h2>Welcome To GFG Step 3</h2>
-							<input type="button" name="next-step"
-								class="next-step" value="Final Step" />
-							<input type="button" name="previous-step"
-								class="previous-step"
-								value="Previous Step" />
-						</fieldset>
-						<fieldset>
-							<div class="finish">
-								<h2 class="text text-center">
-									<strong>FINISHED</strong>
-								</h2>
-							</div>
-							<input type="button" name="previous-step"
-								class="previous-step"
-								value="Previous Step" />
-						</fieldset>
-					</form>
+
+					
 				</div>
-			</div>
-		</div>
-            </div><!-- comment -->
+                </div>
+<!-- comment -->
             <div class="col-4">
                 <div class="alert alert-danger">
                     <p><i class="fa-solid fa-bell"></i> &nbsp; Vous avez soumis un dossier de candidature et vous souhaitez avoir des information concernant son état de traitement. utiliser votre code d'accès pour vous connecter. </p>

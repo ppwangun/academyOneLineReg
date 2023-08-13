@@ -80,6 +80,7 @@
             </footer>
         </div>
         <?= $this->inlineScript()
+        ->prependFile($this->basePath('js/app/onlineReg.js'))
         ->prependFile($this->basePath('js/app/app.js'))
         
             ->prependFile($this->basePath('js/angular-material.min.js'))

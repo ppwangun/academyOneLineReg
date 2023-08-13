@@ -4,6 +4,8 @@
 var app = angular.module('myApp', [
   'ngMaterial',
   'ngMessages',
+  'ngAnimate',
+  'onlineReg'
  // 'ngRoute'
 
   //"ngResource"
