@@ -26,7 +26,9 @@
         "doctrine/orm": "^2.2",
         "doctrine/dbal": "^2.2",
         "doctrine/doctrine-orm-module": "^6.0",
-        "symfony/cache": "^5.4"
+        "symfony/cache": "^5.4",
+        "mpdf/mpdf": "^6.1",
+        "tecnickcom/tcpdf": "^6.6"
     },
     "autoload": {
         "psr-4": {
