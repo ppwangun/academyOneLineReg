@@ -4,6 +4,8 @@ namespace User;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Mvc\Controller\AbstractActionController;
 use User\Controller\AuthController;
+use Registration\Controller\CountriesController;
+use Registration\Controller\OnlineRegController;
 use User\Service\AuthManager;
 use Laminas\Session\SessionManager;
 
@@ -61,7 +63,10 @@ class Module
        
         // Execute the access filter on every controller except AuthController
         // (to avoid infinite redirect).
+
         if ($controllerName!=AuthController::class)
+        if ($controllerName!=OnlineRegController::class)
+        if($controllerName!= CountriesController::class)
         {
             $result = $authManager->filterAccess($controllerName, $actionName);
             
@@ -85,16 +90,7 @@ class Module
                 // Redirect the user to the "Not Authorized" page.
                 return $controller->redirect()->toRoute('not-authorized');
             }
-        // Get controller and action to which the HTTP request was dispatched.
-        $controller = $event->getTarget();
-        $controllerName = $event->getRouteMatch()->getParam('controller', null);
-        $actionName = $event->getRouteMatch()->getParam('action', null);
-        
-        // Convert dash-style action name to camel-case.
-        $actionName = str_replace('-', '', lcfirst(ucwords($actionName, '-')));
-        
-        // Get the instance of AuthManager service.
-        $authManager = $event->getApplication()->getServiceManager()->get(AuthManager::class);
+
         }
 
      

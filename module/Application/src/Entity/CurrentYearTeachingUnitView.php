@@ -31,14 +31,22 @@ class CurrentYearTeachingUnitView
     /**
     * @var string
     *
+    * @ORM\Column(name="degree_code", type="string", length=45, nullable=true)
+    */
+    private $degreeCode;    
+    
+    
+    /**
+    * @var string
+    *
     * @ORM\Column(name="nom_ue", type="string", length=255, nullable=true)
     */
     private $nomUe;
     
         /**
-    * @var integer
+    * @var float
     *
-    * @ORM\Column(name="credits", type="integer",  nullable=true)
+    * @ORM\Column(name="credits", type="float",  nullable=true)
     */
     private $credits;
     
@@ -50,19 +58,32 @@ class CurrentYearTeachingUnitView
     private $classe;
     
     /**
+    * @var integer
+    *
+    * @ORM\Column(name="is_previous_year_subject", type="integer", length=255, nullable=false)
+    */
+    private $isPreviousYearSubject;    
+    
+       /**
+    * @var integer
+    *
+    * @ORM\Column(name="study_level", type="integer", nullable=true)
+    */
+    private $studyLevel;
+    
+    /**
     * @var string
     *
     * @ORM\Column(name="semester", type="string", nullable=true)
     */
     private $semester;
-    
+ 
     /**
     * @var integer
     *
     * @ORM\Column(name="semID", type="integer", nullable=true)
     */
-    private $semID;    
-    
+    private $semId;
     /**
     * @var integer
     *
@@ -109,14 +130,65 @@ class CurrentYearTeachingUnitView
     {
         return $this->codeUe;
     }
+    
+    /**
+     * Get string
+     *
+     * @return string
+     */
+    public function getNomUe()
+    {
+        return $this->nomUe;
+    }
+    
+    
+     /**
+     * Get string
+     *
+     * @return string
+     */
+    public function getDegreeCode()
+    {
+        return $this->degreeCode;
+    }    
+    
+     /**
+     * Get float
+     *
+     * @return float
+     */
+    public function getCredits()
+    {
+        return $this->credits;
+    }
+    
      /**
      * Get integer
      *
      * @return integer
      */
-    public function getCredits()
+    public function getSemId()
     {
-        return $this->credits;
-    }      
+        return $this->semId;
+    }
+         /**
+     * Get integer
+     *
+     * @return integer
+     */
+    public function getStudyLevel()
+    {
+        return $this->studyLevel;
+    }
+    
+         /**
+     * Get integer
+     *
+     * @return integer
+     */
+    public function getSemRanking()
+    {
+        return $this->semRanking;
+    }    
 }
 

@@ -5,6 +5,7 @@ var app = angular.module('myApp', [
   'ngMaterial',
   'ngMessages',
   'ngAnimate',
+  'ngImageCompress',
   'onlineReg'
  // 'ngRoute'
 

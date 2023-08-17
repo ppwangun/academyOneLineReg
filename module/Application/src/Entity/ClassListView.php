@@ -38,6 +38,8 @@ class ClassListView
      */
     private $name;
     
+   
+    
      /**
      * @var integer
      *
@@ -162,6 +164,7 @@ class ClassListView
         return $this->name;
     }
     
+   
     
      /**
      * Get isEndCycle

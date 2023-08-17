@@ -1,46 +1,46 @@
 <?php
-
 namespace Application\Entity;
 
+
 use Doctrine\ORM\Mapping as ORM;
+
 use Application\Entity\FieldOfStudy;
-use Application\Entity\ClassOfStudy;
+use Application\Entity\Speciality;
+use Application\Entity\SpecialityOption;
 
 /**
  * Degree
  *
- * @ORM\Table(name="degree", uniqueConstraints={@ORM\UniqueConstraint(name="course_code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_degree_field_of_study1_idx", columns={"field_study_id"})})
+ * @ORM\Table(name="degree", uniqueConstraints={@ORM\UniqueConstraint(name="course_code_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_degree_speciality_option1_idx", columns={"speciality_option_id"}), @ORM\Index(name="fk_degree_speciality1_idx", columns={"speciality_id"}), @ORM\Index(name="fk_degree_field_of_study1_idx", columns={"field_study_id"})})
  * @ORM\Entity
  */
 class Degree
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * 
      */
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="code", type="string", length=45, nullable=true)
-     * 
      */
     private $code;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="status", type="integer", nullable=true)
      */
@@ -56,16 +56,32 @@ class Degree
      */
     private $fieldStudy;
 
-     /**
-     * @ORM\OneToMany(targetEntity="ClassOfStudy", mappedBy="degree")
-     * @var Stock[]
+    /**
+     * @var Speciality
+     *
+     * @ORM\ManyToOne(targetEntity="Speciality")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="speciality_id", referencedColumnName="id")
+     * })
      */
-    private $classOfStudy;
+    private $speciality;
 
     /**
-     * Get id
+     * @var SpecialityOption
      *
-     * @return integer
+     * @ORM\ManyToOne(targetEntity="SpecialityOption")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="speciality_option_id", referencedColumnName="id")
+     * })
+     */
+    private $specialityOption;
+
+
+
+    /**
+     * Get id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -73,23 +89,23 @@ class Degree
     }
 
     /**
-     * Set code
+     * Set code.
      *
-     * @param string $code
+     * @param string|null $code
      *
      * @return Degree
      */
-    public function setCode($code)
+    public function setCode($code = null)
     {
         $this->code = $code;
-
+    
         return $this;
     }
 
     /**
-     * Get code
+     * Get code.
      *
-     * @return string
+     * @return string|null
      */
     public function getCode()
     {
@@ -97,23 +113,23 @@ class Degree
     }
 
     /**
-     * Set name
+     * Set name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return Degree
      */
-    public function setName($name)
+    public function setName($name = null)
     {
         $this->name = $name;
-
+    
         return $this;
     }
 
     /**
-     * Get name
+     * Get name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -121,23 +137,23 @@ class Degree
     }
 
     /**
-     * Set status
+     * Set status.
      *
-     * @param integer $status
+     * @param int|null $status
      *
      * @return Degree
      */
-    public function setStatus($status)
+    public function setStatus($status = null)
     {
         $this->status = $status;
-
+    
         return $this;
     }
 
     /**
-     * Get status
+     * Get status.
      *
-     * @return integer
+     * @return int|null
      */
     public function getStatus()
     {
@@ -145,28 +161,74 @@ class Degree
     }
 
     /**
-     * Set fieldStudy
+     * Set fieldStudy.
      *
-     * @param FieldOfStudy $fieldStudy
+     * @param FieldOfStudy|null $fieldStudy
      *
      * @return Degree
      */
     public function setFieldStudy(FieldOfStudy $fieldStudy = null)
     {
         $this->fieldStudy = $fieldStudy;
-
+    
         return $this;
     }
 
     /**
-     * Get fieldStudy
+     * Get fieldStudy.
      *
-     * @return FieldOfStudy
+     * @return FieldOfStudy|null
      */
     public function getFieldStudy()
     {
         return $this->fieldStudy;
     }
+
+    /**
+     * Set speciality.
+     *
+     * @param Speciality|null $speciality
+     *
+     * @return Degree
+     */
+    public function setSpeciality(Speciality $speciality = null)
+    {
+        $this->speciality = $speciality;
     
-  
+        return $this;
+    }
+
+    /**
+     * Get speciality.
+     *
+     * @return Speciality|null
+     */
+    public function getSpeciality()
+    {
+        return $this->speciality;
+    }
+
+    /**
+     * Set specialityOption.
+     *
+     * @param SpecialityOption|null $specialityOption
+     *
+     * @return Degree
+     */
+    public function setSpecialityOption(SpecialityOption $specialityOption = null)
+    {
+        $this->specialityOption = $specialityOption;
+    
+        return $this;
+    }
+
+    /**
+     * Get specialityOption.
+     *
+     * @return SpecialityOption|null
+     */
+    public function getSpecialityOption()
+    {
+        return $this->specialityOption;
+    }
 }

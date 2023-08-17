@@ -11,6 +11,7 @@ return [
             Controller\IndexController::class => InvokableFactory::class,
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
             Controller\CountriesController::class => Controller\Factory\CountriesControllerFactory::class,
+            Controller\OnlineRegController::class => Controller\Factory\OnlineRegControllerFactory::class,
             Controller\StdRegistrationController::class => Controller\Factory\StdRegistrationControllerFactory::class,
             Controller\SubjectRegistrationController::class => Controller\Factory\SubjectRegistrationControllerFactory::class,
             Controller\PreRegistrationController::class => Controller\Factory\PreRegistrationControllerFactory::class,
@@ -139,7 +140,7 @@ return [
                     'route'    => '/students[/:id]',
                     'defaults' => [
                         'controller' => Controller\StdRegistrationController::class,
-                       // 'action'     => 'students',
+                        'action'     => 'students',
                     ],
                 ],
             ],
@@ -175,6 +176,39 @@ return [
                     ],
                 ],
             ],
+            'searchFilByFaculty' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/searchFilByFaculty[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'searchFilByFaculty',
+                       
+                    ],
+                ],
+            ],   
+            'searchCycleFormation' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/searchCycleFormation[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'searchCycleFormation',
+                       
+                    ],
+                ],
+            ],  
+            'searchDegree' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/searchDegree[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'searchDegree',
+                       
+                    ],
+                ],
+            ],             
              'saveRegistration' => [
                 'type'    => Segment::class,
                 'options' => [

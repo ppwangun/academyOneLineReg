@@ -38,6 +38,20 @@ class Payment
     private $amount;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="mobile_payment_id", type="string", length=45, nullable=true)
+     */
+    private $mobilePaymentId;    
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="from_balance", type="integer", nullable=true)
+     */
+    private $fromBalance;    
+
+    /**
      * @var AdminRegistration
      *
      * @ORM\ManyToOne(targetEntity="AdminRegistration")
@@ -114,6 +128,54 @@ class Payment
         return $this->amount;
     }
 
+    /**
+     * Set fromBalance
+     *
+     * @param integer $fromBalance
+     *
+     * @return Payment
+     */
+    public function setFromBalance($fromBalance)
+    {
+        $this->fromBalance = $fromBalance;
+
+        return $this;
+    }
+    /**
+     * Set mobilePaymentId
+     *
+     * @param string $mobilePaymentId
+     *
+     * @return Payment
+     */
+    public function setMobilePaymentId($mobilePaymentId)
+    {
+        $this->mobilePaymentId = $mobilePaymentId;
+
+        return $this;
+    }
+
+    /**
+     * Get mobilePaymentId
+     *
+     * @return string
+     */
+    public function getMobilePaymentId()
+    {
+        return $this->mobilePaymentId;
+    }
+    
+    
+    /**
+     * Get fromBalance
+     *
+     * @return integer
+     */
+    public function getFromBalance()
+    {
+        return $this->fromBalance;
+    }
+    
     /**
      * Set adminRegistration
      *

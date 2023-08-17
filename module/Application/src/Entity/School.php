@@ -38,7 +38,7 @@ class School
     /**
      * @var string
      *
-     * @ORM\Column(name="logo", type="blob", length=65535, nullable=true)
+     * @ORM\Column(name="logo", type="string", length=65535, nullable=true)
      */
     private $logo;
 

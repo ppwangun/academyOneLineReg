@@ -74,24 +74,17 @@ class AdmittedStudentView
     /**
      * @var string
      *
+     * @ORM\Column(name="entrance_type", type="string", length=45, nullable=true)
+     */
+    private $entranceType;    
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="classe", type="string", length=255, nullable=true)
      */
     private $classe;
-    
-     /**
-     * @var string
-     *
-     * @ORM\Column(name="filiere", type="string", length=255, nullable=true)
-     */
-    private $filiere;
-    
-    
-     /**
-     * @var string
-     *
-     * @ORM\Column(name="faculte", type="string", length=255, nullable=true)
-     */
-    private $faculte;
+
 
 
 

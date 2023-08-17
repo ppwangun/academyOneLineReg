@@ -62,6 +62,13 @@ class Admission
     private $dateAdmission;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="payment_date", type="datetime", nullable=true)
+     */
+    private $paymentDate;
+    
+    /**
      * @var string
      *
      * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
@@ -234,6 +241,30 @@ class Admission
     }
 
     /**
+     * Get paymentDate
+     *
+     * @return \DateTime
+     */
+    public function getPaymentDate()
+    {
+        return $this->paymentDate;
+    }
+    
+    /**
+     * Set paymentDate
+     *
+     * @param \DateTime $paymentDate
+     *
+     * @return Admission
+     */
+    public function setPaymentDate($paymentDate)
+    {
+        $this->paymentDate = $paymentDate;
+
+        return $this;
+    }
+
+    /**
      * Get dateAdmission
      *
      * @return \DateTime
@@ -241,7 +272,7 @@ class Admission
     public function getDateAdmission()
     {
         return $this->dateAdmission;
-    }
+    }    
 
     /**
      * Set phoneNumber

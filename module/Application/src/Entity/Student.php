@@ -1,7 +1,6 @@
 <?php
 
 namespace Application\Entity;
-use Application\Entity\Admission;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -99,7 +98,7 @@ class Student
     /**
      * @var blob
      *
-     * @ORM\Column(name="photo", type="blob", length=204971520, nullable=true)
+     * @ORM\Column(name="photo", type="blob", length=65535, nullable=true)
      */
     private $photo;
 
@@ -363,13 +362,7 @@ class Student
     private $motherCity;
 
 
-    /**
-     * One Student is associated with  One Admission.
-     * @ORM\OneToOne(targetEntity="Admission")
-     * @ORM\JoinColumn(name="admission_id", referencedColumnName="id")
-     */
-    private $admission;
-    
+
     /**
      * Get id
      *
@@ -641,7 +634,6 @@ class Student
      */
     public function getPhoto()
     {
-        
         return $this->photo;
     }
 
@@ -1531,28 +1523,5 @@ class Student
     public function getMotherCity()
     {
         return $this->motherCity;
-    }
-    
-    /**
-     * Set admission
-     *
-     * @param Admission $admission
-     * @return Admission
-     */
-    public function setAdmission(Admission  $admission = null)
-    {
-        $this->admission =  $admission;
-
-        return $this;
-    }
-
-    /**
-     * Get admission
-     *
-     * @return Admission
-     */
-    public function getAdmission()
-    {
-        return $this->admission;
     }
 }

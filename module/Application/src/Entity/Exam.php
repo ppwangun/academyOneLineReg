@@ -109,6 +109,13 @@ class Exam
     private $status = '1';
     
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="is_catch_up_exam_performed", type="integer", nullable=true)
+     */
+    private $isCatchUpExamPerformed = '1';    
+    
+    /**
      * @var ClassOfStudyHasSemester
      *
      * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
@@ -476,5 +483,27 @@ class Exam
         return $this->examTypeCode;
     }
 
-    
+    /**
+     * Set isCatchUpExamPerformed
+     *
+     * @param integer $isCatchUpExamPerformed
+     *
+     * @return Exam
+     */
+    public function setIsCatchUpExamPerformed($isCatchUpExamPerformed)
+    {
+        $this->isCatchUpExamPerformed = $isCatchUpExamPerformed;
+
+        return $this;
+    }
+
+    /**
+     * Get isCatchUpExamPerformed
+     *
+     * @return integer
+     */
+    public function getIsCatchUpExamPerformed()
+    {
+        return $this->isCatchUpExamPerformed;
+    }    
 }

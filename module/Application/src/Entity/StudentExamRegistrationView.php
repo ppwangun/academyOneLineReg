@@ -104,6 +104,13 @@ class StudentExamRegistrationView
      * @ORM\Column(name="num_anonymat", type="integer", nullable=true)
      */
     private $anonymat;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status;    
 
     /**
      * @var float
@@ -125,6 +132,34 @@ class StudentExamRegistrationView
      * @ORM\Column(name="confirmed_mark", type="float", precision=10, scale=0, nullable=true)
      */
     private $confirmedMark = '0';
+    
+     /**
+     * @var integer
+     *
+     * @ORM\Column(name="isMarkFromCatchUpExam", type="integer", nullable=true)
+     */
+    private $isMarkFromCatchUpExam = '0';
+    
+     /**
+     * @var integer
+     *
+     * @ORM\Column(name="isMarkRegistered", type="integer", nullable=true)
+     */
+    private $isMarkRegistered = '0'; 
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isMarkConfirmed", type="integer", nullable=true)
+     */
+    private $isMarkConfirmed = '0';
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isMarkValidated", type="integer", nullable=true)
+     */
+    private $isMarkValidated = '0';    
 
     /**
      * Get id
@@ -159,6 +194,25 @@ class StudentExamRegistrationView
     {
         return $this->attendance;
     }
+    
+    /**
+     * Get matricule
+     * @return string
+     */
+    public function getMatricule()
+    {
+        return $this->matricule;
+    } 
+    
+    /**
+     * Get nom
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }    
 
     /**
      * Set numAnonymat
@@ -400,5 +454,13 @@ class StudentExamRegistrationView
         return $this->isMarkConfirmed;
     }
 
-
+    /**
+     * Get isMarkFromCatchUpExam
+     *
+     * @return integer
+     */
+    public function getIsMarkFromCatchUpExam()
+    {
+        return $this->isMarkFromCatchUpExam;
+    }
 }

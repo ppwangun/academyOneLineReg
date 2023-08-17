@@ -28,14 +28,16 @@
         "doctrine/doctrine-orm-module": "^6.0",
         "symfony/cache": "^5.4",
         "mpdf/mpdf": "^6.1",
-        "tecnickcom/tcpdf": "^6.6"
+        "tecnickcom/tcpdf": "^6.6",
+        "laminas/laminas-hydrator": "^4.14"
     },
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
             "User\\": "module/User/src/",
             "Registration\\": "module/Registration/src/",
-            "Payment\\": "module/Payment/src/"
+            "Payment\\": "module/Payment/src/",
+            "SchoolGlobalConfig\\": "module/SchoolGlobalConfig/src/"
            
         }
     },

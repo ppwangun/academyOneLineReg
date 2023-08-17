@@ -6,7 +6,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * AdmittedStudentForActiveRegistrationYearView
+ * AdmittedStudentView
  *
  * @ORM\Table(name="admitted_student_for_active_registration_year_view")
  * @ORM\Entity

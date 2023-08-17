@@ -58,6 +58,13 @@ class ExamRegistration
      * @ORM\Column(name="confirmed_mark", type="float", precision=10, scale=0, nullable=true)
      */
     private $confirmedMark = '0';
+    
+     /**
+     * @var integer
+     *
+     * @ORM\Column(name="isMarkFromCatchUpExam", type="integer", nullable=true)
+     */
+    private $isMarkFromCatchUpExam = '0';
 
     /**
      * @var Exam
@@ -259,5 +266,26 @@ class ExamRegistration
         return $this->student;
     }
 
-  
+    /**
+     * Get isMarkFromCatchUpExam
+     *
+     * @return integer
+     */
+    public function getIsMarkFromCatchUpExam()
+    {
+        return $this->isMarkFromCatchUpExam;
+    }
+
+    /**
+     * Set isMarkFromCatchUpExam
+     *
+     * @param integer $isMarkFromCatchUpExam
+     *
+     * @return Exam
+     */
+    public function setIsMarkFromCatchUpExam($isMarkFromCatchUpExam)
+    {
+        $this->isMarkFromCatchUpExam = $isMarkFromCatchUpExam;
+        return $this;
+    }  
 }

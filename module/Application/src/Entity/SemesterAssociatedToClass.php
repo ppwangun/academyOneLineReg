@@ -25,6 +25,28 @@ class SemesterAssociatedToClass
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="mark_calculation_status", type="integer", nullable=true)
+     */
+    private $markCalculationStatus='0';   
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="sendSmsStatus", type="integer", nullable=true)
+     */
+    private $sendSmsStatus='0';   
+    
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="transcriptReferenceGenerationStatus", type="integer", nullable=true)
+     */
+    private $transcriptReferenceGenerationStatus='0';     
 
     /**
      * @var AcademicYear
@@ -67,6 +89,55 @@ class SemesterAssociatedToClass
     {
         return $this->id;
     }
+
+    /**
+     * Set markCalculationStatus
+     *
+     * @param integer $markCalculationStatus
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setMarkCalculationStatus($markCalculationStatus)
+    {
+        $this->markCalculationStatus = $markCalculationStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get markCalculationStatus
+     *
+     * @return integer
+     */
+    public function getMarkCalculationStatus()
+    {
+        return $this->markCalculationStatus;
+    }
+ 
+
+    /**
+     * Set sendSmsStatus
+     *
+     * @param integer $sendSmsStatus
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setSendSmsStatus($sendSmsStatus)
+    {
+        $this->sendSmsStatus = $sendSmsStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get sendSmsStatus
+     *
+     * @return integer
+     */
+    public function getSendSmsStatus()
+    {
+        return $this->sendSmsStatus;
+    }    
 
     /**
      * Set academicYear
@@ -139,4 +210,28 @@ class SemesterAssociatedToClass
     {
         return $this->semester;
     }
+
+    /**
+     * Get transcriptReferenceGenerationStatus
+     *
+     * @return integer
+     */
+    public function getTranscriptReferenceGenerationStatus()
+    {
+        return $this->transcriptReferenceGenerationStatus;
+    }
+
+    /**
+     * Set transcriptReferenceGenerationStatus
+     *
+     * @param integer $transcriptReferenceGenerationStatus
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setTranscriptReferenceGenerationStatus($transcriptReferenceGenerationStatus)
+    {
+        $this->transcriptReferenceGenerationStatus = $transcriptReferenceGenerationStatus;
+
+        return $this;
+    }    
 }

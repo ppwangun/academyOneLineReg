@@ -29,6 +29,15 @@ class CurrentYearSubjectExamsView
     private $code;
     
     /**
+    * @var integer
+    *
+    * @ORM\Column(name="coshs", type="integer", nullable=false)
+    * @ORM\Id
+    * 
+    */
+    private $coshs;    
+    
+    /**
     * @var string
     *
     * @ORM\Column(name="type", type="string", length=255, nullable=true)
@@ -160,6 +169,25 @@ class CurrentYearSubjectExamsView
     public function getIsMarkConfirmed()
     {
         return $this->isMarkConfirmed;
-    }  
+    } 
+    
+     /**
+     * Get coshs
+     *
+     * @return integer
+     */
+    public function getCoshs()
+    {
+        return $this->coshs;
+    }
+
+    /* Get code
+     *
+     * @return integer
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }     
 }
 

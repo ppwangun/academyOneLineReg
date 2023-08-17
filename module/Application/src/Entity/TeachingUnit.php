@@ -42,7 +42,12 @@ class TeachingUnit
      */
     private $numberOfSubjects= '0';
 
-
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isCompulsory", type="integer", nullable=true)
+     */
+    private $isCompulsory = '0'; 
 
     /**
      * Get id
@@ -126,5 +131,27 @@ class TeachingUnit
         return $this->numberOfSubjects;
     }
 
-   
+    /**
+     * Set isCompulsory
+     *
+     * @param integer $isCompulsory
+     *
+     * @return TeachingUnit
+     */
+    public function setIsCompulsory($isCompulsory)
+    {
+        $this->isCompulsory = $isCompulsory;
+
+        return $this;
+    }
+
+    /**
+     * Get isCompulsory
+     *
+     * @return integer
+     */
+    public function getIsCompulsory()
+    {
+        return $this->isCompulsory;
+    }    
 }

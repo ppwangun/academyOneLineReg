@@ -7,24 +7,17 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasClassOfStudy
  *
- * @ORM\Table(name="degree_has_class_of_study", indexes={@ORM\Index(name="fk_degree_has_class_of_study_training_curriculum1_idx", columns={"training_curriculum_id"}), @ORM\Index(name="fk_degree_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_degree_has_class_of_study_degree1_idx", columns={"degree_id"})})
+ * @ORM\Table(name="degree_has_class_of_study", indexes={@ORM\Index(name="fk_degree_has_class_of_study_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_class_of_study_training_curriculum1_idx", columns={"training_curriculum_id"}), @ORM\Index(name="fk_degree_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class DegreeHasClassOfStudy
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
      * @var \ClassOfStudy
      *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudy")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
      * })
@@ -34,7 +27,9 @@ class DegreeHasClassOfStudy
     /**
      * @var \Degree
      *
-     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Degree")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
      * })
@@ -44,7 +39,9 @@ class DegreeHasClassOfStudy
     /**
      * @var \TrainingCurriculum
      *
-     * @ORM\ManyToOne(targetEntity="TrainingCurriculum")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="TrainingCurriculum")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="training_curriculum_id", referencedColumnName="id")
      * })
@@ -54,23 +51,13 @@ class DegreeHasClassOfStudy
 
 
     /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
      * Set classOfStudy.
      *
-     * @param \ClassOfStudy|null $classOfStudy
+     * @param \ClassOfStudy $classOfStudy
      *
      * @return DegreeHasClassOfStudy
      */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
     {
         $this->classOfStudy = $classOfStudy;
     
@@ -80,7 +67,7 @@ class DegreeHasClassOfStudy
     /**
      * Get classOfStudy.
      *
-     * @return \ClassOfStudy|null
+     * @return \ClassOfStudy
      */
     public function getClassOfStudy()
     {
@@ -90,11 +77,11 @@ class DegreeHasClassOfStudy
     /**
      * Set degree.
      *
-     * @param \Degree|null $degree
+     * @param \Degree $degree
      *
      * @return DegreeHasClassOfStudy
      */
-    public function setDegree(\Degree $degree = null)
+    public function setDegree(\Degree $degree)
     {
         $this->degree = $degree;
     
@@ -104,7 +91,7 @@ class DegreeHasClassOfStudy
     /**
      * Get degree.
      *
-     * @return \Degree|null
+     * @return \Degree
      */
     public function getDegree()
     {
@@ -114,11 +101,11 @@ class DegreeHasClassOfStudy
     /**
      * Set trainingCurriculum.
      *
-     * @param \TrainingCurriculum|null $trainingCurriculum
+     * @param \TrainingCurriculum $trainingCurriculum
      *
      * @return DegreeHasClassOfStudy
      */
-    public function setTrainingCurriculum(\TrainingCurriculum $trainingCurriculum = null)
+    public function setTrainingCurriculum(\TrainingCurriculum $trainingCurriculum)
     {
         $this->trainingCurriculum = $trainingCurriculum;
     
@@ -128,7 +115,7 @@ class DegreeHasClassOfStudy
     /**
      * Get trainingCurriculum.
      *
-     * @return \TrainingCurriculum|null
+     * @return \TrainingCurriculum
      */
     public function getTrainingCurriculum()
     {

@@ -64,6 +64,7 @@ class Semester
      * @ORM\Column(name="ranking", type="integer", nullable=true)
      */
     private $ranking;
+   
 
     /**
      * @var AcademicYear
@@ -207,7 +208,7 @@ class Semester
         return $this->ranking;
     }
 
-/**
+    /**
      * Set ranking
      *
      * @param integer $ranking
@@ -230,6 +231,7 @@ class Semester
     {
         return $this->status;
     }    
+ 
     
     /**
      * Set academicYear
@@ -254,6 +256,6 @@ class Semester
     {
         return $this->academicYear;
     }
+   
 
- 
 }

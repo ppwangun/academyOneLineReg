@@ -1,4 +1,7 @@
 <?php
+
+
+
 namespace Application\Entity;
 
 
@@ -7,17 +10,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Application\Entity\TrainingCurriculum;
 use Application\Entity\Degree;
 use Application\Entity\Grade;
+use Application\Entity\Deliberation;
 
 /**
  * ClassOfStudy
  *
- * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"}), @ORM\Index(name="fk_class_of_study_degree1_idx", columns={"degree_id"})})
+ * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_class_of_study_grade1_idx", columns={"grade_id"}), @ORM\Index(name="fk_class_of_study_deliberation1_idx", columns={"deliberation_id"}), @ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"})})
  * @ORM\Entity
  */
 class ClassOfStudy
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -26,35 +30,49 @@ class ClassOfStudy
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="code", type="string", length=45, nullable=true)
      */
     private $code;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="study_level", type="integer", nullable=true)
      */
     private $studyLevel;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @var integer
+     * @var int|null
+     *
+     * @ORM\Column(name="is_core_curriculum", type="integer", nullable=true)
+     */
+    private $isCoreCurriculum = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="is_end_of_core_curriculum", type="integer", nullable=true)
+     */
+    private $isEndOfCoreCurriculum = '0';
+
+    /**
+     * @var int|null
      *
      * @ORM\Column(name="is_end_cycle", type="integer", nullable=true)
      */
     private $isEndCycle = '0';
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="is_end_degree_training", type="integer", nullable=true)
      */
@@ -65,7 +83,7 @@ class ClassOfStudy
      *
      * @ORM\ManyToOne(targetEntity="TrainingCurriculum")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="cycle_id", referencedColumnName="id", nullable=true)
+     *   @ORM\JoinColumn(name="cycle_id", referencedColumnName="id")
      * })
      */
     private $cycle;
@@ -73,12 +91,22 @@ class ClassOfStudy
     /**
      * @var Degree
      *
-     * @ORM\ManyToOne(targetEntity="Degree", inversedBy="classOfStudy")
+     * @ORM\ManyToOne(targetEntity="Degree")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
      * })
      */
     private $degree;
+
+    /**
+     * @var Deliberation
+     *
+     * @ORM\ManyToOne(targetEntity="Deliberation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="deliberation_id", referencedColumnName="id")
+     * })
+     */
+    private $deliberation;
 
     /**
      * @var Grade
@@ -91,9 +119,33 @@ class ClassOfStudy
     private $grade;
 
     /**
-     * Get id
+     * @var \Doctrine\Common\Collections\Collection
      *
-     * @return integer
+     * @ORM\ManyToMany(targetEntity="AcademicYear", inversedBy="classOfStudy")
+     * @ORM\JoinTable(name="class_of_study_has_academic_year",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $academicYear = array();
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->academicYear = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+
+    /**
+     * Get id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -101,23 +153,23 @@ class ClassOfStudy
     }
 
     /**
-     * Set code
+     * Set code.
      *
-     * @param string $code
+     * @param string|null $code
      *
      * @return ClassOfStudy
      */
-    public function setCode($code)
+    public function setCode($code = null)
     {
         $this->code = $code;
-
+    
         return $this;
     }
 
     /**
-     * Get code
+     * Get code.
      *
-     * @return string
+     * @return string|null
      */
     public function getCode()
     {
@@ -125,23 +177,23 @@ class ClassOfStudy
     }
 
     /**
-     * Set studyLevel
+     * Set studyLevel.
      *
-     * @param integer $studyLevel
+     * @param int|null $studyLevel
      *
      * @return ClassOfStudy
      */
-    public function setStudyLevel($studyLevel)
+    public function setStudyLevel($studyLevel = null)
     {
         $this->studyLevel = $studyLevel;
-
+    
         return $this;
     }
 
     /**
-     * Get studyLevel
+     * Get studyLevel.
      *
-     * @return integer
+     * @return int|null
      */
     public function getStudyLevel()
     {
@@ -149,23 +201,23 @@ class ClassOfStudy
     }
 
     /**
-     * Set name
+     * Set name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return ClassOfStudy
      */
-    public function setName($name)
+    public function setName($name = null)
     {
         $this->name = $name;
-
+    
         return $this;
     }
 
     /**
-     * Get name
+     * Get name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -173,23 +225,71 @@ class ClassOfStudy
     }
 
     /**
-     * Set isEndCycle
+     * Set isCoreCurriculum.
      *
-     * @param integer $isEndCycle
+     * @param int|null $isCoreCurriculum
      *
      * @return ClassOfStudy
      */
-    public function setIsEndCycle($isEndCycle)
+    public function setIsCoreCurriculum($isCoreCurriculum = null)
     {
-        $this->isEndCycle = $isEndCycle;
-
+        $this->isCoreCurriculum = $isCoreCurriculum;
+    
         return $this;
     }
 
     /**
-     * Get isEndCycle
+     * Get isCoreCurriculum.
      *
-     * @return integer
+     * @return int|null
+     */
+    public function getIsCoreCurriculum()
+    {
+        return $this->isCoreCurriculum;
+    }
+
+    /**
+     * Set isEndOfCoreCurriculum.
+     *
+     * @param int|null $isEndOfCoreCurriculum
+     *
+     * @return ClassOfStudy
+     */
+    public function setIsEndOfCoreCurriculum($isEndOfCoreCurriculum = null)
+    {
+        $this->isEndOfCoreCurriculum = $isEndOfCoreCurriculum;
+    
+        return $this;
+    }
+
+    /**
+     * Get isEndOfCoreCurriculum.
+     *
+     * @return int|null
+     */
+    public function getIsEndOfCoreCurriculum()
+    {
+        return $this->isEndOfCoreCurriculum;
+    }
+
+    /**
+     * Set isEndCycle.
+     *
+     * @param int|null $isEndCycle
+     *
+     * @return ClassOfStudy
+     */
+    public function setIsEndCycle($isEndCycle = null)
+    {
+        $this->isEndCycle = $isEndCycle;
+    
+        return $this;
+    }
+
+    /**
+     * Get isEndCycle.
+     *
+     * @return int|null
      */
     public function getIsEndCycle()
     {
@@ -197,23 +297,23 @@ class ClassOfStudy
     }
 
     /**
-     * Set isEndDegreeTraining
+     * Set isEndDegreeTraining.
      *
-     * @param integer $isEndDegreeTraining
+     * @param int|null $isEndDegreeTraining
      *
      * @return ClassOfStudy
      */
-    public function setIsEndDegreeTraining($isEndDegreeTraining)
+    public function setIsEndDegreeTraining($isEndDegreeTraining = null)
     {
         $this->isEndDegreeTraining = $isEndDegreeTraining;
-
+    
         return $this;
     }
 
     /**
-     * Get isEndDegreeTraining
+     * Get isEndDegreeTraining.
      *
-     * @return integer
+     * @return int|null
      */
     public function getIsEndDegreeTraining()
     {
@@ -221,23 +321,23 @@ class ClassOfStudy
     }
 
     /**
-     * Set cycle
+     * Set cycle.
      *
-     * @param TrainingCurriculum $cycle
+     * @param TrainingCurriculum|null $cycle
      *
      * @return ClassOfStudy
      */
     public function setCycle(TrainingCurriculum $cycle = null)
     {
         $this->cycle = $cycle;
-
+    
         return $this;
     }
 
     /**
-     * Get cycle
+     * Get cycle.
      *
-     * @return TrainingCurriculum
+     * @return TrainingCurriculum|null
      */
     public function getCycle()
     {
@@ -245,51 +345,110 @@ class ClassOfStudy
     }
 
     /**
-     * Set degree
+     * Set degree.
      *
-     * @param Degree $degree
+     * @param Degree|null $degree
      *
      * @return ClassOfStudy
      */
     public function setDegree(Degree $degree = null)
     {
         $this->degree = $degree;
-
+    
         return $this;
     }
 
     /**
-     * Get degree
+     * Get degree.
      *
-     * @return Degree
+     * @return Degree|null
      */
     public function getDegree()
     {
         return $this->degree;
     }
-    
+
     /**
-     * Set grade
+     * Set deliberation.
      *
-     * @param Grade $grade
+     * @param Deliberation|null $deliberation
+     *
+     * @return ClassOfStudy
+     */
+    public function setDeliberation(Deliberation $deliberation = null)
+    {
+        $this->deliberation = $deliberation;
+    
+        return $this;
+    }
+
+    /**
+     * Get deliberation.
+     *
+     * @return Deliberation|null
+     */
+    public function getDeliberation()
+    {
+        return $this->deliberation;
+    }
+
+    /**
+     * Set grade.
+     *
+     * @param Grade|null $grade
      *
      * @return ClassOfStudy
      */
     public function setGrade(Grade $grade = null)
     {
         $this->grade = $grade;
-
+    
         return $this;
     }
 
     /**
-     * Get grade
+     * Get grade.
      *
-     * @return Grade
+     * @return Grade|null
      */
     public function getGrade()
     {
         return $this->grade;
     }
- 
+
+    /**
+     * Add academicYear.
+     *
+     * @param AcademicYear $academicYear
+     *
+     * @return ClassOfStudy
+     */
+    public function addAcademicYear(AcademicYear $academicYear)
+    {
+        $this->academicYear[] = $academicYear;
+    
+        return $this;
+    }
+
+    /**
+     * Remove academicYear.
+     *
+     * @param AcademicYear $academicYear
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeAcademicYear(AcademicYear $academicYear)
+    {
+        return $this->academicYear->removeElement($academicYear);
+    }
+
+    /**
+     * Get academicYear.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAcademicYear()
+    {
+        return $this->academicYear;
+    }
 }

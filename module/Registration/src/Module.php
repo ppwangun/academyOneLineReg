@@ -11,6 +11,8 @@ use Laminas\ModuleManager\ModuleManager;
 use Laminas\Session\SessionManager;
 use Laminas\Mvc\MvcEvent;
 
+use Registration\Controller\CountriesController;
+
 class Module
 {
     public function getConfig()
@@ -47,6 +49,12 @@ class Module
             $viewModel = $event->getViewModel();
             $viewModel->setTemplate('layout/layout2');  
         }        
-    }
+ 
+        
+        
+
+     
+
+    }    
     
 }

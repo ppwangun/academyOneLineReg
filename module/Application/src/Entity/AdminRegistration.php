@@ -118,8 +118,8 @@ class AdminRegistration
      *
      * @ORM\Column(name="decision", type="string",  nullable=true)
      */
-    private $decision;    
-
+    private $decision;  
+    
     /**
      * Get id
      *
@@ -390,6 +390,7 @@ class AdminRegistration
     {
         return $this->decision;
     } 
+
 
     /**
      * Set isStudentRepeating

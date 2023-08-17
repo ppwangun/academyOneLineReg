@@ -34,6 +34,12 @@ class RegisteredStudentView
     */
     private $status;
     
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="isStudentRepeating", type="integer", nullable=false)
+    */
+    private $isStudentRepeating;
     
     /**
     * @var integer
@@ -81,7 +87,7 @@ class RegisteredStudentView
     *
     * @ORM\Column(name="classe", type="string", nullable=true)
     */
-    private $classe;
+    private $class;
     
     /**
     * @var \DateTime
@@ -217,10 +223,13 @@ class RegisteredStudentView
     */
     private $sponsorEmail;     
     
- 
-
-
-      /**
+     /**
+     * id
+     *
+     * @return integer
+     */
+    
+     /**
      * Get id
      *
      * @return integer
@@ -271,13 +280,13 @@ class RegisteredStudentView
     }
     
      /**
-     * Get classe
+     * Get class
      *
      * @return string
      */
-    public function getClasse()
+    public function getClass()
     {
-        return $this->classe;
+        return $this->class;
     } 
     
      /**
@@ -310,14 +319,201 @@ class RegisteredStudentView
         return $this->registrationId;
     }
     
+      /**
+     * Get gender
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }  
+    
+      /**
+     * Get phone_number
+     *
+     * @return string
+     */
+    public function getStdPhoneNumber()
+    {
+        return $this->phone_number;
+    }  
+    
+      /**
+     * Get dateNaissance
+     *
+     * @return string
+     */
+    public function getBirthDate()
+    {
+        return $this->dateNaissance;
+    }  
+      /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }   
+    
+      /**
+     * Get bornPlace
+     *
+     * @return string
+     */
+    public function getBornPlace()
+    {
+        return $this->bornPlace;
+    } 
+
+      /**
+     * Get regionOfOrigin
+     *
+     * @return string
+     */
+    public function getRegionOfOrigin()
+    {
+        return $this->regionOfOrigin;
+    }   
+    
+      /**
+     * Get nationality
+     *
+     * @return string
+     */
+    public function getNationality()
+    {
+        return $this->nationality;
+    }  
+    
+      /**
+     * Get religion
+     *
+     * @return string
+     */
+    public function getReligion()
+    {
+        return $this->religion;
+    } 
+
+      /**
+     * Get maritalStatus
+     *
+     * @return string
+     */
+    public function getMaritalStatus()
+    {
+        return $this->maritalStatus;
+    }   
+      /**
+     * Get workingStatus
+     *
+     * @return string
+     */
+    public function getWorkingStatus()
+    {
+        return $this->workingStatus;
+    }  
+      /**
+     * Get fatherName
+     *
+     * @return string
+     */
+    public function getFatherName()
+    {
+        return $this->fatherName;
+    } 
+    
+      /**
+     * Get fatherPhoneNumber
+     *
+     * @return string
+     */
+    public function getFatherPhoneNumber()
+    {
+        return $this->fatherPhoneNumber;
+    } 
+    
+      /**
+     * Get fatherEmail
+     *
+     * @return string
+     */
+    public function getFatherEmail()
+    {
+        return $this->fatherEmail;
+    }  
+    
      /**
-     * Get id
+     * Get motherName
+     *
+     * @return string
+     */
+    public function getMotherName()
+    {
+        return $this->motherName;
+    } 
+    
+      /**
+     * Get motherPhoneNumber
+     *
+     * @return string
+     */
+    public function getMotherPhoneNumber()
+    {
+        return $this->motherPhoneNumber;
+    } 
+    
+      /**
+     * Get motherEmail
+     *
+     * @return string
+     */
+    public function getMotherEmail()
+    {
+        return $this->motherEmail;
+    }   
+    
+     /**
+     * Get sponsorName
+     *
+     * @return string
+     */
+    public function getSponsorName()
+    {
+        return $this->sponsorName;
+    } 
+    
+      /**
+     * Get sponsorPhoneNumber
+     *
+     * @return string
+     */
+    public function getSponsorPhoneNumber()
+    {
+        return $this->sponsorPhoneNumber;
+    } 
+    
+      /**
+     * Get sponsorEmail
+     *
+     * @return string
+     */
+    public function getSponsorEmail()
+    {
+        return $this->sponsorEmail;
+    }
+    
+    /**
+     * Get isStudentRepeating
      *
      * @return integer
      */
-    public function getStatus()
+    public function getIsStudentRepeating()
     {
-        return $this->status;
-    }
+        return $this->isStudentRepeating;
+    }    
 }
 

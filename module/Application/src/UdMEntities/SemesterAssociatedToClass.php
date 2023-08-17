@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SemesterAssociatedToClass
  *
- * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"})})
  * @ORM\Entity
  */
 class SemesterAssociatedToClass
@@ -20,13 +20,6 @@ class SemesterAssociatedToClass
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="academic_year_id", type="integer", nullable=true)
-     */
-    private $academicYearId;
 
     /**
      * @var bool|null
@@ -48,6 +41,16 @@ class SemesterAssociatedToClass
      * @ORM\Column(name="transcriptReferenceGenerationStatus", type="integer", nullable=true)
      */
     private $transcriptreferencegenerationstatus = '0';
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
 
     /**
      * @var \ClassOfStudy
@@ -79,30 +82,6 @@ class SemesterAssociatedToClass
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set academicYearId.
-     *
-     * @param int|null $academicYearId
-     *
-     * @return SemesterAssociatedToClass
-     */
-    public function setAcademicYearId($academicYearId = null)
-    {
-        $this->academicYearId = $academicYearId;
-    
-        return $this;
-    }
-
-    /**
-     * Get academicYearId.
-     *
-     * @return int|null
-     */
-    public function getAcademicYearId()
-    {
-        return $this->academicYearId;
     }
 
     /**
@@ -175,6 +154,30 @@ class SemesterAssociatedToClass
     public function getTranscriptreferencegenerationstatus()
     {
         return $this->transcriptreferencegenerationstatus;
+    }
+
+    /**
+     * Set academicYear.
+     *
+     * @param \AcademicYear|null $academicYear
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setAcademicYear(\AcademicYear $academicYear = null)
+    {
+        $this->academicYear = $academicYear;
+    
+        return $this;
+    }
+
+    /**
+     * Get academicYear.
+     *
+     * @return \AcademicYear|null
+     */
+    public function getAcademicYear()
+    {
+        return $this->academicYear;
     }
 
     /**

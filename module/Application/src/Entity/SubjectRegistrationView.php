@@ -31,11 +31,27 @@ class SubjectRegistrationView
     /**
     * @var integer
     *
+    * @ORM\Column(name="status", type="integer", nullable=true)
+    */
+    private $status;
+    
+    /**
+    * @var integer
+    *
     * @ORM\Column(name="id_ue", type="integer", nullable=false)
     * 
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $idUe;
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="id_subject", type="integer", nullable=false)
+    * 
+    * @ORM\GeneratedValue(strategy="IDENTITY")
+    */
+    private $idSubject;    
     
     /**
     * @var string
@@ -164,11 +180,38 @@ class SubjectRegistrationView
      * @ORM\Column(name="points", type="float", precision=10, scale=0, nullable=true)
      */
     private $points;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isFromRatrappage", type="integer",  nullable=true)
+     */
+    private $isFromRatrappage = '0';    
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isFromDeliberation", type="integer",  nullable=true)
+     */
+    private $isFromDeliberation = '0';
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isRepeated", type="integer",  nullable=true)
+     */
+    private $isRepeated = '0';
+    
     public function getId()
     {
         return $this->id;
     }
+
     
+    public function getIdSubject()
+    {
+        return $this->idSubject;
+    }    
      /**
      * Get integer
      *
@@ -197,6 +240,50 @@ class SubjectRegistrationView
     public function getSemester()
     {
         return $this->semester;
+    }
+    
+    /**
+     * Get isFromDeliberation
+     *
+     * @return float
+     */
+    public function getIsFromDeliberation()
+    {
+        return $this->isFromDeliberation;
+    }
+
+    /**
+     * Get isFromRatrappage
+     *
+     * @return float
+     */
+    public function getIsFromRatrappage()
+    {
+        return $this->isFromRatrappage;
+    }  
+    
+    public function setMatricule($matricule)
+    {
+         $this->matricule = $matricule;
+    }     
+    
+    public function setNom($nom)
+    {
+         $this->nom = $nom;
+    }
+    
+    public function setStudentCurrentClasse($studentCurrentClasse)
+    {
+         $this->studentCurrentClasse = $studentCurrentClasse;
     } 
+    
+    public function setStatus($status)
+    {
+         $this->status = $status;
+    }   
+    public function getIsRepeated()
+    {
+         return $this->isRepeated ;
+    }    
 }
 

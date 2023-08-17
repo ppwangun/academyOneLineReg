@@ -32,4 +32,5 @@ return [
     'User',
     'Registration',
     'Payment',
+    'SchoolGlobalConfig'
 ];

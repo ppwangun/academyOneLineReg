@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Exam
  *
- * @ORM\Table(name="exam", indexes={@ORM\Index(name="fk_exam_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_exam_exam_type1_idx", columns={"exam_type_code"})})
+ * @ORM\Table(name="exam", indexes={@ORM\Index(name="fk_exam_exam_session1_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_exam_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_exam_exam_type1_idx", columns={"exam_type_code"}), @ORM\Index(name="fk_exam_exam1_idx", columns={"exam_id"})})
  * @ORM\Entity
  */
 class Exam
@@ -128,6 +128,26 @@ class Exam
      * })
      */
     private $classOfStudyHasSemester;
+
+    /**
+     * @var \Exam
+     *
+     * @ORM\ManyToOne(targetEntity="Exam")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
+     * })
+     */
+    private $exam;
+
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;
 
 
 
@@ -499,5 +519,53 @@ class Exam
     public function getClassOfStudyHasSemester()
     {
         return $this->classOfStudyHasSemester;
+    }
+
+    /**
+     * Set exam.
+     *
+     * @param \Exam|null $exam
+     *
+     * @return Exam
+     */
+    public function setExam(\Exam $exam = null)
+    {
+        $this->exam = $exam;
+    
+        return $this;
+    }
+
+    /**
+     * Get exam.
+     *
+     * @return \Exam|null
+     */
+    public function getExam()
+    {
+        return $this->exam;
+    }
+
+    /**
+     * Set examSession.
+     *
+     * @param \ExamSession|null $examSession
+     *
+     * @return Exam
+     */
+    public function setExamSession(\ExamSession $examSession = null)
+    {
+        $this->examSession = $examSession;
+    
+        return $this;
+    }
+
+    /**
+     * Get examSession.
+     *
+     * @return \ExamSession|null
+     */
+    public function getExamSession()
+    {
+        return $this->examSession;
     }
 }

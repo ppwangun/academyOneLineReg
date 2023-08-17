@@ -22,13 +22,6 @@ class SubjectRegistrationOnlineRegistrationYearView
     private $id;
     
     /**
-    * @var integer
-    *
-    * @ORM\Column(name="subject_id", type="integer", nullable=false)
-    */
-    private $subjectId;    
-    
-    /**
     * @var string
     *
     * @ORM\Column(name="code_ue", type="string", length=45, nullable=true)
@@ -164,6 +157,13 @@ class SubjectRegistrationOnlineRegistrationYearView
      * @ORM\Column(name="grade", type="string", length=45, nullable=true)
      */
     private $grade;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isRepeated", type="integer",  nullable=true)
+     */
+    private $isRepeated;    
 
     /**
      * @var float
@@ -175,11 +175,6 @@ class SubjectRegistrationOnlineRegistrationYearView
     {
         return $this->id;
     }
-    
-    public function getSujectId()
-    {
-        return $this->subjectId;
-    }    
     
      /**
      * Get integer

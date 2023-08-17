@@ -5,6 +5,8 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 
+
+
 return [
     'controllers' => [
         'factories' => [
@@ -74,7 +76,17 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ],       
+            ],   
+            'register' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/register',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'register',
+                    ],
+                ],
+            ],            
             'apply' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -84,7 +96,8 @@ return [
                         'action'     => 'apply',
                     ],
                 ],
-            ],             
+            ], 
+           
                'logout' => [
                 'type' => Literal::class,
                 'options' => [

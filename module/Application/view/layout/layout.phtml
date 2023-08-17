@@ -21,6 +21,8 @@
                                 'href' => $this->basePath() . '/img/favicon.ico'
                             ])
         ->prependStylesheet($this->basePath('css/style.css'))
+        //->prependStylesheet($this->basePath('css/registration/bootstrap.min.css'))
+        //->prependStylesheet($this->basePath('css/registration/style.css'))
         ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
         ->prependStylesheet($this->basePath('css/fas/css/brands.css'))
         ->prependStylesheet($this->basePath('css/fas/css/regular.css'))
@@ -61,7 +63,7 @@
                             <a
                                 class="nav-link active"
                                 aria-current="page"
-                                href="<?= $this->url('home') ?>"
+                                href="#"
                             >Home
                             </a>
                         </li>
@@ -82,7 +84,8 @@
         <?= $this->inlineScript()
         ->prependFile($this->basePath('js/app/onlineReg.js'))
         ->prependFile($this->basePath('js/app/app.js'))
-        
+        //->prependFile($this->basePath('js/registration/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/angular-image-compress.js'))
             ->prependFile($this->basePath('js/angular-material.min.js'))
         
         ->prependFile($this->basePath('js/angular-messages.min.js'))
