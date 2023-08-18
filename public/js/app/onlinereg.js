@@ -5,11 +5,12 @@
 		  		$mdThemingProvider.theme('default')
 		    	.primaryPalette('blue')
 		    	.accentPalette('blue');
-		}).controller('formCtrl', ['$scope', '$http','$timeout', function($scope, $http, $timeout) {
+		}).controller('formCtrl', ['$scope', '$http','$timeout', function($scope, $http, $timeout,$window,$location) {
                         var $ctrl = this;
                             $ctrl.student= {fac_id:-1,fil_id:-1};
 				$scope.formParams = {};
 				$scope.stage = "";
+                                
 				$scope.formValidation = false;
 				$scope.toggleJSONView = false;
 				$scope.toggleFormErrorsView = false;
@@ -146,6 +147,50 @@
             });    
         
     }
+    
+        /*--------------------------------------------------------------------------
+     *--------------------------- Uploading form  ---------------------
+     *----------------------------------------------------------------------- */
+    
+    $scope.submitRegistrationForm = function()
+    {
+        
+        var fd = new FormData();
+   
+        angular.forEach($ctrl.student.uploadFiles,function(file){
+          fd.append('file[]',file);
+        });
+        angular.forEach($scope.image1.compressed.dataURL,function(file){
+          fd.append('img_file[]',file);
+        });       
+        var config  = {
+          params: {fd:fd,student:$ctrl.student},
+          headers: {'Content-Type': undefined}
+        }
+
+        $scope.myPromise = $http.post("submitRegistrationForm",fd,config).then(
+            function successCallback(response){
+               
+               //window.location.href="submitRegistrationForm"
+                
+            },
+            function errorCallback(response){
+             
+            }        
+        )
+
+   /*$scope.myPromise =$http({
+     method: 'post',
+     url: 'submitRegistrationForm',
+     data: fd,
+     headers: {'Content-Type': undefined},
+   }).then(function successCallback(response) {  
+     // Store response data
+     $scope.response = response.data;
+   });*/
+
+      
+    }
 			/*
 			|--------------------------------------------------------------------------
 			|  Go NEXT
@@ -162,6 +207,7 @@
 			    	// increment progressbar
 			    	$scope.progressValue += (100 / 6);
 			    }
+                     
 			};
 
 			/*

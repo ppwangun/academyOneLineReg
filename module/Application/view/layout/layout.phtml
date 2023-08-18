@@ -21,6 +21,7 @@
                                 'href' => $this->basePath() . '/img/favicon.ico'
                             ])
         ->prependStylesheet($this->basePath('css/style.css'))
+        ->prependStylesheet($this->basePath('css/angular-busy.min.css'))
         //->prependStylesheet($this->basePath('css/registration/bootstrap.min.css'))
         //->prependStylesheet($this->basePath('css/registration/style.css'))
         ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
@@ -72,7 +73,9 @@
             </div>
         </nav>
         <div class="container">
+         
             <?= $this->content ?>
+
             <hr>
             <footer>
                 <p>
@@ -86,6 +89,7 @@
         ->prependFile($this->basePath('js/app/app.js'))
         //->prependFile($this->basePath('js/registration/bootstrap.min.js'))
         ->prependFile($this->basePath('js/angular-image-compress.js'))
+        ->prependFile($this->basePath('js/angular-busy.min.js'))
             ->prependFile($this->basePath('js/angular-material.min.js'))
         
         ->prependFile($this->basePath('js/angular-messages.min.js'))

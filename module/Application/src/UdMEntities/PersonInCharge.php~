@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PersonInCharge
  *
- * @ORM\Table(name="person_in_charge", indexes={@ORM\Index(name="fk_person_in_charge_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_person_in_charge_school_employee1_idx", columns={"school_employee_id"}), @ORM\Index(name="fk_person_in_charge_department1_idx", columns={"department_id"}), @ORM\Index(name="fk_person_in_charge_school1_idx", columns={"school_id"}), @ORM\Index(name="fk_person_in_charge_faculty1_idx", columns={"faculty_id"})})
+ * @ORM\Table(name="person_in_charge", indexes={@ORM\Index(name="fk_person_in_charge_school1_idx", columns={"school_id"}), @ORM\Index(name="fk_person_in_charge_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_person_in_charge_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_person_in_charge_school_employee1_idx", columns={"school_employee_id"}), @ORM\Index(name="fk_person_in_charge_department1_idx", columns={"department_id"})})
  * @ORM\Entity
  */
 class PersonInCharge

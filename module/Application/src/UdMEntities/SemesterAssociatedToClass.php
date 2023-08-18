@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SemesterAssociatedToClass
  *
- * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"})})
+ * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"})})
  * @ORM\Entity
  */
 class SemesterAssociatedToClass

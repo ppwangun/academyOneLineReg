@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasCourseCategory
  *
- * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"})})
+ * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"})})
  * @ORM\Entity
  */
 class DegreeHasCourseCategory

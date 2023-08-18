@@ -208,7 +208,18 @@ return [
                        
                     ],
                 ],
-            ],             
+            ],  
+             'submitRegistrationForm' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/submitRegistrationForm[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'submitregistrationform',
+                       
+                    ],
+                ],
+            ],            
              'saveRegistration' => [
                 'type'    => Segment::class,
                 'options' => [
