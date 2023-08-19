@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ProspectiveStudent
  *
- * @ORM\Table(name="prospective_student")
+ * @ORM\Table(name="prospective_student", indexes={@ORM\Index(name="fk_prospective_student_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_prospective_student_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class ProspectiveStudent
@@ -349,6 +349,40 @@ class ProspectiveStudent
      * @ORM\Column(name="mother_city", type="string", length=255, nullable=true)
      */
     private $motherCity;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="num_dossier", type="string", length=45, nullable=true)
+     */
+    private $numDossier;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="payment_proof_path", type="string", length=45, nullable=true)
+     */
+    private $paymentProofPath;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 }

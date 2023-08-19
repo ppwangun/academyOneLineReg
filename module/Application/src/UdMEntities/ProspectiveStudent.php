@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ProspectiveStudent
  *
- * @ORM\Table(name="prospective_student")
+ * @ORM\Table(name="prospective_student", indexes={@ORM\Index(name="fk_prospective_student_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_prospective_student_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class ProspectiveStudent
@@ -349,6 +349,40 @@ class ProspectiveStudent
      * @ORM\Column(name="mother_city", type="string", length=255, nullable=true)
      */
     private $motherCity;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="num_dossier", type="string", length=45, nullable=true)
+     */
+    private $numDossier;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="payment_proof_path", type="string", length=45, nullable=true)
+     */
+    private $paymentProofPath;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 
@@ -1488,5 +1522,101 @@ class ProspectiveStudent
     public function getMotherCity()
     {
         return $this->motherCity;
+    }
+
+    /**
+     * Set numDossier.
+     *
+     * @param string|null $numDossier
+     *
+     * @return ProspectiveStudent
+     */
+    public function setNumDossier($numDossier = null)
+    {
+        $this->numDossier = $numDossier;
+    
+        return $this;
+    }
+
+    /**
+     * Get numDossier.
+     *
+     * @return string|null
+     */
+    public function getNumDossier()
+    {
+        return $this->numDossier;
+    }
+
+    /**
+     * Set paymentProofPath.
+     *
+     * @param string|null $paymentProofPath
+     *
+     * @return ProspectiveStudent
+     */
+    public function setPaymentProofPath($paymentProofPath = null)
+    {
+        $this->paymentProofPath = $paymentProofPath;
+    
+        return $this;
+    }
+
+    /**
+     * Get paymentProofPath.
+     *
+     * @return string|null
+     */
+    public function getPaymentProofPath()
+    {
+        return $this->paymentProofPath;
+    }
+
+    /**
+     * Set academicYear.
+     *
+     * @param \AcademicYear|null $academicYear
+     *
+     * @return ProspectiveStudent
+     */
+    public function setAcademicYear(\AcademicYear $academicYear = null)
+    {
+        $this->academicYear = $academicYear;
+    
+        return $this;
+    }
+
+    /**
+     * Get academicYear.
+     *
+     * @return \AcademicYear|null
+     */
+    public function getAcademicYear()
+    {
+        return $this->academicYear;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return ProspectiveStudent
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+    
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
     }
 }
