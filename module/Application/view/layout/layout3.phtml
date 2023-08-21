@@ -73,12 +73,113 @@
             </div>
         </nav>
         <div class="container">
- 
+            <div class="row">
+              <div class="col-md-8">
          
                 <?= $this->content ?>
-          
+              </div>
             
-          
+                <div class="col-md-4">
+                    <div class="alert alert-warning mt-5">
+                        <p><i class="fa-solid fa-bell"></i> &nbsp; Vous avez soumis un dossier de candidature et vous souhaitez avoir un feeback sur son état de traitement, alors connectez vous en saisisant comme login votre adresse email et votre numéro de dossier come mot de passe . </p>
+                    </div>
+
+<?php
+use Laminas\Captcha;
+use Laminas\Captcha\Dumb;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputFilter;
+
+
+
+// Create a text element to capture the user email address:
+$email = new Element\Email('email');
+$email->setLabel('Your email address');
+$email->setAttributes([
+    'class'=>'form-control mb-3',
+    'placeHolder' => 'Votre adresse email',
+
+    
+]);
+
+// Create a text element to capture the message subject:
+$subject = new Element('subject');
+$subject->setLabel('Subject');
+$subject->setAttributes([
+    'type' => 'text',
+    'class'=>'form-control mt-3',
+
+]);
+
+
+
+// Create a CAPTCHA:
+// let's skip the captcha for now
+
+// Create a CSRF token:
+
+$csrf = new Element\Csrf('security');
+
+$password = new Element\Password('numDossier');
+$password->setLabel('Votre numéro de dossier ici');
+$password->setAttributes([
+    'class'=>'form-control',
+    'required'=>true,
+    'placeHolder' => 'Votre numéro de dossier ici',
+    
+]);
+// Create a submit button:
+$send = new Element('send');
+$send->setLabel('Submit');
+$send->setAttributes([
+    'type' => 'submit',
+    'class'=>'form-control mt-3 btn btn-primary',
+    'value'=>"Connectez vous"
+
+]);
+
+
+// Create the form and add all elements:
+$form = new Form('contact');
+
+//$form->add($email);
+$form->add($password);
+
+
+$form->add($send);
+
+$form->prepare();
+
+// Assuming change the / to whatever framework you're using does for routes or app urls
+$form->setAttribute('action', '');
+
+// Set the method attribute for the form
+$form->setAttribute('method', 'post');
+
+$form->prepare();
+
+if(isset($fileStatus))
+    echo '<div class="alert alert-danger"> Numéro de dossier introuvable</div>';
+
+// Render the opening tag
+echo $this->form()->openTag($form);
+
+// ...loop through and render the form elements...
+foreach ($form as $element) {
+    echo $this->formElement($element);
+    echo $this->formElementErrors($element);
+}
+
+// Render the closing tag
+echo $this->form()->closeTag();
+?>
+
+
+        </div>  
+            </div>
 
             <hr>
             <footer>

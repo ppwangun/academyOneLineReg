@@ -1,0 +1,166 @@
+<?php
+
+$html = '
+<h5 style="align:center">FICHE DE CANDIDATURE D’ENTREE  A L’INSTITUT UNIVERSITAIRE SOUS REGIONAL
+BILINGUE AGENLA ACADEMY-YAOUNDE, POUR LE COMPTE DE L’ANNEE ACADEMIQUE 20____ – 20____</h5>';
+
+$htmlEtudiant ='<div id="stp" ><table><tbody>'
+        . '<tr><td></td><td></td><td rowspan="7"><img width="150" height="150"   src="data:image/jpeg;base64,'. stream_get_contents($this->student['photo']) .'" /></></tr>'  
+        . '<tr><td colspan="2"><span style="font-weight: bold">Nom(s) et Prénom(s):</span> '.$this->student["nom"].' '.$this->student["prenom"].''
+        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sexe:</strong>'.$this->student["gender"].'</td>'
+ 
+        . '</tr>'
+        . '<tr><td><span style="font-weight: bold">Date de naissance:</span> '.$this->student["dateOfBirth"]->format('d/m/Y').' </td> <td><span style="font-weight: bold">Lieu de naissance:</span> '.$this->student["bornAt"].'</td></tr>'
+        
+          . '<tr>'
+        . '<td ><span style="font-weight: bold">Nationalité:</span> '.$this->student["nationality"].'</td>'
+        . '<td  ><span style="font-weight: bold">Région d\'origine:</span> '.$this->student["regionOfOrigin"]
+        //. '&nbsp;&nbsp;<span style="font-weight: bold">Langue:</span> '.$this->student["language"].'</td>'
+        . '</tr>'
+
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Email:</span> '.$this->student["email"].'</td>'
+        . '<td ><span style="font-weight: bold">N° Téléphone:</span> '.$this->student["phoneNumber"].'</td>'
+       // . '<td ></td>'
+        . '</tr>'
+        
+
+        
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Religion:</span> '.$this->student["religion"].'</td>'
+        . '<td><span style="font-weight: bold">Langue:</span> '.$this->student["language"].'</td>' 
+       // . '<td></td>  '     
+        . '</tr>'     
+
+        .'<tr>'
+        . '<td><span style="font-weight: bold">Situation d\'emploi:</span> '.$this->student["workingStatus"].'</td>'
+        . '<td ><span style="font-weight: bold">Situation matrimoniale:</span> '.$this->student["maritalStatus"].'</td>'
+       // . '<td></td>  '
+        . '</tr>'
+        
+                    
+        . '</tbody></table></div>'
+        . '<style> #std { border:1px solid grey;font-family"Arial Narrow", Arial, sans-serif}</style>';
+
+
+//require_once __DIR__ . '/bootstrap.php';
+
+$mpdf = new Mpdf\Mpdf([
+	'mode' => 'c',
+	'margin_left' => 25,
+	'margin_right' => 25,
+	'margin_top' => 27,
+	'margin_bottom' => 25,
+	'margin_header' => 16,
+	'margin_footer' => 13
+]);
+
+$mpdf->SetDisplayMode('fullpage');
+
+$mpdf->list_indent_first_level = 0; // 1 or 0 - whether to indent the first level of a list
+
+// Load a stylesheet
+//$stylesheet = file_get_contents('assets/mpdfstyletables.css');
+
+//$mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
+$mpdf->WriteHTML($html,2);
+$mpdf->WriteHTML($htmlEtudiant,2);
+
+$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.'mpdf.pdf', 'F');
+
+
+
+?>
+
+
+<style>
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none;
+}
+
+.submitForm {
+	width: 100%;
+}
+
+.validation{
+	padding-top: 5px;
+	display: none;
+	color: red;
+}
+
+.input-error {
+  display: block;
+  font-size: 12px;
+}
+
+</style>
+<div class=" bg-light  rounded-3 "      );
+            background-size: cover;
+            color: #581845;
+            " ng-controller="formCtrl as $ctrl" ng-init="init()">
+    <br /><br />
+<!DOCTYPE html>
+<div class="container">
+   
+   
+<div cg-busy="{promise:myPromise,minDuration:700}"> 					
+         
+    <div class="row">             
+    <div class="col-md-8">
+        <br /><br /><br />
+        
+        <div class="alert alert-success">
+            Vous êtes parvenus au terme du processus d'inscription. veuillez <a href='<?='../../impressions/'.'mpdf.pdf'?>'  download>télécharger votre fiche d'inscription ici</a>
+            Prière de bien vouloir imprimer ce document, le joindre à la liste des documents exigés et le soumettre au service des diplômes et des programmes.
+                       
+        </div>
+
+ <br /><br /><br />
+                    
+ 
+                                        
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+        <!-- comment -->
+ 
+        
+    </div>
+
+</div>
+</div>
+
+        <?= $this->inlineScript()
+
+        ->prependFile($this->basePath('js/jquery-3.7.0.min.js'))
+        ?>
+<script type="text/javascript">
+$(document).on("click", ".browse", function() {
+  var file = $(this).parents().find(".file");
+  file.trigger("click");
+});
+$('input[type="file"]').change(function(e) {
+  var fileName = e.target.files[0].name;
+  $("#file").val(fileName);
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    // get loaded data and render thumbnail.
+    document.getElementById("preview").src = e.target.result;
+  };
+  // read the image file as a data URL.
+  reader.readAsDataURL(this.files[0]);
+});
+
+
+</script>
+

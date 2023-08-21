@@ -12,6 +12,7 @@ use Laminas\Permissions\Rbac\Rbac;
 use Application\Entity\User;
 use Application\Entity\Student;
 use Application\Entity\Admission;
+use Application\Entity\ProspectiveStudent;
 
 
 
@@ -70,10 +71,7 @@ class AuthController extends AbstractActionController
         return new ViewModel();
     }    
     
-    public function applyAction()
-    {
-        return new ViewModel();
-    }     
+    
     public function registerAction()
     {
         return new ViewModel();

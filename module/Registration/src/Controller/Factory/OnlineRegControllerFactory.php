@@ -22,9 +22,10 @@ class OnlineregControllerFactory implements FactoryInterface
                      $requestedName, array $options = null)
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $sessionContainer = $container->get('onlineLoggedInUser');
 
         
         // Instantiate the controller and inject dependencies
-        return new OnlineRegController($entityManager);
+        return new OnlineRegController($entityManager,$sessionContainer);
     }
 }

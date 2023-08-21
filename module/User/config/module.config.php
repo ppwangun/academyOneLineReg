@@ -87,16 +87,7 @@ return [
                     ],
                 ],
             ],            
-            'apply' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/apply',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'apply',
-                    ],
-                ],
-            ], 
+
            
                'logout' => [
                 'type' => Literal::class,
@@ -237,7 +228,8 @@ return [
     ],
 
     'session_containers' => [
-        'LoggedInUser'
+        'LoggedInUser',
+        'onlineLoggedInUser'
         ],
     // This key stores configuration for RBAC manager.
     'rbac_manager' => [

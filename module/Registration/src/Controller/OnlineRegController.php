@@ -24,14 +24,16 @@ use Application\Entity\CursusAcademique;
 class OnlineRegController extends AbstractActionController
 {
     private $entityManager;
+    private $sessionContainer;
     
      const PENDING = 0;
      const REJECTED = 2;
      const APPROVED = 1;
     
-    public function __construct($entityManager) 
+    public function __construct($entityManager, $sessionContainer) 
     {
         $this->entityManager = $entityManager;
+        $this->sessionContainer = $sessionContainer;
     }
     
     public function searchFilByFacultyAction()
@@ -288,7 +290,9 @@ class OnlineRegController extends AbstractActionController
                 }
             }            
             $this->entityManager->flush();
-            $this->entityManager->getConnection()->commit();                
+            $this->entityManager->getConnection()->commit();  
+            $this->sessionContainer->onlineLoggedInUser = $numDossier;
+            
         }
         catch(Exception $e)
         {
@@ -302,7 +306,98 @@ class OnlineRegController extends AbstractActionController
          ]);
         return $view; 
         
-    } 
+    }
+    public function applyAction()
+    {
+        $this->layout()->setTemplate('layout/layout3');
+            $data = $this->params()->fromPost();
+
+            if(!isset($data["numDossier"]))  return new ViewModel();
+            $prospective = $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($data['numDossier']);
+            if($prospective)
+            {           // var_dump($data); exit;
+          
+                $this->sessionContainer->onlineLoggedInUser = $data['numDossier'] ;
+                echo  $this->sessionContainer->onlineLoggedInUser; 
+                return $this->redirect()->toRoute('endApplication');
+               /* $hydrator = new ReflectionHydrator();
+                $prospective = $hydrator->extract($prospective); 
+                        $view = new ViewModel([
+                        "student"=> $prospective 
+                        ]);
+                       return $view;*/
+            }
+            else{
+                
+               
+                $this->layout()->setVariable('fileStatus', true);
+                //$this->redirect()->toRoute('apply');
+           
+                return new ViewModel();
+            }
+
+    }     
+    
+    public function endApplicationAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {  
+            $numDossier = $this->sessionContainer->onlineLoggedInUser;
+            if(!$numDossier ) return $this->redirect()->toRoute('apply');
+            
+            $pros= $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($numDossier);
+            $hydrator = new ReflectionHydrator();
+            $prospective = $hydrator->extract($pros);            
+            $this->sessionContainer->onlineLoggedInUser = null;
+        } 
+        catch (Exception $ex) {
+           $this->entityManager->getConnection()->rollBack();
+            throw $ex;
+        }
+        $this->layout()->setTemplate('layout/layout3');
+        $view = new ViewModel([
+         "student"=> $prospective, 
+         "status"  => $pros->getStatus()     
+         ]);
+        return $view;         
+    }
+    
+    public function searchapplicationfileAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {  
+            $data = $this->params()->fromPost();
+           // var_dump($data); exit;
+            
+            
+            $prospective = $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($data['numDossier']);
+            if($prospective)
+            {
+                $numDossier = $this->sessionContainer->onlineLoggedInUser;
+                return $this->redirect()->toRoute('endApplication');
+                $hydrator = new ReflectionHydrator();
+                $prospective = $hydrator->extract($prospective); 
+                        $view = new ViewModel([
+                        "student"=> $prospective 
+                        ]);
+                       return $view;
+            }
+            else{
+                
+                $this->layout()->setTemplate('layout/layout3');
+                $this->layout()->setVariable('fileStatus', true);
+                //$this->redirect()->toRoute('apply');
+            }
+            
+        } 
+        catch (Exception $ex) {
+           $this->entityManager->getConnection()->rollBack();
+            throw $ex;
+        }
+         
+    }
     
     private function imgageCompress ($source, $destination, $quality)
     {

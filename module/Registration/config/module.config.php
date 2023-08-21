@@ -22,6 +22,9 @@ return [
             Controller\PaymentController::class => Controller\Factory\PaymentControllerFactory::class,
         ],
     ],
+    'session_containers' => [
+        'onlineLoggedInUser'
+        ],    
     'service_manager' => [
         'factories' => [
         Service\StudentManager::class =>Service\Factory\StudentManagerFactory::class,
@@ -208,7 +211,17 @@ return [
                        
                     ],
                 ],
-            ],  
+            ],
+            'apply' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/apply',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'apply',
+                    ],
+                ],
+            ],             
              'submitRegistrationForm' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -216,6 +229,28 @@ return [
                     'defaults' => [
                         'controller' => Controller\OnlineRegController::class,
                         'action'     => 'submitregistrationform',
+                       
+                    ],
+                ],
+            ],  
+             'searchapplicationfile' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/searchapplicationfile[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'searchapplicationfile',
+                       
+                    ],
+                ],
+            ],            
+             'endApplication' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/endApplication[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'endApplication',
                        
                     ],
                 ],
@@ -341,12 +376,20 @@ return [
     ],
 
     'view_manager' => [
-        'template_path_stack' => [
-           __DIR__ . '/../view',
+        'template_map' => [
+            'registration/online-reg/apply' => __DIR__ . '/../view/registration/onlinereg/apply.phtml',
+            'registration/online-reg/submitregistrationform' => __DIR__ . '/../view/registration/onlinereg/submitregistrationform.phtml',
+            'registration/online-reg/searchapplicationfile' => __DIR__ . '/../view/registration/onlinereg/searchapplicationfile.phtml',
+            'registration/online-reg/end-application' => __DIR__ . '/../view/registration/onlinereg/endapplication.phtml',
+   
         ],
-    'strategies' => [
-        'ViewJsonStrategy',
-    ],
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+       'strategies' => [
+            'ViewJsonStrategy',
+        ],
+
     ],
     // The 'access_filter' key is used by the User module to restrict or permit
     // access to certain controller actions for unauthorized visitors.
