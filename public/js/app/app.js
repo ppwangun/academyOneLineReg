@@ -7,7 +7,9 @@ var app = angular.module('myApp', [
   'ngAnimate',
   'ngImageCompress',
   'cgBusy',
-  'onlineReg'
+  'onlineReg',
+  'ngFileUpload'
+  
  // 'ngRoute'
 
   //"ngResource"

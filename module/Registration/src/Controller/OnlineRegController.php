@@ -20,6 +20,9 @@ use Application\Entity\ProspectiveStudent;
 use Application\Entity\AcademicYear;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\CursusAcademique;
+use Application\Entity\ProspetiveRegistration;
+use Application\Entity\StudentParent;
+use Jurosh\PDFMerge\PDFMerger;
 
 class OnlineRegController extends AbstractActionController
 {
@@ -69,12 +72,14 @@ class OnlineRegController extends AbstractActionController
         $data = $this->params()->fromQuery();
                
         $cycleFormation = $this->entityManager->getRepository(CourseCategory::class)->find($data["cycle_id"]);
-        $filiere = $this->entityManager->getRepository(FieldOfStudy::class)->find($data["fil_id"]);
-        $degreeCategory = $this->entityManager->getRepository(DegreeHasCourseCategory::class)->findBy(array("fieldOfStudy"=>$filiere,"courseCategory"=>$cycleFormation));
+        //$filiere = $this->entityManager->getRepository(FieldOfStudy::class)->find($data["fil_id"]);
+        $degreeCategory = $this->entityManager->getRepository(DegreeHasCourseCategory::class)->findBy(array("courseCategory"=>$cycleFormation));
         
         foreach ($degreeCategory as $key=>$value)
         { 
             $degree = $value->getDegree();
+            $filiere = $degree->getFieldStudy();
+            $school = $filiere->getFaculty();
             
             if($degree)
             {
@@ -83,7 +88,7 @@ class OnlineRegController extends AbstractActionController
                 $hydrator = new ReflectionHydrator();
                 $data1 = $hydrator->extract($data); 
                 
-               $degreeCategory[$key] =  array("id"=>$data->getId(),"name"=>$data->getName(),"code"=>$data->getCode());
+               $degreeCategory[$key] =  array("id"=>$data->getId(),"name"=>$data->getName(),"code"=>$data->getCode(),"filiere"=>$filiere->getName(),"faculty"=>$school->getName());
                 
             }
 
@@ -119,14 +124,18 @@ class OnlineRegController extends AbstractActionController
     
     public  function submitregistrationformAction()
     {
-        $data = $this->params()->fromQuery(); 
+        $data = $this->params()->fromQuery();
+        $studentDetails = json_decode($data["student"],true);
+        
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
             //Default academic year
             $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
             
+            $pdf = new PDFMerger();
             
+            $student = new ProspectiveStudent();
             //collection image and get it compresses
            if($_FILES['img_file'])
            {
@@ -138,27 +147,17 @@ class OnlineRegController extends AbstractActionController
                 move_uploaded_file($_FILES['img_file']['tmp_name'][0],$source);  
                 $this->imgageCompress($source, $destination, 0.7);
                 //covert the image to blob compatible type
-                $image_base64 = base64_encode(file_get_contents($destination)); 
+                $image_base64 = base64_encode(file_get_contents($destination));
+               $student->setPhoto($image_base64);
 
            }
-           //Colecting file dans save the  path
-           //PDF files are not stored into the data base but instead, just the path is sotred
-           //Final user will get access to the file through a link
 
-           if($_FILES['file'])
-           {
-               $filename = $_FILES['file']['name'][0];
-               $destination = $_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$filename;
-               move_uploaded_file($_FILES['file']['tmp_name'][0],$destination);  
-
-
-           }
-           $studentDetails = json_decode($data["student"],true);
            
-           var_dump($studentDetails);
+              
+      
              
             $escaper = new Escaper("utf-8");   
-            $student = new ProspectiveStudent();
+            
             if(isset($studentDetails["nom"]))   
                 $student->setNom($escaper->escapeHtml($studentDetails["nom"]));
             if(isset($studentDetails["prenom"]))
@@ -226,33 +225,146 @@ class OnlineRegController extends AbstractActionController
                 $student->setSponsorCountry($escaper->escapeHtml($studentDetails["sponsorCountry"]));
             if(isset($studentDetails["sponsorCity"]))
                 $student->setSponsorCity($escaper->escapeHtml($studentDetails["sponsorCity"]));
+           
+         
+            
+            //$student->setPaymentProofPath($filename);
             
 
-            
-            $student->setPaymentProofPath($filename);
-            $student->setPhoto($image_base64);
-            $student->setAcademicYear($academicYear);
-            
-            //looking class of study
-                        //class of study
-            if(isset($studentDetails["degree_id"]))
-                $degree = $this->entityManager->getRepository(Degree::class)->find($escaper->escapeHtml($studentDetails["degree_id"]));
-            if(isset($studentDetails["study_level"]))
-            {
-                $classofStudy = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByDegree($degree);
-                $student->setClassOfStudy($classofStudy);
-            }
             
             //generating a file number
             $prefixe = date('y');
             $numDossier= $prefixe.'-'.mt_rand(100000, 199999);
-            while($this->entityManager->getRepository(ProspectiveStudent::Class)->findOneByNumDossier($numDossier))
+            while($this->entityManager->getRepository(ProspetiveRegistration::Class)->findOneByNumDossier($numDossier))
             {
                 $numDossier = $prefixe.'-'.mt_rand(10000, 19999);
             }
-            $student->setNumDossier($numDossier);
             
-            $student->setStatus(self::PENDING);
+           //Colecting file dans save the  path
+           //PDF files are not stored into the data base but instead, just the path is sotred
+           //Final user will get access to the file through a link
+
+           foreach ($_FILES as $key=>$file)
+           {               //var_dump($file); exit;
+               if($key!="img_file")
+               {
+               $filename = $file["name"][0];  
+               $destination = $_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$filename;
+               move_uploaded_file($file['tmp_name'][0],$destination);
+               $pdf->addPDF($destination,'all');
+               }
+
+
+           }
+            $pdf->merge('file',$_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$numDossier.'.pdf');
+           //$studentDetails = json_decode($data["student"],true); print_r($studentDetails);
+           $this->entityManager->persist($student);
+           $this->entityManager->flush();
+  
+            //looking class of study
+                        //class of study
+            if(isset($studentDetails["choixDeg1"]))
+                $degree = $this->entityManager->getRepository(Degree::class)->find($escaper->escapeHtml($studentDetails["choixDeg1"]));
+            if(isset($studentDetails["study_level"]))
+            {
+                $classOfStudy1 = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("degree"=>$degree,"studyLevel"=>$studentDetails["study_level"]));
+                //$student->setClassOfStudy($classofStudy);
+            }           
+            if(isset($studentDetails["choixDeg2"]))
+                $degree = $this->entityManager->getRepository(Degree::class)->find($escaper->escapeHtml($studentDetails["choixDeg2"]));
+            if(isset($studentDetails["study_level"]))
+            {
+                $classOfStudy2 = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("degree"=>$degree,"studyLevel"=>$studentDetails["study_level"]));
+                //$student->setClassOfStudy($classofStudy);
+            }
+            if(isset($studentDetails["choixDeg1"]))
+                $degree = $this->entityManager->getRepository(Degree::class)->find($escaper->escapeHtml($studentDetails["choixDeg3"]));
+            if(isset($studentDetails["study_level"]))
+            {
+                $classOfStudy3 = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("degree"=>$degree,"studyLevel"=>$studentDetails["study_level"]));
+                //$student->setClassOfStudy($classofStudy);
+            }            
+           $prospectiveRegistration = new ProspetiveRegistration();
+           
+           $prospectiveRegistration->setAcademicYear($academicYear);
+           //rospectiveRegistration->setClassOfStudy($classOfStudy);
+           $prospectiveRegistration->setProspectiveStudent($student);
+           $prospectiveRegistration->setNumDossier($numDossier);
+           $prospectiveRegistration->setPaymentProofPath($numDossier.'.pdf');
+           $prospectiveRegistration->setChoixFormation1($classOfStudy1->getCode());
+           $prospectiveRegistration->setChoixFormation2($classOfStudy2->getCode());
+           $prospectiveRegistration->setChoixFormation3($classOfStudy3->getCode());
+           $prospectiveRegistration->setRegistrationDecision(self::PENDING);
+           $prospectiveRegistration->setStatus(self::PENDING);
+          
+           $this->entityManager->persist($prospectiveRegistration); 
+           
+           $studentFather = new StudentParent();
+           $studentFather->getStudent($prospectiveRegistration);
+            if(isset($studentDetails["fatherName"]))
+                $studentFather->setName($escaper->escapeHtml($studentDetails["fatherName"]));
+            if(isset($studentDetails["fatherProfession"]))
+                $studentFather->setProfession($escaper->escapeHtml($studentDetails["fatherProfession"]));
+            if(isset($studentDetails["fatherPhoneNumber"]))
+                $studentFather->setPhoneNumber($escaper->escapeHtml($studentDetails["fatherPhoneNumber"]));
+            if(isset($studentDetails["fatherEmail"]))
+                $studentFather->setEmail($escaper->escapeHtml($studentDetails["fatherEmail"]));
+            if(isset($studentDetails["fatherAdress"]))
+                $studentFather->setAdress($escaper->escapeHtml($studentDetails["fatherAdress"]));            
+            if(isset($studentDetails["fatherCountry"]))
+                $studentFather->setCountry($escaper->escapeHtml($studentDetails["fatherCountry"]));
+            if(isset($studentDetails["fatherCity"]))
+                //$studentFather->setCity($escaper->escapeHtml($studentDetails["fatherCity"]));
+            $studentFather->setParentTye("PERE");
+            
+
+           $studentMother = new StudentParent();
+           $studentMother->getStudent($prospectiveRegistration);
+            if(isset($studentDetails["motherName"]))
+                $studentMother->setName($escaper->escapeHtml($studentDetails["motherName"]));
+            if(isset($studentDetails["motherProfession"]))
+                $studentMother->setProfession($escaper->escapeHtml($studentDetails["motherProfession"]));
+            if(isset($studentDetails["fatherPhoneNumber"]))
+                $studentMother->setPhoneNumber($escaper->escapeHtml($studentDetails["motherPhoneNumber"]));
+            if(isset($studentDetails["motherEmail"]))
+                $studentMother->setEmail($escaper->escapeHtml($studentDetails["motherEmail"]));
+            if(isset($studentDetails["motherAdress"]))
+                $studentFather->setAdress($escaper->escapeHtml($studentDetails["motherAdress"]));                 
+                
+            if(isset($studentDetails["motherCountry"]))
+                $studentMother->setCountry($escaper->escapeHtml($studentDetails["motherCountry"]));
+            if(isset($studentDetails["motherCity"]))
+                $studentMother->setCity($escaper->escapeHtml($studentDetails["motherCity"]));
+            $studentMother->setParentTye("MERE");
+            
+            $studentSponsor = new StudentParent();
+            $studentSponsor->getStudent($prospectiveRegistration);
+            if(isset($studentDetails["sponsorName"]))
+                 $studentSponsor->setName($escaper->escapeHtml($studentDetails["sponsorName"]));
+            if(isset($studentDetails["sponsorProfession"]))
+                 $studentSponsor->setProfession($escaper->escapeHtml($studentDetails["sponsorProfession"]));
+            if(isset($studentDetails["sponsorPhoneNumber"]))
+                 $studentSponsor->setPhoneNumber($escaper->escapeHtml($studentDetails["sponsorPhoneNumber"]));
+            if(isset($studentDetails["sponsorEmail"]))
+                 $studentSponsor->setEmail($escaper->escapeHtml($studentDetails["sponsorEmail"]));
+            if(isset($studentDetails["sponsorAdress"]))
+                $studentFather->setAdress($escaper->escapeHtml($studentDetails["sponsorAdress"]));                
+                
+            if(isset($studentDetails["sponsorCountry"]))
+                 $studentSponsor->setCountry($escaper->escapeHtml($studentDetails["sponsorCountry"]));
+            if(isset($studentDetails["sponsorCity"]))
+                 $studentSponsor->setCity($escaper->escapeHtml($studentDetails["sponsorCity"]));
+            if(isset($studentDetails["sponsorRelationShipWithStd"]))
+                 $studentSponsor->setTutorRalationWithStudent($escaper->escapeHtml($studentDetails["sponsorRelationShipWithStd"]));                
+            $studentMother->setParentTye("TUTOR");
+           
+            
+            $this->entityManager->persist($studentFather);
+            $this->entityManager->persist($studentMother);
+            $this->entityManager->persist($studentSponsor);
+
+            
+    
             /*$student->setLastSchool($studentDetails["lastSchool"]);
             $student->setEnteringDegree($studentDetails["enteringDegree"]);
             $student->setDegreeId($studentDetails["degreeId"]);
@@ -273,7 +385,7 @@ class OnlineRegController extends AbstractActionController
             //perform student administrative registration and update registration status to 2
            /* $data["matricule"]=$studentMat;
             $data["classe"]=$studentDetails["classe"];    */           
-            $this->entityManager->persist($student);
+           
             
             if(isset($studentDetails["cursus"]))
             {
@@ -346,7 +458,8 @@ class OnlineRegController extends AbstractActionController
             $numDossier = $this->sessionContainer->onlineLoggedInUser;
             if(!$numDossier ) return $this->redirect()->toRoute('apply');
             
-            $pros= $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($numDossier);
+            $pros = $this->entityManager->getRepository(ProspectiveRegistration::class)->findOneByNumDossier($numDossier);
+            $pros = $pros->getProsectiveStudent();
             $hydrator = new ReflectionHydrator();
             $prospective = $hydrator->extract($pros);            
             $this->sessionContainer->onlineLoggedInUser = null;

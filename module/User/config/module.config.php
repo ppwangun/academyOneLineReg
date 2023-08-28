@@ -67,16 +67,7 @@ return [
                     ],
                 ],
             ],
-            '/' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],   
+  
             'register' => [
                 'type'    => Literal::class,
                 'options' => [

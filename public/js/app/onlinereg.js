@@ -5,16 +5,274 @@
 		  		$mdThemingProvider.theme('default')
 		    	.primaryPalette('blue')
 		    	.accentPalette('blue');
-		}).controller('formCtrl', ['$scope', '$http','$timeout', function($scope, $http, $timeout,$window,$location) {
+		}).controller('formCtrl', ['$scope', '$http','$timeout','$mdDialog', function($scope, $http, $timeout,$mdDialog,$window,$location) {
                         var $ctrl = this;
                             $ctrl.student= {fac_id:-1,fil_id:-1};
 				$scope.formParams = {};
 				$scope.stage = "";
-                                
+                                $scope.deg = null
 				$scope.formValidation = false;
 				$scope.toggleJSONView = false;
 				$scope.toggleFormErrorsView = false;
+                                $ctrl.student.uploadFinancialProof = [];
+                                $ctrl.student.uploadCv = [];
+$scope.baccalaureat = [
+ {
+  "code": "A4",
+  "name": "BAC A4"
+ },
+ {
+  "code": "AAT",
+  "name": "BAC AAT"
+ },
+ {
+  "code": "ACA",
+  "name": "BAC ACA"
+ },
+ {
+  "code": "ACC",
+  "name": "BAC ACC"
+ },
+ {
+  "code": "AV",
+  "name": "BAC AV"
+ },
+ {
+  "code": "AC",
+  "name": "BAC AC"
+ },
+ {
+  "code": "AF1",
+  "name": "BAC AF1"
+ },
+ {
+  "code": "AF2",
+  "name": "BAC AF2"
+ },
+ {
+  "code": "AF3",
+  "name": "BAC AF3"
+ },
+ {
+  "code": "BIJO",
+  "name": "BAC BIJO"
+ },
+ {
+  "code": "F6-BIPE",
+  "name": "BAC F6-BIPE"
+ },
+ {
+  "code": "B-PA",
+  "name": "BAC B-PA"
+ },
+ {
+  "code": "C",
+  "name": "BAC C"
+ },
+ {
+  "code": "CH-TI",
+  "name": "BAC CH-TI"
+ },
+ {
+  "code": "CI",
+  "name": "BAC CI"
+ },
+ {
+  "code": "CG",
+  "name": "BAC CG"
+ },
+ {
+  "code": "CMA-MVT",
+  "name": "BAC CMA-MVT"
+ },
+ {
+  "code": "CMA-MVPL",
+  "name": "BAC CMA-MVPL"
+ },
+ {
+  "code": "F6-COPH",
+  "name": "BAC F6-COPH"
+ },
+ {
+  "code": "CU",
+  "name": "BAC CU"
+ },
+ {
+  "code": "D",
+  "name": "BAC D"
+ },
+ {
+  "code": "E",
+  "name": "BAC E"
+ },
+ {
+  "code": "ESF",
+  "name": "BAC ESF"
+ },
+ {
+  "code": "F2",
+  "name": "BAC F2"
+ },
+ {
+  "code": "F3",
+  "name": "BAC F3"
+ },
+ {
+  "code": "F1",
+  "name": "BAC F1"
+ },
+ {
+  "code": "ABI",
+  "name": "BAC ABI"
+ },
+ {
+  "code": "FIG",
+  "name": "BAC FIG"
+ },
+ {
+  "code": "F5",
+  "name": "BAC F5"
+ },
+ {
+  "code": "F4-BA",
+  "name": "BAC F4-BA"
+ },
+ {
+  "code": "F4-BE",
+  "name": "BAC F4-BE"
+ },
+ {
+  "code": "F4-TP",
+  "name": "BAC F4-TP"
+ },
+ {
+  "code": "GT\/TOPO ou GTTO",
+  "name": "BAC GT\/TOPO ou GTTO"
+ },
+ {
+  "code": "IH",
+  "name": "BAC IH"
+ },
+ {
+  "code": "IB",
+  "name": "BAC IB"
+ },
+ {
+  "code": "IS",
+  "name": "BAC IS"
+ },
+ {
+  "code": "MEA",
+  "name": "BAC MEA"
+ },
+ {
+  "code": "MEM",
+  "name": "BAC MEM"
+ },
+ {
+  "code": "MISE",
+  "name": "BAC MISE"
+ },
+ {
+  "code": "MHB",
+  "name": "BAC MHB"
+ },
+ {
+  "code": "MA",
+  "name": "BAC MA"
+ },
+ {
+  "code": "MEB",
+  "name": "BAC MEB"
+ },
+ {
+  "code": "F6-MIPE",
+  "name": "BAC F6-MIPE"
+ },
+ {
+  "code": "AG-PA",
+  "name": "BAC AG-PA"
+ },
+ {
+  "code": "AG-PV",
+  "name": "BAC AG-PV"
+ },
+ {
+  "code": "RB",
+  "name": "BAC RB"
+ },
+ {
+  "code": "SES",
+  "name": "BAC SES"
+ },
+ {
+  "code": "F7-BIOLAP",
+  "name": "BAC F7-BIOLAP"
+ },
+ {
+  "code": "F7",
+  "name": "BAC F7"
+ },
+ {
+  "code": "F8",
+  "name": "BAC F8"
+ },
+ {
+  "code": "SH",
+  "name": "BAC SH"
+ },
+ {
+  "code": "TGF",
+  "name": "BAC TGF"
+ },
+ {
+  "code": "TI",
+  "name": "BAC TI"
+ },
+ {
+  "code": "AG-TP",
+  "name": "BAC AG-TP"
+ }
+]
 
+$scope.annee = [
+ {
+  "annee": "2020/2021"
+ },
+ {
+  "annee": "2021/2022"
+ },
+ {
+  "annee": "2022/2023"
+ },
+ {
+  "annee": "2023/2024"
+ },
+ {
+  "annee": "2024/2025"
+ },
+ {
+  "annee": "2025/2026"
+ },
+ {
+  "annee": "2026/2027"
+ },
+ {
+  "annee": "2028/2029"
+ },
+ {
+  "annee": "2030/2031"
+ },
+ {
+  "annee": "2031/2032"
+ },
+ {
+  "annee": "2032/2033"
+ },
+ {
+  "annee": "2033/2034"
+ }
+]
 				$scope.genders = ["male", "female", "other"];
 
 				$scope.progressValue = 0;
@@ -129,8 +387,8 @@
     /*--------------------------------------------------------------------------
      *--------------------------- loading all filières by faculty   ---------------------
      *----------------------------------------------------------------------- */
-    $ctrl.searchDegree = function(cycle_id,fil_id){
-      var data = {fil_id: fil_id,cycle_id:cycle_id}; 
+    $ctrl.searchDegree = function(cycle_id){
+      var data = {cycle_id:cycle_id}; 
       var config = {
       params: data,
       headers : {'Accept' : 'application/json'}
@@ -138,7 +396,12 @@
         $http.get('searchDegree',config).then(
             function successCallback(response){
                 $ctrl.cpt =1;
+                $ctrl.student.degree_id = null;
+                $ctrl.student.filiere= "";
+                $ctrl.student.faculty = "";
                 $scope.degrees = response.data[0];
+                $ctrl.student.filiere = $scope.degrees.filiere;
+                $ctrl.student.faculty = $scope.degrees.faculty;
 
                 
             },
@@ -157,9 +420,29 @@
         
         var fd = new FormData();
    
-        angular.forEach($ctrl.student.uploadFiles,function(file){
+        angular.forEach($ctrl.student.uploadFinancialProof,function(file){
+          fd.append('file[]',file); 
+          });
+        angular.forEach($ctrl.student.uploadCv,function(file){
+          fd.append('file1[]',file); 
+          });  
+        /*angular.forEach($ctrl.student.uploadCv,function(file){
           fd.append('file[]',file);
-        });
+          });  */         
+        angular.forEach($ctrl.student.uploadLastDegree,function(file){
+          fd.append('file2[]',file);
+          });           
+        angular.forEach($ctrl.student.uploadTranscript,function(file){
+          fd.append('file3[]',file);
+          });
+        angular.forEach($ctrl.student.uploadBirthCertificate,function(file){
+          fd.append('file4[]',file);
+          });
+        angular.forEach($ctrl.student.uploadIdentity,function(file){
+          fd.append('file5[]',file);
+          });          
+         
+       // });
         angular.forEach($scope.image1.compressed.dataURL,function(file){
           fd.append('img_file[]',file);
         });       
@@ -171,7 +454,7 @@
         $scope.myPromise = $http.post("submitRegistrationForm",fd,config).then(
             function successCallback(response){
                
-               window.location.href="endApplication"
+               //window.location.href="endApplication"
                 
             },
             function errorCallback(response){
@@ -198,6 +481,32 @@
 			*/
 			$scope.next = function (stage) {
 				$scope.formValidation = true;
+                                var validFileSize = true;
+                                var fd = new FormData();
+                                
+                        angular.forEach($ctrl.student.uploadFiles,function(file,ev){
+                            var size = file.size / 1024 / 1024;
+                        if(parseFloat(size) > 2) 
+                        {
+                            validFileSize = false;
+                            $mdDialog.show(
+                                $mdDialog.alert()
+                                  .parent(angular.element(document.querySelector('#popupContainer')))
+                                  .clickOutsideToClose(true)
+                                  .title('Attention!!!!!!!')
+                                  .textContent('Assurez vous  que la taille des fichiers importés n\'est pas supérieur à 2MB')
+                                  .ariaLabel('Alert Dialog Demo')
+                                  .ok('OK')
+                                  .targetEvent(ev)
+                              );
+                            console.log(file); 
+                            
+                        }else fd.append('file[]',file);
+                        
+                        
+                        });
+
+                            if(!validFileSize) return;    
 			    
 			    if ($scope.stdRegistrationForm.$valid) {
 			    	$scope.direction = 1;
@@ -205,9 +514,10 @@
 			    	$scope.formValidation = false;
 
 			    	// increment progressbar
-			    	$scope.progressValue += (100 / 6);
+			    	$scope.progressValue += (100 / 8);
 			    }
-                     
+                            
+                                                 
 			};
 
 			/*
@@ -297,22 +607,22 @@
 
                             return true;
                         }                            
-                }]).directive('validFile',function(){
-                    return {
-                        require:'ngModel',
-                        link:function(scope,el,attrs,ctrl){
-                            ctrl.$setValidity('validFile', el.val() != '');
-                            //change event is fired when file is selected
-                            el.bind('change',function(){
-                                ctrl.$setValidity('validFile', el.val() != '');
-                                scope.$apply(function(){
-                                    ctrl.$setViewValue(el.val());
-                                    ctrl.$render();
-                                });
-                            });
-                        }
-                    }
-}).directive('ngFile', ['$parse', function ($parse) {
+    }]).directive('validFile', function () {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function (scope,elem,attrs,ngModel) {
+            
+        elem.bind("change", function(e) {
+          console.log("change");
+          scope.$apply(function(){
+              ngModel.$valid=true;
+              ngModel.$invalid=false;
+          });
+        });
+      }
+    };
+  }).directive('ngFile', ['$parse', function ($parse) {
   return {
    restrict: 'A',
    link: function(scope, element, attrs) {

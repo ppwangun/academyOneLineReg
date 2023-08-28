@@ -40,8 +40,7 @@ $htmlEtudiant ='<div id="stp" ><table><tbody>'
         . '</tr>'
         
                     
-        . '</tbody></table></div>'
-        . '<style> #std { border:1px solid grey;font-family"Arial Narrow", Arial, sans-serif}</style>';
+        . '</tbody></table></div>';
 
 
 //require_once __DIR__ . '/bootstrap.php';
@@ -109,7 +108,7 @@ $mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.'mpdf.pdf', 'F');
     <div class="row">             
 
         <br /><br /><br />
-        
+        Votre numéro de dossier:<h1><?=$this->student["numDossier"]?></h1>
         <div class="alert alert-success">
             Vous êtes parvenus au terme du processus d'inscription. veuillez <a href='<?='../../impressions/'.'mpdf.pdf'?>'  download>télécharger votre fiche d'inscription ici</a>
             </ br>
@@ -121,10 +120,23 @@ $mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.'mpdf.pdf', 'F');
         <div class="alert alert-info">
         <?php if($status ==0) 
             
-            echo" Votre dossier est bien reçu et  en cours de traitement par nos soins. \n"; 
-            echo "Dans un delai Au plus  tard  de 48H vous récevrer la réponse à votre demande de candidature par mail ou par SMS";
+            echo" Votre dossier est bien reçu et  en cours de traitement par nos soins. \n".'</ br>'; 
+            echo "Dans un delai d'au plus  tard  d 48H vous récevrer la réponse à votre demande de candidature vous sera transmis par mail ou par SMS";
             
             ?>
+        <?php if($status ==1) 
+            
+            echo"Félicitations!!!! Votre candidature a été acceptée . \n"; 
+            echo "Vous êtes priès de procéder à votre inscription en ligne ";
+            
+            ?>   
+            
+        <?php if($status ==2) 
+            
+            echo"Désolé votre demande candidature a été rejetée"; 
+            
+            
+            ?>             
         </div>
         
         

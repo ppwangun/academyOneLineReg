@@ -26,19 +26,12 @@
 }
 
 </style>
-<div class=" bg-light  rounded-3 "      );
-            background-size: cover;
-            color: #581845;
-            " ng-controller="formCtrl as $ctrl" ng-init="init()">
+<div class=" bg-light  rounded-3 "
+        ng-controller="formCtrl as $ctrl" ng-init="init()">
     <br />
 <!DOCTYPE html>
 
-<div class="alert alert-info">
-    L’admission est ouverte aux titulaires d’un Baccalauréat d’Enseignement Général, Technique Industriel ou
-Commercial, d’un Brevet de Technicien, d’un G.C.E. A-Level, ou de tout autre diplôme reconnu en équivalence par le
-Ministère en charge de l’Enseignement Supérieur au Cameroun.
-    
-</div>  
+
    
 <div cg-busy="{promise:myPromise,minDuration:700}"> 					
          
@@ -50,10 +43,65 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
         <md-content class="md-padding" layout-xs="column" >
             <form ng-submit="submitRegistrationForm()" name="stdRegistrationForm" id="submitForm" class="submitForm form-validation" role="form" novalidate>
          <div class="animate-switch-container" ng-switch on="stage" ng-class="{forward: direction, backward:!direction}">
+             
 <!--|==========================================================================
 					| Stag0
-|==========================================================================   -->                 
+|==========================================================================   -->                
 <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-default  ng-class="{forward: direction, backward:!direction}">
+    <md-card-title>
+        <md-card-title-text>
+            <h1>Admission à Agnela Academy</h1> 
+            <md-card-title-media></md-card-title-media>
+        </md-card-title-text>
+    </md-card-title> 
+    <md-card-content>
+    <div >
+        <p>
+        L’admission est ouverte aux titulaires d’un Baccalauréat d’Enseignement Général, Technique Industriel ou
+        Commercial, d’un Brevet de Technicien, d’un G.C.E. A-Level, ou de tout autre diplôme reconnu en équivalence par le
+        Ministère en charge de l’Enseignement Supérieur au Cameroun.
+        </p>
+        <p>
+            L’admission en première année se fait sur concours d’entrée.
+        </p>
+        <p>
+            Le Jury d’admission prend en compte les trois éléments suivants :
+        </p>
+        <p>
+
+        Elément 1 : Etude du dossier, sur la base d’une grille d’évaluation interne unique pour tous les candidats <br />
+
+        Elément 2 : Résultats obtenus aux épreuves écrites du concours d’entrée <br />
+        <ul>
+
+            <li>Epreuve de connaissances générales</li>
+            <li>Epreuve de compréhension de texte et synthèse</li>
+            <li>Epreuve de langue : compréhension, grammaire, vocabulaire</li>
+            <li>Epreuve de raisonnement logique et calculs élémentaires</li>
+        </ul>
+    </p>
+    <p>
+        Elément 3 : Résultats obtenus aux épreuves orales du concours d’entrée <be />
+    <ul>
+        <li> Entretien individuel de motivation</li>
+        <li> Entretien de groupe</li>
+    </ul>
+    <p>    
+        L’admission en première année est prononcée sous réserve de l’obtention par le candidat d’un baccalauréat, général ou professionnel, ou d’un diplôme de niveau équivalent.
+     </p>
+
+    </div>          
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+ 
+        <button type="button" class="btn btn-secondary m-1" ng-click="next('stage1')"><i class="fa-solid fa-circle-play"></i>&nbsp;Cliquer ici pour démarrer&nbsp;</button>
+    </md-card-actions>    
+</md-card>            
+             
+<!--|==========================================================================
+					| Stag1
+|==========================================================================   -->                 
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch md-theme-watch ng-switch-when="stage1">
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-headline">Identification du candidat</span> 
@@ -174,7 +222,26 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                 </md-input-container>
    
                         </div>
-
+                          <div layout-gt-sm="row" style='margin-top: -35px;' >
+                                <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                    <label>Adresse</label>
+                                    <input name="adresse" ng-model="$ctrl.student.adresse"       />
+                                    <div ng-messages="stdRegistrationForm.adresse.$error">
+                                        <div ng-message="required">le champ adresse est obligatoire</div>
+      
+                                    </div> 
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                    <label>Numéro CNI/Passeport</label>
+                                    <input name="identite" ng-model="$ctrl.student.idNumber"    required   />
+                                    <div ng-messages="stdRegistrationForm.identite.$error">
+                                        <div ng-message="required">le champ adresse est obligatoire</div>
+                                        <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.identite.$error.required}">
+                                            le chmap adresse est obligatoire
+                                        </div> 
+                                    </div> 
+                                </md-input-container>                              
+                          </div>
 
                           <div layout-gt-sm="row" style='margin-top: -35px;' >
                                 <md-input-container class="md-block" flex-gt-sm>
@@ -276,20 +343,17 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
                     <!-- buttons -->
             <md-card-actions layout="row" layout-align="end center">
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('')">
-                            Back
-                    </button>
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage1')">		Next
-                    </button>
+                <button type="button" class="btn btn-danger m-1" ng-click="back('')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                <button type="button" class="btn btn-danger m-1" ng-click="next('stage2')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
             </md-card-actions>  
         </md-card>
                     
 <!--
 |==========================================================================
-| Stage 1
+| Stage 2
 |==========================================================================
 -->
-            <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage1">
+            <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage2">
                 <md-card-title>
                         <md-card-title-text>
                                 <span class="md-headline">Information sur les parents</span>
@@ -386,6 +450,17 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                 </div> 
                           </md-input-container>
                         </div>
+                        <div layout-gt-sm="row" style='margin-top: -35px;' >
+                             <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                 <label>Adresse</label>
+                                 <input name="fatherAdress" ng-model="$ctrl.student.fatherAdress"       />
+                                 <div ng-messages="stdRegistrationForm.fatherAdress.$error">
+                                     <div ng-message="required">le champ adresse est obligatoire</div>
+                             <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.fatherAdress.$error.required}">
+                                 le chmap adresse est obligatoire
+                             </div> 
+                                 </div>  
+                       </div>
            
  <!-- FIn identification du père -->
  
@@ -478,6 +553,17 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                 </div> 
                           </md-input-container>
                         </div> 
+                          <div layout-gt-sm="row" style='margin-top: -35px;' >
+                                <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                    <label>Adresse</label>
+                                    <input name="motherAdress" ng-model="$ctrl.student.motherAdress"       />
+                                    <div ng-messages="stdRegistrationForm.motherAdress.$error">
+                                        <div ng-message="required">le champ adresse est obligatoire</div>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.motherAdress.$rror.required}">
+                                    le chmap adresse est obligatoire
+                                </div> 
+                                    </div>  
+                          </div>  
  <!-- FIn identification de la mère -->
  
    <!-- identification du tuteur -->
@@ -523,6 +609,25 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
                             </md-input-container>
                         </div> 
+                        <div layout-gt-sm="row" style='margin-top: 15px;'  >
+                            <md-input-container class="md-block" flex-gt-sm>
+                              <label>Relation avec l'étudiant:</label>
+                                        <md-select name="studyLevel"  ng-model="$ctrl.student.sponsorRelationShipWithStd"    ng-required='!$ctrl.chkSponsor($ctrl.sponsor)' >
+                                            <md-option value="ONCLE">Oncle</md-option>
+                                            <md-option value="TANTE">Tante</md-option>
+                                            <md-option value="AMI">Ami(e)</md-option>
+                                            <md-option value="CONNAISSANCE">Connaissance</md-option>  
+                                            <md-option value="FIANCE">Fiancé(e)</md-option>
+                                            <md-option value="CONJOINT">Conjoint</md-option>
+                                            
+                                        </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.studyLevel.$error.required}">
+                                    Choix du niveau d'étude obligatoire
+                                </div>                            
+                            </md-input-container>
+
+
+                        </div>                     
                         <div layout-gt-sm="row" style='margin-top: 5px;' >
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Pays de Résidence</label>
@@ -579,8 +684,19 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                         </div>
                                 </div> 
                           </md-input-container>
-                    </div> 
-            </div>
+                    </div>
+                          <div layout-gt-sm="row" style='margin-top: -35px;' >
+                                <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                    <label>Adresse</label>
+                                    <input name="sponsorAdress" ng-model="$ctrl.student.sponsorAdress"       />
+                                    <div ng-messages="stdRegistrationForm.sponsorAdress.$error">
+                                        <div ng-message="required">le champ adresse est obligatoire</div>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.sponsorAdress.$rror.required}">
+                                    le chmap adresse est obligatoire
+                                </div> 
+                                    </div>  
+                          </div>                      
+                </div>
  <!-- FIn identification du tuteur -->
             </md-card-content>
 
@@ -588,22 +704,21 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
             <!-- buttons -->
             <md-card-actions layout="row" layout-align="end center">
-                <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('')">
-                            Back
-                    </button>
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage2')">		Next
-                    </button>
+                <md-card-actions layout="row" layout-align="end center">
+                    <button type="button" class="btn btn-danger m-1" ng-click="back('stage1')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                    <button type="button" class="btn btn-danger m-1" ng-click="next('stage3')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
+                </md-card-actions>
             </md-card-actions>
 
     </md-card>  
                                         
 <!--
         |==========================================================================
-        | Stage 2
+        | Stage 3
         |==========================================================================
 -->
 
-        <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage2" >
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage3" >
                 <md-card-title>
                         <md-card-title-text>
                                 <span class="md-headline">Choix de la formation</span>
@@ -618,80 +733,97 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                             </div>
                           </md-toolbar>
                             <md-input-container class="md-block" flex-gt-sm>
-                                <label>Ecole</label>
-                                <md-select name='faculty' ng-model="$ctrl.student.fac_id" ng-change="$ctrl.searchFilByFaculty($ctrl.student.fac_id)"  >
-                                    <md-option ng-repeat="fac in faculties" ng-value="fac.id" >
-                                      {{fac.name}}
-                                    </md-select>
-                                <div ng-messages="stdRegistrationForm.regionOfOrigin.$error">
-                                    <div ng-message="required">le champ Religion est obligatoire</div>
-                                </div>
-                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.regionOfOrigin.$error.required}">
-                                    region d'aorigine obligatoire
-                                </div>                                    
-                            </md-input-container>
- 
                                  <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
-                                        <label>Cycle de formation:</label>
-                                        <md-select name="filiere" placeholder="Choisir le cycle de formation" ng-model="$ctrl.student.cycle_id"    required >
+                                        <label>Cycle de formation sollicité:</label>
+                                        <md-select name="cycle" placeholder="Choisir le cycle de formation" ng-model="$ctrl.student.cycle_id" ng-change="$ctrl.searchDegree($ctrl.student.cycle_id)"    required >
                                            <md-option  ng-repeat="cycle in cycles" ng-value="cycle.id">{{cycle.name}} </md-option>
                                         </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.cycle.$error.required}">
+                                    Choix du cycle obligatoire
+                                </div>                                       
                                    </md-input-container>
-                                </div>
-
-                                <div layout layout-sm="column">
+                                </div> 
+                            </md-input-container>
+ 
+                            <md-input-container class="md-block" flex-gt-sm> 
+                                 <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
-                                        <label>Filière:</label>
-                                        <md-select name="filiere" placeholder="Choisir la filière" ng-model="$ctrl.student.fil_id"   ng-change="$ctrl.searchDegree($ctrl.student.cycle_id,$ctrl.student.fil_id)"  required >
-                                           <md-option  ng-repeat="fil in filieres" ng-value="fil.id">{{fil.name}} </md-option>
-                                        </md-select>
-                                   </md-input-container>
-                                </div>
-
-
-
-                                <div layout layout-sm="column">
-                                    <md-input-container flex="flex" style="" >
-                                        <label>Choix du cursus de formation:</label>
-                                        <md-select name="filiere" placeholder="Choisir la formation" ng-model="$ctrl.student.degree_id"    required >
+                                        <label>Premier choix de formation:</label>
+                                        <md-select name="choix1" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg1"    required >
                                            <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
                                         </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix1.$error.required}">
+                                    Premier chix oblgatoire
+                                </div>                                         
                                    </md-input-container>
                                 </div>
-        
+                            </md-input-container>
+ 
+                            <md-input-container class="md-block" flex-gt-sm> 
+                                 <div layout layout-sm="column">
+                                    <md-input-container flex="flex" style="" >
+                                        <label>Deuxième choix de formation:</label>
+                                        <md-select name="choix2" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg2"    required >
+                                           <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
+                                        </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix2.$error.required}">
+                                    Deuxhième choix obligatoire
+                                </div>                                         
+                                   </md-input-container>
+                                </div>
+                            </md-input-container>
+ 
+                            <md-input-container class="md-block" flex-gt-sm> 
+                                 <div layout layout-sm="column">
+                                    <md-input-container flex="flex" style="" >
+                                        <label>Deuxième choix de formation:</label>
+                                        <md-select name="choix3" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg3"    required >
+                                           <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
+                                        </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix3.$error.required}">
+                                    Troisème choix obligatoire
+                                </div>                                        
+                                   </md-input-container>
+                                </div>
+                            </md-input-container>
+ 
+
+
                                 <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
                                         <label>Niveau d'étude:</label>
-                                        <md-select name="filiere" placeholder="Choisir le niveau d'étude" ng-model="$ctrl.student.study_level"    required >
+                                        <md-select name="studyLevel" placeholder="Choisir le niveau d'étude" ng-model="$ctrl.student.study_level"    required >
                                             <md-option value="1">Niveau 1</md-option>
                                             <md-option value="2">Niveau 2</md-option>
-                                            <md-option value="1">Niveau 3</md-option>
-                                            <md-option value="2">Niveau 4</md-option>  
-                                            <md-option value="1">Niveau 5</md-option>
+                                            <md-option value="3">Niveau 3</md-option>
+                                            <md-option value="4">Niveau 4</md-option>  
+                                            <md-option value="5">Niveau 5</md-option>
                                             
                                         </md-select>
+                                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.studyLevel.$error.required}">
+                                    Choix du niveau d'étude obligatoire
+                                </div>                                         
                                    </md-input-container>
                                 </div>
 						<!-- buttons -->
-                                <md-card-actions layout="row" layout-align="end center">
-                                        <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('stage1')">
-                                                Back
-                                        </button>
-                                        <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage3')">		Next
-                                        </button>
-                                </md-card-actions>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-card-actions layout="row" layout-align="end center">
+                <button type="button" class="btn btn-danger m-1" ng-click="back('stage2')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                <button type="button" class="btn btn-danger m-1" ng-click="next('stage4')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
+            </md-card-actions>
+        </md-card-actions>
                 </md-card-content>
 
                 </md-card>                                          
                                         
  <!--
         |==========================================================================
-        | Stage 3
+        | Stage 4
         |==========================================================================
 -->
 
-        <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when='stage3' >
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage4" >
                 <md-card-title>
                         <md-card-title-text>
                                 <span class="md-headline">Cursus académique</span>
@@ -706,17 +838,17 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                 </div>
             </md-toolbar>
 
- <div layout-gt-sm="row" class="mt-3" >
+    <div layout-gt-sm="row" class="mt-3" >        
      <ul style='list-style-type:none'>
          <li class="row" ng-repeat="cursus in $ctrl.student.cursus">
+              
           
                                 <md-input-container class="md-block" flex-gt-sm layout-sm="column">
-                                    <label>Année académique</label>
-                                    <input name="cursusAnnee" ng-model="cursus.annee"  required />
-                                    <div ng-messages="stdRegistrationForm.cursusAnnee.$error">
-                                        <div ng-message="required">Ce champ est obligatoire</div>
-                                        
-                                    </div>
+                                    <label>Année  d'obtention</label>
+                                        <md-select name="cursusAnnee"  ng-model="cursus.annee"    required >
+                                        <md-option  ng-repeat="yr in annee" ng-value="yr.annee">{{yr.annee}} </md-option>
+                                            
+                                        </md-select>
                                 <div class="validation" ng-class="{'input-error': formValidation &&  stdRegistrationForm.cursusAnnee.$error.required }">
                                     Champ est obligatoire
                                 </div>                                    
@@ -739,11 +871,10 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
      
                                 <md-input-container class="md-block" flex-gt-sm layout-sm="column">
                                     <label>Diplôme obtenu</label>
-                                    <input name="cursusDiplome" ng-model="cursus.diplome" required />
-                                    <div ng-messages="stdRegistrationForm.cursusDiplome.$error">
-                                        <div ng-message="required">Champ obligatoire</div>
-                                        
-                                    </div>
+                                        <md-select name="cursusDiplome"  ng-model="cursus.diplome"    required >
+                                        <md-option  ng-repeat="bacc in baccalaureat" ng-value="bacc.code">{{bacc.name}} </md-option>
+                                            
+                                        </md-select>
                                 <div class="validation" ng-class="{'input-error': formValidation &&  stdRegistrationForm.cursusDiplome.$error.required }">
                                     Champ obligatoire
                                 </div>                                    
@@ -751,7 +882,14 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm layout-sm="column">
                                     <label>Mention</label>
-                                    <input name="cursusMention" ng-model="cursus.mention"   required   />
+                                        <md-select name="cursusMention"  ng-model="cursus.mention"    required >
+                                            <md-option value="TB">Très bien</md-option>
+                                            <md-option value="B">Bien</md-option>
+                                            <md-option value="AB">Assez Bien</md-option>
+                                            <md-option value="P">Passable</md-option>  
+                                       
+                                            
+                                        </md-select>
                                     <div ng-messages="stdRegistrationForm.cursusMention.$error" role="alert">
                                        <div ng-message-exp="['required']">
                                           Champ oblogatoire
@@ -760,40 +898,42 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
                                 <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.cursusMention.$error.required}">
                                    Champ obligatoire
                                 </div> 
-                                     <md-input-container class="md-block" flex-gt-sm layout-sm="column">
-                                         <button  type="button"class="btn btn-danger btn-sm" ng-click="$ctrl.student.cursus.splice($index, 1)" >Supprimer le cursus</button>
-                                     </md-input-container>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm layout-sm="column">
+                                    <button  type="button"class="btn btn-danger btn-sm" title="supprimer" ng-click="$ctrl.student.cursus.length>1?$ctrl.student.cursus.splice($index, 1):''" ><i class="fa-solid fa-trash"></i></button>
+                                </md-input-container>
+                   
                                     </li>
                                     
                                     <li>
                                         <button type="button" class="btn btn-success" ng-click="$ctrl.addCursus()"> Ajouter un Cursus</button>  
                                     </li>
+                   
         </ul>
-                                </md-input-container>
-   
-                        </div>
+                             
+        </div>
+                       
 
 
                             <!-- buttons -->
             <md-card-actions layout="row" layout-align="end center">
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('stage2')">
-                            Back
-                    </button>
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage4')">		Next
-                    </button>
+                <md-card-actions layout="row" layout-align="end center">
+                    <button type="button" class="btn btn-danger m-1" ng-click="back('stage3')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                    <button type="button" class="btn btn-danger m-1" ng-click="next('stage5')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
+                </md-card-actions>
             </md-card-actions>
             </md-card-content>
         </md-card> 
 <!--
         |==========================================================================
-        | Stage 4
+        | Stage 5
         |==========================================================================
 -->
 
-<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage4" >
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage5" >
                 <md-card-title>
                         <md-card-title-text>
-                                <span class="md-headline">Joindre un fichier</span>
+                                <span class="md-headline">Joindre la preuve paiement des frais d'étude de dossier</span>
                 </md-card-title>
 
                                 <!-- first name -->
@@ -803,17 +943,18 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
             
             <div class="alert alert-warning mt-2" style="font-size: 0.75em;">
-
+                <p>
                     Tout dossier de candidature doit être accompagné du paiement de la somme de 150000 FCFA corespondant aux frais d'étude de dossier.
                     Le paiement de ces frais se fait dans le compte N° ------------------ Domicilié à ------------------- <br />
-                    Une fois le Paiement effectué bien vouloir scanner au format PDF la preuve de paiement et le trans mettrre pour validation.
+                    Une fois le Paiement effectué bien vouloir scanner au format PDF la preuve de paiement et le transmettrre pour validation.
+                </p>
             </div>
 
     <div layout-gt-sm="row" class="mt-3" >
             <div class="mb-3">
               <label for="formFile" class="form-label ">Preuve de règlement des frais de dossier</label>
-              <input  class="form-control form-control-sm" name='financialProof' type="file" name='file' accept=".pdf" ng-file='$ctrl.student.uploadFiles' id="formFile">
-                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.file.$error}">
+              <input  class="form-control form-control-sm" name='financialProof' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadFinancialProof' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.financialProof.$error}">
                    Champ obligatoire
                 </div> 
             </div>
@@ -826,11 +967,102 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
                             <!-- buttons -->
             <md-card-actions layout="row" layout-align="end center">
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="back('stage3')">
-                            Back
-                    </button>
-                    <button type="button" class="md-raised md-warn md-button md-ink-ripple" ng-click="next('stage5')">		Next
-                    </button>
+                    <button type="button" class="btn btn-danger m-1" ng-click="back('stage4')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                    <button type="button" class="btn btn-danger m-1" ng-disabled="$ctrl.student.uploadFinancialProof.length<1" ng-click="next('stage6')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
+            </md-card-actions>
+            </md-card-content>
+        </md-card> 
+
+
+
+
+<!--
+        |==========================================================================
+        | Stage 6
+        |==========================================================================
+-->
+
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage6" >
+
+                <md-card-title>
+                        <md-card-title-text>
+                                <span class="md-headline">Joindre les documents</span>
+                </md-card-title>
+
+                                <!-- first name -->
+            <md-card-content>
+            <div class="alert alert-warning mt-1" style="font-size: 0.75em;">
+                <p>
+                    Vous êtes priés de bien vouloir Joindre les documents suivants pour faciliter l'étude de votre dossier:
+                <ul>
+                    <li> Curriculum vitae</li>
+                    <li> Copie du dernier diplôme</li>
+                    <li> Copie des bulletins trimestriels des trois dernières années</li>
+                    <li> Copie d'acte de de n'aissance</li>
+                    <li> Copie de la carte d'identité</li>
+                </ul>
+                </p>
+            </div>                
+ <!-- identification du père -->
+
+
+
+    <div layout-gt-sm="row" class="mt-3" >
+        <ul style='list-style-type:none'>
+            <li>
+            <div class="mb-3">
+              <label for="formFile" class="form-label ">Curriculum vitae</label>
+              <input  class="form-control form-control-sm" name='uploadCv' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadCv' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.uploadCv.$error}">
+                   Champ obligatoire
+                </div> 
+            </div>
+            </li>
+            <li>
+            <div class="mb-3">
+              <label for="formFile" class="form-label ">Copie du dernier diplôme</label>
+              <input  class="form-control form-control-sm" name='uploadLastDegree' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadLastDegree' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.financialProof.$error}">
+                   Champ obligatoire
+                </div> 
+            </div>
+            </li>            
+            <li>
+            <div class="mb-3">
+              <label for="formFile" class="form-label ">Bulletins trimestriels des deux dernières</label>
+              <input  class="form-control form-control-sm" name='financialProof' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadTranscript' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.financialProof.$error}">
+                   Champ obligatoire
+                </div> 
+            </div>
+            </li> 
+            <li>
+            <div class="mb-3">
+              <label for="formFile" class="form-label ">Copie d'acte de naissance</label>
+              <input  class="form-control form-control-sm" name='financialProof' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadBirthCertificate' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.financialProof.$error}">
+                   Champ obligatoire
+                </div> 
+            </div>
+            </li> 
+            <li>
+            <div class="mb-3">
+              <label for="formFile" class="form-label ">Copie de la carte d'indentité</label>
+              <input  class="form-control form-control-sm" name='financialProof' type="file"  accept=".pdf" ng-file='$ctrl.student.uploadIdentity' id="formFile" required>
+                <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.financialProof.$error}">
+                   Champ obligatoire
+                </div> 
+            </div>
+            </li>             
+        </ul>
+
+            </div>
+
+
+                            <!-- buttons -->
+            <md-card-actions layout="row" layout-align="end center">
+                    <button type="button" class="btn btn-danger m-1" ng-click="back('stage5')"><i class="fa-solid fa-backward"></i>&nbsp; Retour &nbsp;</button>
+                    <button type="button" class="btn btn-danger m-1" ng-disabled="" ng-click="next('stage7')">&nbsp;Suivant&nbsp;<i class="fa-solid fa-forward"></i> </button>
             </md-card-actions>
             </md-card-content>
         </md-card> 
@@ -838,11 +1070,11 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
 <!--
         |==========================================================================
-        | Stage 5
+        | Stage 7
         |==========================================================================
 -->
 
-<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage5" >
+<md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-when="stage7" >
                 <md-card-title>
                         <md-card-title-text>
                                 <span class="md-headline">Fin du processus</span>
@@ -876,8 +1108,8 @@ Ministère en charge de l’Enseignement Supérieur au Cameroun.
 
                             <!-- buttons -->
             <md-card-actions layout="row" layout-align="end center">
-                    <button type="button" class="btn btn-danger btn-block" ng-click="back('stage4')">
-                        <i class="glyphicon glyphicon-arrow-left"></i>  Retour 
+                    <button type="button" class="btn btn-danger btn-block" ng-click="back('stage6')">
+                        <i class="fa-solid fa-backward"></i>  Retour 
                     </button>&nbsp;
                     <button type="submit" class="btn btn-success  btn-block "   >
                      <i class="fa-solid fa-paper-plane"></i> Enregistrer

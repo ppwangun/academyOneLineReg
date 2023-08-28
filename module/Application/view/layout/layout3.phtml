@@ -27,6 +27,7 @@
         ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
         ->prependStylesheet($this->basePath('css/fas/css/brands.css'))
         ->prependStylesheet($this->basePath('css/fas/css/regular.css'))
+        ->prependStylesheet($this->basePath('css/fas/css/solid.css'))
         ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ->prependStylesheet($this->basePath('css/angular-material.css'))
         
@@ -64,7 +65,7 @@
                             <a
                                 class="nav-link active"
                                 aria-current="page"
-                                href="#"
+                                href="home"
                             >Home
                             </a>
                         </li>
@@ -190,9 +191,11 @@ echo $this->form()->closeTag();
             </footer>
         </div>
         <?= $this->inlineScript()
-        ->prependFile($this->basePath('js/app/onlineReg.js'))
+        ->prependFile($this->basePath('js/app/onlinereg.js'))
         ->prependFile($this->basePath('js/app/app.js'))
         //->prependFile($this->basePath('js/registration/bootstrap.min.js'))
+        ->prependFile($this->basePath('js/ng-file-upload.min.js'))
+        ->prependFile($this->basePath('js/ng-file-upload-shim.min.js'))
         ->prependFile($this->basePath('js/angular-image-compress.js'))
         ->prependFile($this->basePath('js/angular-busy.min.js'))
             ->prependFile($this->basePath('js/angular-material.min.js'))

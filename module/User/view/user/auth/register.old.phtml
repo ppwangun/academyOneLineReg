@@ -1,0 +1,127 @@
+<head>
+<link rel="stylesheet" type="text/css" href="css/registration/style.css">
+<link rel="stylesheet" type="text/css" href="css/registration/bootstrap.min.css">
+
+<?= $this->headScript()
+    ->prependFile($this->basePath('js/registration/bootstrap.min.js'))
+
+?>
+</head>
+ <p>
+ <div  style="margin-top: 55px;">
+    
+   
+
+        
+<div class='row'>
+    <div class="col-md-8" >
+        <h2 style='color: grey;'>Bienvenue à Agenla Academy </h2>
+        <span style="font-size: 1.5em; color: grey; font-weight: normal; ">Inscription ou réiniscription défintive</span>
+        <br /><br /><br /><br />
+        <div class="panel-group" id="accordion">
+         <div class="panel panel-default">
+           <div class="panel-heading">
+             <h4 class="panel-title">
+             <span class="fa fa-refresh"></span>   <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                 <strong>Je me réinscris</strong> à Agenla</a> <br />
+                 <span class='small'>// J'ai déjà un numéro de matricule</span>
+             </h4>
+           </div>
+           <div id="collapse1" class="panel-collapse collapse">
+             <div class="panel-body ">Tous  les  étudiants de Agenla Academy sont  tenus  de   se  réinscrire  pour  le compte de l’année courrante. <br />
+                 L’inscription administrative et  académique consite à : 
+                 <ul>
+                     <li>Paiement des frais  exigibles ;</li>  
+                     <li>Remplissage en ligne du formulaire d'inscription,</li> 
+                     <li>Téléchargement et dépôt d’une fiche d’inscription accompagnée de tout autre document exigé par l’UdM au Secrétariat de la Filière.</li> 
+                 </ul>  
+                 Votre ré-inscription sera définitive après réception et vérification par la scolarité de vos pièces et paiements dus. 
+                 <div class='alert alert-success'>
+                     <span class='fa fa-link'></span> <a href="login">Je me ré-inscris</a> 
+                 </div>
+                 <div class='alert alert-danger small' style='margin-top: 15px;'>
+                     <span class='fa fa-warning'></span>Attention, une fois le paiement effectué, vous devez attendre au plus 48h (jour ouvrable) pour qu'il soit pris en compte dans la base de donnée. 
+                 </div>
+             </div>
+           </div>
+         </div>
+         <div class="panel panel-default">
+           <div class="panel-heading">
+             <h4 class="panel-title">
+             <span class="fa fa-file"></span>  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                   Je m'inscris pour la <strong>première fois à Agenla Academy</strong></a>
+             </h4><span class='small'>// Je suis nouveau</span>
+           </div>
+           <div id="collapse2" class="panel-collapse collapse">
+             <div class="panel-body text-justify"> Pour procéder à votre inscription définitive et au paiement des droits d'inscription, munissez-vous de votre
+
+                 numéro d'admission que vous obtiendrez après soumission en ligne de votre candidature d'admission <a href="apply">en cliquant ici</a>. une fois ce numéro obtenu, vous devez:
+        
+                 <ul>
+                     <li>Procéder au paiement de la somme d'au moins ....... pour confirmer votre admission;</li> 
+                     <li>Scanner votre réçu de paiement au format pdf;</li>
+                     <li>Remplir le formulaire d'inscription en ligne;</li> 
+                     <li>Téléchargement et dépôt d’une fiche d’inscription accompagnée de tout autre document exigé au Secrétariat de la Filière.</li> 
+                     <!--<li>Téléchargement de la fiche d'engagement sur l'honneuur: <a href="impressions/Engagement_honneur-sept2016.pdf">Cliquer Ici</a></li>--> 
+                     
+                 </ul>  
+
+
+
+                <div class='alert alert-success'style='margin-top: 15px;'>
+                      <span class='fa fa-link'></span> <a href="newstudentlogin">Je m'inscris</a> 
+                </div>               
+                <div class='alert alert-danger small text-justify' style='margin-top: 15px;'>
+                    <span class='fa fa-warning'></span>
+                    Votre inscription sera définitive après réception et vérification par la scolarité de l'ensemble de vos pièces et paiements dus.
+                </div>                   
+           </div>
+           </div>
+         </div>
+         <div class="panel panel-default">
+           <div class="panel-heading">
+             <h4 class="panel-title">
+               <span class="fa fa-file-archive-o"></span><a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                   Je souhaite <strong>suspendre cette année académique</strong></a>
+             </h4>
+           </div>
+           <div id="collapse3" class="panel-collapse collapse">
+             <div class="panel-body text-justify">Dans le cas où vous ne seriez pas capable de poursuivre vos études cette année académique, il vous serait avantagieux de la suspendre.
+             Pour ce faire, vous devez adresser une demande motivée au président de l'UdM en indiquant clairement les raisons et la durée de supension.
+             
+                <div class='alert alert-danger small text-justify' style='margin-top: 15px;'>
+                    <span class='fa fa-warning'></span>
+                    En cas de refus ou d'omission de suspension, vous serez tenu de régler les frais de scolrité de l'année d'absence à votre retour
+                </div>               
+             </div>
+           </div>
+         </div>
+       </div> 
+    </div>
+    <div class="col-md-4">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">pour vous <strong>inscrire,</strong> vous devez:</div>
+          <div class="panel-body">
+            <ul style="padding: 15px;">
+                <li>Avoir <strong>vérifié</strong>  auprès des autorités académique que vous êtes bien admis à l'un des concours d'entrée ou admis sur titre</li>
+                
+                <li>Avoir  <strong>confirmé votre place</strong> en vous acquittant de du paiement de la somme de 150 000FCFA</li>
+            </ul>
+          </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">pour vous <strong>réinscrire,</strong> vous devez:</div>
+          <div class="panel-body">
+              <ul style="padding: 15px;">
+                  <li>Avoir <strong>connaissance de vos résultats</strong> pour l'année en cours</li>
+                  <li>Être <strong>admins à poursuivre</strong> ou à <strong>redoubler</strong></li>
+                  <li>Avoir<strong> soldé la totalité des frais de scolarité des années académques antérieures.</strong></li>
+                  <li>Avoir <strong> payé les frais de transport qui s'élèvents à 115 000FCFA</strong> </li>
+              </ul>
+          </div>
+        </div>
+    </div>
+</div>
+    </div>
+

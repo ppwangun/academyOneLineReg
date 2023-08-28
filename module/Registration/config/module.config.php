@@ -212,6 +212,26 @@ return [
                     ],
                 ],
             ],
+            '/' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],             
+            'home' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/home',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],            
             'apply' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -377,10 +397,11 @@ return [
 
     'view_manager' => [
         'template_map' => [
-            'registration/online-reg/apply' => __DIR__ . '/../view/registration/onlinereg/apply.phtml',
-            'registration/online-reg/submitregistrationform' => __DIR__ . '/../view/registration/onlinereg/submitregistrationform.phtml',
-            'registration/online-reg/searchapplicationfile' => __DIR__ . '/../view/registration/onlinereg/searchapplicationfile.phtml',
-            'registration/online-reg/end-application' => __DIR__ . '/../view/registration/onlinereg/endapplication.phtml',
+            'registration/online-reg/index' => __DIR__ .'/../view/Registration/onlinereg/index.phtml',
+            'registration/online-reg/apply' => __DIR__ .'/../view/Registration/onlinereg/apply.phtml',
+            'registration/online-reg/submitregistrationform' => __DIR__ .'/../view/Registration/onlinereg/submitregistrationform.phtml',
+            'registration/online-reg/searchapplicationfile' => __DIR__ .'/../view/Registration/onlinereg/searchapplicationfile.phtml',
+            'registration/online-reg/end-application' => __DIR__ .'/../view/Registration/onlinereg/endapplication.phtml',
    
         ],
         'template_path_stack' => [

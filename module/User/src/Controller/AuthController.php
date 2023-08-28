@@ -74,6 +74,7 @@ class AuthController extends AbstractActionController
     
     public function registerAction()
     {
+        $this->layout()->setTemplate('layout/layout');
         return new ViewModel();
     }     
     /**
@@ -99,7 +100,7 @@ class AuthController extends AbstractActionController
 
             // Check if we do not have users in database at all. If so, create 
             // the 'Admin' user.
-            //$this->userManager->createAdminUserIfNotExists();
+            $this->userManager->createAdminUserIfNotExists();
 
 
             // Create login form
