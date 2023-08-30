@@ -454,7 +454,7 @@ $scope.annee = [
         $scope.myPromise = $http.post("submitRegistrationForm",fd,config).then(
             function successCallback(response){
                
-               //window.location.href="endApplication"
+               window.location.href="endApplication"
                 
             },
             function errorCallback(response){

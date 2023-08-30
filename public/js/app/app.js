@@ -8,7 +8,7 @@ var app = angular.module('myApp', [
   'ngImageCompress',
   'cgBusy',
   'onlineReg',
-  'ngFileUpload'
+  
   
  // 'ngRoute'
 

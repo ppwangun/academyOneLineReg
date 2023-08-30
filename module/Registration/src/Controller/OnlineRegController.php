@@ -260,7 +260,7 @@ class OnlineRegController extends AbstractActionController
            //$studentDetails = json_decode($data["student"],true); print_r($studentDetails);
            $this->entityManager->persist($student);
            $this->entityManager->flush();
-  
+            $this->sessionContainer->onlineLoggedInUser = ["stdId"=>$student->getId(),"numDossier"=>-1];
             //looking class of study
                         //class of study
             if(isset($studentDetails["choixDeg1"]))
@@ -298,9 +298,10 @@ class OnlineRegController extends AbstractActionController
            $prospectiveRegistration->setStatus(self::PENDING);
           
            $this->entityManager->persist($prospectiveRegistration); 
+           $this->entityManager->flush();
            
            $studentFather = new StudentParent();
-           $studentFather->getStudent($prospectiveRegistration);
+           $studentFather->setProspectiveStudent($student);
             if(isset($studentDetails["fatherName"]))
                 $studentFather->setName($escaper->escapeHtml($studentDetails["fatherName"]));
             if(isset($studentDetails["fatherProfession"]))
@@ -319,12 +320,12 @@ class OnlineRegController extends AbstractActionController
             
 
            $studentMother = new StudentParent();
-           $studentMother->getStudent($prospectiveRegistration);
+           $studentMother->setProspectiveStudent($student);
             if(isset($studentDetails["motherName"]))
                 $studentMother->setName($escaper->escapeHtml($studentDetails["motherName"]));
             if(isset($studentDetails["motherProfession"]))
                 $studentMother->setProfession($escaper->escapeHtml($studentDetails["motherProfession"]));
-            if(isset($studentDetails["fatherPhoneNumber"]))
+            if(isset($studentDetails["motherNumber"]))
                 $studentMother->setPhoneNumber($escaper->escapeHtml($studentDetails["motherPhoneNumber"]));
             if(isset($studentDetails["motherEmail"]))
                 $studentMother->setEmail($escaper->escapeHtml($studentDetails["motherEmail"]));
@@ -338,7 +339,7 @@ class OnlineRegController extends AbstractActionController
             $studentMother->setParentTye("MERE");
             
             $studentSponsor = new StudentParent();
-            $studentSponsor->getStudent($prospectiveRegistration);
+            $studentSponsor->setProspectiveStudent($student);
             if(isset($studentDetails["sponsorName"]))
                  $studentSponsor->setName($escaper->escapeHtml($studentDetails["sponsorName"]));
             if(isset($studentDetails["sponsorProfession"]))
@@ -403,7 +404,7 @@ class OnlineRegController extends AbstractActionController
             }            
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();  
-            $this->sessionContainer->onlineLoggedInUser = $numDossier;
+            $this->sessionContainer->onlineLoggedInUser["numDossier"] = $numDossier;
             
         }
         catch(Exception $e)
@@ -425,12 +426,14 @@ class OnlineRegController extends AbstractActionController
             $data = $this->params()->fromPost();
 
             if(!isset($data["numDossier"]))  return new ViewModel();
-            $prospective = $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($data['numDossier']);
+            $prospective = $this->entityManager->getRepository(ProspetiveRegistration::class)->findOneByNumDossier($data['numDossier']);
+            
             if($prospective)
-            {           // var_dump($data); exit;
+            {  
+                $id = $prospective->getProspectiveStudent()->getId();
           
-                $this->sessionContainer->onlineLoggedInUser = $data['numDossier'] ;
-                echo  $this->sessionContainer->onlineLoggedInUser; 
+                $this->sessionContainer->onlineLoggedInUser = ["numDossier"=>$data['numDossier'],"stdId"=>$id] ;
+                
                 return $this->redirect()->toRoute('endApplication');
                /* $hydrator = new ReflectionHydrator();
                 $prospective = $hydrator->extract($prospective); 
@@ -441,7 +444,7 @@ class OnlineRegController extends AbstractActionController
             }
             else{
                 
-               
+     
                 $this->layout()->setVariable('fileStatus', true);
                 //$this->redirect()->toRoute('apply');
            
@@ -455,14 +458,37 @@ class OnlineRegController extends AbstractActionController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {  
-            $numDossier = $this->sessionContainer->onlineLoggedInUser;
+            $numDossier = $this->sessionContainer->onlineLoggedInUser["numDossier"];
+            $stdId =  $this->sessionContainer->onlineLoggedInUser["stdId"];
             if(!$numDossier ) return $this->redirect()->toRoute('apply');
+            $pros = $this->entityManager->getRepository(ProspectiveStudent::class)->find($stdId);
+            $cursusAcademic = $this->entityManager->getRepository(CursusAcademique::class)->findByProspectiveStudent($pros);
             
-            $pros = $this->entityManager->getRepository(ProspectiveRegistration::class)->findOneByNumDossier($numDossier);
-            $pros = $pros->getProsectiveStudent();
+            $prosReg = $this->entityManager->getRepository(ProspetiveRegistration::class)->findOneByNumDossier($numDossier);
+            $academicYear = $prosReg->getAcademicYear()->getCode(); 
+            $stdParent = $this->entityManager->getRepository(StudentParent::class)->findByProspectiveStudent($pros);
+          //  $id = intval($prosReg->getProspectiveStudent()->getId());
+            
+           // $pros = $prosReg->getProspectiveStudent();
             $hydrator = new ReflectionHydrator();
-            $prospective = $hydrator->extract($pros);            
-            $this->sessionContainer->onlineLoggedInUser = null;
+            $prospective = $hydrator->extract($pros);
+            $registrationDetails =  $hydrator->extract($prosReg); 
+            foreach($stdParent as $key=>$value)
+            {
+                $hydrator = new ReflectionHydrator();
+                $data =  $hydrator->extract($value);
+                $stdParent[$key] = $data;
+            }
+            foreach($cursusAcademic as $key=>$value)
+            {
+                $hydrator = new ReflectionHydrator();
+                $data =  $hydrator->extract($value);
+                $cursusAcademic[$key] = $data;
+            }
+            //var_dump($registrationDetails);
+            //return;          
+            //var_dump($prospective); return;
+            //$this->sessionContainer->onlineLoggedInUser = null;
         } 
         catch (Exception $ex) {
            $this->entityManager->getConnection()->rollBack();
@@ -470,8 +496,12 @@ class OnlineRegController extends AbstractActionController
         }
         $this->layout()->setTemplate('layout/layout3');
         $view = new ViewModel([
-         "student"=> $prospective, 
-         "status"  => $pros->getStatus()     
+         "student"=> $prospective,
+         "registrationDetails" => $registrationDetails,
+         "status"  => $pros->getStatus(),
+         "stdParent"=>$stdParent,
+         "academicYear"=>$academicYear,
+            "cursusAcademic"=>$cursusAcademic
          ]);
         return $view;         
     }
@@ -484,7 +514,7 @@ class OnlineRegController extends AbstractActionController
             $data = $this->params()->fromPost();
            // var_dump($data); exit;
             
-            
+           
             $prospective = $this->entityManager->getRepository(ProspectiveStudent::class)->findOneByNumDossier($data['numDossier']);
             if($prospective)
             {
@@ -528,6 +558,6 @@ class OnlineRegController extends AbstractActionController
 
             imagejpeg($image,$destination, 90);
              
-            }
+    }
     
 }
