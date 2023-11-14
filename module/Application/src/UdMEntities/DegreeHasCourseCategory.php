@@ -7,17 +7,24 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasCourseCategory
  *
- * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"})})
+ * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"})})
  * @ORM\Entity
  */
 class DegreeHasCourseCategory
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var \CourseCategory
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="CourseCategory")
+     * @ORM\ManyToOne(targetEntity="CourseCategory")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
      * })
@@ -27,9 +34,7 @@ class DegreeHasCourseCategory
     /**
      * @var \Degree
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Degree")
+     * @ORM\ManyToOne(targetEntity="Degree")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
      * })
@@ -39,9 +44,7 @@ class DegreeHasCourseCategory
     /**
      * @var \FieldOfStudy
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="FieldOfStudy")
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="field_of_study_id", referencedColumnName="id")
      * })
@@ -51,13 +54,23 @@ class DegreeHasCourseCategory
 
 
     /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set courseCategory.
      *
-     * @param \CourseCategory $courseCategory
+     * @param \CourseCategory|null $courseCategory
      *
      * @return DegreeHasCourseCategory
      */
-    public function setCourseCategory(\CourseCategory $courseCategory)
+    public function setCourseCategory(\CourseCategory $courseCategory = null)
     {
         $this->courseCategory = $courseCategory;
     
@@ -67,7 +80,7 @@ class DegreeHasCourseCategory
     /**
      * Get courseCategory.
      *
-     * @return \CourseCategory
+     * @return \CourseCategory|null
      */
     public function getCourseCategory()
     {
@@ -77,11 +90,11 @@ class DegreeHasCourseCategory
     /**
      * Set degree.
      *
-     * @param \Degree $degree
+     * @param \Degree|null $degree
      *
      * @return DegreeHasCourseCategory
      */
-    public function setDegree(\Degree $degree)
+    public function setDegree(\Degree $degree = null)
     {
         $this->degree = $degree;
     
@@ -91,7 +104,7 @@ class DegreeHasCourseCategory
     /**
      * Get degree.
      *
-     * @return \Degree
+     * @return \Degree|null
      */
     public function getDegree()
     {
@@ -101,11 +114,11 @@ class DegreeHasCourseCategory
     /**
      * Set fieldOfStudy.
      *
-     * @param \FieldOfStudy $fieldOfStudy
+     * @param \FieldOfStudy|null $fieldOfStudy
      *
      * @return DegreeHasCourseCategory
      */
-    public function setFieldOfStudy(\FieldOfStudy $fieldOfStudy)
+    public function setFieldOfStudy(\FieldOfStudy $fieldOfStudy = null)
     {
         $this->fieldOfStudy = $fieldOfStudy;
     
@@ -115,7 +128,7 @@ class DegreeHasCourseCategory
     /**
      * Get fieldOfStudy.
      *
-     * @return \FieldOfStudy
+     * @return \FieldOfStudy|null
      */
     public function getFieldOfStudy()
     {

@@ -44,7 +44,7 @@ use Student\Service\StudentManager;
 use ICanBoogie\DateTime;
 
 
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
 
 class IndexController extends AbstractActionController
 {

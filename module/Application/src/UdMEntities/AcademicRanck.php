@@ -28,6 +28,20 @@ class AcademicRanck
      */
     private $name;
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="payment_rate", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $paymentRate;
+
 
 
     /**
@@ -62,5 +76,53 @@ class AcademicRanck
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set code.
+     *
+     * @param string|null $code
+     *
+     * @return AcademicRanck
+     */
+    public function setCode($code = null)
+    {
+        $this->code = $code;
+    
+        return $this;
+    }
+
+    /**
+     * Get code.
+     *
+     * @return string|null
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set paymentRate.
+     *
+     * @param float|null $paymentRate
+     *
+     * @return AcademicRanck
+     */
+    public function setPaymentRate($paymentRate = null)
+    {
+        $this->paymentRate = $paymentRate;
+    
+        return $this;
+    }
+
+    /**
+     * Get paymentRate.
+     *
+     * @return float|null
+     */
+    public function getPaymentRate()
+    {
+        return $this->paymentRate;
     }
 }

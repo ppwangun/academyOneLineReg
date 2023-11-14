@@ -622,7 +622,22 @@ $scope.annee = [
         });
       }
     };
-  }).directive('ngFile', ['$parse', function ($parse) {
+  }).directive('validFile1',function(){
+                    return {
+                        require:'ngModel',
+                        link:function(scope,el,attrs,ctrl){
+                            ctrl.$setValidity('validFile1', el.val() != '');
+                            //change event is fired when file is selected
+                            el.bind('change',function(){
+                                ctrl.$setValidity('validFile1', el.val() != '');
+                                scope.$apply(function(){
+                                    ctrl.$setViewValue(el.val());
+                                    ctrl.$render();
+                                });
+                            });
+                        }
+                    }
+}).directive('ngFile', ['$parse', function ($parse) {
   return {
    restrict: 'A',
    link: function(scope, element, attrs) {

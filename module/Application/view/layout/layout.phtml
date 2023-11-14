@@ -89,9 +89,30 @@
                 </p>
             </footer>
         </div>
+        
         <?= $this->inlineScript()
+        ->prependFile($this->basePath('js/angular-toastr.min.js'))
+        ->prependFile($this->basePath('js/moment.min.js'))
+        ->prependFile($this->basePath('bower_components/angular-material/angular-material.min.js'))
+        ->prependFile($this->basePath('bower_components/angular-messages/angular-messages.min.js'))
+        ->prependFile($this->basePath('bower_components/angular-animate/angular-animate.min.js'))
+        ->prependFile($this->basePath('bower_components/angular-aria/angular-aria.min.js'))
+        ->prependFile($this->basePath('bower_components/bower-angular-resource/angular-resource.js'))
+        
+        ->prependFile($this->basePath('js/angular-image-compress.js'))
+        ->prependFile($this->basePath('js/angular-busy.min.js'))      
+        ->prependFile($this->basePath('js/angular-toastr.min.js'))    
+          ->prependFile($this->basePath('js/loading-bar.js'))   
+          
+        ->prependFile($this->basePath('js/ui-bootstrap-tpls-2.5.0.min.js'))
+     
+        ->prependFile($this->basePath('js/angular-route.js'))
+        
+        
         ->prependFile($this->basePath('js/app/onlinereg.js'))
+       
         ->prependFile($this->basePath('js/app/app.js'))
+         ->prependFile($this->basePath("js/app/onlinereg/student.component.js"))
         //->prependFile($this->basePath('js/registration/bootstrap.min.js'))
         ->prependFile($this->basePath('js/angular-image-compress.js'))
         ->prependFile($this->basePath('js/angular-busy.min.js'))
@@ -104,5 +125,7 @@
             ->prependFile($this->basePath('js/bootstrap.min.js'))
         ->prependFile($this->basePath('js/jquery-3.7.0.min.js'))
         ?>
+   
+
     </body>
 </html>

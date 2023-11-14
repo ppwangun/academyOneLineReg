@@ -7,17 +7,24 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasCourseCategory
  *
- * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"})})
+ * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"})})
  * @ORM\Entity
  */
 class DegreeHasCourseCategory
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var \CourseCategory
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="CourseCategory")
+     * @ORM\ManyToOne(targetEntity="CourseCategory")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
      * })
@@ -27,9 +34,7 @@ class DegreeHasCourseCategory
     /**
      * @var \Degree
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Degree")
+     * @ORM\ManyToOne(targetEntity="Degree")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
      * })
@@ -39,9 +44,7 @@ class DegreeHasCourseCategory
     /**
      * @var \FieldOfStudy
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="FieldOfStudy")
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="field_of_study_id", referencedColumnName="id")
      * })

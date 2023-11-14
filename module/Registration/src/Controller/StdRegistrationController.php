@@ -10,7 +10,7 @@ namespace Registration\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
 use Violet\StreamingJsonEncoder\StreamJsonEncoder; 
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 

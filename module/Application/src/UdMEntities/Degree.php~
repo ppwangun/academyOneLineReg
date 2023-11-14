@@ -43,6 +43,13 @@ class Degree
     private $status;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="isCoreCurriculum", type="boolean", nullable=true)
+     */
+    private $iscorecurriculum;
+
+    /**
      * @var \FieldOfStudy
      *
      * @ORM\ManyToOne(targetEntity="FieldOfStudy")

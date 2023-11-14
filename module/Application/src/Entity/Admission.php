@@ -2,23 +2,24 @@
 
 namespace Application\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+
 use Application\Entity\Degree;
 use Application\Entity\AcademicYear;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\ProspectiveStudent;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Admission
  *
- * @ORM\Table(name="admission", indexes={@ORM\Index(name="fk_admission_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_admission_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admission_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="admission", indexes={@ORM\Index(name="fk_admission_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_admission_prospective_student1_idx", columns={"prospective_student_id"}), @ORM\Index(name="fk_admission_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_admission_academic_year1_idx", columns={"academic_year_id"})})
  * @ORM\Entity
  */
 class Admission
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -27,66 +28,67 @@ class Admission
     private $id;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="status", type="integer", nullable=true)
      */
     private $status = '0';
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="file_number", type="string", length=45, nullable=true)
      */
     private $fileNumber;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="nom", type="string", length=255, nullable=true)
      */
     private $nom;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="prenom", type="string", length=255, nullable=true)
      */
     private $prenom;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
      * @ORM\Column(name="date_admission", type="datetime", nullable=true)
      */
     private $dateAdmission;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="payment_date", type="datetime", nullable=true)
-     */
-    private $paymentDate;
-    
-    /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
      */
     private $phoneNumber;
-     /**
-     * @var float
+
+    /**
+     * @var string|null
      *
-     * @ORM\Column(name="fees_paid", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="fees_paid", type="decimal", precision=10, scale=0, nullable=true)
      */
     private $feesPaid;
-    
+
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="entrance_type", type="string", length=255, nullable=true)
+     * @ORM\Column(name="entrance_type", type="string", length=45, nullable=true)
      */
-    private $entranceType;    
+    private $entranceType;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="payment_date", type="datetime", nullable=true)
+     */
+    private $paymentDate;
 
     /**
      * @var AcademicYear
@@ -118,12 +120,22 @@ class Admission
      */
     private $degree;
 
+   /**
+     * @var \ProspectiveStudent
+     *
+     * @ORM\ManyToOne(targetEntity="ProspectiveStudent",fetch="EAGER")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
+     * })
+     */
+    private $prospectiveStudent;
+
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -131,23 +143,23 @@ class Admission
     }
 
     /**
-     * Set status
+     * Set status.
      *
-     * @param integer $status
+     * @param int|null $status
      *
      * @return Admission
      */
-    public function setStatus($status)
+    public function setStatus($status = null)
     {
         $this->status = $status;
-
+    
         return $this;
     }
 
     /**
-     * Get status
+     * Get status.
      *
-     * @return integer
+     * @return int|null
      */
     public function getStatus()
     {
@@ -155,23 +167,23 @@ class Admission
     }
 
     /**
-     * Set fileNumber
+     * Set fileNumber.
      *
-     * @param string $fileNumber
+     * @param string|null $fileNumber
      *
      * @return Admission
      */
-    public function setFileNumber($fileNumber)
+    public function setFileNumber($fileNumber = null)
     {
         $this->fileNumber = $fileNumber;
-
+    
         return $this;
     }
 
     /**
-     * Get fileNumber
+     * Get fileNumber.
      *
-     * @return string
+     * @return string|null
      */
     public function getFileNumber()
     {
@@ -179,23 +191,23 @@ class Admission
     }
 
     /**
-     * Set nom
+     * Set nom.
      *
-     * @param string $nom
+     * @param string|null $nom
      *
      * @return Admission
      */
-    public function setNom($nom)
+    public function setNom($nom = null)
     {
         $this->nom = $nom;
-
+    
         return $this;
     }
 
     /**
-     * Get nom
+     * Get nom.
      *
-     * @return string
+     * @return string|null
      */
     public function getNom()
     {
@@ -203,23 +215,23 @@ class Admission
     }
 
     /**
-     * Set prenom
+     * Set prenom.
      *
-     * @param string $prenom
+     * @param string|null $prenom
      *
      * @return Admission
      */
-    public function setPrenom($prenom)
+    public function setPrenom($prenom = null)
     {
         $this->prenom = $prenom;
-
+    
         return $this;
     }
 
     /**
-     * Get prenom
+     * Get prenom.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrenom()
     {
@@ -227,143 +239,143 @@ class Admission
     }
 
     /**
-     * Set dateAdmission
+     * Set dateAdmission.
      *
-     * @param \DateTime $dateAdmission
+     * @param \DateTime|null $dateAdmission
      *
      * @return Admission
      */
-    public function setDateAdmission($dateAdmission)
+    public function setDateAdmission($dateAdmission = null)
     {
         $this->dateAdmission = $dateAdmission;
-
-        return $this;
-    }
-
-    /**
-     * Get paymentDate
-     *
-     * @return \DateTime
-     */
-    public function getPaymentDate()
-    {
-        return $this->paymentDate;
-    }
     
-    /**
-     * Set paymentDate
-     *
-     * @param \DateTime $paymentDate
-     *
-     * @return Admission
-     */
-    public function setPaymentDate($paymentDate)
-    {
-        $this->paymentDate = $paymentDate;
-
         return $this;
     }
 
     /**
-     * Get dateAdmission
+     * Get dateAdmission.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDateAdmission()
     {
         return $this->dateAdmission;
-    }    
+    }
 
     /**
-     * Set phoneNumber
+     * Set phoneNumber.
      *
-     * @param string $phoneNumber
+     * @param string|null $phoneNumber
      *
      * @return Admission
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhoneNumber($phoneNumber = null)
     {
         $this->phoneNumber = $phoneNumber;
-
+    
         return $this;
     }
 
     /**
-     * Get phoneNumber
+     * Get phoneNumber.
      *
-     * @return string
+     * @return string|null
      */
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
     }
-    
+
     /**
-     * Set feesPaid
+     * Set feesPaid.
      *
-     * @param float $feesPaid
+     * @param string|null $feesPaid
      *
-     * @return AdminRegistration
+     * @return Admission
      */
-    public function setFeesPaid($feesPaid)
+    public function setFeesPaid($feesPaid = null)
     {
         $this->feesPaid = $feesPaid;
-
+    
         return $this;
     }
-    
+
     /**
-     * Get feesPaid
+     * Get feesPaid.
      *
-     * @return float
+     * @return string|null
      */
     public function getFeesPaid()
     {
         return $this->feesPaid;
     }
-    
+
     /**
-     * Set entranceType
+     * Set entranceType.
      *
-     * @param string $entranceType
+     * @param string|null $entranceType
      *
      * @return Admission
      */
-    public function setEntranceType($entranceType)
+    public function setEntranceType($entranceType = null)
     {
         $this->entranceType = $entranceType;
-
+    
         return $this;
     }
 
     /**
-     * Get entranceType
+     * Get entranceType.
      *
-     * @return string
+     * @return string|null
      */
     public function getEntranceType()
     {
         return $this->entranceType;
-    }    
+    }
 
     /**
-     * Set academicYear
+     * Set paymentDate.
      *
-     * @param AcademicYear $academicYear
+     * @param \DateTime|null $paymentDate
+     *
+     * @return Admission
+     */
+    public function setPaymentDate($paymentDate = null)
+    {
+        $this->paymentDate = $paymentDate;
+    
+        return $this;
+    }
+
+    /**
+     * Get paymentDate.
+     *
+     * @return \DateTime|null
+     */
+    public function getPaymentDate()
+    {
+        return $this->paymentDate;
+    }
+
+    /**
+     * Set academicYear.
+     *
+     * @param AcademicYear|null $academicYear
      *
      * @return Admission
      */
     public function setAcademicYear(AcademicYear $academicYear = null)
     {
         $this->academicYear = $academicYear;
-
+    
         return $this;
     }
 
     /**
-     * Get academicYear
+     * Get academicYear.
      *
-     * @return AcademicYear
+     * @return AcademicYear|null
      */
     public function getAcademicYear()
     {
@@ -371,23 +383,23 @@ class Admission
     }
 
     /**
-     * Set classOfStudy
+     * Set classOfStudy.
      *
-     * @param ClassOfStudy $classOfStudy
+     * @param ClassOfStudy|null $classOfStudy
      *
      * @return Admission
      */
     public function setClassOfStudy(ClassOfStudy $classOfStudy = null)
     {
         $this->classOfStudy = $classOfStudy;
-
+    
         return $this;
     }
 
     /**
-     * Get classOfStudy
+     * Get classOfStudy.
      *
-     * @return ClassOfStudy
+     * @return ClassOfStudy|null
      */
     public function getClassOfStudy()
     {
@@ -395,26 +407,50 @@ class Admission
     }
 
     /**
-     * Set degree
+     * Set degree.
      *
-     * @param Degree $degree
+     * @param Degree|null $degree
      *
      * @return Admission
      */
     public function setDegree(Degree $degree = null)
     {
         $this->degree = $degree;
-
+    
         return $this;
     }
 
     /**
-     * Get degree
+     * Get degree.
      *
-     * @return Degree
+     * @return Degree|null
      */
     public function getDegree()
     {
         return $this->degree;
+    }
+
+    /**
+     * Set prospectiveStudent.
+     *
+     * @param ProspectiveStudent|null $prospectiveStudent
+     *
+     * @return Admission
+     */
+    public function setProspectiveStudent(ProspectiveStudent $prospectiveStudent = null)
+    {
+        $this->prospectiveStudent = $prospectiveStudent;
+    
+        return $this;
+    }
+
+    /**
+     * Get prospectiveStudent.
+     *
+     * @return ProspectiveStudent|null
+     */
+    public function getProspectiveStudent()
+    {
+        return $this->prospectiveStudent;
     }
 }

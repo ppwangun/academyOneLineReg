@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Teacher
  *
- * @ORM\Table(name="teacher", indexes={@ORM\Index(name="fk_teacher_academic_ranck1_idx", columns={"academic_ranck_id"})})
+ * @ORM\Table(name="teacher", indexes={@ORM\Index(name="fk_teacher_academic_ranck1_idx", columns={"academic_ranck_id"}), @ORM\Index(name="fk_teacher_faculty1_idx", columns={"faculty_id"})})
  * @ORM\Entity
  */
 class Teacher
@@ -24,6 +24,13 @@ class Teacher
     /**
      * @var string|null
      *
+     * @ORM\Column(name="civility", type="string", length=45, nullable=true)
+     */
+    private $civility;
+
+    /**
+     * @var string|null
+     *
      * @ORM\Column(name="name", type="string", length=45, nullable=true)
      */
     private $name;
@@ -36,11 +43,130 @@ class Teacher
     private $surname;
 
     /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="birth_date", type="datetime", nullable=true)
+     */
+    private $birthDate;
+
+    /**
      * @var string|null
      *
-     * @ORM\Column(name="academic rank", type="string", length=45, nullable=true)
+     * @ORM\Column(name="marital_status", type="string", length=45, nullable=true)
      */
-    private $academicRank;
+    private $maritalStatus;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
+     */
+    private $phoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="email", type="string", length=45, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="high_degree", type="string", length=45, nullable=true)
+     */
+    private $highDegree;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="speciality", type="string", length=45, nullable=true)
+     */
+    private $speciality;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="current_employer", type="string", length=45, nullable=true)
+     */
+    private $currentEmployer;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="living_city", type="string", length=45, nullable=true)
+     */
+    private $livingCity;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="living_country", type="string", length=45, nullable=true)
+     */
+    private $livingCountry;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="nationality", type="string", length=45, nullable=true)
+     */
+    private $nationality;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="contact_in_emergency", type="string", length=45, nullable=true)
+     */
+    private $contactInEmergency;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="type", type="string", length=45, nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="status", type="boolean", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="idendity_document", type="string", length=45, nullable=true)
+     */
+    private $idendityDocument;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="cover_letter", type="string", length=45, nullable=true)
+     */
+    private $coverLetter;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="resume", type="string", length=45, nullable=true)
+     */
+    private $resume;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="highest_degree", type="string", length=45, nullable=true)
+     */
+    private $highestDegree;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="act_of_appointment", type="string", length=45, nullable=true)
+     */
+    private $actOfAppointment;
 
     /**
      * @var \AcademicRanck
@@ -51,6 +177,16 @@ class Teacher
      * })
      */
     private $academicRanck;
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
 
 
 }

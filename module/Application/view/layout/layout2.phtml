@@ -30,10 +30,11 @@
         ->prependFile($this->basePath('bower_components/angular-aria/angular-aria.min.js'))
         ->prependFile($this->basePath('bower_components/bower-angular-resource/angular-resource.js'))
         
-               
+        ->prependFile($this->basePath('js/angular-image-compress.js'))
+        ->prependFile($this->basePath('js/angular-busy.min.js'))      
         ->prependFile($this->basePath('js/angular-toastr.min.js'))    
           ->prependFile($this->basePath('js/loading-bar.js'))   
-         ->prependFile($this->basePath('js/my_js/globalconfig/angulartest.js')) 
+          
         ->prependFile($this->basePath('js/ui-bootstrap-tpls-2.5.0.min.js'))
         ->prependFile($this->basePath('js/angular-animate.js'))
         ->prependFile($this->basePath('js/angular-route.js'))
@@ -43,9 +44,11 @@
        
         ?>
 
-        
-        <script src="js/app/onlinereg/student.component.js"></script>
+       
+        <script src="js/app/onlinereg.js"></script>
         <script src="js/app/app.js"></script>
+        <script src="js/app/onlinereg/student.component.js"></script>
+        
 
     </head>
    

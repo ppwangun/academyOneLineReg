@@ -43,6 +43,13 @@ class Degree
     private $status;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="isCoreCurriculum", type="boolean", nullable=true)
+     */
+    private $iscorecurriculum;
+
+    /**
      * @var \FieldOfStudy
      *
      * @ORM\ManyToOne(targetEntity="FieldOfStudy")
@@ -154,6 +161,30 @@ class Degree
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set iscorecurriculum.
+     *
+     * @param bool|null $iscorecurriculum
+     *
+     * @return Degree
+     */
+    public function setIscorecurriculum($iscorecurriculum = null)
+    {
+        $this->iscorecurriculum = $iscorecurriculum;
+    
+        return $this;
+    }
+
+    /**
+     * Get iscorecurriculum.
+     *
+     * @return bool|null
+     */
+    public function getIscorecurriculum()
+    {
+        return $this->iscorecurriculum;
     }
 
     /**

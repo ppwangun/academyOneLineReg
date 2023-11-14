@@ -4,6 +4,8 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Application\Entity\Admission;
+
 /**
  * Student
  *
@@ -362,7 +364,15 @@ class Student
     private $motherCity;
 
 
-
+    /**
+     * @var Admission
+     *
+     * @ORM\ManyToOne(targetEntity="Admission")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admission_id", referencedColumnName="id")
+     * })
+     */
+    private $admission;
     /**
      * Get id
      *
@@ -1524,4 +1534,28 @@ class Student
     {
         return $this->motherCity;
     }
+    
+    /**
+     * Set admission.
+     *
+     * @param Admission $admission
+     *
+     * @return Student
+     */
+    public function setAdmission(Admission $admissionId1)
+    {
+        $this->admissionId1 = $admission;
+    
+        return $this;
+    }
+
+    /**
+     * Get admission.
+     *
+     * @return Admission
+     */
+    public function getAdmission()
+    {
+        return $this->admission;
+    }    
 }

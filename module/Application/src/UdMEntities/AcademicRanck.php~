@@ -28,5 +28,19 @@ class AcademicRanck
      */
     private $name;
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="payment_rate", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $paymentRate;
+
 
 }

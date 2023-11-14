@@ -143,10 +143,20 @@ return [
                     'route'    => '/students[/:id]',
                     'defaults' => [
                         'controller' => Controller\StdRegistrationController::class,
-                        'action'     => 'students',
+                       // 'action'     => 'students',
                     ],
                 ],
             ],
+            'getPreRegisteredStd' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getPreRegisteredStd[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\PreRegistrationController::class,
+                        'action'     => 'getPreRegisteredStd',
+                    ],
+                ],
+            ],            
             'countries' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -430,7 +440,7 @@ return [
             Controller\PreRegistrationController::class => [
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
-                ['actions' => ['preRegistration','savePreRegistration'],'allow' => '*'],
+                ['actions' => ['preRegistration','savePreRegistration','getPreRegisteredStd'],'allow' => '*'],
                // ['actions' => '*','allow' => '@'],
             ],            
             Controller\CountriesController::class => [

@@ -8,6 +8,7 @@ var app = angular.module('myApp', [
   'ngImageCompress',
   'cgBusy',
   'onlineReg',
+  'student'
   
   
  // 'ngRoute'

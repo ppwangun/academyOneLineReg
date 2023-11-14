@@ -11,7 +11,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
 use Violet\StreamingJsonEncoder\StreamJsonEncoder; 
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 
@@ -19,6 +19,10 @@ use Application\Entity\AdmittedStudentView;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
 use Application\Entity\Admission;
+use Application\Entity\ProspectiveStudent;
+use Application\Entity\CursusAcademique;
+use Application\Entity\ProspetiveRegistration;
+use Application\Entity\StudentParent;
 
 class PreRegistrationController extends AbstractActionController
 {
@@ -31,6 +35,39 @@ class PreRegistrationController extends AbstractActionController
         $this->studentManager = $studentManager;
         $this->sessionContainer = $sessionContainer;
       
+    }
+    
+    public function getPreRegisteredStdAction()
+    {
+        $numDossier = $this->sessionContainer->newUserId;
+        try
+        {
+            
+            $admission = $this->entityManager->getRepository(Admission::class)->findOneByFileNumber($numDossier);
+            
+
+            
+            $prosStd = $admission->getProspectiveStudent();
+            //echo $prosStd->getNom(); exit;
+            $hydrator = new ReflectionHydrator();
+            $student = $hydrator->extract($prosStd); 
+            
+
+           // $academicYear = $prosReg->getAcademicYear()->getCode(); 
+           // $stdParent = $this->entityManager->getRepository(StudentParent::class)->findByProspectiveStudent($pros);  
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+           throw $e;
+ 
+        }         
+        
+        
+        return new JsonModel([
+         $student   
+        ]);
+        
     }
     
     public function preRegistrationAction()
