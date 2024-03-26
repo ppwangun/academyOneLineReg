@@ -85,6 +85,13 @@ class Admission
     private $paymentDate;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="prospective_student_id", type="integer", nullable=true)
+     */
+    private $prospectiveStudentId;
+
+    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -113,16 +120,6 @@ class Admission
      * })
      */
     private $degree;
-
-    /**
-     * @var \ProspectiveStudent
-     *
-     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
-     * })
-     */
-    private $prospectiveStudent;
 
 
 
@@ -353,6 +350,30 @@ class Admission
     }
 
     /**
+     * Set prospectiveStudentId.
+     *
+     * @param int|null $prospectiveStudentId
+     *
+     * @return Admission
+     */
+    public function setProspectiveStudentId($prospectiveStudentId = null)
+    {
+        $this->prospectiveStudentId = $prospectiveStudentId;
+    
+        return $this;
+    }
+
+    /**
+     * Get prospectiveStudentId.
+     *
+     * @return int|null
+     */
+    public function getProspectiveStudentId()
+    {
+        return $this->prospectiveStudentId;
+    }
+
+    /**
      * Set academicYear.
      *
      * @param \AcademicYear|null $academicYear
@@ -422,29 +443,5 @@ class Admission
     public function getDegree()
     {
         return $this->degree;
-    }
-
-    /**
-     * Set prospectiveStudent.
-     *
-     * @param \ProspectiveStudent|null $prospectiveStudent
-     *
-     * @return Admission
-     */
-    public function setProspectiveStudent(\ProspectiveStudent $prospectiveStudent = null)
-    {
-        $this->prospectiveStudent = $prospectiveStudent;
-    
-        return $this;
-    }
-
-    /**
-     * Get prospectiveStudent.
-     *
-     * @return \ProspectiveStudent|null
-     */
-    public function getProspectiveStudent()
-    {
-        return $this->prospectiveStudent;
     }
 }

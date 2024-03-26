@@ -29,27 +29,6 @@ class ContractFollowUp
     private $date;
 
     /**
-     * @var float|null
-     *
-     * @ORM\Column(name="hr_volume", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $hrVolume;
-
-    /**
-     * @var float|null
-     *
-     * @ORM\Column(name="payment_amount", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $paymentAmount;
-
-    /**
-     * @var bool|null
-     *
-     * @ORM\Column(name="payment_status", type="boolean", nullable=true)
-     */
-    private $paymentStatus = '0';
-
-    /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="start_time", type="time", nullable=true)
@@ -62,6 +41,13 @@ class ContractFollowUp
      * @ORM\Column(name="end_time", type="time", nullable=true)
      */
     private $endTime;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="total_time", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $totalTime;
 
     /**
      * @var string|null
@@ -78,11 +64,18 @@ class ContractFollowUp
     private $lectureType;
 
     /**
-     * @var float|null
+     * @var bool|null
      *
-     * @ORM\Column(name="toal_time", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="payment_status", type="boolean", nullable=true)
      */
-    private $toalTime;
+    private $paymentStatus = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="course_scheduled_id", type="integer", nullable=true)
+     */
+    private $courseScheduledId;
 
     /**
      * @var \ClassOfStudyHasSemester
@@ -151,78 +144,6 @@ class ContractFollowUp
     }
 
     /**
-     * Set hrVolume.
-     *
-     * @param float|null $hrVolume
-     *
-     * @return ContractFollowUp
-     */
-    public function setHrVolume($hrVolume = null)
-    {
-        $this->hrVolume = $hrVolume;
-    
-        return $this;
-    }
-
-    /**
-     * Get hrVolume.
-     *
-     * @return float|null
-     */
-    public function getHrVolume()
-    {
-        return $this->hrVolume;
-    }
-
-    /**
-     * Set paymentAmount.
-     *
-     * @param float|null $paymentAmount
-     *
-     * @return ContractFollowUp
-     */
-    public function setPaymentAmount($paymentAmount = null)
-    {
-        $this->paymentAmount = $paymentAmount;
-    
-        return $this;
-    }
-
-    /**
-     * Get paymentAmount.
-     *
-     * @return float|null
-     */
-    public function getPaymentAmount()
-    {
-        return $this->paymentAmount;
-    }
-
-    /**
-     * Set paymentStatus.
-     *
-     * @param bool|null $paymentStatus
-     *
-     * @return ContractFollowUp
-     */
-    public function setPaymentStatus($paymentStatus = null)
-    {
-        $this->paymentStatus = $paymentStatus;
-    
-        return $this;
-    }
-
-    /**
-     * Get paymentStatus.
-     *
-     * @return bool|null
-     */
-    public function getPaymentStatus()
-    {
-        return $this->paymentStatus;
-    }
-
-    /**
      * Set startTime.
      *
      * @param \DateTime|null $startTime
@@ -268,6 +189,30 @@ class ContractFollowUp
     public function getEndTime()
     {
         return $this->endTime;
+    }
+
+    /**
+     * Set totalTime.
+     *
+     * @param float|null $totalTime
+     *
+     * @return ContractFollowUp
+     */
+    public function setTotalTime($totalTime = null)
+    {
+        $this->totalTime = $totalTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get totalTime.
+     *
+     * @return float|null
+     */
+    public function getTotalTime()
+    {
+        return $this->totalTime;
     }
 
     /**
@@ -319,27 +264,51 @@ class ContractFollowUp
     }
 
     /**
-     * Set toalTime.
+     * Set paymentStatus.
      *
-     * @param float|null $toalTime
+     * @param bool|null $paymentStatus
      *
      * @return ContractFollowUp
      */
-    public function setToalTime($toalTime = null)
+    public function setPaymentStatus($paymentStatus = null)
     {
-        $this->toalTime = $toalTime;
+        $this->paymentStatus = $paymentStatus;
     
         return $this;
     }
 
     /**
-     * Get toalTime.
+     * Get paymentStatus.
      *
-     * @return float|null
+     * @return bool|null
      */
-    public function getToalTime()
+    public function getPaymentStatus()
     {
-        return $this->toalTime;
+        return $this->paymentStatus;
+    }
+
+    /**
+     * Set courseScheduledId.
+     *
+     * @param int|null $courseScheduledId
+     *
+     * @return ContractFollowUp
+     */
+    public function setCourseScheduledId($courseScheduledId = null)
+    {
+        $this->courseScheduledId = $courseScheduledId;
+    
+        return $this;
+    }
+
+    /**
+     * Get courseScheduledId.
+     *
+     * @return int|null
+     */
+    public function getCourseScheduledId()
+    {
+        return $this->courseScheduledId;
     }
 
     /**

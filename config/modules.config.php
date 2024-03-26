@@ -32,5 +32,6 @@ return [
     'User',
     'Registration',
     'Payment',
-    'SchoolGlobalConfig'
+    'SchoolGlobalConfig',
+    'UserSpace'
 ];

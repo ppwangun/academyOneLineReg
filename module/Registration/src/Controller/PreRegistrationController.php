@@ -45,12 +45,15 @@ class PreRegistrationController extends AbstractActionController
             
             $admission = $this->entityManager->getRepository(Admission::class)->findOneByFileNumber($numDossier);
             
-
+            $student =[];
             
             $prosStd = $admission->getProspectiveStudent();
             //echo $prosStd->getNom(); exit;
             $hydrator = new ReflectionHydrator();
-            $student = $hydrator->extract($prosStd); 
+            $student = $hydrator->extract($prosStd);
+            
+            $student["nom"] = $prosStd->getNom();
+            
             
 
            // $academicYear = $prosReg->getAcademicYear()->getCode(); 

@@ -115,9 +115,16 @@ class AdminRegistration
     /**
      * @var string|null
      *
-     * @ORM\Column(name="schoolCertificateReferenceId", type="string", length=45, nullable=true)
+     * @ORM\Column(name="school_certificate_reference_id", type="string", length=45, nullable=true)
      */
-    private $schoolcertificatereferenceid;
+    private $schoolCertificateReferenceId;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="school_certificate_availability_status", type="boolean", nullable=true)
+     */
+    private $schoolCertificateAvailabilityStatus = '0';
 
     /**
      * @var \ClassOfStudy
@@ -454,27 +461,51 @@ class AdminRegistration
     }
 
     /**
-     * Set schoolcertificatereferenceid.
+     * Set schoolCertificateReferenceId.
      *
-     * @param string|null $schoolcertificatereferenceid
+     * @param string|null $schoolCertificateReferenceId
      *
      * @return AdminRegistration
      */
-    public function setSchoolcertificatereferenceid($schoolcertificatereferenceid = null)
+    public function setSchoolCertificateReferenceId($schoolCertificateReferenceId = null)
     {
-        $this->schoolcertificatereferenceid = $schoolcertificatereferenceid;
+        $this->schoolCertificateReferenceId = $schoolCertificateReferenceId;
     
         return $this;
     }
 
     /**
-     * Get schoolcertificatereferenceid.
+     * Get schoolCertificateReferenceId.
      *
      * @return string|null
      */
-    public function getSchoolcertificatereferenceid()
+    public function getSchoolCertificateReferenceId()
     {
-        return $this->schoolcertificatereferenceid;
+        return $this->schoolCertificateReferenceId;
+    }
+
+    /**
+     * Set schoolCertificateAvailabilityStatus.
+     *
+     * @param bool|null $schoolCertificateAvailabilityStatus
+     *
+     * @return AdminRegistration
+     */
+    public function setSchoolCertificateAvailabilityStatus($schoolCertificateAvailabilityStatus = null)
+    {
+        $this->schoolCertificateAvailabilityStatus = $schoolCertificateAvailabilityStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get schoolCertificateAvailabilityStatus.
+     *
+     * @return bool|null
+     */
+    public function getSchoolCertificateAvailabilityStatus()
+    {
+        return $this->schoolCertificateAvailabilityStatus;
     }
 
     /**

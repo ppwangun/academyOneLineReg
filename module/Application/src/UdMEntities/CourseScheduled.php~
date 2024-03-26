@@ -1,0 +1,76 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * CourseScheduled
+ *
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_course_scheduled1_idx", columns={"date_scheduled_date"}), @ORM\Index(name="fk_course_scheduled_time_slot1_idx", columns={"time_slot_id"})})
+ * @ORM\Entity
+ */
+class CourseScheduled
+{
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
+
+    /**
+     * @var \TimeSlot
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="TimeSlot")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="time_slot_id", referencedColumnName="id")
+     * })
+     */
+    private $timeSlot;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
+     * @var \DateScheduled
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="DateScheduled")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="date_scheduled_date", referencedColumnName="date")
+     * })
+     */
+    private $dateScheduledDate;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+
+}

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Student
  *
- * @ORM\Table(name="student", uniqueConstraints={@ORM\UniqueConstraint(name="admission_id_UNIQUE", columns={"admission_id"}), @ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})}, indexes={@ORM\Index(name="fk_student_admission1_idx", columns={"admission_id"}), @ORM\Index(name="fk_student_admission2_idx", columns={"admission_id1"})})
+ * @ORM\Table(name="student", uniqueConstraints={@ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})}, indexes={@ORM\Index(name="fk_student_admission1_idx", columns={"admission_id"})})
  * @ORM\Entity
  */
 class Student
@@ -17,7 +17,7 @@ class Student
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -368,19 +368,6 @@ class Student
     private $admission;
 
 
-    /**
-     * Set id.
-     *
-     * @param int $id
-     *
-     * @return Student
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    
-        return $this;
-    }
 
     /**
      * Get id.
@@ -1566,29 +1553,5 @@ class Student
     public function getAdmission()
     {
         return $this->admission;
-    }
-
-    /**
-     * Set admissionId1.
-     *
-     * @param \Admission $admissionId1
-     *
-     * @return Student
-     */
-    public function setAdmissionId1(\Admission $admissionId1)
-    {
-        $this->admissionId1 = $admissionId1;
-    
-        return $this;
-    }
-
-    /**
-     * Get admissionId1.
-     *
-     * @return \Admission
-     */
-    public function getAdmissionId1()
-    {
-        return $this->admissionId1;
     }
 }

@@ -85,6 +85,13 @@ class Admission
     private $paymentDate;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="prospective_student_id", type="integer", nullable=true)
+     */
+    private $prospectiveStudentId;
+
+    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -113,16 +120,6 @@ class Admission
      * })
      */
     private $degree;
-
-    /**
-     * @var \ProspectiveStudent
-     *
-     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
-     * })
-     */
-    private $prospectiveStudent;
 
 
 }

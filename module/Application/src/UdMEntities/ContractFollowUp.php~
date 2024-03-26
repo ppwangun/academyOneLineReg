@@ -29,27 +29,6 @@ class ContractFollowUp
     private $date;
 
     /**
-     * @var float|null
-     *
-     * @ORM\Column(name="hr_volume", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $hrVolume;
-
-    /**
-     * @var float|null
-     *
-     * @ORM\Column(name="payment_amount", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $paymentAmount;
-
-    /**
-     * @var bool|null
-     *
-     * @ORM\Column(name="payment_status", type="boolean", nullable=true)
-     */
-    private $paymentStatus = '0';
-
-    /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="start_time", type="time", nullable=true)
@@ -62,6 +41,13 @@ class ContractFollowUp
      * @ORM\Column(name="end_time", type="time", nullable=true)
      */
     private $endTime;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="total_time", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $totalTime;
 
     /**
      * @var string|null
@@ -78,11 +64,18 @@ class ContractFollowUp
     private $lectureType;
 
     /**
-     * @var float|null
+     * @var bool|null
      *
-     * @ORM\Column(name="toal_time", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="payment_status", type="boolean", nullable=true)
      */
-    private $toalTime;
+    private $paymentStatus = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="course_scheduled_id", type="integer", nullable=true)
+     */
+    private $courseScheduledId;
 
     /**
      * @var \ClassOfStudyHasSemester

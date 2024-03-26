@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ClassOfStudyHasSemester
  *
- * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"})})
+ * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class ClassOfStudyHasSemester
@@ -142,16 +142,6 @@ class ClassOfStudyHasSemester
      * })
      */
     private $classOfStudy;
-
-    /**
-     * @var \Contract
-     *
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
-     * })
-     */
-    private $contract;
 
     /**
      * @var \Semester
@@ -611,30 +601,6 @@ class ClassOfStudyHasSemester
     public function getClassOfStudy()
     {
         return $this->classOfStudy;
-    }
-
-    /**
-     * Set contract.
-     *
-     * @param \Contract|null $contract
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setContract(\Contract $contract = null)
-    {
-        $this->contract = $contract;
-    
-        return $this;
-    }
-
-    /**
-     * Get contract.
-     *
-     * @return \Contract|null
-     */
-    public function getContract()
-    {
-        return $this->contract;
     }
 
     /**

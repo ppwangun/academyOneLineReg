@@ -115,9 +115,16 @@ class AdminRegistration
     /**
      * @var string|null
      *
-     * @ORM\Column(name="schoolCertificateReferenceId", type="string", length=45, nullable=true)
+     * @ORM\Column(name="school_certificate_reference_id", type="string", length=45, nullable=true)
      */
-    private $schoolcertificatereferenceid;
+    private $schoolCertificateReferenceId;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="school_certificate_availability_status", type="boolean", nullable=true)
+     */
+    private $schoolCertificateAvailabilityStatus = '0';
 
     /**
      * @var \ClassOfStudy

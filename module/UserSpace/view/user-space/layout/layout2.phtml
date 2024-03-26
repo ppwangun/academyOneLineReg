@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link
+
+        <?= $this->headTitle('CPC-Online App')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?= $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"> 
+        <!-- Le styles -->
+        <?= $this->headTitle('CPC-Online App')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?= $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+        
+        ->prependStylesheet($this->basePath('css/style.css'))
+         ->prependStylesheet($this->basePath('css/sb-admin-2.css'))
+         ->prependStylesheet($this->basePath('css/util.css'))
+        ->prependStylesheet($this->basePath('css/shop-item.css'))
+        ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        //->prependStylesheet($this->basePath('css/semantic.min.css'))
+        ->prependStylesheet($this->basePath('../node_modules/angular-loading-bar/src/loading-bar.css'))
+        ->prependStylesheet($this->basePath('../node_modules/angular-material/angular-material.css'))
+        ->prependStylesheet($this->basePath('../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css'))
+
+         ->prependStylesheet($this->basePath('../node_modules/@fortawesome/fontawesome-free/css/all.css'))
+        ?>
+        <?= $this->headScript()
+        
+       
+        ->prependFile($this->basePath('js/app/cpconlineApp.js'))
+        ->prependFile($this->basePath('js/app/payment-component.js'))
+         ->prependFile($this->basePath('js/semantic.min.js'))
+        ->prependFile($this->basePath('js/angular-datatables.fixedheader.min.js'))
+        ->prependFile($this->basePath('js/angular-datatables.buttons.min.js'))
+        ->prependFile($this->basePath('js/angular-datatables.min.js'))
+        ->prependFile($this->basePath('../node_modules/angularjs-bootstrap4-validate/dist/angularjs-bootstrap4-validate.min.js'))
+        ->prependFile($this->basePath('../node_modules/@fortawesome/fontawesome-free/js/all.min.js'))
+        ->prependFile($this->basePath('../node_modules/bootstrap/dist/js/bootstrap.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-material/angular-material.js'))
+            
+            
+        
+        ->prependFile($this->basePath('../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js'))
+        ->prependFile($this->basePath('../node_modules/angular-ui-utils/angular-ui-utils.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-loading-bar/src/loading-bar.js'))
+        ->prependFile($this->basePath('../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js'))
+        ->prependFile($this->basePath('../node_modules/datatables/media/js/jquery.dataTables.min.js'))
+
+        //->prependFile($this->basePath('../node_modules/bootstrap-show-password-master/dist/bootstrap-show-password.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-toastr/dist/angular-toastr.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-route/angular-route.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-messages/angular-messages.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-aria/angular-aria.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular-animate/angular-animate.min.js'))
+        ->prependFile($this->basePath('../node_modules/angular/angular.min.js'))  
+        ->prependFile($this->basePath('js/jquery-3.5.1.min.js'))
+        ?>
+        
+
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">CPC Management Panel</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <!--<li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>-->
+          <li class="nav-item">
+            <span class="nav-link"> Bienvenue <?=$this->identity()?></span> 
+          </li> 
+          <li class="nav-item ">
+              <a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;Se Déconnecter</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container" ng-app="cpconlineApp" ng-controller="cpconlineCtrl as $ctrl" >
+
+    <div class="row">
+
+      <div class="col-lg-3">
+          
+        <div class="list-group pt-3">
+         
+            <a href="showResults" class="list-group-item"><i class="fas fa-poll"></i>&nbsp;Résultat d'examens</a>
+          <a href="goProforma" class="list-group-item"><i class="fas fa-file-invoice"></i>&nbsp;Gérer les  proformas</a>
+          <a href="#" class="list-group-item"><i class="fas fa-shopping-cart"></i>&nbsp;Gérer les  paiements</a>
+        </div>
+        <div class="list-group pt-5">
+         
+            <a href="#" class="list-group-item"><i class="fas fa-procedures"></i>&nbsp;Gérer les patients</a>
+          <a href="medicalExams" class="list-group-item"><i class="fas fa-crutch"></i>&nbsp;Analyses médicaux</a>
+          <a href="userManagement" class="list-group-item"><i class="fas fa-users" aria-hidden="true"></i>&nbsp;Utilisateurs</a>
+        </div>          
+      </div>
+      <!-- /.col-lg-3 -->
+      
+      <div class="col-lg-9" ng-init="init()">
+          <?= $this->content ?>
+        
+        <!-- /.card -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="mt-5 py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Centre pasteur du Cameroun 2021</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+
+
+</body>
+
+</html>
+
