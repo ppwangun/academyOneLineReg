@@ -2,14 +2,7 @@
     --brand-color: #581845;
 }
 
-.navbar {
-    background-color: var(--brand-color);
-}
 
-.btn-primary {
-    background-color: var(--brand-color);
-    border-color: var(--brand-color);
-}
 
 .file {
   visibility: hidden;
@@ -24,4 +17,81 @@
   top: 0;
 }
 
+:root {
+    --brand-color: #292b2c; /*#013755;*/
+}
+
+
+
+
+
+
+
+.center-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 60vh;
+}
+.card{
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+      transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+    padding-top: 30px;
+    
+    cursor: pointer;
+}
+
+
+.cardpmt:hover{
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  background-color: lightblue!important;
+  font-weight: bold;
+}
+.card h3{
+  font-weight: 600;
+}
+
+.card img{
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  max-height: 120px;
+}
+
+.card-1{
+
+
+    background-size: 80px;
+    height: 200px
+}
+
+.card-2{
+    text-align: center;
+    height: 200px;
+   
+}
+
+.card-3{
+
+ 
+ 
+   background-size: 80px;
+   height: 200px;
+}
+
+.box {
+    
+    
+    
+    border: solid #4e73df 1px;
+}
+@media(max-width: 990px){
+  .card{
+    margin: 20px;
+  }
+} 
 

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CourseScheduled
  *
- * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_course_scheduled1_idx", columns={"date_scheduled_date"}), @ORM\Index(name="fk_course_scheduled_time_slot1_idx", columns={"time_slot_id"})})
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_course_scheduled1_idx", columns={"date_scheduled_date"}), @ORM\Index(name="fk_course_scheduled_time_slot1_idx", columns={"time_slot_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class CourseScheduled

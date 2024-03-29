@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ClassOfStudy
  *
- * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_degree2_idx", columns={"degree_id"}), @ORM\Index(name="fk_class_of_study_grade1_idx", columns={"grade_id"}), @ORM\Index(name="fk_class_of_study_deliberation1_idx", columns={"deliberation_id"}), @ORM\Index(name="fk_class_of_study_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"})})
+ * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_deliberation1_idx", columns={"deliberation_id"}), @ORM\Index(name="fk_class_of_study_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"}), @ORM\Index(name="fk_class_of_study_degree2_idx", columns={"degree_id"}), @ORM\Index(name="fk_class_of_study_grade1_idx", columns={"grade_id"})})
  * @ORM\Entity
  */
 class ClassOfStudy

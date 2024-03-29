@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Contract
  *
- * @ORM\Table(name="contract", indexes={@ORM\Index(name="fk_contract_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_contract_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_contract_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_contract_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_contract_academic_year1_idx", columns={"academic_year_id"})})
+ * @ORM\Table(name="contract", indexes={@ORM\Index(name="fk_contract_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_contract_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_contract_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_contract_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_contract_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class Contract
@@ -36,9 +36,9 @@ class Contract
     private $status;
 
     /**
-     * @var string|null
+     * @var float|null
      *
-     * @ORM\Column(name="volume_hrs", type="string", length=45, nullable=true)
+     * @ORM\Column(name="volume_hrs", type="float", precision=10, scale=0, nullable=true)
      */
     private $volumeHrs;
 
@@ -48,6 +48,27 @@ class Contract
      * @ORM\Column(name="amount", type="float", precision=10, scale=0, nullable=true)
      */
     private $amount;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="cm_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $cmHrs;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="td_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $tdHrs;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="tp_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $tpHrs;
 
     /**
      * @var \AcademicYear
@@ -162,7 +183,7 @@ class Contract
     /**
      * Set volumeHrs.
      *
-     * @param string|null $volumeHrs
+     * @param float|null $volumeHrs
      *
      * @return Contract
      */
@@ -176,7 +197,7 @@ class Contract
     /**
      * Get volumeHrs.
      *
-     * @return string|null
+     * @return float|null
      */
     public function getVolumeHrs()
     {
@@ -205,6 +226,78 @@ class Contract
     public function getAmount()
     {
         return $this->amount;
+    }
+
+    /**
+     * Set cmHrs.
+     *
+     * @param float|null $cmHrs
+     *
+     * @return Contract
+     */
+    public function setCmHrs($cmHrs = null)
+    {
+        $this->cmHrs = $cmHrs;
+    
+        return $this;
+    }
+
+    /**
+     * Get cmHrs.
+     *
+     * @return float|null
+     */
+    public function getCmHrs()
+    {
+        return $this->cmHrs;
+    }
+
+    /**
+     * Set tdHrs.
+     *
+     * @param float|null $tdHrs
+     *
+     * @return Contract
+     */
+    public function setTdHrs($tdHrs = null)
+    {
+        $this->tdHrs = $tdHrs;
+    
+        return $this;
+    }
+
+    /**
+     * Get tdHrs.
+     *
+     * @return float|null
+     */
+    public function getTdHrs()
+    {
+        return $this->tdHrs;
+    }
+
+    /**
+     * Set tpHrs.
+     *
+     * @param float|null $tpHrs
+     *
+     * @return Contract
+     */
+    public function setTpHrs($tpHrs = null)
+    {
+        $this->tpHrs = $tpHrs;
+    
+        return $this;
+    }
+
+    /**
+     * Get tpHrs.
+     *
+     * @return float|null
+     */
+    public function getTpHrs()
+    {
+        return $this->tpHrs;
     }
 
     /**

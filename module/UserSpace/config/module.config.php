@@ -31,8 +31,48 @@ return [
                         'action'     => 'goLecturer',
                     ],
                 ],
+            ],   
+               'lSubjects' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/lSubjects',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'lSubjects',
+                    ],
+                ],
+            ], 
+            
+               'lAssignedSubjects' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/lAssignedSubjects',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'lAssignedSubjects',
+                    ],
+                ],
+            ],
+               'lAssignedSubjectsFollowUpTpl' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/lAssignedSubjectsFollowUpTpl',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'lAssignedSubjectsFollowUpTpl',
+                    ],
+                ],
             ],            
-
+               'lAssignedSubjectsFollowUp' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/lAssignedSubjectsFollowUp',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'lAssignedSubjectsFollowUp',
+                    ],
+                ],
+            ],
         ]
     ],
     'view_manager' => [
@@ -42,13 +82,10 @@ return [
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => [
-            'layout_1/layout_1'           => __DIR__ . '/../view/layout/layout.phtml',
-         
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+
         ],
         'template_path_stack' => [
-            __NAMESPACE__ . '/../view',
+            __DIR__. '/../view',
         ],
     ],
     

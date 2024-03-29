@@ -410,8 +410,8 @@ class AuthController extends AbstractActionController
                             $redirectUrl = $this->params()->fromPost('redirect_url', '');
                             $teacher= $this->entityManager->getRepository(Teacher::class)->findOneByPhoneNumber($data['phoneNumber']);
 
-                             $this->sessionContainer->userName = $teacher->getName()." ".$teacher->getSurname();
-                             $this->sessionContainer->userId = $teacher->getPhoneNumber();
+                             $name = $teacher->getName()." ".$teacher->getSurname();
+                             $this->sessionContainer->LoggedInUser = ["id"=>$teacher->getId(), "phoneNumber"=>$teacher->getPhoneNumber(),"name"=>$teacher->getName()." ".$teacher->getSurname()];
 
 
 
