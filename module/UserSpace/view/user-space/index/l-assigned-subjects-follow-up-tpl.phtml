@@ -7,9 +7,9 @@
   </ol>
 </nav>
 
-<h1 class="mt-4">Unités d'enseignements attribués</h1>
+<h1 class="mt-4">Suivi du volume horaire</h1>
    <ol class="breadcrumb mb-4">
-       <li class="breadcrumb-item active">Tableau des attributions</li>
+       <li class="breadcrumb-item active">Tableau de progression</li>
    </ol>
 
 
@@ -31,13 +31,15 @@
                                         <th style="vertical-align: middle;" rowspan="2">UE</th>
                                         <th style="vertical-align: middle;" rowspan="2">Sem</th>
                                         <th style="vertical-align: middle;" rowspan="2">Classe</th>
-                                        <th style="vertical-align: middle;" colspan="2">Volume Horaire</th>
+                                        <th style="vertical-align: middle; width: 30%;" colspan="4">Volume Horaire</th>
                                         
                                     </tr>
                                     <tr style="background-color:#708090; text-align: center;">
 
                                         <th style="vertical-align: middle;">Atrribué</th>
+                                        <th style="vertical-align: middle;">Programmé</th>
                                         <th style="vertical-align: middle;">Réalisé</th>
+                                        <th style="vertical-align: middle;">%Réalisation</th>
                                     </tr>                                    
                                     </thead>
                                     <tbody>
@@ -48,12 +50,16 @@
                                         <td>{{teachingUnit.codeUe}}</td>
                                         <td>{{teachingUnit.semester}}</td>
                                         <td>{{teachingUnit.classe}}</td>
-                                        <td>{{teachingUnit.totalHrs}}H</td>
-                                        <td>{{teachingUnit.totalHrsDone}}H</td>
+                                        <td class="bg-primary text-white">{{teachingUnit.totalHrs}}H</td>
+                                        <td class="bg-warning text-white"></td>
+                                        <td class="bg-success text-white">{{teachingUnit.totalHrsDone}}H</td>
+                                        <td class="bg-danger text-white">{{(teachingUnit.totalHrsDone/teachingUnit.totalHrs)*100}}%</td>
                                        
                                     </tr>
                                     <tr style="text-align:center;font-weight : bold; color: #fff; background-color:#708090;"><td  colspan="4">Total Volume Horaire</td><td align="left">{{$ctrl.subjectsFollowUp|sumByKey:'totalHrs'}}H</td>
+                                        <td></td>
                                     <td align="left">{{$ctrl.subjectsFollowUp|sumByKey:'totalHrsDone'}}H</td>
+                                    <td></td>
                                     </tr>
                                     </tbody>
                                 </table>

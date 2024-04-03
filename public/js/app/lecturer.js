@@ -6,14 +6,12 @@
 		    	.primaryPalette('blue')
 		    	.accentPalette('blue');
 		}).controller('lecturerCtrl', ['$scope', '$http','$timeout','$mdDialog', function($scope, $http, $timeout,$mdDialog,$window,$location) {
-                        var $ctrl = this;
-                            $ctrl.student= {fac_id:-1,fil_id:-1};
-				$scope.subjects = [];
-
-
-				$scope.genders = ["male", "female", "other"];
-
-				$scope.progressValue = 0;
+                var $ctrl = this;
+                $ctrl.student= {fac_id:-1,fil_id:-1};
+                $scope.subjects = [];
+                $scope.hasLoadedCurrentTeacher = null;
+                $scope.genders = ["male", "female", "other"];
+                $scope.progressValue = 0;
                                 
      $scope.image1  ={compressed: {dataURL: "https://placehold.it/80x80"}};
      $ctrl.student.cursus = [{"annee":'',"Etablissement":'',"diplome":'',"mention":''}];
@@ -50,6 +48,27 @@
         function errorCallback(response){
     }),1000);
     
+    $timeout(
+        
+        $http.get(`getTeacher`).then(function (response) {
+            console.log(response)
+            const {documents, ...data} = response.data[0];
+            $scope.currentTeacher = {
+                ...data,
+                identityDocumentFile: documents.find(document => document.type === 'identity_document'),
+                coverLetterFile: documents.find(document => document.type === 'cover_letter'),
+                resumeFile: documents.find(document => document.type === 'resume'),
+                teacherRankFile: documents.find(document => document.type === 'teacher_rank'),
+                highestDegreeFile: documents.find(document => document.type === 'highest_degree'),
+                experienceReviewFile: documents.find(document => document.type === 'experience_review'),
+                nominationActFile: documents.find(document => document.type === 'nomination_act'),
+            }
+          
+            $scope.hasLoadedCurrentTeacher = true;
+        }, function (error) {
+            console.error(error);
+            $scope.hasLoadedCurrentTeacher = false;
+        }),1000)    
     
      $http.get('faculty')
             .then(

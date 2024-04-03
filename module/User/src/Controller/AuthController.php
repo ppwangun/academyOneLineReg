@@ -465,7 +465,7 @@ class AuthController extends AbstractActionController
     {        
         $this->authManager->logout();
         
-        return $this->redirect()->toRoute('accueil');
+        return $this->redirect()->toRoute('home');
     }
     
     public function notAuthorizedAction()

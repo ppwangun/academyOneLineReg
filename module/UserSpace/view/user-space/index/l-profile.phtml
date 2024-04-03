@@ -1,0 +1,64 @@
+
+<link rel="stylesheet" type="text/css" href="css/datatables.bootstrap.css">
+<link rel="stylesheel" type="text/css" href="css/buttons.datables.min.css">
+<style>
+/*md-dialog{
+max-width: 900px;
+
+}*/
+.md-dialog-container {
+
+    z-index: 1000;
+
+}
+
+</style>
+
+  
+
+</style>
+
+<nav  style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="goLecturer">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Mon profile</li>
+  </ol>
+</nav>
+
+<h1 class="mt-4">Informations sur l'enseignant</h1>
+   <ol class="breadcrumb mb-4">
+       <li class="breadcrumb-item active"></li>
+   </ol>
+
+
+<div class="row" ng-cloak>
+
+        <div layout="row" id="container" >
+
+                <div id="teacher_details" ng-if="!hasSucceededLoadingCurrentTeacher()" class="panel">
+                    <div class="panel-body gap-1" layout="column">
+                        <div layout="row" class="gap-1">
+                            <div class="flex-gt-sm gap-0-5" flex="50" layout="column">
+                                <table class="table table-bordered bordered table-striped table-condensed" style="font-size:0.8em;  color: #0c2461;">
+                                    <tr><td>Noms & Prenoms</td><td>{{currentTeacher.name}}</td></tr>
+                                    <tr><td>Date de naissance</td><td>{{currentTeacher.birthDate.date | date}}</td></tr>
+                                    <tr><td>Lieu de naissance</td><td>{{currentTeacher.birthplace}}</td></tr>
+                                    <tr><td>Nationalite</td><td>{{currentTeacher.country.name.fr}}</td></tr>
+                                    <tr><td>Etat civil</td><td>{{currentTeacher.maritalSStatus === 'single' ? 'Celibataire' : 'Marie(e)'}}</td></tr>
+                                    <tr><td>Telephone</td><td>{{currentTeacher.phone}}</td></tr>
+                                    <tr><td>Email</td><td>{{currentTeacher.email}}</td></tr>
+                                    <tr><td>Diplome le plus eleve</td><td>{{currentTeacher.highest_degree.name}}</td></tr>
+                                    <tr><td>Specialite</td><td>{{currentTeacher.speciality.name}}</td></tr>
+                                    <tr><td>Grade</td><td>{{currentTeacher.grade.name}}</td></tr>
+                                    <tr><td>Employeur Actuel</td><td>{{currentTeacher.actual_employer}}</td></tr>
+                                    <tr><td>Etablissement sollicité</td><td>{{currentTeacher.requested_establishement.name}}</td></tr>
+                                </table>
+
+
+                            </div>
+
+                        </div>                        
+                    </div>
+                </div>
+        </div>
+</div>

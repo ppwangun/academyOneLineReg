@@ -73,6 +73,26 @@ return [
                     ],
                 ],
             ],
+               'lProfile' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/lProfile',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'lProfile',
+                    ],
+                ],
+            ],  
+               'getTeacher' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/getTeacher',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'getTeacher',
+                    ],
+                ],
+            ],            
         ]
     ],
     'view_manager' => [
@@ -123,7 +143,7 @@ return [
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
                 ['actions' => '*', 
-                 'allow' => '*'],
+                 'allow' => '@'],
 
             ],
 

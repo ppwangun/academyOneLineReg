@@ -83,7 +83,7 @@ class Module
                 $redirectUrl = $uri->toString();
 
                 // Redirect the user to the "Login" page.
-                return $controller->redirect()->toRoute('accueil', [], 
+                return $controller->redirect()->toRoute('home', [], 
                         ['query'=>['redirectUrl'=>$redirectUrl]]);
             }
             else if ($result==AuthManager::ACCESS_DENIED) {
