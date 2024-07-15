@@ -64,7 +64,7 @@ class PDF extends TCPDF {
         
     }
     function Footer() {
-        $footertext="Report generated with UdMAcademy 2.0 By WTECH (" . date("d-m-Y H:i") . ")";
+        $footertext="Report generated with AgenlaAcademy 2.0 By WTECH (" . date("d-m-Y H:i") . ")";
         // Position at 15 mm from bottom
         $this->SetY(-15);
         $this->SetFont('helvetica', '', 6);
@@ -78,7 +78,7 @@ class PDF extends TCPDF {
         $this->SetY(-20);
         $this->SetFont('freesans','I',8);
         $this->SetTextColor(34,68,136);
-        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@udm.aed-cm.org    Site web :  www.udm.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@Agenla.aed-cm.org    Site web :  www.Agenla.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
         $this->SetTextColor(0,0,0);
         $this->SetFont('garamond','I',10);
        

@@ -50,7 +50,7 @@
 <md-card  class="card-40-center animate-switch stepCard" md-theme-watch ng-switch-default  ng-class="{forward: direction, backward:!direction}">
     <md-card-title>
         <md-card-title-text>
-            <h1>Admission à Agnela Academy</h1> 
+            <h1>Admission à l'Université des Montagnes</h1> 
             <md-card-title-media></md-card-title-media>
         </md-card-title-text>
     </md-card-title> 
@@ -750,7 +750,7 @@
                                  <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
                                         <label>Premier choix de formation:</label>
-                                        <md-select name="choix1" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg1"    required >
+                                        <md-select name="choix1" placeholder="Premier choix de" ng-model="$ctrl.student.choixDeg1"    required >
                                            <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
                                         </md-select>
                                 <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix1.$error.required}">
@@ -764,7 +764,7 @@
                                  <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
                                         <label>Deuxième choix de formation:</label>
-                                        <md-select name="choix2" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg2"    required >
+                                        <md-select name="choix2" placeholder="Deuxième choix" ng-model="$ctrl.student.choixDeg2"    required >
                                            <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
                                         </md-select>
                                 <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix2.$error.required}">
@@ -777,8 +777,8 @@
                             <md-input-container class="md-block" flex-gt-sm> 
                                  <div layout layout-sm="column">
                                     <md-input-container flex="flex" style="" >
-                                        <label>Deuxième choix de formation:</label>
-                                        <md-select name="choix3" placeholder="Choisir la formation" ng-model="$ctrl.student.choixDeg3"    required >
+                                        <label>Troisième choix de formation:</label>
+                                        <md-select name="choix3" placeholder="Troisième choix" ng-model="$ctrl.student.choixDeg3"    required >
                                            <md-option  ng-repeat="deg in degrees" ng-value="deg.id">{{deg.name}} </md-option>
                                         </md-select>
                                 <div class="validation" ng-class="{'input-error': formValidation && stdRegistrationForm.choix3.$error.required}">
@@ -841,7 +841,7 @@
     <div layout-gt-sm="row" class="mt-3" >        
      <ul style='list-style-type:none'>
          <li class="row" ng-repeat="cursus in $ctrl.student.cursus">
-              
+             <div class="row"> 
           
                                 <md-input-container class="md-block" flex-gt-sm layout-sm="column">
                                     <label>Année  d'obtention</label>
@@ -902,13 +902,13 @@
                                 <md-input-container class="md-block" flex-gt-sm layout-sm="column">
                                     <button  type="button"class="btn btn-danger btn-sm" title="supprimer" ng-click="$ctrl.student.cursus.length>1?$ctrl.student.cursus.splice($index, 1):''" ><i class="fa-solid fa-trash"></i></button>
                                 </md-input-container>
-                   
+            </div>         
                                     </li>
                                     
                                     <li>
                                         <button type="button" class="btn btn-success" ng-click="$ctrl.addCursus()"> Ajouter un Cursus</button>  
                                     </li>
-                   
+                    
         </ul>
                              
         </div>

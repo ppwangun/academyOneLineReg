@@ -22,7 +22,10 @@ use Application\Entity\ClassOfStudy;
 use Application\Entity\CursusAcademique;
 use Application\Entity\ProspetiveRegistration;
 use Application\Entity\StudentParent;
-use Jurosh\PDFMerge\PDFMerger;
+
+use Tomsgu\PdfMerger\PdfMerger;
+use Tomsgu\PdfMerger\PdfCollection;
+use setasign\Fpdi\Fpdi;
 
 class OnlineRegController extends AbstractActionController
 {
@@ -131,9 +134,10 @@ class OnlineRegController extends AbstractActionController
         try
         { 
             //Default academic year
-            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear (1);
             
-            $pdf = new PDFMerger();
+            $pdfCollection = new PdfCollection();
+           
             
             $student = new ProspectiveStudent();
             //collection image and get it compresses
@@ -248,15 +252,30 @@ class OnlineRegController extends AbstractActionController
            {               //var_dump($file); exit;
                if($key!="img_file")
                {
-               $filename = $file["name"][0];  
-               $destination = $_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$filename;
+               $filename = $file["name"][0]; 
+               if($key=="file")
+               $destination = $_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$numDossier;
+               if($key=="file1")
+                   $destination = $_SERVER['DOCUMENT_ROOT'] .'/cvs/'.$numDossier;
+               if($key=="file2")
+                   $destination = $_SERVER['DOCUMENT_ROOT'] .'/degrees/'.$numDossier;     
+               if($key=="file3")
+                   $destination = $_SERVER['DOCUMENT_ROOT'] .'/transcripts/'.$numDossier;   
+               if($key=="file4")
+                   $destination = $_SERVER['DOCUMENT_ROOT'] .'/birthcertificates/'.$numDossier; 
+               if($key=="file5")
+                   $destination = $_SERVER['DOCUMENT_ROOT'] .'/identities/'.$numDossier;               
                move_uploaded_file($file['tmp_name'][0],$destination);
-               $pdf->addPDF($destination,'all');
+               //$pdfCollection->addPDF($destination);
                }
 
 
            }
-            $pdf->merge('file',$_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$numDossier.'.pdf');
+           
+           $fpdi = new Fpdi();
+           $merger = new PdfMerger($fpdi);
+          // $merger->merge($pdfCollection, $_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$numDossier.'.pdf');
+           // $pdf->merge('file',$_SERVER['DOCUMENT_ROOT'] .'/paymentsproof/'.$numDossier.'.pdf');
            //$studentDetails = json_decode($data["student"],true); print_r($studentDetails);
            $this->entityManager->persist($student);
            $this->entityManager->flush();
@@ -311,7 +330,7 @@ class OnlineRegController extends AbstractActionController
             if(isset($studentDetails["fatherEmail"]))
                 $studentFather->setEmail($escaper->escapeHtml($studentDetails["fatherEmail"]));
             if(isset($studentDetails["fatherAdress"]))
-                $studentFather->setAdress($escaper->escapeHtml($studentDetails["fatherAdress"]));            
+                $studentFather->setAdresse($escaper->escapeHtml($studentDetails["fatherAdress"]));            
             if(isset($studentDetails["fatherCountry"]))
                 $studentFather->setCountry($escaper->escapeHtml($studentDetails["fatherCountry"]));
             if(isset($studentDetails["fatherCity"]))
@@ -330,7 +349,7 @@ class OnlineRegController extends AbstractActionController
             if(isset($studentDetails["motherEmail"]))
                 $studentMother->setEmail($escaper->escapeHtml($studentDetails["motherEmail"]));
             if(isset($studentDetails["motherAdress"]))
-                $studentFather->setAdress($escaper->escapeHtml($studentDetails["motherAdress"]));                 
+                $studentFather->setAdresse($escaper->escapeHtml($studentDetails["motherAdress"]));                 
                 
             if(isset($studentDetails["motherCountry"]))
                 $studentMother->setCountry($escaper->escapeHtml($studentDetails["motherCountry"]));
@@ -349,7 +368,7 @@ class OnlineRegController extends AbstractActionController
             if(isset($studentDetails["sponsorEmail"]))
                  $studentSponsor->setEmail($escaper->escapeHtml($studentDetails["sponsorEmail"]));
             if(isset($studentDetails["sponsorAdress"]))
-                $studentFather->setAdress($escaper->escapeHtml($studentDetails["sponsorAdress"]));                
+                $studentFather->setAdresse($escaper->escapeHtml($studentDetails["sponsorAdress"]));                
                 
             if(isset($studentDetails["sponsorCountry"]))
                  $studentSponsor->setCountry($escaper->escapeHtml($studentDetails["sponsorCountry"]));

@@ -19,9 +19,9 @@ $isDevMode = false;
 // the connection configuration
 $dbParams = [
     'driver'   => 'pdo_mysql',
-    'user'     => 'udm_root',
+    'user'     => 'Agenla_root',
     'password' => 'wpp',
-    'dbname'   => 'udm_academy',
+    'dbname'   => 'Agenla_academy',
 ];
 
 //$config = ORMSetup::createAnnotationMetadataConfiguration($paths, $isDevMode, null, null, false);

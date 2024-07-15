@@ -31,7 +31,7 @@ class Resource
     /**
      * @var string|null
      *
-     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     * @ORM\Column(name="code", type="string", length=40, nullable=true)
      */
     private $code;
 

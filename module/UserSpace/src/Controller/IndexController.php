@@ -16,7 +16,7 @@ use Application\Entity\AllContractsFollowUpView;
 use Application\Entity\AllContractsView;
 use Application\Entity\Teacher;
 use Application\Entity\FileDocument;
-use Application\Entity\countries;
+use Application\Entity\Countries;
 use Application\Entity\Cities;
 
 class IndexController extends AbstractActionController

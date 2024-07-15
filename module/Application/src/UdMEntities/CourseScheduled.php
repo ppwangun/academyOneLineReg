@@ -1,5 +1,13 @@
 <?php
 
+namespace Application\Entity;
+
+use Application\Entity\Teacher;
+use Application\Entity\TeachingUnit;
+use Application\Entity\Semester;
+use Application\Entity\Subject;
+use Application\Entity\ClassOfStudy;
+use Application\Entity\Resource;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -7,41 +15,85 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CourseScheduled
  *
- * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_course_scheduled1_idx", columns={"date_scheduled_date"}), @ORM\Index(name="fk_course_scheduled_time_slot1_idx", columns={"time_slot_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"})})
  * @ORM\Entity
  */
 class CourseScheduled
 {
     /**
-     * @var \ClassOfStudyHasSemester
+     * @var int
      *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="ClassOfStudyHasSemester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
-     * })
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $classOfStudyHasSemester;
+    private $id;
 
     /**
-     * @var \TimeSlot
+     * @var \DateTime
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="TimeSlot")
+     * @ORM\Column(name="date_scheduled", type="date", nullable=false)
+     */
+    private $dateScheduled;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="starting_time", type="datetime", nullable=true)
+     */
+    private $startingTime;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="ending_time", type="datetime", nullable=true)
+     */
+    private $endingTime;
+
+    /**
+     * @var \Resource
+     *
+     * @ORM\ManyToOne(targetEntity="Resource")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="time_slot_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
      * })
      */
-    private $timeSlot;
+    private $resource;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
 
     /**
      * @var \ClassOfStudy
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="ClassOfStudy")
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
      * })
@@ -49,23 +101,9 @@ class CourseScheduled
     private $classOfStudy;
 
     /**
-     * @var \DateScheduled
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="DateScheduled")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="date_scheduled_date", referencedColumnName="date")
-     * })
-     */
-    private $dateScheduledDate;
-
-    /**
      * @var \Teacher
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Teacher")
+     * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
      * })
@@ -75,61 +113,191 @@ class CourseScheduled
 
 
     /**
-     * Set classOfStudyHasSemester.
+     * Get id.
      *
-     * @param \ClassOfStudyHasSemester $classOfStudyHasSemester
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set dateScheduled.
+     *
+     * @param \DateTime $dateScheduled
      *
      * @return CourseScheduled
      */
-    public function setClassOfStudyHasSemester(\ClassOfStudyHasSemester $classOfStudyHasSemester)
+    public function setDateScheduled($dateScheduled)
     {
-        $this->classOfStudyHasSemester = $classOfStudyHasSemester;
+        $this->dateScheduled = $dateScheduled;
     
         return $this;
     }
 
     /**
-     * Get classOfStudyHasSemester.
+     * Get dateScheduled.
      *
-     * @return \ClassOfStudyHasSemester
+     * @return \DateTime
      */
-    public function getClassOfStudyHasSemester()
+    public function getDateScheduled()
     {
-        return $this->classOfStudyHasSemester;
+        return $this->dateScheduled;
     }
 
     /**
-     * Set timeSlot.
+     * Set startingTime.
      *
-     * @param \TimeSlot $timeSlot
+     * @param \DateTime|null $startingTime
      *
      * @return CourseScheduled
      */
-    public function setTimeSlot(\TimeSlot $timeSlot)
+    public function setStartingTime($startingTime = null)
     {
-        $this->timeSlot = $timeSlot;
+        $this->startingTime = $startingTime;
     
         return $this;
     }
 
     /**
-     * Get timeSlot.
+     * Get startingTime.
      *
-     * @return \TimeSlot
+     * @return \DateTime|null
      */
-    public function getTimeSlot()
+    public function getStartingTime()
     {
-        return $this->timeSlot;
+        return $this->startingTime;
+    }
+
+    /**
+     * Set endingTime.
+     *
+     * @param \DateTime|null $endingTime
+     *
+     * @return CourseScheduled
+     */
+    public function setEndingTime($endingTime = null)
+    {
+        $this->endingTime = $endingTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get endingTime.
+     *
+     * @return \DateTime|null
+     */
+    public function getEndingTime()
+    {
+        return $this->endingTime;
+    }
+
+    /**
+     * Set resource.
+     *
+     * @param \Resource|null $resource
+     *
+     * @return CourseScheduled
+     */
+    public function setResource(\Resource $resource = null)
+    {
+        $this->resource = $resource;
+    
+        return $this;
+    }
+
+    /**
+     * Get resource.
+     *
+     * @return \Resource|null
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return CourseScheduled
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+    
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set subject.
+     *
+     * @param \Subject|null $subject
+     *
+     * @return CourseScheduled
+     */
+    public function setSubject(\Subject $subject = null)
+    {
+        $this->subject = $subject;
+    
+        return $this;
+    }
+
+    /**
+     * Get subject.
+     *
+     * @return \Subject|null
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * Set teachingUnit.
+     *
+     * @param \TeachingUnit|null $teachingUnit
+     *
+     * @return CourseScheduled
+     */
+    public function setTeachingUnit(\TeachingUnit $teachingUnit = null)
+    {
+        $this->teachingUnit = $teachingUnit;
+    
+        return $this;
+    }
+
+    /**
+     * Get teachingUnit.
+     *
+     * @return \TeachingUnit|null
+     */
+    public function getTeachingUnit()
+    {
+        return $this->teachingUnit;
     }
 
     /**
      * Set classOfStudy.
      *
-     * @param \ClassOfStudy $classOfStudy
+     * @param \ClassOfStudy|null $classOfStudy
      *
      * @return CourseScheduled
      */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
     {
         $this->classOfStudy = $classOfStudy;
     
@@ -139,7 +307,7 @@ class CourseScheduled
     /**
      * Get classOfStudy.
      *
-     * @return \ClassOfStudy
+     * @return \ClassOfStudy|null
      */
     public function getClassOfStudy()
     {
@@ -147,37 +315,13 @@ class CourseScheduled
     }
 
     /**
-     * Set dateScheduledDate.
-     *
-     * @param \DateScheduled $dateScheduledDate
-     *
-     * @return CourseScheduled
-     */
-    public function setDateScheduledDate(\DateScheduled $dateScheduledDate)
-    {
-        $this->dateScheduledDate = $dateScheduledDate;
-    
-        return $this;
-    }
-
-    /**
-     * Get dateScheduledDate.
-     *
-     * @return \DateScheduled
-     */
-    public function getDateScheduledDate()
-    {
-        return $this->dateScheduledDate;
-    }
-
-    /**
      * Set teacher.
      *
-     * @param \Teacher $teacher
+     * @param \Teacher|null $teacher
      *
      * @return CourseScheduled
      */
-    public function setTeacher(\Teacher $teacher)
+    public function setTeacher(\Teacher $teacher = null)
     {
         $this->teacher = $teacher;
     
@@ -187,7 +331,7 @@ class CourseScheduled
     /**
      * Get teacher.
      *
-     * @return \Teacher
+     * @return \Teacher|null
      */
     public function getTeacher()
     {

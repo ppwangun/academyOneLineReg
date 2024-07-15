@@ -186,22 +186,11 @@ return [
                     ],
                 ],
             ],
-            
-               'myAcademySpace' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/myAcademySpace',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'myAcademySpace',
-                    ],
-                ],
-            ],            
         ],
     ],
     'view_manager' => [
         'template_path_stack' => [
-            'User' => __DIR__ . '/../view',
+            'user' => __DIR__ . '/../view',
         ],
     ],
     

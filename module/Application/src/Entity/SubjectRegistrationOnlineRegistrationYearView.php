@@ -22,6 +22,14 @@ class SubjectRegistrationOnlineRegistrationYearView
     private $id;
     
     /**
+    * @var integer
+    *
+    * @ORM\Column(name="subject_id", type="integer", nullable=false)
+    */
+    private $subjectId;    
+    
+    
+    /**
     * @var string
     *
     * @ORM\Column(name="code_ue", type="string", length=45, nullable=true)

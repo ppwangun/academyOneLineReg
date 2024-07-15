@@ -140,7 +140,7 @@ class StdAdmissionController extends AbstractRestfulController
             //Sending sms
             
 
-            $msge=  urlencode( "Bonjour et bienvenue à l'UdM.Votre code d'admission est ".$numDossier.".Connectez vous sur le lien http://udmacademy.aed-cm.org pour finaliser votre inscription.");
+            $msge=  urlencode( "Bonjour et bienvenue à l'Agenla.Votre code d'admission est ".$numDossier.".Connectez vous sur le lien http://Agenlaacademy.aed-cm.org pour finaliser votre inscription.");
             $phoneNumber = "+237".$data["phoneNumber"];
            
             $data["msgeStatus"]=$this->studentManager->sendSMS($phoneNumber,$msge);

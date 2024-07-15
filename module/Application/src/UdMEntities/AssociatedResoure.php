@@ -7,11 +7,25 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AssociatedResoure
  *
- * @ORM\Table(name="associated_resoure", indexes={@ORM\Index(name="fk_associated_resoure_course_scheduled1_idx", columns={"course_scheduled_date_scheduled_date", "course_scheduled_class_of_study_id", "course_scheduled_teacher_id", "course_scheduled_class_of_study_has_semester_id", "course_scheduled_time_slot_id"}), @ORM\Index(name="fk_associated_resoure_resource1_idx", columns={"resource_id"})})
+ * @ORM\Table(name="associated_resoure", indexes={@ORM\Index(name="fk_associated_resoure_course_scheduled1_idx", columns={"course_scheduled_date_scheduled_date", "course_scheduled_class_of_study_id", "course_scheduled_teacher_id", "course_scheduled_class_of_study_has_semester_id", "course_scheduled_time_slot_id"}), @ORM\Index(name="fk_associated_resoure_resource1_idx", columns={"resource_id"}), @ORM\Index(name="IDX_A372683CF5A9B154BFF87B758EECD83", columns={"course_scheduled_date_scheduled_date", "course_scheduled_class_of_study_id", "course_scheduled_teacher_id"})})
  * @ORM\Entity
  */
 class AssociatedResoure
 {
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="course_scheduled_class_of_study_has_semester_id", type="integer", nullable=false)
+     */
+    private $courseScheduledClassOfStudyHasSemesterId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="course_scheduled_time_slot_id", type="integer", nullable=false)
+     */
+    private $courseScheduledTimeSlotId;
+
     /**
      * @var \CourseScheduled
      *
@@ -19,9 +33,7 @@ class AssociatedResoure
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="course_scheduled_date_scheduled_date", referencedColumnName="date_scheduled_date"),
      *   @ORM\JoinColumn(name="course_scheduled_class_of_study_id", referencedColumnName="class_of_study_id"),
-     *   @ORM\JoinColumn(name="course_scheduled_teacher_id", referencedColumnName="teacher_id"),
-     *   @ORM\JoinColumn(name="course_scheduled_class_of_study_has_semester_id", referencedColumnName="class_of_study_has_semester_id"),
-     *   @ORM\JoinColumn(name="course_scheduled_time_slot_id", referencedColumnName="time_slot_id")
+     *   @ORM\JoinColumn(name="course_scheduled_teacher_id", referencedColumnName="teacher_id")
      * })
      */
     private $courseScheduledDateScheduledDate;
@@ -39,6 +51,54 @@ class AssociatedResoure
     private $resource;
 
 
+
+    /**
+     * Set courseScheduledClassOfStudyHasSemesterId.
+     *
+     * @param int $courseScheduledClassOfStudyHasSemesterId
+     *
+     * @return AssociatedResoure
+     */
+    public function setCourseScheduledClassOfStudyHasSemesterId($courseScheduledClassOfStudyHasSemesterId)
+    {
+        $this->courseScheduledClassOfStudyHasSemesterId = $courseScheduledClassOfStudyHasSemesterId;
+    
+        return $this;
+    }
+
+    /**
+     * Get courseScheduledClassOfStudyHasSemesterId.
+     *
+     * @return int
+     */
+    public function getCourseScheduledClassOfStudyHasSemesterId()
+    {
+        return $this->courseScheduledClassOfStudyHasSemesterId;
+    }
+
+    /**
+     * Set courseScheduledTimeSlotId.
+     *
+     * @param int $courseScheduledTimeSlotId
+     *
+     * @return AssociatedResoure
+     */
+    public function setCourseScheduledTimeSlotId($courseScheduledTimeSlotId)
+    {
+        $this->courseScheduledTimeSlotId = $courseScheduledTimeSlotId;
+    
+        return $this;
+    }
+
+    /**
+     * Get courseScheduledTimeSlotId.
+     *
+     * @return int
+     */
+    public function getCourseScheduledTimeSlotId()
+    {
+        return $this->courseScheduledTimeSlotId;
+    }
 
     /**
      * Set courseScheduledDateScheduledDate.

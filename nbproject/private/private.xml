@@ -3,12 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Registration/view/Registration/onlinereg/apply.phtml</file>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Registration/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Application/view/layout/layout3.phtml</file>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Application/view/layout/layout.phtml</file>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Registration/view/Registration/onlinereg/endapplication.phtml</file>
-            <file>file:/C:/xampp/htdocs/academyProject/module/Registration/src/Controller/OnlineRegController.php</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Application/view/layout/layout2.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Registration/view/Registration/onlinereg/apply.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Application/view/application/index/index.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Application/view/layout/layout.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Registration/view/Registration/onlinereg/index.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/User/view/user/auth/register.phtml</file>
+            <file>file:/C:/xampp/htdocs/udmonline/module/Application/view/layout/layout3.phtml</file>
         </group>
     </open-files>
 </project-private>

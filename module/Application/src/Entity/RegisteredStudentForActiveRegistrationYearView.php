@@ -87,7 +87,7 @@ class RegisteredStudentForActiveRegistrationYearView
     *
     * @ORM\Column(name="classe", type="string", nullable=true)
     */
-    private $class;
+    private $classe;
     
     /**
     * @var \DateTime
@@ -291,9 +291,9 @@ class RegisteredStudentForActiveRegistrationYearView
      *
      * @return string
      */
-    public function getClass()
+    public function getClasse()
     {
-        return $this->class;
+        return $this->classe;
     } 
     
      /**
