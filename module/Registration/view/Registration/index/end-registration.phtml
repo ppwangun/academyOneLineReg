@@ -78,7 +78,7 @@ class PDF extends TCPDF {
         $this->SetY(-20);
         $this->SetFont('freesans','I',8);
         $this->SetTextColor(34,68,136);
-        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@Agenla.aed-cm.org    Site web :  www.Agenla.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@udm.aed-cm.org    Site web :  www.udm.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
         $this->SetTextColor(0,0,0);
         $this->SetFont('garamond','I',10);
        
@@ -145,7 +145,8 @@ $pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
 $pdf->setFont("coopbl",'',12); 
 $student = $this->student;
 
-$html = '<div  style="width:100%;  text-align:center; background-color:#428bca; color:#191970;">FICHE D\'INSCRIPTION ADMINISTRATIVE ET ACADEMIQUE <br>'
+$html = '<div  style="width:100%;  text-align:center; background-color:#428bca; color:#191970;"><span style="font-size:20pts;">'.$this->acadYr.'</span><br>'
+        . 'FICHE D\'INSCRIPTION ADMINISTRATIVE ET ACADEMIQUE <br>'
         . '<span style="font-size: 8px; font-weight:normal;"><i>ADMINISTRATIVE AND ACADEMIC REGISTRATION FILE</i></span></div>';
 
 // output the HTML content

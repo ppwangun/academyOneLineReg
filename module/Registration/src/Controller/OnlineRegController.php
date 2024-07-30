@@ -144,8 +144,8 @@ class OnlineRegController extends AbstractActionController
            if($_FILES['img_file'])
            {
                 $filename = $_FILES['img_file']['name'][0];   
-                $source = $_SERVER['DOCUMENT_ROOT'] .'/img/'.$filename;
-                $destination = $_SERVER['DOCUMENT_ROOT'] .'/img/'.$filename;
+                $source = $_SERVER['DOCUMENT_ROOT'] .'/images/'.$filename;
+                $destination = $_SERVER['DOCUMENT_ROOT'] .'/images/'.$filename;
                 $filename ="parfait.pdf";
                 // Upload file    
                 move_uploaded_file($_FILES['img_file']['tmp_name'][0],$source);  

@@ -77,5 +77,26 @@ class User
      */
     private $pwdResetTokenCreationDate;
 
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="first_connection", type="boolean", nullable=true, options={"default"="1"})
+     */
+    private $firstConnection = true;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="connected_status", type="boolean", nullable=true)
+     */
+    private $connectedStatus = '0';
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="last_connected_date", type="datetime", nullable=true)
+     */
+    private $lastConnectedDate;
+
 
 }

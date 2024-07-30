@@ -92,6 +92,16 @@ return [
                         'action'     => 'getTeacher',
                     ],
                 ],
+            ],
+               'goStudent' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/goStudent',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'goStudent',
+                    ],
+                ],
             ],            
         ]
     ],

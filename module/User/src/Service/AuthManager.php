@@ -82,6 +82,41 @@ class AuthManager
         
         return $result;
     }
+    
+    /**
+     * Performs a login attempt. If $rememberMe argument is true, it forces the session
+     * to last for one month (otherwise the session expires on one hour).
+     */
+    public function lecturerLogin($phoneNumber, $password, $rememberMe)
+    {   
+        // Check if user has already logged in. If so, do not allow to log in 
+        // twice.
+        if ($this->authService->getIdentity()!=null) {
+                    //redirect to the login action of authController
+            //header('Location: home ');
+            //throw new \Exception('Already logged in');
+            //Before logging in, first clear existing session
+            // $this->authService->clearIdentity();
+        }
+            
+        // Authenticate with login/password.
+        $authAdapter = $this->authService->getAdapter();
+        $authAdapter->setPhoneNumber($phoneNumber);
+        $authAdapter->setPassword($password);
+        $result = $this->authService->lecturerAuthenticate();
+
+        // If user wants to "remember him", we will make session to expire in 
+        // one month. By default session expires in 1 hour (as specified in our 
+        // config/global.php file).
+        if ($result->getCode()==Result::SUCCESS && $rememberMe) {
+            // Session cookie will expire in 1 month (30 days).
+            $this->sessionManager->rememberMe(60*60*24*30);
+        }
+        
+        return $result;
+    }
+    
+    
     /**
      * Performs a login attempt. If $rememberMe argument is true, it forces the session
      * to last for one month (otherwise the session expires on one hour).

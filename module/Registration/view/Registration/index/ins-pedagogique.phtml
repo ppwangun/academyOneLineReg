@@ -55,11 +55,11 @@
                     </div>
                 </div>                        
         </div>                  
-                <div class='row'>
-                    <div ng-repeat="sem in semesters"> 
+                <div class='row'> 
+             
                     
                             
-                        <div class='col-md-6'>
+                        <div class='col-md-6' ng-repeat="sem in semesters">
                         <!-- <h5 ng-bind="sem.code"></h5>-->    
                                         <table class="table table-striped table-condensed small">
                                             <thead>
@@ -73,24 +73,24 @@
                                             </thead>
                                             <tbody >
      
-                                                <tr ng-repeat="subject in currentYrSubjects" ng-if="(sem.code===subject.semester)&&sem.ranking%2===1"> 
+                                                <tr ng-repeat="subject in currentYrSubjects" ng-if="(sem.ranking%2===subject.semRanking%2)&&sem.ranking%2===1"> 
                                                     <td ng-init="calculateSum1(subject)"></td>
                                                     <td ng-bind="subject.codeUe"></td>
                                                     <td ng-bind="subject.nomUe" ></td>
                                                     <td ng-bind="subject.credits"></td>
-
+                                                   
                                                      <td>
                                                          <input type="checkbox" ng-click="toggleSelection1(subject);"  ng-checked="exist1(subject)" /></td>
 
                                                 </tr>
                                                 <tr ng-if="sem.ranking%2===1" class='bg-danger'><th colspan='3'>Total</th><th ng-model="totalCredits1">{{totalCredits1}}</th><th></th></tr>
                                                 
-                                                 <tr ng-repeat="subject in currentYrSubjects" ng-if="(sem.code===subject.semester)&&sem.ranking%2===0"> 
+                                                 <tr ng-repeat="subject in currentYrSubjects" ng-if="(sem.ranking%2===subject.semRanking%2)&&sem.ranking%2===0"> 
                                                     <td ng-init="calculateSum2(subject)"></td>
                                                     <td ng-bind="subject.codeUe"></td>
                                                     <td ng-bind="subject.nomUe" ></td>
                                                     <td ng-bind="subject.credits"></td>
-
+                                                 
                                                      <td>
                                                          <input type="checkbox" ng-checked="exist2(subject)" ng-app="    "ng-click="toggleSelection2(subject);"/></td>
 
@@ -99,15 +99,15 @@
        
                                             </tbody>
                                         </table>
-                        </div>
+                    
                         
                     </div>
                 </div>
                       
                     <div ng-if="backlogs.length>0">
-                    <div class="row" ><div class="col-md-12 text-center"><h5>UE A REPRENDRE</h5> </strong> </div></div>
-                    <div  ng-repeat="sem in semesters">     
-                    <div class='col-md-6' >
+                    <div class="row" ><div class="col-md-12 text-center"><h2>UE A REPRENDRE</h2> </strong> </div></div>
+                        
+                    <div class='col-md-6' ng-repeat="sem in semesters">
                         
                                         <table class="table table-striped table-condensed small" >
                                             <thead>
@@ -147,7 +147,7 @@
                                         </table>                        
                         
                     </div> 
-                    </div>
+                    
               </div>          
 
               <div class="row">

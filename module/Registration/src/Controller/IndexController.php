@@ -1042,7 +1042,7 @@ class IndexController extends AbstractActionController
     {
        $this->entityManager->getConnection()->beginTransaction();
        try
-        { 
+        {  
            $data = $this->params()->fromQuery(); 
 
            $currentClasseSubject = $this->studentManager->getSubjectsByClasse($data["classe"]);

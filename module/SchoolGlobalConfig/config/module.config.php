@@ -334,6 +334,16 @@ return [
                     ],
                 ],
             ],
+            'semesterByClasse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/semesterByClasse[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'semesterByClasse',                        
+                    ],
+                ],
+            ],             
             'searchDptByFaculty' => [
                 'type'    => Literal::class,
                 'options' => [

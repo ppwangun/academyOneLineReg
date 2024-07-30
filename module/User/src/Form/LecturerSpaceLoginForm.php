@@ -37,7 +37,7 @@ class LecturerSpaceLoginForm extends Form
 	    'type'  => 'text',
             'name' => 'phoneNumber',
             'options' => [
-                'label' => 'Numéro Téléphone',
+                'label' => 'Adresse email ou Numéro Téléphone',
             ],
         ]);
     $this->add([

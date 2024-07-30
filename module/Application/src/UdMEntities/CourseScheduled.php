@@ -1,13 +1,5 @@
 <?php
 
-namespace Application\Entity;
-
-use Application\Entity\Teacher;
-use Application\Entity\TeachingUnit;
-use Application\Entity\Semester;
-use Application\Entity\Subject;
-use Application\Entity\ClassOfStudy;
-use Application\Entity\Resource;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -15,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CourseScheduled
  *
- * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"})})
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"})})
  * @ORM\Entity
  */
 class CourseScheduled
@@ -49,6 +41,13 @@ class CourseScheduled
      * @ORM\Column(name="ending_time", type="datetime", nullable=true)
      */
     private $endingTime;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="schedule_type", type="string", length=45, nullable=true)
+     */
+    private $scheduleType;
 
     /**
      * @var \Resource
@@ -192,6 +191,30 @@ class CourseScheduled
     public function getEndingTime()
     {
         return $this->endingTime;
+    }
+
+    /**
+     * Set scheduleType.
+     *
+     * @param string|null $scheduleType
+     *
+     * @return CourseScheduled
+     */
+    public function setScheduleType($scheduleType = null)
+    {
+        $this->scheduleType = $scheduleType;
+    
+        return $this;
+    }
+
+    /**
+     * Get scheduleType.
+     *
+     * @return string|null
+     */
+    public function getScheduleType()
+    {
+        return $this->scheduleType;
     }
 
     /**

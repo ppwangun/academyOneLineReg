@@ -24,7 +24,7 @@ use Application\Entity\SubjectRegistrationOnlineRegistrationYearView;
 use Application\Entity\UnitRegistration;
 use Application\Entity\StudentSemRegistration;
 use Application\Entity\RegistrationPerClassView;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Patrickmaken\AvlyText\Client as AVTClient; 
 
 
@@ -412,7 +412,7 @@ class StudentManager {
             if ($st)
             {
 
-                $senderID = 'Agenla';
+                $senderID = 'UdM';
                 $api_key = "cnZTHTWhO0HHsivMJMWqIXSqdKt8ifH8kP5IRHbqYTquHqjux5ehSLxpWY4lWkkwNlw8";
                 $response = AVTClient::sendSMS($phoneNumber, $msge, $senderID, $api_key);
                           

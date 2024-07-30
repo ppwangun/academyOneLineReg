@@ -10,7 +10,7 @@ namespace SchoolGlobalConfig\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use SchoolGlobalConfig\Form\AnneeAcadForm;
 
 use Application\Entity\Faculty;
@@ -245,7 +245,41 @@ class IndexController extends AbstractActionController
            throw $ex;
         }
         
+    } 
+    
+    public function semesterByClasseAction()
+    {
+      $this->entityManager->getConnection()->beginTransaction();
+       try
+        { 
+           $data = $this->params()->fromQuery(); 
+     
+           $i=0;
+           $sem=[];
+            $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findByCode($data["classe"]);
+            $acadyr = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $semsters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadyr) );
+            foreach($semsters as $key=>$value)
+            {
+                //$hydrator = new ReflectionHydrator();
+                //$data = $hydrator->extract($value->getSemester());
+
+                $sem[$i] = array("code"=>$value->getSemester()->getCode(),"ranking"=>$value->getSemester()->getRanking());
+                $i++;
+            } 
+
+            $this->entityManager->getConnection()->commit();
+            return new JsonModel([
+                $sem
+             ]);
+
+        } catch (Exception $ex) {
+           $this->entityManager->getConnection()->rollBack();
+           throw $ex;
+        }
+        
     }    
+    
     //Collect degrees bases  on training curriculum
     public function cyclebydegreeAction()
     {

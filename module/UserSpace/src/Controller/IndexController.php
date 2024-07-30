@@ -206,5 +206,19 @@ class IndexController extends AbstractActionController
                 $teacher
             ]);           
 
+    } 
+    
+    public function goStudentAction()
+    {
+          
+        
+        $view = new ViewModel([
+             
+         ]);
+        // Disable layouts; `MvcEvent` will use this View Model instead
+        $this->layout()->setTemplate('layout/layout5');
+
+        return $view;            
+
     }    
 }
