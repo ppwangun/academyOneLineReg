@@ -231,7 +231,17 @@ return [
                         'action'     => 'index',
                     ],
                 ],
-            ],             
+            ],
+            'accueil' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/accueil',
+                    'defaults' => [
+                        'controller' => Controller\OnlineRegController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],            
             'home' => [
                 'type'    => Literal::class,
                 'options' => [

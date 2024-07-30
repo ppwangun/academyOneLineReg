@@ -47,6 +47,16 @@ return [
                     // route defined above here.
                 ],
             ],
+            'myAcademySpace' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/myAcademySpace',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'myAcademySpace',
+                    ],
+                ],
+            ],            
                'login' => [
                 'type' => Literal::class,
                 'options' => [
@@ -186,17 +196,7 @@ return [
                     ],
                 ],
             ],
-            
-               'myAcademySpace' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/myAcademySpace',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'myAcademySpace',
-                    ],
-                ],
-            ],            
+     
         ],
     ],
     'view_manager' => [
