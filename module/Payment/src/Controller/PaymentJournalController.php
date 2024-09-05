@@ -10,7 +10,7 @@ namespace Payment\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Payment\Service\PaymentManager;
 
 use Application\Entity\RegisteredStudentView;
@@ -34,8 +34,10 @@ class PaymentJournalController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {   
-            //Find student based on Matricule
+            //Find student based on Matricule 
+           
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule(array("matricue"=>$id));
+            
             $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$this->paymentManager->getCurrentYear()));
             
             $payments = $this->entityManager->getRepository(Payment::class)->findBy(array("adminRegistration"=>$adminRegistration,"academicYear"=>$this->paymentManager->getCurrentYear()));

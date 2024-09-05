@@ -10,7 +10,7 @@ namespace Payment\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Payment\Service\PaymentManager;
 
 use Application\Entity\RegisteredStudentView;

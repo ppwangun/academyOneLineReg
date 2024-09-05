@@ -13,7 +13,7 @@ use Doctrine\DBAL\Types\Type;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\TeachingUnit;
 use Application\Entity\TrainingCurriculum;
 use Application\Entity\ClassOfStudy;

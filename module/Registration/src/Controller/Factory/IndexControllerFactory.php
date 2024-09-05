@@ -25,9 +25,9 @@ class IndexControllerFactory implements FactoryInterface
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $studentManager = $container->get(StudentManager::class);
         $sessionContainer = $container->get('LoggedInUser');
-        //$examManager = $container->get(ExamManager::class);
+        $examManager = $container->get(ExamManager::class);
         
         // Instantiate the controller and inject dependencies
-        return new IndexController($entityManager,$studentManager,$sessionContainer);
+        return new IndexController($entityManager,$studentManager,$sessionContainer,$examManager);
     }
 }

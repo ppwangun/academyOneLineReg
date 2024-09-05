@@ -1,21 +1,19 @@
 <?php
-
-
-
 namespace Application\Entity;
 
+use Application\Entity\Grade;
+use Application\Entity\Deliberation;
+use Application\Entity\TrainingCurriculum;
+use Application\Entity\Degree;
+use Application\Entity\FieldOfStudy;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Application\Entity\TrainingCurriculum;
-use Application\Entity\Degree;
-use Application\Entity\Grade;
-use Application\Entity\Deliberation;
 
 /**
  * ClassOfStudy
  *
- * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_class_of_study_grade1_idx", columns={"grade_id"}), @ORM\Index(name="fk_class_of_study_deliberation1_idx", columns={"deliberation_id"}), @ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"})})
+ * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_deliberation1_idx", columns={"deliberation_id"}), @ORM\Index(name="fk_class_of_study_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"}), @ORM\Index(name="fk_class_of_study_degree2_idx", columns={"degree_id"}), @ORM\Index(name="fk_class_of_study_grade1_idx", columns={"grade_id"})})
  * @ORM\Entity
  */
 class ClassOfStudy
@@ -109,6 +107,16 @@ class ClassOfStudy
     private $deliberation;
 
     /**
+     * @var FieldOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="field_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $fieldOfStudy;
+
+    /**
      * @var Grade
      *
      * @ORM\ManyToOne(targetEntity="Grade")
@@ -117,29 +125,6 @@ class ClassOfStudy
      * })
      */
     private $grade;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AcademicYear", inversedBy="classOfStudy")
-     * @ORM\JoinTable(name="class_of_study_has_academic_year",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
-     *   }
-     * )
-     */
-    private $academicYear = array();
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->academicYear = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
 
     /**
@@ -393,6 +378,30 @@ class ClassOfStudy
     }
 
     /**
+     * Set fieldOfStudy.
+     *
+     * @param \FieldOfStudy|null $fieldOfStudy
+     *
+     * @return ClassOfStudy
+     */
+    public function setFieldOfStudy(FieldOfStudy $fieldOfStudy = null)
+    {
+        $this->fieldOfStudy = $fieldOfStudy;
+    
+        return $this;
+    }
+
+    /**
+     * Get fieldOfStudy.
+     *
+     * @return FieldOfStudy|null
+     */
+    public function getFieldOfStudy()
+    {
+        return $this->fieldOfStudy;
+    }
+
+    /**
      * Set grade.
      *
      * @param Grade|null $grade
@@ -414,41 +423,5 @@ class ClassOfStudy
     public function getGrade()
     {
         return $this->grade;
-    }
-
-    /**
-     * Add academicYear.
-     *
-     * @param AcademicYear $academicYear
-     *
-     * @return ClassOfStudy
-     */
-    public function addAcademicYear(AcademicYear $academicYear)
-    {
-        $this->academicYear[] = $academicYear;
-    
-        return $this;
-    }
-
-    /**
-     * Remove academicYear.
-     *
-     * @param AcademicYear $academicYear
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeAcademicYear(AcademicYear $academicYear)
-    {
-        return $this->academicYear->removeElement($academicYear);
-    }
-
-    /**
-     * Get academicYear.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getAcademicYear()
-    {
-        return $this->academicYear;
     }
 }

@@ -35,21 +35,21 @@ class LoginForm extends Form
     // Add "email" field
     $this->add([
 	    'type'  => 'text',
-            'name' => 'matricule',
+            'name' => 'email',
             'options' => [
-                'label' => 'Matricule',
+                'label' => 'Login',
             ],
         ]);
     $this->add([
 	    'type'  => 'password',
-            'name' => 'birthdate',
+            'name' => 'password',
             'attributes' => [                
                 'class'=>'form-control', 
                 'placeholder'=>'Password',
                 'required' => true,
             ],
             'options' => [
-                'label' => 'Date de naissance',
+                'label' => 'Mot de passe',
             ],
         ]);
         $this->add([            
@@ -100,12 +100,12 @@ class LoginForm extends Form
                 
         // Add input for "email" field
         $inputFilter->add([
-                'name'     => 'matricule',
+                'name'     => 'email',
                 'required' => true,
                 'filters'  => [
                     ['name' => 'StringTrim'],                    
                 ],                
-               /* 'validators' => [
+                'validators' => [
                     [
                         'name' => 'EmailAddress',
                         'options' => [
@@ -113,12 +113,12 @@ class LoginForm extends Form
                             'useMxCheck' => false,                            
                         ],
                     ],
-                ],*/
+                ],
             ]);     
         
         // Add input for "password" field
         $inputFilter->add([
-                'name'     => 'birthdate',
+                'name'     => 'password',
                 'required' => true,
                 'filters'  => [                    
                 ],                

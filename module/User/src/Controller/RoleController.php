@@ -8,7 +8,7 @@
 namespace User\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\View\Model\JsonModel;
 use Application\Entity\Role;
 use Application\Entity\User;

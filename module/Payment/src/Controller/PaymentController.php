@@ -10,7 +10,7 @@ namespace Payment\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Payment\Service\PaymentManager;
 
 use Application\Entity\RegisteredStudentView;
@@ -19,6 +19,8 @@ use Application\Entity\Payment;
 use Application\Entity\AdminRegistration;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
+
+use g105b\phpcsv;
 
 class PaymentController extends AbstractRestfulController
 {
@@ -58,8 +60,8 @@ class PaymentController extends AbstractRestfulController
                 //$data['dateInscription']=$data['dateInscription']->format('Y-m-d');
                 
                 //Convert all text from NOM and PRENOM field to UTF-8
-                $data['nom']= utf8_encode($data['nom']);
-                $data['prenom']= utf8_encode($data['prenom']);
+                //$data['nom']= utf8_encode($data['nom']);
+                //$data['prenom']= utf8_encode($data['prenom']);
             }
 
 
@@ -114,13 +116,13 @@ class PaymentController extends AbstractRestfulController
                 $registeredStd[$key] = $data;
             }            
             
-            //COnvert all text from NOM and PRENOM field to UTF-8
-            for($i=0;$i<sizeof($registeredStd);$i++)
+           //COnvert all text from NOM and PRENOM field to UTF-8
+           /* for($i=0;$i<sizeof($registeredStd);$i++)
             {
                 $registeredStd[$i]['nom']= utf8_encode($registeredStd[$i]['nom']);
                 $registeredStd[$i]['prenom']= utf8_encode($registeredStd[$i]['prenom']);
                 
-            }
+            }*/
          
             $output = $registeredStd;
 
@@ -164,6 +166,7 @@ class PaymentController extends AbstractRestfulController
             $payment->setAmount($data['amount']);
             date_default_timezone_set('Africa/Douala');
             $payment->setDateTransaction(new \DateTime(date("Y-m-d H:i:s")));
+            $payment->setMobilePaymentId($data['paymentid']);
             $payment->setAcademicYear($this->paymentManager->getCurrentYear());
             $payment->setAdminRegistration($std);
  

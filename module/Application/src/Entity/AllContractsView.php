@@ -21,6 +21,12 @@ class AllContractsView
     */
     private $id;
    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="coshs", type="integer", nullable=false)
+    */
+    private $coshs;
     
     /**
     * @var string

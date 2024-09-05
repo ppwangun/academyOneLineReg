@@ -15,11 +15,13 @@ use Application\Entity\Faculty;
  */
 class Teacher
 {
+    
     /**
      * General Failure
      */
      const STATUS_UNACTIVE = 0;
-     const STATUS_ACTIVE = 1;    
+     const STATUS_ACTIVE = 1;
+    
     /**
      * @var int
      *

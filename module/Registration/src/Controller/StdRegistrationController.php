@@ -10,14 +10,16 @@ namespace Registration\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Violet\StreamingJsonEncoder\StreamJsonEncoder; 
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 
 use Application\Entity\RegisteredStudentView;
+use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
 use Application\Entity\Student;
+use Application\Entity\ClassOfStudy;
 
 class StdRegistrationController extends AbstractRestfulController
 {
@@ -33,22 +35,41 @@ class StdRegistrationController extends AbstractRestfulController
     public function get($id) {
         $this->entityManager->getConnection()->beginTransaction();
         try
-        {  
+        {    
             
-            $registeredStd = $this->entityManager->getRepository(Student::class)->findOneByMatricule($id);
+               $registeredStd = $this->entityManager->getRepository(Student::class)->findOneByMatricule($id);
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($registeredStd);
                 $data['dateOfBirth']=$data['dateOfBirth']->format('Y-m-d');
-                if($data['photo'])
-                    $data["photo"]= ["content"=>(stream_get_contents($data['photo']))];
-                
+                if($registeredStd->getPhoto())
+                    $data["photo"]=stream_get_contents($registeredStd->getPhoto());
                 $data["phone_number"] = trim($data['phoneNumber']);
                 
                 $data["fatherPhoneNumber"] = trim($data['fatherPhoneNumber']);
                 $data["motherPhoneNumber"] = trim($data['fatherPhoneNumber']);
                 $data["sponsorPhoneNumber"] = trim($data['sponsorPhoneNumber']);
+                
+                
+                $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($id);
+            
+                $hydrator = new ReflectionHydrator();
+                $student = $hydrator->extract($student);
+                
+                $studentClasse = $student["class"];
+                
+                $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($studentClasse);
+                $studentFilere = $classe->getDegree()->getFieldStudy();
+                $studentFaculty = $studentFilere->getFaculty();
+       
+                $data["filiere"]= $studentFilere->getName();
+                $data['faculty']= $studentFaculty->getName();
+                $data['training'] = $classe->getDegree()->getName();
+                $data['classe'] = $classe->getCode();
                 //$data['dateInscription']=$data['dateInscription']->format('Y-m-d');11
-               //var_dump($data); exit;  
+              // var_dump($data); exit; 
+                
+                
+
             $this->entityManager->getConnection()->commit();
             
             

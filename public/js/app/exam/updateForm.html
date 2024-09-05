@@ -1,0 +1,115 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 100%;  max-height: 100%;width: 100%; height: 100%;  border-radius: 0;" aria-label="Mise à jour examen">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Gestion des présence à l'examen</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+        <form ng-cloak name="updateExamForm">
+            <div layout-gt-sm='row'>
+               <span style="margin-left: 10px; color: #F0F0F0; cursor: default;" ng-click="rollBack()" > Roll Back</span>   
+            </div>
+            <div layout-gt-sm='row'>
+                <div>
+                    <md-button class="md-raised md-primary" ng-click="" > Imprimer la liste</md-button>  
+                </div>
+                <div ng-show="isNoteButtonActive">
+                    <md-button ng-show="importButtonIsVisible" class="md-raised md-primary" ng-click="loadImportForm()" > Importer les notes</md-button> 
+                    <md-button  ng-show="fileLoadButtonIsVisible" class="md-raised md-warn" ng-click="uploadFile()" > Charger le fichier</md-button>
+                     <i ng-show="uploadSuccessIsVisible" style="color: green; font-size: 24px;margin-left: 50px; margin-top: 8px;" class="fa fa-check"></i>
+                </div>
+                <div layout-gt-sm='column' ng-show="inportInputIsVisible">
+                    <md-input-container class="md-block" flex-gt-sm flex='100'>
+                        <div class="custom-file">
+                            <input type="file" data-file-reader-directive="fileContent" accept='.csv' ng-file='uploadfiles'  id="file" data-classButton="btn btn-primary" required> 
+
+                        </div>
+                    </md-input-container> 
+                    <i>format: matricule,num_anonymat,note</i>
+                </div>
+            </div>
+            <div layout-gt-sm='column'>
+            
+                 
+                <table datatable="ng" dt-options="dtOptions"  dt-column-defs="dtColumnDefs" class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th style='width:10%;'>N°</th>
+                        <th>Matricule</th>
+                        <th>Nom</th>
+                        <th>Présence</th>
+                        <th>Num Anonymat</th>
+                        <th>Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stud in students">
+                            <td ng-bind="stud.num"></td>
+                            <td ng-bind="stud.matricule"></td>
+                            <td ng-bind="stud .nom"></td>
+                            <td >           
+                                <md-checkbox  ng-model="stud.attend" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
+                                              ng-true-value="'P'"
+                                              ng-false-value="'A'"             
+                                              class="md-primary">
+            
+                                </md-checkbox>
+                    
+                            </td>
+                            <td>
+                        <md-input-container class="md-block" flex-gt-sm flex="30" >
+                                  <input name="anonymat" ng-model="stud.anonym" aria-label="Anonymat" ng-disabled='!isAnonymatButtonActive||stud.attendance === "A"' md-no-asterisk ng-required='isAnonymatButtonActive' type="number">
+                                      <div ng-messages="updateExamForm.anonymat.$error">
+                                            <div ng-message="required">le champ nom UE est obligatoire</div>
+                                      </div>   
+                                </md-input-container>
+                            
+                            </td>
+                            <td>
+                                <md-input-container class="md-block" flex-gt-sm flex="30">
+                                 
+                                  <input name="note" ng-model="stud.mark" aria-label="Note" ng-disabled ='!isNoteActive||stud.attend === "A"' md-no-asterisk  type="number" step="0.0000001" >
+                                      <div ng-messages="updateExamForm.note.$error">
+                                            <div ng-message="required">le champ nom UE est obligatoire</div>
+
+                                      </div>   
+                                </md-input-container>                                  
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                    
+
+            <md-dialog-actions layout="row">
+
+              <span flex></span>
+              <md-button ng-click="cancel()"> Annuler</md-button>
+
+              <md-button class="md-warn" ng-click="saveAttendance()" ng-show="isAttendanceButtonActive" ng-disabled="updateExamForm.$invalid"> Valider Présence</md-button>
+              <md-button class="md-warn" ng-click="saveAnonymat()" ng-show="isAnonymatButtonActive" ng-disabled="updateExamForm.$invalid"> Valider Anonymat</md-button>
+              <md-button class="md-warn" ng-click="saveNotes()" ng-show="isNoteButtonActive" ng-disabled="updateExamForm.$invalid"> Enrégister note</md-button>
+              <md-button class="md-warn" ng-click="validateNotes()" ng-show="isNoteValidationButtonActive" ng-disabled="updateExamForm.$invalid"> Valider note</md-button>
+              <md-button class="md-warn" ng-click="finaliseNotes()" ng-show="isNoteFinalisationButtonActive" ng-disabled="updateExamForm.$invalid"> Confirmer note</md-button>
+            </md-dialog-actions>
+        </form>    
+          </md-content>
+      </div>
+      
+
+  
+</md-dialog>

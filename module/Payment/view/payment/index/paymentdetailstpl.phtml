@@ -16,7 +16,7 @@ z-index: 120000}
                 <div class='col-lg-2'>
                     <button  type="button" class="btn btn-danger" ng-click="$ctrl.updateClasse()" ng-show="$ctrl.isUpdate" ng-disabled="classForm.$invalid">Modifier</button>
                     <button  type="button" ng-click="$ctrl.addClasse()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="classForm.$invalid">Enrégistrer</button>
-                    <span> <a href="#!/payments">Annuler</a></span>
+                    <span> <a href="#!/payments">[Retour]</a></span>
                 </div>
                 <div class="col-lg-4"></div>
                 <div class="col-lg-2">
@@ -33,7 +33,7 @@ z-index: 120000}
 
 
   
-<div  layout="column" ng-cloak class="md-inline-form">
+<div  layout="column" ng-cloak class="md-inline-form" >
 
 
     <md-content layout-padding >
@@ -76,7 +76,7 @@ z-index: 120000}
 </div>
 <p>&nbsp;</p>
               <!--tabs widget-->
-                <div class="row" >
+                <div class="row" style='padding: 25px;' >
                     <ul class="nav nav-tabs">
                       <li class="active"><a href="#">Historique des paiements</a></li>
 
@@ -86,6 +86,7 @@ z-index: 120000}
                                             <thead>
                                                 <tr class="bg-primary">
                                                     <th >Num</th>
+                                                    <th >ID de paiement</th>
                                                     <th>Date de la transaction</th>
                                                     <th>Montant</th>
                                                 </tr>
@@ -93,10 +94,11 @@ z-index: 120000}
                                             <tbody>
                                                 <tr ng-repeat="pmt in $ctrl.payments" >
                                                   <td ng-bind="pmt.num"></td>
+                                                  <td ng-bind="pmt.mobilePaymentId"></td>
                                                   <td ng-bind="$ctrl.formatDate(pmt.dateTransaction) | date:'dd/MM/yyyy H:m:s'"></td>
                                                   <td ng-bind="pmt.amount | currency:'':0" style="text-align: right"></td>
                                                 </tr>
-                                                <tr class="bg-info"><td colspan=2 style="vertical-align: middle; text-align: center;"><strong>Total</strong></td><td style="text-align: right"><strong>{{$ctrl.totalPayments | currency:'':0}}</strong></td></tr>
+                                                <tr class="bg-info"><td colspan=3 style="vertical-align: middle; text-align: center;"><strong>Total</strong></td><td style="text-align: right"><strong>{{$ctrl.totalPayments | currency:'':0}}</strong></td></tr>
                                             </tbody>
                                         </table>
                     

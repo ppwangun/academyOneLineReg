@@ -1,0 +1,110 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 60%;
+            max-height: auto;
+    width: 60%;
+    height: auto;
+    border-radius: 0;" aria-label="Ajouter une matière">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Importer les dotations d'étudiants</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+<div  ng-cloak>
+        <md-content  layout-padding>
+               <form name="dotationForm" layout-padding>
+                    <div layout-gt-sm='row'  >
+                        <div layout-gt-sm='column' flex="100" >
+                            <md-input-container>
+                                <label>Faculté</label>
+                          
+                                <md-select name="faculty" placeholder="Choix de la faculté" ng-model="school.fac_id"   required>
+                                     <md-option ng-disabled="true"><em>---Choix de la faculté---</em></md-option>
+                                    <md-option ng-value="faculty.id" ng-repeat="faculty in faculties">{{faculty.name}}</md-option>
+                                </md-select>
+                               
+                                <div class="errors" ng-messages="dotationForm.faculty.$error">
+                                  <div ng-message="required">Champ obligatoire</div>
+                                </div>
+                            </md-input-container>  
+                        </div> 
+                    </div> 
+                    <div layout-gt-sm='row'  >                    
+                        <div layout-gt-sm='column' flex="100" >
+                            <md-select name="filiere" placeholder="Choix de la filiere" ng-model="school.fil_id" md-on-open="loadFilieres(school.fac_id)" >
+                                 <md-option ng-disabled="true"><em>---Choix de la faculté---</em></md-option>
+                                <md-option ng-value="filiere.id" ng-repeat="filiere in filieres">{{filiere.name}}</md-option>
+                            </md-select>
+                           
+                        </div>
+                    </div>
+                    <div layout-gt-sm='row'  >                    
+                        <div layout-gt-sm='column' flex="100" >
+                            <md-select name="faculty" placeholder="Choix de la spécialité" ng-model="school.spe_id" md-on-open="loadSpecialities(school.fil_id)">
+                                 <md-option ng-disabled="true"><em>---Choix de la spécialité---</em></md-option>
+                                <md-option ng-value="filiere.id" ng-repeat="spe in specilalities">{{spe.name}}</md-option>
+                            </md-select>
+                            
+                        </div>
+                    </div> 
+                    <div layout-gt-sm='row'  >
+                        <div layout-gt-sm='column' flex="100" >
+                            <md-input-container>
+                                <label>Faculté</label>
+                          
+                                <md-select name="degree" placeholder="Choisir le programm de formation" ng-model="school.deg_id" md-on-open="loadDegrees(school.spe_id)">
+                                     <md-option ng-disabled="true"><em>---Choix du programme de formation---</em></md-option>
+                                    <md-option ng-value="degree.id" ng-repeat="degree in degrees">{{degree.name}}</md-option>
+                                </md-select>
+                            </md-input-container>  
+                        </div> 
+                    </div>                    
+                    <div layout-gt-sm='row'  >                    
+                        <div layout-gt-sm='column' flex="100" >
+                            <md-select name="cycle" placeholder="Choisir du cycle" ng-model="school.cycle" md-on-open="loadFaculties()"  required>
+                                 <md-option ng-disabled="true"><em>---Choix du cycle---</em></md-option>
+                                <md-option ng-value="1" >1</md-option>
+                                <md-option ng-value="2" >2</md-option>
+                                <md-option ng-value="3" >3</md-option>
+                            </md-select>
+                                <div class="errors" ng-messages="dotationForm.cycle.$error">
+                                  <div ng-message="required">Champ obligatoire</div>
+                                </div>                            
+                        </div>
+                    </div>
+                   
+                <div layout-gt-sm="row" >
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Montant frais de scolarité</label>
+                        <input name="feesPaid" ng-model="school.amountToPay" style="background-color:#fab1a0; color: #fff; font-weight: bold" required />
+                        <div ng-messages="dotationForm.feesPaid.$error">
+                            <div ng-message="required">le champ numéro de téléphone est obligatoire</div>
+                            <div ng-message="pattern">Numéro de téléphone invalid</div>
+
+                        </div>                        
+                    </md-input-container>
+
+               </div>                   
+
+                
+                <md-button ng-click="close()" class="md-primary" ng-disabled="dotationForm.$invalid">
+                  Close Sidenav Right
+                </md-button>
+                    </form>               
+         </md-content>
+    </div>
+  
+</md-dialog>

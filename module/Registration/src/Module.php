@@ -11,8 +11,6 @@ use Laminas\ModuleManager\ModuleManager;
 use Laminas\Session\SessionManager;
 use Laminas\Mvc\MvcEvent;
 
-use Registration\Controller\CountriesController;
-
 class Module
 {
     public function getConfig()
@@ -33,28 +31,7 @@ class Module
         $sessionManager = $serviceManager->get(SessionManager::class);
     }
     
+
     
-     // Event listener method.
-    public function onDispatch(MvcEvent $event)
-    {
-        // Get controller to which the HTTP request was dispatched.
-        $controller = $event->getTarget();
-        // Get fully qualified class name of the controller.
-        $controllerClass = get_class($controller);
-        // Get module name of the controller.
-        $moduleNamespace = substr($controllerClass, 0, strpos($controllerClass, '\\'));
-           
-        // Switch layout only for controllers belonging to our module.
-        if ($moduleNamespace == __NAMESPACE__) {
-            $viewModel = $event->getViewModel();
-            $viewModel->setTemplate('layout/layout2');  
-        }        
- 
-        
-        
-
-     
-
-    }    
     
 }

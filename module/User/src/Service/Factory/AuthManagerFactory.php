@@ -21,9 +21,7 @@ class AuthManagerFactory implements FactoryInterface
     {        
         // Instantiate dependencies.
         $authenticationService = $container->get(\Laminas\Authentication\AuthenticationService::class);
-        $authenticationService2 = $container->get(\Laminas\Authentication\AuthenticationService::class);
         $sessionManager = $container->get(SessionManager::class);
-        $entityManager = $container->get('doctrine.entitymanager.orm_default');
         
         // Get contents of 'access_filter' config key (the AuthManager service
         // will use this data to determine whether to allow currently logged in user
@@ -35,6 +33,6 @@ class AuthManagerFactory implements FactoryInterface
             $config = [];
                         
         // Instantiate the AuthManager service and inject dependencies to its constructor.
-        return new AuthManager($entityManager,$authenticationService,$authenticationService2, $sessionManager, $config);
+        return new AuthManager($authenticationService, $sessionManager, $config);
     }
 }

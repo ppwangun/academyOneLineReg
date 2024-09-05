@@ -152,17 +152,17 @@
 
               <div class="row">
                   <md-input-container class="md-block pull-right" flex-gt-sm>
-                      <md-button  ng-click='$ctrl.submitInscriptionPedagogique()' class="md-raised md-warn" ng-disabled="disableSendButton1||disableSendButton2||$ctrl.submitInscriptionButtonDisabled"  <!--ng-disabled="stdRegistrationForm.$invalid"-->Enrégistrer</md-button>
+                      <md-button  ng-click='$ctrl.submitInscriptionPedagogique()' class="md-raised md-warn" ng-disabled="(disableSendButton1||disableSendButton2||$ctrl.submitInscriptionButtonDisabled)"  <!--ng-disabled="stdRegistrationForm.$invalid"-->Enrégistrer</md-button>
                   </md-input-container>
               </div>                        
 
         </div>
            
-              <div ng-show="flag<0">
+              <div ng-if="currentYrSubjects.length<=0">
               <div class="row">
                   <p class="text-center">Grille d'enseignments non encore disponible</p>
                   <md-input-container class="md-block pull-right" flex-gt-sm>
-                      <a ng-click='$ctrl.submitInscriptionPedagogique()'  class="btn btn-danger "     > >Suivant</a>
+                      <a   class="btn btn-danger "  href="endRegistration"  <!--ng-disabled="stdRegistrationForm.$invalid"-->Suivant</a>
                   </md-input-container>
               </div>                  
               </div>

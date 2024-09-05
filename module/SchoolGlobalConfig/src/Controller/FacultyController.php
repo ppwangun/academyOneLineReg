@@ -9,7 +9,7 @@ namespace SchoolGlobalConfig\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\School;
 use Application\Entity\Faculty;
 
@@ -46,7 +46,7 @@ class FacultyController extends AbstractRestfulController
     }
    public function getList()
     {
-        $faculties = $this->entityManager->getRepository(Faculty::class)->findAll();
+        $faculties = $this->entityManager->getRepository(Faculty::class)->findBy([],array("name"=>"ASC"));
         
      
         foreach($faculties as $key=>$value)

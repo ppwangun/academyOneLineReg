@@ -4,8 +4,6 @@ namespace User;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Mvc\Controller\AbstractActionController;
 use User\Controller\AuthController;
-use Registration\Controller\CountriesController;
-use Registration\Controller\OnlineRegController;
 use User\Service\AuthManager;
 use Laminas\Session\SessionManager;
 
@@ -49,7 +47,7 @@ class Module
      */
     public function onDispatch(MvcEvent $event)
     {
-        
+       
         // Get controller and action to which the HTTP request was dispatched.
         $controller = $event->getTarget();
         $controllerName = $event->getRouteMatch()->getParam('controller', null);
@@ -63,14 +61,11 @@ class Module
        
         // Execute the access filter on every controller except AuthController
         // (to avoid infinite redirect).
-
         if ($controllerName!=AuthController::class)
-        if ($controllerName!=OnlineRegController::class)
-        if($controllerName!= CountriesController::class)
         {
             $result = $authManager->filterAccess($controllerName, $actionName);
             
-            if ($result==AuthManager::AUTH_REQUIRED) {
+            if ($result==AuthManager::AUTH_REQUIRED) {  
                 // Remember the URL of the page the user tried to access. We will
                 // redirect the user to that URL after successful login.
                 $uri = $event->getApplication()->getRequest()->getUri();
@@ -83,7 +78,7 @@ class Module
                 $redirectUrl = $uri->toString();
 
                 // Redirect the user to the "Login" page.
-                return $controller->redirect()->toRoute('home', [], 
+                return $controller->redirect()->toRoute('login', [], 
                         ['query'=>['redirectUrl'=>$redirectUrl]]);
             }
             else if ($result==AuthManager::ACCESS_DENIED) {
@@ -93,7 +88,7 @@ class Module
 
         }
 
-     
+        
 
     }
 }

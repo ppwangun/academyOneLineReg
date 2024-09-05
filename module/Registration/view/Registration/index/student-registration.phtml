@@ -62,11 +62,11 @@
        
                         </div>                        
                         <div class="col-md-3">
-                          <span class="small text-danger">Taille limite de la photo:65KO </span>
-                          <img style="width:200px; height:200px;" ng-src="{{$ctrl.student.imageSrc;}}" />      
+                          <span class="small text-danger">Taille limite de la photo:65KO</span>
+                          <img style="width:200px; height:200px;" ng-src="{{$ctrl.student.imageSrc}}" />      
                           <md-input-container class="md-block" flex-gt-sm>
                             
-                              <input  type ="file" name="imageSrc" ng-file-select="onFileSelect($files)" ng-model="$ctrl.student.imageSrc" accept="image/*"   />
+                              <input  type ="file" name="imageSrc" ng-file-select="onFileSelect($files)" ng-model="$ctrl.student.imageSrc" accept="image/*" required  />
                                 <div ng-messages="stdRegistrationForm.imageSrc.$error">
                                     <div ng-message="required">le champ photo est obligatoire</div>
                                     <div ng-message="extension">Format de fichier invalid</div>

@@ -12,6 +12,7 @@ return [
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
             Controller\PaymentController::class => Controller\Factory\PaymentControllerFactory::class,
             Controller\PaymentJournalController::class => Controller\Factory\PaymentJournalControllerFactory::class,
+            Controller\AdmissionPaymentController::class => Controller\Factory\AdmissionPaymentControllerFactory::class,
             Controller\MoratoriumController::class => Controller\Factory\MoratoriumControllerFactory::class,
         ],
     ],
@@ -22,7 +23,7 @@ return [
     ],
     'router' => [
         'routes' => [
-           /* 'Payment' => [
+            'Payment' => [
                 'type'    => 'Literal',
                 'options' => [
                     // Change this to something specific to your module
@@ -37,7 +38,7 @@ return [
                     // You can place additional routes that match under the
                     // route defined above here.
                 ],
-            ],*/
+            ],
 
             'payment' => [
                 'type'    => Segment::class,
@@ -49,7 +50,16 @@ return [
                     ],
                 ],
             ],
-
+            'admissionPayment' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/api/admissionPayment[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\AdmissionPaymentController::class,
+                       
+                    ],
+                ],
+            ],
             'paymentlist' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -70,6 +80,17 @@ return [
                        
                     ],
                 ],
+            ],  
+            'savePymtTransaction' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/savePymtTransaction',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'savePymtTransaction',
+                       
+                    ],
+                ],
             ],            
             'payments' => [
                 'type'    => 'Literal',
@@ -81,6 +102,17 @@ return [
                     ],
                 ],
             ],
+             'newStdRegistrationFeesMgt' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newStdRegistrationFeesMgt',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'newStdRegistrationFeesMgt',
+                       
+                    ],
+                ],
+            ],            
             'moratoriums' => [
                 'type'    => 'Literal',
                 'options' => [
@@ -121,6 +153,36 @@ return [
                     ],
                 ],
             ],
+            'importBalance' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/importBalance',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importBalance',
+                    ],
+                ],
+            ], 
+            'importPayments' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/importPayments',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importPayments',
+                    ],
+                ],
+            ], 
+            'importDotations' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/importDotations',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importDotations',
+                    ],
+                ],
+            ],            
         ],
     ],
     'view_manager' => [

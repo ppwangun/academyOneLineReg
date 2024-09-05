@@ -11,7 +11,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Application\Entity\School;
 
-use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
 
 class SchoolController extends AbstractRestfulController

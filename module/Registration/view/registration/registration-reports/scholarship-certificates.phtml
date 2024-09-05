@@ -1,0 +1,118 @@
+<link rel="stylesheet" href='js/datatables-plugins/dataTables.bootstrap.css'>
+
+
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+
+</style>
+    
+<form  ng-submit=""  name="transcriptForm" ng-cloak novalidate>
+        <div class="well" style="margin-left: -30px; margin-right: -30px;" >
+
+            <div class="row">
+                <div class='col-md-4'>
+  
+                    <span> <a href="#!/home">Retour</a></span>
+                </div>
+                <div class="col-md-8 text-danger"><h3>Impression des certificats de scolarité</h3></div>
+            
+            </div>
+        </div>
+
+<div class="form-view-main" ng  ng-controller="registrationCtrl as $ctrl" ng-cloak>
+    <div class="form-view" ng-init="$ctrl.init()">
+
+
+    <md-content layout-padding >
+
+   
+    <div layout-gt-sm='row' >
+
+        <div layout-gt-sm='column' class="col-md-6"  >
+                <!-- Display examlis on a table -->
+                                <md-autocomplete  md-search-text="$ctrl.searchClasse" 
+                                 md-selected-item="$ctrl.selectedClasse"  
+                                 md-items="item in $ctrl.query($ctrl.searchClasse)" 
+                                 md-item-text="item.code" 
+                                 md-min-length="0"
+                                 
+                                 md-selected-item-change="$ctrl.selectedClasseChange(item)"
+                                 md-input-name="classe"
+                                md-escape-options="clear"
+                                md-require-match=""
+                                md-floating-label="Classe"
+                                input-aria-describedby="favoriteStateDescription" 
+                                required
+                                 >
+                    <md-item-template>
+                      <span md-highlight-text="$ctrl.searchClasse" md-highlight-flags="^i">{{item.code}}</span>
+
+                    </md-item-template>
+                    <md-not-found>
+                      Aucun élément correspondant à "{{$ctrl.searchClasse}}" n'a été trouvé.
+
+                    </md-not-found>
+                </md-autocomplete>
+
+  
+            </div>
+        </div>
+
+           
+         <div layout-gt-sm='row' >
+            <div layout-gt-sm='column'  class="col-md-6" >
+                <md-autocomplete  md-search-text="$ctrl.stdMat" 
+                                 md-selected-item="$ctrl.selectedStd"  
+                                 md-items="std in $ctrl.queryStudent($ctrl.stdMat)" 
+                                 md-item-text="std.matricule" 
+                                 md-min-length="0"
+                                md-no-cache ="true"
+                                 md-selected-item-change="$ctrl.selectedStudentChange(acadYrItem)"
+                                 md-input-name="student"
+                                md-escape-options="clear"
+                                md-require-match=""
+                                md-floating-label="Matricule de l'étudiant"
+                                input-aria-describedby="Student ID"                                 
+                                 >
+                    <md-item-template>
+                      <span md-highlight-text="std.matricule" md-highlight-flags="^i">{{std.matricule}}</span>
+
+                    </md-item-template>
+                    <md-not-found>
+                      Aucun élément correspondant à "{{$ctrl.stdMat}}" n'a été trouvé.
+
+                    </md-not-found>
+                </md-autocomplete>
+            </div>
+             <div layout-gt-sm='column'  class="col-md-6 text-danger" >
+                 {{$ctrl.selectedStd.nom+" "+$ctrl.selectedStd.prenom}}
+             </div>
+        </div>   
+        <div layout-gt-sm="row">
+            <div layout-gt-sm='column'  class="col-md-6" style="font-size:0.8em; color: #0c2461;" >
+            
+
+                   <button class="btn btn-lg-12 btn-inverse pull-right"  
+                           ng-disabled="transcriptForm.$invalid"
+                           ng-click="$ctrl.printScholarshipCertificates()"><i class="fa fa-download" ></i>&nbsp;Télécharger les certificats de scolarité</button>                        
+
+        
+
+                
+            </div>            
+           
+        </div>    
+   
+
+         
+</md-content>
+     
+            </div>  
+        </div>
+  </div>
+  </form>

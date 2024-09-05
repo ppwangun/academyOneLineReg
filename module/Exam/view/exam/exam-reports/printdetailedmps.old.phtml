@@ -1,0 +1,682 @@
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<?php
+//============================================================+
+// File name   : example_048.php
+// Begin       : 2009-03-20
+// Last Update : 2013-05-14
+//
+// Description : Example 048 for TCPDF class
+//               HTML tables and table headers
+//
+// Author: Nicola Asuni
+//
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com LTD
+//               www.tecnick.com
+//               info@tecnick.com
+//============================================================+
+
+/**
+ * Creates an example PDF TEST document using TCPDF
+ * @package com.tecnick.tcpdf
+ * @abstract TCPDF - Example: HTML tables and table headers
+ * @author Nicola Asuni
+ * @since 2009-03-20
+ */
+
+class PDF extends TCPDF {
+    //
+    // This class extends FPDF so we may customize the header and footer
+    // of the PDFs that are created
+    //
+
+    function Footer() {
+        $footertext="Report generated with UdMAcademy 2.0 By WTECH (" . date("d-m-Y H:i") . ")";
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        $this->SetFont('helvetica', '', 6);
+        // Page number
+         
+        $this->Cell(0, 5, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $html ='<hr>';
+        $this->writeHTML($html, true, false, true, false, '');
+        $this->writeHTML($footertext, false, true, false, true);
+        
+        $this->SetY(-20);
+        $this->SetFont('freesans','I',8);
+        $this->SetTextColor(34,68,136);
+        $this->Cell(0, 5, 'TCC: Total crédits capitalisés  TCI Total crédits inscrits'
+                . ' MPS: Moyenne pondérée semestrielle MPC: Moyenne pndérée cumulée ADM: Admis(e) AJR:Ajourné(e) RED: Redouble EXC: Exclu(e)', 0, false, 'L', 0, '', 0, false, 'T', 'M');
+            
+    }  // end of the Footer function
+}
+
+// create new PDF document
+$pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Parfait Pascal Wangun');
+$pdf->SetTitle('Universté des Montagnes');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, pv , test, guide');
+
+
+// set default header data
+$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr."\n".$this->semestre);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP+5, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM+5);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('helvetica', 'B', 16);
+
+// add a page
+$pdf->AddPage('L','A4');
+$pdf->Write(0, $this->classe, '', 0, 'L', true, 0, false, false, 0);
+//$pdf->Write(0, $nomUe.':    '.$codeUe, '', 0, 'L', true, 0, false, false, 0);
+$pdf->SetFont('helvetica', '', 2);
+$pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
+$pdf->SetFont('helvetica', '', 8);
+$sem = $this->semestre;
+
+function w_createHeader($students,$width_sem_1,$width_col_1,$width_col_2,$width_mps,$font_header_size,$sem,$width_grd,$width_moy,$width_col_suject,$font_mark_size,$ranking)
+{
+    $tblHeader = '<tr style="background-color:#428bca; color: #ffffff;  font-size: 8px;">';
+    $counter = 0;
+    $tblHeader_2 ='<tr   style="background-color:#428bca; color: #ffffff; font-size: '.$font_header_size.' ">';
+    $tblHeader_3 ='<tr   style="background-color:#428bca;  font-size: '.$font_header_size.' ">';
+    foreach($students[0] as $key=>$values)
+    {
+        if(strtolower($key)==strtolower("MPCPREV"))
+        {   
+            
+            $tblHeader.= '<th rowspan="2" style = " font-size: '.$font_header_size.';" width='.$width_sem_1.' >MPC </th>';
+            //Doing nothing
+        }
+        if(strtolower($key)==strtolower("CrV"))
+        {   
+            
+            $tblHeader.= '<th rowspan="2" style = " font-size: '.$font_header_size.'; " width='.$width_sem_1.' >TCC </th>';
+            //Doing nothing
+        }
+        if(strtolower($key)==strtolower("tcis"))
+        {   
+            
+            $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:25px;" >TCI </th>';
+            //Doing nothing
+        }
+        if(strtolower($key)==strtolower("tcvs"))
+        {   
+            
+            $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:25px;" >TCC </th>';
+            //Doing nothing
+        }    
+         if(strtolower($key)==strtolower("tcia"))
+        {  
+            if(($ranking%2)==0)
+                $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:25px;" >TCI </th>';
+            //Doing nothing
+        }
+        if(strtolower($key)==strtolower("tcva"))
+        {   
+            if(($ranking%2)==0)
+                $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:25px" >TCC </th>';
+            //Doing nothing
+        } 
+        if(strtolower($key)==strtolower("tcic"))
+        {   
+
+            $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:30px; ">TCI </th>';
+            //Doing nothing
+        }        
+        if(strtolower($key)==strtolower("tcc"))
+        {   
+
+            $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:30px; ">TCC </th>';
+            //Doing nothing
+        } 
+        if(strtolower($key)==strtolower("percent"))
+        {   
+
+            $tblHeader.= '<th rowspan="2" style = " font-size: 8px; width:30px;">%val </th>';
+            //Doing nothing
+        }         
+       // $tblHeader.= '<th rowspan="2" style = "height: 20px; text-align: center; width: '.$width_col_1.' text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+
+       
+    }
+   
+    $tblHeader =$tblHeader.'</tr>';
+    
+    foreach($students[0] as $key=>$values)
+    {
+       
+        $colspan = "1";
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tblHeader_2.= '<th rowspan="3" align="center" width="30px">Num</th><th rowspan="3"   style = "height: 20px; text-align: center; font-size: '.$font_header_size.'; width: '.$width_col_1.' text-align: center;"><strong>Matricule</strong></th>';
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            $width = "22%;";
+             $tblHeader_2.= '<th rowspan="3"  style = "height: 20px; text-align: center; font-size: '.$font_header_size.'; width: '.$width_col_2.' text-align: center;"><strong>Nom</strong></th>';
+             $tblHeader_2.= '<th  colspan="2" width ="6%"><strong>SEM N-1</strong></th>';
+        }
+        elseif(strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+             $tblHeader_2.= '<th rowspan="3"  style = "height: 20px; padding:8px; width: '.$width_grd.'; text-align: center;"><strong>'.$key.'</strong></th>';
+        }
+        elseif(strtolower($key)=="tcis")
+        {
+             $tblHeader_2.= '<th colspan="2"  style = "height: 20px;  padding:8px; width: 50px; text-align: center;"><strong>'.$sem.'</strong></th>';
+        }     
+        elseif(strtolower($key)=="tcia"  )
+        {
+            if(($ranking%2)==0)
+                $tblHeader_2.= '<th colspan="2"  style = "height: 20px; padding:8px; width: 50px; text-align: center;"><strong>Année</strong></th>';
+        } 
+        elseif(strtolower($key)==strtolower("tcic")) {//Doing nothing
+
+            $tblHeader_2.= '<th colspan="3"  style = "width: 90px;   text-align: center;"><strong>Cycle</strong></th>';            
+        }        
+        elseif(strtolower($key)==strtolower("note".$counter))
+        {   
+            $counter++;
+            //Doing nothing
+        }
+        elseif(strtolower($key)==strtolower("credits".$counter))
+        {   
+            //$counter++;
+            //Doing nothing 
+            
+            $tblHeader_3.='<th align="center" color="#ffffff">'.$values.'</th>';
+        }        
+        elseif( strtolower($key)==strtolower("MPCPREV")||strtolower($key)==strtolower("CrV") || strtolower($key)=="tcvs" || strtolower($key)=="tcva"|| strtolower($key)=="tcc"|| strtolower($key)=="percent")
+        {   
+            
+        
+            //Doing nothing
+        }
+
+        elseif(strtolower($key)==strtolower("MENTION")) {//Doing nothing
+            $tblHeader_2.= '<th rowspan="3"  style = "height: 20px; font-size:6px; width: '.$width_mps.'; text-align: center;"><strong>MENTION</strong></th>';
+        } 
+        elseif(strtolower($key)==strtolower("DECISION")) {//Doing nothing
+            if(($ranking%2==0))
+                $tblHeader_2.= '<th rowspan="3"  style = "height: 20px; font-size:6px; width: '.$width_mps.'; text-align: center;"><strong>DECISION</strong></th>';
+        }        
+        else
+        { 
+
+             $tblHeader_2.= '<th rowspan="2" style = " font-size: '.$font_header_size.'; height: 20px; padding:8px; width: '.$width_col_suject.'; text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+             
+             
+             
+        }       // else $width = "";
+        //Table header
+       
+    }
+$tblHeader_2 =$tblHeader_2.'</tr>';
+$tblHeader_3 ='<th></th><th></th><th></th><th></th><th></th>'.$tblHeader_3.'</tr>';    
+
+$tblHeader =$tblHeader_2.$tblHeader.$tblHeader_3;
+return $tblHeader;
+}
+
+$students = $this->students;
+$ranking = $this->semRanking;
+
+//report template configuration
+//we are going to construc the template by considering the number of the column to display
+
+//Number of columns
+
+$numColumns = sizeof($students[0]);
+              
+                $width_col_1 = "7%";
+                $width_col_2 = "20%";
+                $width_mps = "3.5%";
+                $width_grd = "3.5%";
+                $font_header_size = "10px";
+                $font_size = "10px;";
+                $font_mark_size = "10px;";
+                $width_sem_1 = "3%";
+                $sem = $this->semestre;
+                //echo $numColumns; exit;
+            if($numColumns<=25) $width_col_suject = "5%";
+            elseif($numColumns<=28) $width_col_suject = "4%";
+            elseif($numColumns<=34) $width_col_suject = "3.5%";
+            elseif($numColumns<=46)
+            {
+                $width_col_suject = "3.2%";
+                $font_header_size = "8px";
+            }
+            elseif($numColumns<=57){
+            $width_col_suject = "2.4%";
+            $font_header_size = "8px";
+            }
+            else{
+            $width_col_suject = "2.1%";
+            $font_header_size = "8px"; 
+            $font_mark_size = "9px;";
+            }
+                
+      
+
+$tblHeader =$this->w_createHeader($students,$width_sem_1,$width_col_1,$width_col_2,$width_mps,$font_header_size,$sem,$width_grd,$width_moy,$width_col_suject,$font_mark_size,$ranking);
+
+
+
+$tblBody = '';
+$i=0;
+$k=0;
+
+foreach($students as $stud)
+{
+    $tblBody.='<tr nobr="true">';
+    $counter = 0;
+    $k++;
+    
+    foreach($stud as $key=>$value)
+    {
+        //Table header
+        $align = "center";
+        $color = "#ffffff;";
+        
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tblBody.= '<td align="center" width="30px">'.$k.'</td><td style = "font-size: '.$font_size.' width: '.$width_col_1.'; text-align: '.$align.'; "> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            
+            $align = "left;";
+            $tblBody.= '<td style = "font-size: '.$font_size.' width: '.$width_col_2.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)==strtolower("CrV") )
+        {
+            
+            $align = "left;";
+            $tcc = $value;
+            $tblBody.= '<td style = "font-size: '.$font_size.' ; text-align: '.$align.'; width: '.$width_sem_1.'"> &nbsp;'.$value.'</td>'; 
+        } 
+        elseif(strtolower($key)==strtolower("MPCPREV") )
+        {
+            
+            $align = "left;";
+            $tblBody.= '<td style = "font-size: '.$font_size.';  text-align: '.$align.'; width: '.$width_sem_1.'"> &nbsp;'.$value.'</td>'; 
+        }        
+        elseif(strtolower($key)=="tci" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+            
+            if(strtolower($key)=="tci")  $color_1= "#dcdde1;"; 
+            if(strtolower($key)=="tcc")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="mps")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            $tblBody.= '<td style = "font-weight: bold; font-size: '.$font_size.' background-color:'.$color_1.' width: '.$width_grd.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }
+        elseif(strtolower($key)=="tcis" || strtolower($key)=="tcvs")
+        {
+            
+            if(strtolower($key)=="tci")  $color_1= "#dcdde1;"; 
+            if(strtolower($key)=="tcis")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="mps")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            $tblBody.= '<td style = "font-weight: bold; font-size: '.$font_size.'; width: 25px; background-color:'.$color_1.'  text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }  
+        elseif(strtolower($key)=="tcia" || strtolower($key)=="tcva" )
+        {
+            
+             
+            if(strtolower($key)=="tcc")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="tcia")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            
+            if(($ranking%2==0))
+            $tblBody.= '<td style = "font-weight: bold; font-size: '.$font_size.'; width: 25px; background-color:'.$color_1.'  text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }  
+        elseif(strtolower(strtolower($key)=="tcic"|| strtolower($key)=="tcc"))
+        {
+            
+            if(strtolower($key)=="percent")  $value= $value."%"; 
+            $width = "30px";
+            //if(strtolower($key)=="tcc")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="percent")   $width= "30px";
+            $color_1= "#dcdde1;";
+            $tblBody.= '<td style = " font-size: '.$font_size.'; width:'.$width.'; background-color:'.$color_1.';  text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }         
+        elseif(strtolower($key)=="percent")
+        {
+            
+            if(strtolower($key)=="percent")  $value= $value."%"; 
+            $width = "30px";
+            //if(strtolower($key)=="tcc")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="percent")   $width= "30px";
+            $color_1= "#dcdde1;";
+            $tblBody.= '<td style = " font-size: 8px; width:'.$width.'; background-color:'.$color_1.';  text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }        
+        elseif(strtolower($key)==strtolower("note".$counter) )
+        {
+            $color_font = "#000000;";
+           
+          if($value["grd"]=="F"||$value["grd"]=="E") {$color = "#bb1924;"; $color_font ="#ffffff;";}
+          //$tblBody.= '<td style = "color:'.$color_font.'  font-size: '.$font_mark_size.' background-color:'.$color.' width: '.$width_moy.'; text-align: '.$align.'"> &nbsp; '.$value["moy"].'</td>'; 
+          $tblBody.= '<td style = "color: '.$color_font.' font-size: '.$font_mark_size.' width: '.$width_col_suject.'; background-color:'.$color.'   text-align: '.$align.'"> &nbsp;'.$value["grd"].'</td>'; 
+          $counter++;
+        }
+        elseif(strtolower($key)==strtolower("MENTION")) $mention = $value;
+       // elseif(strtolower($key)==strtolower("PERCENTAGE")) $percentage = $value;
+        elseif(strtolower($key)==strtolower("DECISION"))
+        {
+            $decision = $value;
+            $bgColor = "#ffffff";
+            $color_d = "#212F3D";
+            if($decision=="RED"||$decision=="AJR")
+            {
+                $bgColor = "#000000";
+                $color_d="#ffffff;";
+            }
+            elseif ($decision =="EXC") { $bgColor = "#bb1924;"; $color_d="#ffffff;"; }
+             
+        }
+
+      
+        
+    }
+   // $tblBody.= '<td style = "color: '.$color_font1.' font-size: '.$font_mark_size.' width: '.$width_mps.' background-color:'.$color.'   text-align: '.$align.'"> &nbsp;'.(number_format($percentage,1)).'%</td>';
+    $tblBody.= '<td style = "color: '.$color_font1.' font-size: '.$font_mark_size.' width: '.$width_mps.' background-color:'.$color.'   text-align: '.$align.'"> &nbsp;<strong>'.$mention.'</strong></td>';
+    if(($ranking%2==0))
+        $tblBody.= '<td style = " color: '.$color_d.'; font-size: '.$font_mark_size.'; width: '.$width_mps.'; background-color:'.$bgColor.';   text-align: '.$align.';"> &nbsp;<strong>'.$decision.'</strong></td>';
+    $tblBody.='</tr>';
+}
+
+function createHeader2($students,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$sem,$width_grd,$width_moy,$width_col_suject,$font_mark_size)
+{
+    
+    $counter = 0;
+    $tblHeader_2 ='<tr   style="background-color:#428bca; font-size: '.$font_header_size.' ">';
+
+   
+   
+    
+    foreach($students[0] as $key=>$values)
+    {
+       
+        $colspan = "1";
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tblHeader_2.= '<th style = " text-align: center; font-size: '.$font_header_size.'; width: '.$width_col_1.' text-align: center;"><strong>Matricule</strong></th>';
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            $width = "22%;";
+             $tblHeader_2.= '<th   style = " text-align: center; font-size: '.$font_header_size.'; width: '.$width_col_2.' text-align: center;"><strong>Nom</strong></th>';
+             //$tblHeader_2.= '<th  colspan="2"><strong>SEM N-1</strong></th>';
+        }
+        elseif(strtolower($key)=="tci" || strtolower($key)=="tcc" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+             $tblHeader_2.= '<th   style = " padding:8px; width: '.$width_mps.'; text-align: center;"><strong>'.$key.'</strong></th>';
+        }
+        elseif(strtolower($key)==strtolower("note".$counter))
+        {   
+            $counter++;
+            //Doing nothing
+        }
+       /* elseif(strtolower($key)==strtolower("MPCPREV")||strtolower($key)==strtolower("CrV"))
+        {   
+            
+         
+            //Doing nothing
+        } */       
+      
+        else{ 
+
+             $tblHeader_2.= '<th  style = " font-size: '.$font_header_size.'; height: 20px; padding:8px; width: '.$width_col_suject.'; text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+        }       // else $width = "";
+        //Table header
+       
+    }
+$tblHeader_2 =$tblHeader_2.'</tr>';
+    
+
+$tblHeader =$tblHeader_2;
+return $tblHeader;
+}
+
+//$tblHeader = createHeader($students,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$sem,$width_grd,$width_moy,$width_col_suject,$font_mark_size);
+
+$tbl2Body = '';
+foreach($studentsWithBaclogs as $stud)
+{
+    $tbl2Body.='<tr nobr="true">';
+    $counter = 0;
+    foreach($stud as $key=>$value)
+    {
+        //Table header
+        $align = "center";
+        $color = "#ffffff;";
+        
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' width: '.$width_col_1.'; text-align: '.$align.'; "> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            
+            $align = "left;";
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' width: '.$width_col_2.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="tci" || strtolower($key)=="tcc" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+            
+            if(strtolower($key)=="tcri")  $color_1= "#dcdde1;"; 
+            if(strtolower($key)=="tcrv")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="mps")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' background-color:'.$color_1.' width: '.$width_mps.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }
+        elseif(strtolower($key)==strtolower("note".$counter) )
+        {
+            $color_font = "#000000;";
+           
+          if($value["grd"]=="F"||$value["grd"]=="E") {$color = "#bb1924;"; $color_font ="#ffffff;";}
+          if($value["grd"]==""||$value["grd"]=="") {$color = "#E8E8E8;"; $color_font ="#ffffff;";}
+          $tbl2Body.= '<td style = "color: '.$color_font.' font-size: '.$font_mark_size.' width: '.$width_col_suject.'; background-color:'.$color.'   text-align: '.$align.'"> &nbsp;'.(($value["grd"])?$value["grd"]:$value["moy"]).'</td>'; 
+         // $tbl2Body.= '<td style = "color: '.$color_font.' font-size: '.$font_mark_size.' background-color:'.$color.'  width: '.$width_grd.'; text-align: '.$align.'"> &nbsp;'.$value["grd"].'</td>'; 
+          $counter++;
+        }
+      
+        
+    }
+    $tbl2Body.='</tr>';
+}
+
+function createLegend($subjects,$grade)
+{
+    $counter=0;
+    
+    //$header='<tr><th style="width:10%">Num</th><th style="width:25%">Code UE</th><th style="width:65%">Nome UE</th></tr>';
+    $header='';
+    $table1='';
+    $table2='';
+    foreach($subjects as $sub)
+    { 
+        $counter++;
+       //if($counter%2<>0) 
+       $table1.='<tr><td style="width:15%">'.$sub["codeUe"].'</td><td style="width:85%">'.$sub["nomUe"].'</td></tr>'; 
+       //else
+       //$table2.='<tr><td style="width:15%">'.$sub["codeUe"].'</td><td style="width:85%">'.$sub["nomUe"].'</td></tr>';
+       
+    }
+    $table2='<tr style="background-color:#000000; color:#ffffff;"><td align="center" colspan="6"></td></tr>';
+    $table2.='<tr style="background-color:#000000; color:#ffffff;"><td><strong>NoteMin/20</strong></td><td><strong>NoteMax/20</strong></td><td><strong>NoteMin/100</strong></td><td><strong>NoteMax/100</strong></td>'
+            . '<td><strong>Grade</strong></td><td><strong>Points</strong></td></tr>';
+    foreach($grade as $sub)
+    { 
+        $counter++;
+       //if($counter%2<>0) 
+        
+       $table2.='<tr><td align="center">'.$sub["minsur20"].'</td><td align="center">'.$sub["maxsur20"].''
+               . '</td><td align="center">'.$sub["minsur100"].'</td><td align="center">'.$sub["maxsur100"].'</td>'
+               . '<td align="center">'.$sub["gradeValue"].'</td><td align="center">'.$sub["gradePoints"].'</td></tr>'; 
+       //else
+       //$table2.='<tr><td style="width:15%">'.$sub["codeUe"].'</td><td style="width:85%">'.$sub["nomUe"].'</td></tr>';
+       
+    }
+    $table1='<table>'.$header.'<tbody>'.$table1.'</tbody></table>';
+    $table2='<table border="1">'.$header.'<tbody>'.$table2.'</tbody></table>';
+    $table='<table ><tr nobr="true"  ><td>'.$table1.'</td><td>'.$table2.'</td></tr></table>';
+    
+    return $table;
+    
+}
+
+$numColumns = sizeof($studentsWithBaclogs[0]);
+$tblHeader2 = createHeader2($studentsWithBaclogs,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$font_size,$width_grd,$width_moy,$width_col_suject,$font_mark_size);
+$tbl = '<thead>'.$tblHeader.'</thead>'.$tblBody;
+$tbl2 = '<thead>'.$tblHeader2.'</thead>'.$tbl2Body;
+$pdf->SetFont('helvetica', 'B', 16);
+$pdf->Cell(0, 0, 'PROCES VERBAL RECAPITULATIF', 0, 0, 'C');
+$pdf->SetY(50);
+
+$pdf->SetFont('helvetica', '', 8);
+//echo $numColumns; exit;
+$tbl = <<<EOD
+       
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
+    $tbl
+        </table>
+EOD;
+$pdf->writeHTML($tbl, true, false,true, false, 'c');
+if(!empty($this->studentsWithBaclogs))
+{
+//$pdf->addPage();
+$pdf->SetFont('helvetica', 'B', 16);
+$pdf->writeHtml('Unités d\'enseignement reprises (dettes)', true, false,true,'c');
+//$pdf->SetY(50);
+
+
+$pdf->SetFont('helvetica', '', 8);
+$tbl = <<<EOD
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
+    $tbl2
+        </table>   
+EOD;
+
+$pdf->writeHTML($tbl, true, false,true, false, 'c');
+}
+
+
+$tbl2 = createLegend($this->subjects,$this->grade);
+$tbl = <<<EOD
+       
+    $tbl2
+         
+EOD;
+
+$pdf->writeHTML($tbl, true, false,true, false, 'c');
+
+$pdf->SetFont('helvetica', 'B', 20);
+$pdf->SetTextColor(255,0,0);
+if($ranking%2==0)
+    $pdf->MultiCell(0, 0, $this->msge,0,'C');
+
+
+
+$tbl = <<<EOD
+
+        <table cellspacing="0" cellpadding="1" border="0" margin="15px" >
+    <td style = "text-align: center; font-weight: bold; font-style: italic;">  Le président du jury </td><td style="text-align: center; font-weight: bold; font-style: italic;"> Les membres du jury</td><td style="text-align: center; font-weight: bold; font-style: italic;">Le(s) rapporteur(s)</td>
+        </table>
+EOD;
+
+$pdf->SetFont('helvetica', '', 18);
+$pdf->SetTextColor(0,0,0);
+$pdf->writeHTML($tbl, true, false, false, false, '');
+ob_end_clean();
+//Close and output PDF document
+
+$pdf->Output($_SERVER["DOCUMENT_ROOT"].'impressions/'.preg_replace('/\s+/', '',$this->classe.$this->semestre).'-'.date("d-m-Y-H-i").'.pdf', 'F');
+?>
+
+        <style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+   <md-dialog style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Mango (Fruit)">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Impression PV récapitulatif</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div  class="md-dialog-content">
+
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '',$this->classe.$this->semestre.'-').date("d-m-Y-H-i").'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
+                     
+
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Fermer
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

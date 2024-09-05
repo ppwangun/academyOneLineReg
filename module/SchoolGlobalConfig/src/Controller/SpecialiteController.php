@@ -9,7 +9,7 @@ namespace SchoolGlobalConfig\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\FieldOfStudy;
 use Application\Entity\Faculty;
 use Application\Entity\Department;
@@ -51,7 +51,7 @@ class SpecialiteController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {      
-            $spes = $this->entityManager->getRepository(Speciality::class)->findAll([],array("name"=>"ASC"));
+            $spes = $this->entityManager->getRepository(Speciality::class)->findBy([],array("name"=>"ASC"));
             
             foreach($spes as $key=>$value)
             {
@@ -103,7 +103,7 @@ class SpecialiteController extends AbstractRestfulController
             $spe= new Speciality();
             $spe->setName($data['name']);
             $spe->setCode($data['code']);
-            $spe->setStatus($data['status']);
+            (isset($data['status']))?$spe->setStatus($data['status']):$spe->setStatus(0);
 
             $fil = $this->entityManager->getRepository(FieldOfStudy::class)->find($data['fil_id']);
             $spe->setFieldOfStudy($fil);

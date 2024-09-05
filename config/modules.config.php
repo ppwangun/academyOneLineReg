@@ -6,8 +6,10 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
-    'Laminas\Cache',
     'Laminas\Paginator',
+    'Laminas\Validator',
+    'Laminas\Serializer',
+    'Laminas\Cache',
     'Laminas\Mvc\Plugin\FilePrg',
     'Laminas\Mvc\Plugin\FlashMessenger',
     'Laminas\Mvc\Plugin\Identity',
@@ -22,16 +24,16 @@ return [
     'Laminas\Filter',
     'Laminas\Hydrator',
     'Laminas\Router',
-    'Laminas\Validator',
     'Laminas\Diactoros',
-    'DoctrineModule',
     'Laminas\Cache\Storage\Adapter\Filesystem',
     'Laminas\Cache\Storage\Adapter\Memory',
+    'DoctrineModule',
     'DoctrineORMModule',
+    'Exam',
     'Application',
     'User',
     'Registration',
     'Payment',
     'SchoolGlobalConfig',
-    'UserSpace'
+    'Teacher'
 ];

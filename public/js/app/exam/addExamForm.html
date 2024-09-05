@@ -1,0 +1,110 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 60%;
+            max-height: auto;
+    width: 60%;
+    height: auto;
+    border-radius: 0;" aria-label="Ajouter une matière">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools" ng-cloak>
+        <h2>Duplication des notes  de l'évaluation {{currentExamCode}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+        <form  name="subjectForm">
+            <div layout-gt-sm='column'>
+                    <div>
+                        
+                      <form name="subejctForm">
+                          <div layout='row' flex>
+                                                    
+                            <md-input-container class="md-icon-float md-block" flex-gt-sm flex>
+                          
+                                  <md-autocomplete  md-search-text="examCode" 
+                                                   md-selected-item="selectedExam" 
+                                                   
+                                                   md-items="item in query(examCode)" 
+                                                   md-item-text="item.code" 
+                                                   md-min-length="0"
+                                                   placeholder="Code Evaluation" 
+                                                   md-selected-item-change="selectedExamChangeChange(item)"
+                                                   md-input-name="exam"
+                                                   md-no-asterisk
+                                                   required>
+                                      <md-item-template>
+                                        <span md-highlight-text="examCode" md-highlight-flags="^i">{{item.code}}[{{item.subject}}]</span>
+
+                                      </md-item-template>
+                                      <md-not-found>
+                                        No subjects matching "{{subject}}" were found.
+                                        <a ng-click="">Create a new one!</a>
+                                      </md-not-found>
+                                </md-autocomplete>
+                                      <div ng-messages="subjectForm.subject.$error">
+                                          <div ng-message="required">Ce champ est obligatoire</div>
+                                      </div> 
+                            </md-input-container>
+                            <div>
+                                <md-button class=" md-raised md-warn" ng-disabled="selectedExam === null" ng-click="addExam()">
+                                <!-- below is the material icons -->
+                                    <md-icon class="fa fa-plus"></md-icon>
+                                </md-button>
+                            </div>
+                              
+                         
+                          </div>
+            </div>
+
+    
+        <table class="table">
+            <thead>
+                    <tr>
+                        
+                        <th scope="col">Code Evaluation</th>
+                        <th scope="col">UE</th>
+                        <th scope="col">Classe</th>
+                        <th scope="col">Semestre</th>
+                        <th scope="col"></th>
+                    </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="sub in exams" >
+                  
+                  <td ng-bind="sub.code"></td>
+                  <td ng-bind="sub.subject"></td>
+                  <td ng-bind="sub.classe"></td>
+                  <td ng-bind="sub.semester"></td>
+                  <td ><button  type="button" ng-click="removeExam(sub)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span></td>
+                </tr>
+            
+        </table>
+            
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()"> Annuler</md-button>
+      <md-button class="md-warn" ng-click="saveChoices()" >
+          <span class="fa fa-check">  Dupliquer </span>
+      </md-button>
+
+    </md-dialog-actions>
+        </form>    
+          </md-content>
+      </div>
+      
+
+  
+</md-dialog>

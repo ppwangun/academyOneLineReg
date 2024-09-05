@@ -10,7 +10,7 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-use Doctrine\DBAL\Driver\PDOMySql\Driver as PDOMySqlDriver;
+use Doctrine\DBAL\Driver\PDO\MySql\Driver as PDOMySqlDriver;
 use Laminas\Session\Storage\SessionArrayStorage;
 use Laminas\Session\Validator\RemoteAddr;
 use Laminas\Session\Validator\HttpUserAgent;
@@ -58,24 +58,20 @@ return [
         'type' => SessionArrayStorage::class
     ],
     'caches' => [
-        'FilesystemCache' => [
-            'adapter' => [
-                'name'    => Filesystem::class,
-                'options' => [
-                    // Store cached data in this directory.
-                    'cache_dir' => './data/cache',
-                    // Store cached data for 1 hour.
-                    'ttl' => 60*60*1*12 
-                    //'ttl' => 30*1 
-                ],
-            ],
-            'plugins' => [
-                [
-                    'name' => 'serializer',
-                    'options' => [                        
-                    ],
-                ],
-            ],
+    'FilesystemCache' => [
+        'adapter' => \Laminas\Cache\Storage\Adapter\Filesystem::class,
+        'options' => [
+            // Store cached data in this directory.
+            'cache_dir' => './data/cache',
+            // Store cached data for 1 hour.
+            'ttl' => 60 * 60 * 1
         ],
+        'plugins' => [
+            [
+                'name' => 'serializer',
+                'options' => []
+            ]
+        ]
+    ]
     ],
 ];

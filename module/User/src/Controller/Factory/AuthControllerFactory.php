@@ -7,7 +7,6 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Authentication\AuthenticationService;
 use User\Service\AuthManager;
 use User\Service\UserManager;
-use Registration\Service\StudentManager;
 
 /**
  * This is the factory for AuthController. Its purpose is to instantiate the controller
@@ -21,9 +20,8 @@ class AuthControllerFactory implements FactoryInterface
         $authManager = $container->get(AuthManager::class);
         $userManager = $container->get(UserManager::class);
         $authService = $container->get(AuthenticationService::class);
-        $studentManager = $container->get(StudentManager::class);
         $sessionContainer = $container->get('LoggedInUser');
 
-        return new AuthController($entityManager, $authManager, $authService, $userManager,$sessionContainer,$studentManager);
+        return new AuthController($entityManager, $authManager, $authService, $userManager,$sessionContainer);
     }
 }

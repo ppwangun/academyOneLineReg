@@ -3,11 +3,10 @@
 namespace Registration\Controller;
 
 use Doctrine\ORM\Query\ResultSetMapping;
-
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\ReflectionHydrator as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
 use Application\Entity\Countries;
 use Application\Entity\States;
@@ -16,9 +15,7 @@ use Application\Entity\Cities;
 class CountriesController extends AbstractActionController
 {
     private $entityManager;
-    
-    public function __construct($entityManager) 
-    {
+    public function __construct($entityManager) {
         $this->entityManager = $entityManager;
     }
     
@@ -48,7 +45,6 @@ class CountriesController extends AbstractActionController
 
         }    
     }
-    
     public function regionsAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
@@ -78,15 +74,13 @@ class CountriesController extends AbstractActionController
 
         }    
     }   
-    
-    
     public function citiesAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
             $cities = [];
-            $countryCode = $this->params()->fromQuery('id', 'default_val');
+            $countryCode = $this->params()->fromQuery('id', 'default_val'); 
             $country = $this->entityManager->getRepository(Countries::class)->findOneBySortname($countryCode);
 
             $regions = $this->entityManager->getRepository(States::class)->findByCountry($country);

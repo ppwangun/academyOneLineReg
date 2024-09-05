@@ -36,7 +36,15 @@ class SubjectRegistrationOnlineRegistrationYearView
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $idUe;
-    
+
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="subject_id", type="integer", nullable=false)
+    * 
+    * @ORM\GeneratedValue(strategy="IDENTITY")
+    */
+    private $subjectId;    
     /**
     * @var string
     *

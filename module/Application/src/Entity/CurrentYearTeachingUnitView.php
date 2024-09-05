@@ -31,6 +31,13 @@ class CurrentYearTeachingUnitView
     /**
     * @var string
     *
+    * @ORM\Column(name="subject_id", type="integer", nullable=true)
+    */
+    private $teachingUnitId;    
+    
+    /**
+    * @var string
+    *
     * @ORM\Column(name="degree_code", type="string", length=45, nullable=true)
     */
     private $degreeCode;    
@@ -95,10 +102,21 @@ class CurrentYearTeachingUnitView
      *
      * @return integer
      */
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="teacher", type="integer", nullable=true)
+    */
+    private $teacher;    
     public function getId()
     {
         return $this->id;
     }    
+    
+    public function getTeachingUnitId()
+    {
+        return $this->teachingUnitId;
+    }      
     
      /**
      * Get string
@@ -189,6 +207,15 @@ class CurrentYearTeachingUnitView
     public function getSemRanking()
     {
         return $this->semRanking;
+    }
+    /**
+     * Get integer
+     *
+     * @return integer
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }    
 }
 

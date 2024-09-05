@@ -13,7 +13,7 @@ use Doctrine\DBAL\Types\Type;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\TeachingUnit;
 use Application\Entity\Semester;
 use Application\Entity\TrainingCurriculum;
@@ -168,7 +168,7 @@ class SubjectController extends AbstractRestfulController
 
             if($ueClasse )
             {
-                
+              
                 $this->entityManager->remove($ueClasse );
                 $this->entityManager->remove($subject );
                 $this->entityManager->flush();

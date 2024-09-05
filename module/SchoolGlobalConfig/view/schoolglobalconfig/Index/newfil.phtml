@@ -45,7 +45,7 @@ li.active a.ng-binding {
       <div class="md-dialog-content"  ng-init="init()">
         
             <div layout layout-sm="column">
-                <md-input-container flex="flex" style="width: 60%" >
+                <md-input-container flex="flex" style="width: 60%; margin-top: 15px;" >
                     <label>Etablissement</label>
                     <md-select name="faculty" placeholder="Choisir l'établissement" ng-model="filiere.fac_id"  ng-change="$ctrl.searchDptByFaculty(filiere.fac_id);$ctrl.searchFilByFaculty(filiere.fac_id)"  style="width: 60%;" required>
                          <md-option ng-disabled="true"><em>---Choix de l'établissement---</em></md-option>
@@ -54,7 +54,7 @@ li.active a.ng-binding {
                </md-input-container>
             </div>
             <div layout layout-sm="column">
-                <md-input-container flex="flex" style="width: 60%; margin-top: 10px;" >
+                <md-input-container flex="flex" style="width: 60%; margin-top: 15px;" >
                     <label>Département:</label>
                     <md-select name="dpt" placeholder="Choisir la département" ng-model="filiere.dpt_id"  ng-change="$ctrl.searchFilByDpt(filiere.dpt_id)" style="width: 60%;" >
                          <md-option ng-disabled="true"><em>---Choix de l'établissement---</em></md-option>
@@ -63,7 +63,7 @@ li.active a.ng-binding {
                </md-input-container>
             </div>          
             <div layout layout-sm="column">
-                <md-input-container flex="flex" style="width: 60%" >
+                <md-input-container flex="flex" style="width: 60%; margin-top: 15px;" >
                     <label>Nom de la filière:</label>
                     <input type='text'  name='name' ng-model="filiere.name" width='80%' md-no-asterisk required />
                         <div ng-messages="myForm.name.$error">
@@ -72,9 +72,9 @@ li.active a.ng-binding {
                         </div>                    
         
                 </md-input-container>
-                <md-input-container flex="flex" style="width: 20%" >
+                <md-input-container flex="flex" style="width: 20%; margin-top: 15px;" >
                   
-                    <label>Code département:</label>
+                    <label>Code filière:</label>
                     <input type='text'  name="code" ng-model="filiere.code" width='80%' minlength="2" md-no-asterisk required />
                         <div ng-messages="myForm.code.$error">
                             <div ng-message="required">le champ code  est obligatoire</div>
@@ -97,7 +97,7 @@ li.active a.ng-binding {
     <uib-tabset>
       <uib-tab >
           <uib-tab-heading>
-              <span>Liste des département</span>
+              <span>Liste des filières</span>
           </uib-tab-heading>
         <div class="tab-container">              
                 <div class="row" >

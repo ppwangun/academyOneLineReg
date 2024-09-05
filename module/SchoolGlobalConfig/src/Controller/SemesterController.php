@@ -8,7 +8,7 @@
 namespace SchoolGlobalConfig\Controller;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
 use Application\Entity\Semester;
 use Application\Entity\AcademicYear;

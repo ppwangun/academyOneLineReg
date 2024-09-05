@@ -35,10 +35,10 @@ z-index: 120000}
   
 <div  layout="column" ng-cloak class="md-inline-form">
 
-
+    <div ng-show="$ctrl.errorMsg.showAlert" ng-class="$ctrl.errorMsg.error?'alert alert-danger':'alert alert-success'" role="alert"><span>{{$ctrl.errorMsg.msg}}</span></div>
     <md-content layout-padding >
 
-        
+         
     <div layout='row'>
         <input name="id" ng-model="$ctrl.user.id" hidden />
     <md-input-container class="md-block" flex='100' >
@@ -76,11 +76,7 @@ z-index: 120000}
         </md-input-container>
 
         <md-input-container class="md-block" flex-gt-sm>
-          <label>Confirmer email:</label>
-          <input name="confirm_mail" ng-model="$ctrl.user.confirm_mail" type="email" required md-no-asterisk ng-pattern="/^.+@.+\..+$/"/>
-              <div ng-messages="userForm.confirm_mail.$error">
-                  <div ng-message="required">vous devez confirmer l'email</div>
-              </div> 
+
         </md-input-container>
         
         </div>

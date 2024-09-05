@@ -18,6 +18,7 @@ return [
             Controller\DepartmentController::class => Controller\Factory\DepartmentControllerFactory::class,
             Controller\SpecialiteController::class => Controller\Factory\SpecialiteControllerFactory::class,
             Controller\FiliereController::class => Controller\Factory\FiliereControllerFactory::class,
+            Controller\CycleFormationController::class => Controller\Factory\CycleFormationControllerFactory::class,
             Controller\DegreeController::class => Controller\Factory\DegreeControllerFactory::class,
             Controller\CycleController::class => Controller\Factory\CycleControllerFactory::class,
             Controller\ClassesController::class => Controller\Factory\ClassesControllerFactory::class,
@@ -84,7 +85,17 @@ return [
                         'action' => "searchAcademicYear"
                     ],
                 ],
-            ],            
+            ],  
+            'currentAcademicYear' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/currentAcademicYear[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action' => "currentAcademicYear"
+                    ],
+                ],
+            ],             
             'academicYrDataMigration' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -203,7 +214,37 @@ return [
                         'action'        => 'updateSpe',
                     ],
                 ],
-            ],             
+            ],  
+            'cycletpl' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/cycletpl',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'cycletpl',
+                    ],
+                ],
+            ],  
+            'newCycle' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newCycle',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'newCycle',
+                    ],
+                ],
+            ],   
+            'updateCycle' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/updateCycle',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'updateCycle',
+                    ],
+                ],
+            ],            
             'degreetpl' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -354,7 +395,36 @@ return [
                     ],
                 ],
             ],  
-  
+            'searchFilByFaculty' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/searchFilByFaculty',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'searchFilByFaculty',
+                    ],
+                ],
+            ],
+            'searchDegreeBySpeciality' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/searchDegreeBySpeciality',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'searchDegreeBySpeciality',
+                    ],
+                ],
+            ],            
+            'importSubject' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importSubject',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importSubject',
+                    ],
+                ],
+            ],             
             'searchSpeByFil' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -362,6 +432,16 @@ return [
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'        => 'searchSpeByFil',
+                    ],
+                ],
+            ],  
+            'searchCommonCoreTraining' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/searchCommonCoreTraining',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'searchCommonCoreTraining',
                     ],
                 ],
             ],             
@@ -402,6 +482,15 @@ return [
                     ],
                 ],
             ],
+            'cycleFormation' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/cycleFormation[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\CycleFormationController::class,
+                    ],
+                ],
+            ],            
             'specialite' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -507,24 +596,30 @@ return [
     ],
     'view_manager' => [
         'template_map' => [
-            'school-global-config/index/anneedetails' => __DIR__ . '/../view/schoolglobalconfig/Index/anneedetails.phtml',
-            'school-global-config/index/newacadyr' => __DIR__ . '/../view/schoolglobalconfig/Index/newacadyr.phtml',
-            'school-global-config/index/assignedteachingunitpl' => __DIR__ . '/../view/schoolglobalconfig/Index/assignedteachingunitpl.phtml',
-            'school-global-config/index/assignnewteachingunitpl' => __DIR__ . '/../view/schoolglobalconfig/Index/assignnewteachingunitpl.phtml',
-            'school-global-config/index/facultytpl' => __DIR__ . '/../view/schoolglobalconfig/Index/facultytpl.phtml',
-            'school-global-config/index/departmentpl' => __DIR__ . '/../view/schoolglobalconfig/Index/departmentpl.phtml',
-            'school-global-config/index/new-dept' => __DIR__ . '/../view/schoolglobalconfig/Index/newdept.phtml',
-            'school-global-config/index/update-dpt' => __DIR__ . '/../view/schoolglobalconfig/Index/updatedpt.phtml',
-            'school-global-config/index/filieretpl' => __DIR__ . '/../view/schoolglobalconfig/Index/filieretpl.phtml',
-            'school-global-config/index/new-fil' => __DIR__ . '/../view/schoolglobalconfig/Index/newfil.phtml', 
-            'school-global-config/index/update-fil' => __DIR__ . '/../view/schoolglobalconfig/Index/updatefil.phtml',
-            'school-global-config/index/specialitetpl' => __DIR__ . '/../view/schoolglobalconfig/Index/specialitetpl.phtml',
-            'school-global-config/index/new-spe' => __DIR__ . '/../view/schoolglobalconfig/Index/newspe.phtml', 
-            'school-global-config/index/update-spe' => __DIR__ . '/../view/schoolglobalconfig/Index/updatespe.phtml',
-            'school-global-config/index/degreetpl' => __DIR__ . '/../view/schoolglobalconfig/Index/degreetpl.phtml', 
-            'school-global-config/index/newdegreetpl' => __DIR__ . '/../view/schoolglobalconfig/Index/newdegreetpl.phtml',
-            'school-global-config/index/classetpl' => __DIR__ . '/../view/schoolglobalconfig/Index/classetpl.phtml',
-            'school-global-config/index/newclassetpl' => __DIR__ . '/../view/schoolglobalconfig/Index/newclassetpl.phtml',
+            'school-global-config/index/anneedetails' => __DIR__.'/../view/schoolglobalconfig/Index/anneedetails.phtml',
+            'school-global-config/index/newacadyr' => __DIR__.'/../view/schoolglobalconfig/Index/newacadyr.phtml',
+            'school-global-config/index/assignedteachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/assignedteachingunitpl.phtml',
+            'school-global-config/index/assignnewteachingunitpl' => __DIR__ .'/../view/schoolglobalconfig/Index/assignnewteachingunitpl.phtml',
+            'school-global-config/index/facultytpl' => __DIR__.'/../view/schoolglobalconfig/Index/facultytpl.phtml',
+            'school-global-config/index/departmentpl' => __DIR__ .'/../view/schoolglobalconfig/Index/departmentpl.phtml',
+            'school-global-config/index/new-dept' => __DIR__.'/../view/schoolglobalconfig/Index/newdept.phtml',
+            'school-global-config/index/update-dpt' => __DIR__.'/../view/schoolglobalconfig/Index/updatedpt.phtml',
+            'school-global-config/index/filieretpl' => __DIR__.'/../view/schoolglobalconfig/Index/filieretpl.phtml',
+            'school-global-config/index/new-fil' => __DIR__.'/../view/schoolglobalconfig/Index/newfil.phtml', 
+            'school-global-config/index/update-fil' => __DIR__.'/../view/schoolglobalconfig/Index/updatefil.phtml',
+            'school-global-config/index/specialitetpl' => __DIR__.'/../view/schoolglobalconfig/Index/specialitetpl.phtml',
+            'school-global-config/index/new-spe' => __DIR__.'/../view/schoolglobalconfig/Index/newspe.phtml', 
+            'school-global-config/index/update-spe' => __DIR__.'/../view/schoolglobalconfig/Index/updatespe.phtml',
+            'school-global-config/index/cycletpl' => __DIR__.'/../view/schoolglobalconfig/Index/cycletpl.phtml',
+            'school-global-config/index/new-cycle' => __DIR__.'/../view/schoolglobalconfig/Index/newcycle.phtml',
+            'school-global-config/index/update-cycle' => __DIR__.'/../view/schoolglobalconfig/Index/updatecycle.phtml',
+            'school-global-config/index/degreetpl' => __DIR__.'/../view/schoolglobalconfig/Index/degreetpl.phtml', 
+            'school-global-config/index/newdegreetpl' => __DIR__.'/../view/schoolglobalconfig/Index/newdegreetpl.phtml',
+            'school-global-config/index/classetpl' => __DIR__.'/../view/schoolglobalconfig/Index/classetpl.phtml',
+            'school-global-config/index/newclassetpl' => __DIR__.'/../view/schoolglobalconfig/Index/newclassetpl.phtml',
+            'school-global-config/index/teachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/teachingunitpl.phtml',
+            'school-global-config/index/newteachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/newteachingunitpl.phtml',
+            'school-global-config/index/dashboard' => __DIR__ .'/../view/schoolglobalconfig/Index/dashboard.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',

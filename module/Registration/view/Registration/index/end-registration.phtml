@@ -29,64 +29,10 @@ and open the template in the editor.
  * @author Nicola Asuni
  * @since 2009-03-20
  */
-class PDF extends TCPDF {
-    //
-    // This class extends FPDF so we may customize the header and footer
-    // of the PDFs that are created
-    //
-   //Page header
-    public $faculty;
-    public $facultyCode;
-    public $filiere;
-    public $personOnChargeOfFaculty;
-    
-    public function Header() {
-        // Logo
-        
-        $headertext='';
-        $image_file = K_PATH_IMAGES.'logo.gif';
-        $this->Image($image_file,'', '', PDF_HEADER_LOGO_WIDTH,'', 'GIF', '', 'T', false, 300, 'R', false, false, 0, false, false, false);
-        // Set font
-        $this->SetFont('helvetica', 'B', 10);
-        $this->SetX(15);
-        $this->SetY(10);
-        
-        $this->Cell(0,PDF_MARGIN_LEFT, 'Université des Montagnes ', 0, false, '', 0, '', 0, false, 'M', 'M');
-        $this->SetY(15);
-        $this->SetFont('helvetica', '', 10);
-        $this->Cell(0,25,$this->faculty, 0, false, '', 0, '', 0, false, 'M', 'M');
-        $this->SetY(20);
-        $this->Cell(0,25,$this->filiere, 0, false, '', 0, '', 0, false, 'M', 'M');
-        // Title
-        $this->SetY(25);
-        $html ='<hr>';
-        $this->writeHTML($html, true, false, true, false, '');
-        
-    }
-    function Footer() {
-        $footertext="Report generated with UdMAcademy 2.0 By WTECH (" . date("d-m-Y H:i") . ")";
-        // Position at 15 mm from bottom
-        $this->SetY(-15);
-        $this->SetFont('helvetica', '', 6);
-        // Page number
-         
-       // $this->Cell(0, 5, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-        $html ='<hr>';
-        $this->writeHTML($html, true, false, true, false, '');
-        $this->writeHTML($footertext, false, true, false, true);
-        
-        $this->SetY(-20);
-        $this->SetFont('freesans','I',8);
-        $this->SetTextColor(34,68,136);
-        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@udm.aed-cm.org    Site web :  www.udm.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
-        $this->SetTextColor(0,0,0);
-        $this->SetFont('garamond','I',10);
-       
-    }  // end of the Footer function
-}
+
 
 // create new PDF document
-$pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
@@ -95,13 +41,9 @@ $pdf->SetTitle('Universté des Montagnes');
 $pdf->SetSubject('TCPDF Tutorial');
 $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 
-$pdf->faculty = $this->faculty;
-$pdf->facultyCode = "";
-
-$pdf->filiere = $this->filiere;
 
 // set default header data
-//$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr);
+$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr);
 
 // set header and footer fonts
 $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -130,28 +72,25 @@ if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 // ---------------------------------------------------------
 
 // set font
-
-
+$pdf->SetFont('helvetica', 'B', 12);
 
 // add a page
 $pdf->AddPage();
 //$pdf->Write(0, $this->classe, '', 0, 'L', true, 0, false, false, 0);
 //$pdf->Write(0, $nomUe.':    '.$codeUe, '', 0, 'L', true, 0, false, false, 0);
-//$pdf->SetFont('helvetica', '', 2);
+$pdf->SetFont('helvetica', '', 2);
 $pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
-//$pdf->SetFont('helvetica', '', 16);
+$pdf->SetFont('helvetica', '', 16);
 
 
-$pdf->setFont("coopbl",'',12); 
+
 $student = $this->student;
 
-$html = '<div  style="width:100%;  text-align:center; background-color:#428bca; color:#191970;">FICHE D\'INSCRIPTION ADMINISTRATIVE ET ACADEMIQUE <br>'
+$html = '<div style="background-color: #999999; text-align:center; font-weight:bold;">FCHE D\'INSCRIPTION ADMINISTRATIVE ET ACADEMIQUE <br>'
         . '<span style="font-size: 8px; font-weight:normal;"><i>ADMINISTRATIVE AND ACADEMIC REGISTRATION FILE</i></span></div>';
 
 // output the HTML content
 $pdf->writeHTML($html, true, 0, true, 0);
-
-$pdf->SetFont('garamond', '', 10);
 
 $pdf->MultiCell(23, 5,$this->classe, 1, 'L', 0, 0, '', '', true);
 $pdf->MultiCell('', 5, 'Matricule: '.$this->student["matricule"], 0, 'R', 0, 1, '', '',true, true);
@@ -167,24 +106,24 @@ $pdf->Image('@'.$imgdata,  '', '', 40, 40, '', '', 'T', false, 300, 'R', false, 
  //$html = '<img width="200" height="200"   src="data:image/jpeg;base64,'. $this->student['photo'] .'" />';
 //$pdf->writeHTML($html, true, 0, true, 0);
 
-//$pdf->SetFont('helvetica', '', 10);
-$html1 ='<div style="background-color:#edf0f5; font-weight: bold; color: grey;">IDENTIFICATION DE l\'ETUDIANT</div>';
+$pdf->SetFont('helvetica', '', 10);
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">IDENTIFICATION DE l\'ETUDIANT</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
-//$pdf->SetFont('courier', '', 10);
+
 //$pdf->writeHTMLCell(0, 0, '', 90, $html1, 0, 0, false, 'L', true);
 
 $htmlEtudiant ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr><td colspan="3"><span style="font-weight: bold">Nom(s) et Prénom(s):</span> '.$this->student["nom"].' '.$this->student["prenom"].''
-        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sexe:</strong>'.$this->student["gender"].'</td>'
+        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sexe:</strong>'.$this->student["gender"].'</td>'
  
         . '</tr>'
-        . '<tr><td><span style="font-weight: bold">Date de naissance:</span> '.$this->student["dateOfBirth"]->format('d/m/Y').' </td> <td><span style="font-weight: bold">Lieu de naissance:</span> '.$this->student["bornAt"].'</td></tr>'
+        . '<tr><td><span style="font-weight: bold">Date de naissance:</span> '.$this->student["dateOfBirth"]->format('d/m/Y').' </td> <td><span style="font-weight: bold">Lieu de naissance:</span> '.$this->student["bornAt"].'</td><td></td></tr>'
         
           . '<tr>'
         . '<td ><span style="font-weight: bold">Nationalité:</span> '.$this->student["nationality"].'</td>'
         . '<td colspan="2" ><span style="font-weight: bold">Région d\'origine:</span> '.$this->student["regionOfOrigin"]
-        . '&nbsp;&nbsp;<span style="font-weight: bold">Langue:</span> '.$this->student["language"].'</td>'
+        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold">Langue:</span> '.$this->student["language"].'</td>'
         . '</tr>'
 
         . '<tr>'
@@ -206,16 +145,17 @@ $htmlEtudiant ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<td colspan="2"><span style="font-weight: bold">Situation matrimoniale:</span> '.$this->student["maritalStatus"].'</td>'
         
         . '</tr>'  
-                    
+        
+        .'<tr>'
+        
+        . '<td></td><td></td>'
+        . '</tr>'                    
         . '</tbody></table></div>';
 $pdf->writeHTML($htmlEtudiant, true, 0, true, 0);
 
-$pdf->SetFont('garamond', '', 10);
-$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DU PERE</div>';
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">IDENTIFICATION DU PERE</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
-
-$pdf->SetFont('courier', '', 10);
 
 $htmlPere ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr>'
@@ -235,11 +175,10 @@ $htmlPere ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '</tbody></table></div>';
 $pdf->writeHTML($htmlPere, true, 0, true, 0);
 
-$pdf->SetFont('garamond', '', 10);
-$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DE LA MERE</div>';
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">IDENTIFICATION DE LA MERE</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
-$pdf->SetFont('courier', '', 10);
+
 $htmlMere ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr>'
         . '<td><span style="font-weight: bold">Nom(s) et prénom(s):</span> '.$this->student["motherName"].'</td>'
@@ -257,12 +196,11 @@ $htmlMere ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '</tr>'     
         . '</tbody></table></div>';
 $pdf->writeHTML($htmlMere, true, 0, true, 0);
-$pdf->SetFont('garamond', '', 10);
-$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DU SPONSOR</div>';
+
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">IDENTIFICATION DU SPONSOR</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
 
-$pdf->SetFont('courier', '', 10);
 $htmlSponsor ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr>'
         . '<td><span style="font-weight: bold">Nom(s) et prénom(s):</span> '.$this->student["sponsorName"].'</td>'
@@ -281,12 +219,10 @@ $htmlSponsor ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '</tbody></table></div>';
 $pdf->writeHTML($htmlSponsor, true, 0, true, 0);
 
-$pdf->SetFont('garamond', '', 10);
-$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">ETUDES ANTERIEURES</div>';
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">ETUDES ANTERIEURES</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
 
-$pdf->SetFont('courier', '', 10);
 $htmlEntudesAnterieures ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr>'
         . '<td ><span style="font-weight: bold">Dernier établissement:</span> '.$this->student["lastSchool"].'</td>'
@@ -310,12 +246,12 @@ if(($this->student["enteringDegree"]=="BACCALAUREAT") || ($this->student["enteri
 
         $htmlEntudesAnterieures .= '</tbody></table></div>';
 $pdf->writeHTML($htmlEntudesAnterieures, true, 0, true, 0);
-$pdf->SetFont('garamond', '', 10);
-$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">INFORMATIONS COMPLEMENTAIRES</div>';
+
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">INFORMATIONS COMPLEMENTAIRES</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
-$pdf->SetFont('courier', '', 10);
-$htmlSponsor ='<style> td{ }</style><div> <table><tbody>'
+
+$htmlSponsor ='<style> td{ height:20px;}</style><div> <table><tbody>'
         . '<tr>'
         . '<td><span style="font-weight: bold">Activité(s) sportive(s):</span> '.$this->student["sportiveInformation"].'</td>'
         . '</tr>'
@@ -336,17 +272,16 @@ $htmlSponsor ='<style> td{ }</style><div> <table><tbody>'
 $pdf->writeHTML($htmlSponsor, true, 0, true, 0);
 
 $pdf->AddPage();
-$pdf->setFont("coopbl",'',12);
-$html1 ='<div style="background-color:#428bca; color:#191970; font-weight: bold;">INSCRIPTION ACADEMIQUE</div>';
+$html1 ='<div style="background-color:#C0C0C0; font-weight: bold;">INSCRIPTION ACADEMIQUE</div>';
 // output the HTML content
 $pdf->writeHTML($html1, true, 0, true, 0);
 
-$pdf->SetFont('arialce', '', 10);
-$tblHeader = '<tr style="background-color:#edf0f5;">
-<th style = " width: 5%; text-align: center;"><strong>N°</strong></th>   
-<th style = " width: 20%;text-align: center;"><strong>Code</strong></th>
-<th style = " width: 65%; text-align: center;"><strong>Intitulé</strong></th>
-<th style = "width: 10%; text-align: center; "><strong>Credits</strong></th>
+$pdf->SetFont('helvetica', '', 8);
+$tblHeader = '<tr style="background-color:#F5F5DC;">
+<th style = "text-align: center;"><strong>Num</strong></th>   
+<th style = "text-align: center;"><strong>Code</strong></th>
+<th style = " text-align: center;"><strong>Intitulé</strong></th>
+<th style = "text-align: center; "><strong>Credits</strong></th>
 '
         . '</tr>';
 
@@ -355,64 +290,46 @@ $tblHeader = '<tr style="background-color:#edf0f5;">
 $tbl1Body = '';
 $tbl2Body ='';
 $i=0;
-$credits_1 = 0;
-$credits_2 = 0;
+
 foreach($this->semesters as $sem)
 {
     $count = 1;
     if($sem['ranking']%2==1)
-       $tbl1HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#edf0f5;;"><th  colspan="4">'.$sem["code"].'</th></tr>'; 
-    
+       $tbl1HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#F5F5DC;"><th  colspan="4">'.$sem["code"].'</th></tr>'; 
     if($sem['ranking']%2==0)
-       $tbl2HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#edf0f5;"><th colspan="4">'.$sem["code"].'</th></tr>'; 
-
+       $tbl2HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#F5F5DC;"><th colspan="4">'.$sem["code"].'</th></tr>'; 
     foreach ($this->subjects as $sub)
     {
         if(($sem['ranking']%2==$sub['semRanking']%2)&&$sem['ranking']%2==1 )
         {
-            $tbl1Body.='<tr nobr="true"><td style = "width: 5%; text-align: center;">'.$count++.'</td>'
-                    . '<td style="text-align: center; width: 20%;">'.$sub["codeUe"].'</td>';
-            $tbl1Body.='<td style="width:65%;"> '.$sub["nomUe"].'</td>';
-            $tbl1Body.='<td style="width: 10%; text-align: center;">'.$sub["credits"].'</td></tr>';
-            $credits_1 = $credits_1+$sub["credits"];
+            $tbl1Body.='<tr nobr="true"><td style = "text-align: center;">'.$count++.'</td>'
+                    . '<td style="text-align: center;">'.$sub["codeUe"].'</td>';
+            $tbl1Body.='<td>'.$sub["nomUe"].'</td>';
+            $tbl1Body.='<td style="text-align: center;">'.$sub["credits"].'</td></tr>';
         }
         else if(($sem['ranking']%2==$sub['semRanking']%2)&&$sem['ranking']%2==0 )
         {
-            $tbl2Body.='<tr nobr="true"><td style = "width: 5%;text-align: center;">'.$count++.'</td>'
-                    . '<td style="width: 20%; text-align: center;">'.$sub["codeUe"].'</td>';
-            $tbl2Body.='<td style="width:65%;"> '.$sub["nomUe"].'</td>';
-            $tbl2Body.='<td style="width: 10%; text-align: center;">'.$sub["credits"].'</td></tr>';
-            $credits_2 = $credits_2+$sub["credits"];
+            $tbl2Body.='<tr nobr="true"><td style = "text-align: center;">'.$count++.'</td>'
+                    . '<td style="text-align: center;">'.$sub["codeUe"].'</td>';
+            $tbl2Body.='<td>'.$sub["nomUe"].'</td>';
+            $tbl2Body.='<td style="text-align: center;">'.$sub["credits"].'</td></tr>';
         }            
     }
 
 }
-    $tbl1Body.='<tr><td colspan ="3" style=" text-align: center;"><b>Total crédits inscrits</b></td><td style=" text-align: center;">'.$credits_1.'</td></tr>';
-    $tbl2Body.='<tr><td colspan ="3" style=" text-align: center;"><b>Total crédits inscrits</b></td><td style=" text-align: center;">'.$credits_2.'</td></tr>';
 
-    $tbl1Body = '<tbody>'.$tbl1Body.'</tbody>';
+$tbl1Body = '<tbody>'.$tbl1Body.'</tbody>';
 $tbl2Body = '<tbody>'.$tbl2Body.'</tbody>';
 $tbl1 = '<thead>'.$tbl1HeaderSem.$tblHeader.'</thead>'.$tbl1Body;
 $tbl2 = '<thead>'.$tbl2HeaderSem.$tblHeader.'</thead>'.$tbl2Body;
 $pdf->writeHtml("<p><i>Liste exhaustive des unités d'enseignement  auxquelles vous prendrez part au cours de l'année académique:</i</p><br />", true, 0, true, 0);
 $tbl = <<<EOD
-<style>
-
-i {
-    font-size: 8px;}  
-td,th  {
-   vertical-align: middle;
-   border: solid lightgrey 1px;
-        color: grey;
        
-   }   
-</style>         
-       
-        <table>
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
     $tbl1
         </table>
         <br /><br /><br /><br /><br /><br />
-        <table>
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
     $tbl2
         </table>        
 EOD;
@@ -426,9 +343,8 @@ $pdf->writeHtml("<p style='text-align:right;'><br/><br/><i>"
         . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         . "<strong>Fait à __________________________ le ____/____/________</strong></p><br />", true, 0, true, 0);
 ob_end_clean();
-$date = date("d-m-Y_H_i");
 //Close and output PDF document
-$pdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',$this->studentMat).$date.'.pdf', 'F');
+$pdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',$this->studentMat).'.pdf', 'F');
 ?>
 
 
@@ -443,7 +359,7 @@ $pdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',
             
                           <div class="alert alert-success">
                              
-                              Vous êtes parvenus au terme du processus d'inscription. veuillez <a href='<?='../../impressions/'.preg_replace('/\s+/', '',$this->studentMat).$date.'.pdf'?>'  download>télécharger votre fiche d'inscription ici</a>
+                              Vous êtes parvenus au terme du processus d'inscription. veuillez <a href='<?='../../impressions/'.preg_replace('/\s+/', '',$this->studentMat).'.pdf'?>'  download>télécharger votre fiche d'inscription ici</a>
                               Prière de bien vouloir imprimer ce document, le joindre à la liste des documents exigés et le soumettre au service des diplômes et des programmes.
                           </div>
                       </div>

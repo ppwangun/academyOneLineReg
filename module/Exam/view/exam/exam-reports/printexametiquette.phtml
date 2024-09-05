@@ -1,0 +1,169 @@
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<?php
+//============================================================+
+// File name   : example_048.php
+// Begin       : 2009-03-20
+// Last Update : 2013-05-14
+//
+// Description : Example 048 for TCPDF class
+//               HTML tables and table headers
+//
+// Author: Nicola Asuni
+//
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com LTD
+//               www.tecnick.com
+//               info@tecnick.com
+//============================================================+
+
+/**
+ * Creates an example PDF TEST document using TCPDF
+ * @package com.tecnick.tcpdf
+ * @abstract TCPDF - Example: HTML tables and table headers
+ * @author Nicola Asuni
+ * @since 2009-03-20
+ */
+class PDF extends TCPDF {
+    //
+    // This class extends FPDF so we may customize the header and footer
+    // of the PDFs that are created
+    //
+
+    function Footer() {
+        $footertext="Report generated with UdMAcademy By WPP (" . date("d-m-Y H:i") . ")";
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        $this->SetFont('helvetica', '', 6);
+        // Page number
+         
+        $this->Cell(0, 5, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $html ='<hr>';
+        $this->writeHTML($html, true, false, true, false, '');
+        $this->writeHTML($footertext, false, true, false, true);
+    }  // end of the Footer function
+}
+
+// create new PDF document
+$pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Wangun Parfait Pascal');
+$pdf->SetTitle('Universté des Montagnes');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+
+// set default header data
+//$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr."/".$this->semestre);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+// set font
+$pdf->SetFont('helvetica', 'B', 14);
+
+// add a page
+$pdf->AddPage('L','A5');
+//$pdf->Cell(0, 0,'FICHE DE PRESENCE ', 0, 1, 'C', 0, '', 0);
+
+
+$pdf->SetFont('helvetica', '', 2);
+$pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
+$pdf->SetFont('helvetica', '', 16);
+
+$tblTop= '<tbody><tr><td colspan="2" style="text-align: center;" ><strong>Institut Supérieure Agenla Academy</strong></td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;" >'.$this->faculty.'</td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;">'.$this->filiere.'</td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;" >'.$this->classe.'</td></tr>'
+        . '<tr><td style="text-align: center;">'.$this->typeExam.' de '.$this->nomUe.'( '.$this->codeUe.')</td><td style="color: red;">&nbsp; &nbsp; <strong>'.$this->nbreCopies.'  Copies </strong></td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;">'.$this->date.'</td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;"> <strong>Nom de l\'enseignant:__________________________________</strong></td></tr>'
+        . '<tr><td colspan="2" style="text-align: center;"> <strong>Ville de destination:__________________________________</strong></td></tr></tbody>';
+     
+
+$tblTop = <<<EOD
+
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
+            $tblTop
+        </table>
+EOD;
+$pdf->writeHTML($tblTop, true, false, false, false, '');
+
+
+ob_end_clean();
+//Close and output PDF document
+$pdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '','_exam_etiquette_'.$this->typeExam.'_'.$this->classe.$codeUe).'.pdf', 'F');
+?>
+
+        <style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+   <md-dialog style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Mango (Fruit)">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Impression PV Individuel</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div  class="md-dialog-content">
+
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '','_exam_etiquette_'.$this->typeExam.'_'.$this->classe.$codeUe.'.pdf');?> type="application/pdf" style="width:100%;height:600px;"  />
+                     
+
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Fermer
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

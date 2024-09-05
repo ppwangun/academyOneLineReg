@@ -125,6 +125,7 @@ class RbacManager
             
             $user = $this->entityManager->getRepository(User::class)
                     ->findOneByEmail($identity);
+          
             if ($user==null) {
                 // Oops.. the identity presents in session, but there is no such user in database.
                 // We throw an exception, because this is a possible security problem.

@@ -67,10 +67,10 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
     }
 
     /**
@@ -133,7 +133,7 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setInitializer(\Closure $initializer = null): void
+    public function __setInitializer(?\Closure $initializer = null): void
     {
         $this->__initializer__ = $initializer;
     }
@@ -151,7 +151,7 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setCloner(\Closure $cloner = null): void
+    public function __setCloner(?\Closure $cloner = null): void
     {
         $this->__cloner__ = $cloner;
     }
@@ -256,6 +256,28 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStatus', []);
 
         return parent::getStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setIsCoreCurriculum($isCoreCurriculum = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setIsCoreCurriculum', [$isCoreCurriculum]);
+
+        return parent::setIsCoreCurriculum($isCoreCurriculum);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIsCoreCurriculum()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIsCoreCurriculum', []);
+
+        return parent::getIsCoreCurriculum();
     }
 
     /**

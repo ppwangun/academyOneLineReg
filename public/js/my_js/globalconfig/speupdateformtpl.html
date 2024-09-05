@@ -1,0 +1,103 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="    max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 60%;
+    border-radius: 0;" aria-label="Ajouter une faculté">
+  <form   name="myForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Modifier Département</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" >
+           <form ng-cloak name="filiereForm">
+    <md-content layout-padding >
+        <form   name="myForm">
+
+   
+      <div class="md-dialog-content"  ng-init="init()">
+        
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%" >
+                    <label>Etablissement</label>
+                    <md-select name="faculty" placeholder="Choisir l'établissement" ng-model="specialite.fac_id"  ng-change="$ctrl.searchDptByFaculty(specialite.fac_id);$ctrl.searchFilByFaculty(specialite.fac_id)"  style="width: 60%;" required>
+                         <md-option ng-disabled="true"><em>---Choix de l'établissement---</em></md-option>
+                        <md-option ng-value="faculty.id" ng-repeat="faculty in faculties">{{faculty.name}}</md-option>
+                    </md-select>
+               </md-input-container>
+            </div>
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%; margin-top: 10px;" >
+                    <label>Département:</label>
+                    <md-select name="dpt" placeholder="Choisir la département" ng-model="specialite.dpt_id"  ng-change="$ctrl.searchFilByDpt(specialite.dpt_id)" style="width: 60%;" >
+                         <md-option ng-disabled="true"><em>---Choix de l'établissement---</em></md-option>
+                         
+                        <md-option ng-value="dep.id" ng-repeat="dep in dpts">{{dep.name}}</md-option>
+                    </md-select>
+               </md-input-container>
+            </div>     
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%; margin-top: 10px;" >
+                    <label>Filière:</label>
+                    <md-select name="dpt" placeholder="Choisir la filière" ng-model="specialite.fil_id"  ng-change="$ctrl.searchSpeByDil(specialite.fil_id)" style="width: 60%;" required >
+                         <md-option ng-disabled="true"><em>---Choix de l'établissement---</em></md-option>
+                        <md-option ng-value="fil.id" ng-repeat="fil in filieres">{{fil.name}}</md-option>
+                    </md-select>
+               </md-input-container>
+            </div>          
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%" >
+                    <label>Nom de la spécilaité:</label>
+                    <input type='text'  name='name' ng-model="specialite.name" width='80%' md-no-asterisk required />
+                        <div ng-messages="myForm.name.$error">
+                            <div ng-message="required">le champ nom de la filièreest obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>                    
+        
+                </md-input-container>
+                <md-input-container flex="flex" style="width: 20%" >
+                  
+                    <label>Code spécialité:</label>
+                    <input type='text'  name="code" ng-model="specialite.code" width='80%' minlength="2" md-no-asterisk required />
+                        <div ng-messages="myForm.code.$error">
+                            <div ng-message="required">le champ code  est obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>
+                </md-input-container> 
+            </div>
+
+          <md-checkbox class='md-primary' ng-model="specialite.status"  ng-checked="(specialite.status)"aria-label="Actif ?" md-no-ink ></md-checkbox>
+      </div>
+    </form>
+  </md-content>
+                  
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+        Annuler
+      </md-button>
+      <md-button class="md-warn" ng-click="speUpdate(specialite)" ng-disabled="myForm.$invalid">
+        Modifier
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

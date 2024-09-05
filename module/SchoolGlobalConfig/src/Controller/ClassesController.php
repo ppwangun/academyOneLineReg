@@ -11,11 +11,12 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\DBAL\Types\Type;
 
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\View\Model\JsonModel;
+use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\Degree;
 use Application\Entity\TrainingCurriculum;
+use Application\Entity\DegreeHasClassOfStudy;
 use Application\Entity\User;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\ClassListView;
@@ -37,7 +38,7 @@ class ClassesController extends AbstractRestfulController
  
     
     public function get($id)
-    {
+    {        
         
         if(is_numeric($id))
         {
@@ -52,7 +53,7 @@ class ClassesController extends AbstractRestfulController
             ]);
         }
         //Showing only classes managed by the current logged in user
-        
+
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
            
@@ -83,7 +84,7 @@ class ClassesController extends AbstractRestfulController
         //return $faculties;
     }
     public function getList()
-    {
+    {       
         $this->entityManager->getConnection()->beginTransaction();
         try
         {   
@@ -131,24 +132,54 @@ class ClassesController extends AbstractRestfulController
         try
         {
             $message = false;
-       
+            $degrees = [];
+           //var_dump($data); exit;
+            if(isset($data["degrees"]))
+                $degrees = $data["degrees"];
             $classe= new ClassOfStudy();
             $classe->setName($data['name']);
             $classe->setCode($data['code']);
+            if(isset($data["isCommonCore"]))
+                $classe->setIsCoreCurriculum($data["isCommonCore"]);
+            if(isset($data["isEndCommonCore"]))
+                $classe->setIsEndOfCoreCurriculum($data["isEndCommonCore"]);
             $classe->setIsEndCycle($data['isEndCycle']);
             $classe->setIsEndDegreeTraining($data['isEndDegreeTraining']);
             $classe->setStudyLevel($data['studyLevel']);
             
-            if(!is_null($data['cycleId']))
+            
+            if(isset($data['cycleId']))
             {
                 $cycle = $this->entityManager->getRepository(TrainingCurriculum::class)->findOneById($data['cycleId']);
                 $classe->setCycle($cycle);
+            } 
+            if(isset($data['coreDegree']))
+            {
+                $degree =$this->entityManager->getRepository(Degree::class)->find($data['coreDegree']);
+                $classe->setDegree($degree);
+                
             }
-            $degree =$this->entityManager->getRepository(Degree::class)->findOneById($data['degreeId']);
-            
-            
-            $classe->setDegree($degree);  
             $this->entityManager->persist($classe);
+            
+            
+            /*foreach ($degrees as $key=>$value) 
+            {
+                $degree =$this->entityManager->getRepository(Degree::class)->find($value); 
+
+                
+                $dhcosh = new DegreeHasClassOfStudy();
+                $dhcosh->setClassOfStudy($classe);
+                $dhcosh->setDegree($degree);
+                $dhcosh->setTrainingCurriculum($cycle);
+                $this->entityManager->persist($dhcosh); 
+                
+            }*/
+
+            //$degree =$this->entityManager->getRepository(Degree::class)->findOneById($data['degreeId']);
+            
+            
+            //$classe->setDegree($degree);  
+            
             $this->entityManager->flush();
             $message = true;
             $this->entityManager->getConnection()->commit();
@@ -172,11 +203,10 @@ class ClassesController extends AbstractRestfulController
 
         $this->entityManager->getConnection()->beginTransaction();
         try
-        {
-            $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneById($id);
+        {           
+            $classe = $this->entityManager->getRepository(ClassOfStudy::class)->find($id);
             if($classe )
             {
-                
                 $this->entityManager->remove($classe );
                 $this->entityManager->flush();
                 $this->entityManager->getConnection()->commit();

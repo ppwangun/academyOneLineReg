@@ -10,14 +10,17 @@ namespace Registration\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
+use Application\Entity\AdminRegistration;
 use Application\Entity\RegisteredStudentView;
 use Application\Entity\SubjectRegistrationView;
 use Application\Entity\Student;
 use Application\Entity\TeachingUnit;
 use Application\Entity\UnitRegistration;
+use Application\Entity\ClassOfStudy;
 use Application\Entity\Semester;
+use Application\Entity\AcademicYear;
 
 
 class StdRegisteredToSubjectController extends AbstractRestfulController
@@ -28,14 +31,73 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
         
         $this->entityManager = $entityManager;   
     }
-    
+   
     public function get($id) {
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            // retrieve the sutdent based on the student ID 
-            $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$id),array("nom"=>"ASC")); 
-           // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
+           
+            $data =json_decode($id,true);    
+
+            if(isset($data["classId"]))
+            {
+              
+                if(!isset($data["subjectId"])) $data["subjectId"] = [null," "];
+
+                 $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"idSubject"=>$data["subjectId"]),array("nom"=>"ASC")); 
+          
+            
+                
+                $classOfStudy = $this->entityManager->getRepository(ClassOfStudy::class)->find($data["classId"]); 
+                
+                $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+                $status =-1;
+                $crtClassStud = $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("class"=>$classOfStudy->getCode()),array("nom"=>"ASC"));
+                $i = 0;
+                foreach($crtClassStud as $stud)
+                {
+                    $std1 = $this->entityManager->getRepository(SubjectRegistrationView::class)->findOneBy(array("idUe"=>$data["ueId"],"idSubject"=>$data["subjectId"],"matricule"=>$stud->getMatricule())); 
+                    
+                    if(!$std1)
+                    { 
+                        $regStud = new SubjectRegistrationView();
+                        $regStud->setNom($stud->getNom());
+                        $regStud->setMatricule($stud->getMatricule());
+                        $regStud->setStudentCurrentClasse($classOfStudy->getCode());
+                        $regStud->setStatus($status);
+                        //$std[$i] = $regStud; 
+                        array_splice($std,$i,0,array($regStud) );
+                    }
+                     
+                    $i++;
+                }
+                
+                
+                foreach($std as $key=>$value)
+                {
+                    $hydrator = new ReflectionHydrator();
+                    $data = $hydrator->extract($value);
+                    $std[$key] = $data;
+
+                } 
+                
+                //Sorting the $std array according to the key "nom"
+                $tmp = Array();
+                foreach($std as &$ma)
+                    $tmp[] = &$ma["nom"];
+                array_multisort($tmp, $std);
+
+                return new JsonModel([ $std ]);                
+            }           
+            // retrieve the sutdent based on the UE code 
+            //$sem = $this->entityManager->getRepository(Semester::class)->find($data["sem_id"]);
+            //Only student that have completed registration process with status equal to 1
+
+            if(!isset($data["subjectId"])) 
+             $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data,"idSubject"=>[null," "]),array("nom"=>"ASC")); 
+            else
+                $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"idSubject"=>$data["subjectId"]),array("nom"=>"ASC"));
+            //$std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
             foreach($std as $key=>$value)
             {
@@ -44,11 +106,7 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
                 $std[$key] = $data;
 
             }
-            for($i=0;$i<sizeof($std);$i++)
-            {
-               // $std[$i]['nom']= utf8_encode($std[$i]['nom']);
- 
-            }
+
 
             $this->entityManager->getConnection()->commit();
             
@@ -71,7 +129,7 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
        $this->entityManager->getConnection()->beginTransaction();
         try
         {      
-            $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findAll();
+            $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->find();
             $i= 0;
             foreach($registeredStd as $key=>$value)
             {
@@ -194,6 +252,5 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
            $msge   
         ]);
     }
-    
-
 }
+

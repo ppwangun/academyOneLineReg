@@ -8,7 +8,7 @@
 namespace User\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Mvc\Controller\AbstractRestfulController;
@@ -41,6 +41,8 @@ class UserController extends AbstractRestfulController
 
                 $hydrator = new ReflectionHydrator();
                 $user = $hydrator->extract($user);
+                $user["password"] = "";
+                $user["confirm_password"] = "";
 
 
             $this->entityManager->getConnection()->commit();    
@@ -66,8 +68,9 @@ class UserController extends AbstractRestfulController
             {
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($value);
-
+                $data["fullName"] = $data["nom"]." ".$data["prenom"];
                 $users[$key] = $data;
+                //$users["fullName"] = $data["nom"]." ".$data["prenom"];
             }
             $this->entityManager->getConnection()->commit();    
             
@@ -125,7 +128,17 @@ class UserController extends AbstractRestfulController
             $data = $data["data"];
             $user=  $this->entityManager->getRepository(User::Class)->find($data["id"]);
             //updating user
-       
+           if(isset($data["password"])&&($data["password"]!=$data["confirm_password"]))
+                return new JsonModel([
+                 ["showAlert"=>true,"error"=>true,"msg"=>"Les mots de passes ne correspondent pas"]
+                    
+                ]);
+           if(!empty($data["password"]) && strlen($data["password"])<=6)
+                return new JsonModel([
+                 ["showAlert"=>true,"error"=>true,"msg"=>"Le mot de passe doit contenir au moins 6 caractères"]
+                    
+                ]); 
+           
             $this->userManager->updateUser($user,$data);
             
             //first delete all roles that user is associated with
@@ -154,7 +167,7 @@ class UserController extends AbstractRestfulController
 
             $this->entityManager->getConnection()->commit();
             return new JsonModel([
-                  //$role->getId()
+                  ["showAlert"=>true,"error"=>false,"msg"=>"Opération éffectuée avec succès"]
             ]);  
         }
         catch(Exception $e)

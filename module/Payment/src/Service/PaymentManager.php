@@ -11,8 +11,12 @@ use Application\Entity\ClassOfStudy;
 use Application\Entity\Student;
 use Application\Entity\Semester;
 use Application\Entity\RegisteredStudentView;
+use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\CurrentYearTeachingUnitView;
 use Application\Entity\UnitRegistration;
+
+use g105b\phpcsv;
+
 
 
 use Laminas\Http\Header\Date;
@@ -54,7 +58,7 @@ class PaymentManager {
    }
    public function getCurrentYear()
    {
-       $acadyr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+       $acadyr = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
        return $acadyr;
        
    }
@@ -71,8 +75,8 @@ class PaymentManager {
           
             foreach ($payments as $pmt)
             {
-                
-                $sum = $sum + $pmt->getAmount();
+                $amount = (int)$pmt->getAmount();
+                $sum = $sum + $amount;
             }
        }
        $adminRegistration->setFeesPaid($sum );
@@ -183,6 +187,209 @@ class PaymentManager {
 
        
    }
+   
+   public function importBalance($data)
+   {
+       $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($data["matricule"]);
+       //Check 
+       if($student)
+       {
+            $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($student->getId());
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
+            if($adminRegistration)
+            {
+                 $currentDate  = date_create(date('Y-m-d H:i:s'));
+                //check if balance was already registered
+                $payment = $this->entityManager->getRepository(Payment::class)->findOneBy(array("adminRegistration"=>$adminRegistration,"academicYear"=>$academicYear,"fromBalance"=>1));
+                if($payment)
+                {
+                    $payment->setAmount($data["encaissement"]);
+                    $payment->setDateTransaction($currentDate);
+                    $payment->setFromBalance(1);
+                    $adminRegistration->setFeesPaid($data["encaissement"]);
+                    $adminRegistration->setFeesBalanceFromPreviousYear($data["impaye"]);                    
+                }
+                else
+                {
+                   
+                    $payment = new Payment();
+                    $payment->setAcademicYear($academicYear);
+                    $payment->setAdminRegistration($adminRegistration);
+                    $payment->setAmount($data["encaissement"]);
+                    $payment->setDateTransaction($currentDate);
+                    $payment->setFromBalance(1);
+                    $adminRegistration->setFeesPaid($data["encaissement"]);
+                    $adminRegistration->setFeesBalanceFromPreviousYear($data["impaye"]);
+                    $this->entityManager->persist($payment);
+                }
+                
+                $this->entityManager->flush(); 
+            }
+       }
+
+      
+   }
+   
+   public function importPayments($data)
+   {
+       $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($data["matricule"]);
+       //Check 
+       if($student)
+       {
+            $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($student->getId());
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
+            if($adminRegistration)
+            {
+                (isset($data["transactionDate"]))? $currentDate=date_create($data["transactionDate"]): $currentDate  = date_create(date('Y-m-d H:i:s'));
+
+                    $payment = new Payment();
+                    $payment->setAcademicYear($academicYear);
+                    $payment->setAdminRegistration($adminRegistration);
+                    $payment->setAmount($data["montant"]);
+                    $payment->setDateTransaction($currentDate);
+                    $this->entityManager->persist($payment);
+
+                    $this->entityManager->flush(); 
+                    $this->feesSumOfPayments($student->getRegistrationId());
+            }
+       }
+
+      
+   } 
+   
+      public function updatePymtAPI($data)
+   {
+
+        $url = "http://testagenla.lekef.net/web/session/authenticate";
+
+        // Odoo database credentials
+        $db = "testagenla";
+        $username = "webservice";
+        $password = "webservice";
+
+        // Request data
+        $payload = array(
+            "jsonrpc" => "2.0",
+            "method" => "call",
+            "params" => array(
+                "db" => $db,
+                "login" => $username,
+                "password" => $password,
+            )
+        );
+
+        // Convert the payload to JSON
+        $data = json_encode($payload);
+
+        // Set cURL options
+        $options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/json",
+                "Content-Length: " . strlen($data)
+            )
+        );
+
+        // Initialize cURL
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
+
+        // Send the request
+        $response = curl_exec($curl);
+
+        // Check for errors
+        if ($response === false) {
+            $error = curl_error($curl);
+            return  "message: " . $error;
+        } else {
+         //Send the request
+          
+          
+                
+            // Handle the response
+            $result = json_decode($response, true);
+
+            // Check if the authentication was successful
+            if (array_key_exists("result", $result)) {
+                // Retrieve the session ID 
+                $session_id = $result["result"]["session_id"];
+                $data = ["partner_id"=> "64c7c85c85cfe720ceafaf1a",
+                            "name"=> "Ann Blair",
+                            "email"=> "annblair@xerex.com",
+                            "phone"=> "+1 (904) 469-2398",
+                            "street"=> "679 Sunnyspartner_ide Court, Warren, Palau, 8700"];
+                // Convert the payload to JSON
+                $url =" https://tesdetagenla.lekef.net/api/agenla/partner/create";
+                $data = json_encode($data);
+                $options = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_POST => true,
+                    CURLOPT_POSTFIELDS => $data,
+                    CURLOPT_HTTPHEADER => array(
+                        "Content-Type: application/json",
+                        "Content-Length: " . strlen($data),
+                        "Set-Cookie: session_id".$session_id."; Expires=Wed, 15-May-2024 16:12:37 GMT; Max-Age=7776000; HttpOnly; Path=/",
+                    )
+                ); 
+                
+                curl_close($curl); 
+                $curl = curl_init();
+                curl_setopt_array($curl, $options);
+
+                // Send the request
+                $response = curl_exec($curl); 
+                // Get information about the cURL request
+                $info = curl_getinfo($curl);
+
+                // Check for errors
+                if ($response === false) {
+                    $error = curl_error($curl);                   
+                    echo "message: " . $error; exit;
+                } 
+              curl_close($curl);
+              echo 'HTTP Code: ' . $info['http_code'] . '<br>';
+                echo 'Total Time: ' . $info['total_time'] . ' seconds<br>';
+                echo 'Content Type: ' . $info['content_type'] . '<br>';
+
+
+
+            } 
+
+            // Close cURL
+        curl_close($curl); 
+}
+
+      
+   }
+   
+   public function importDotations($data)
+   {
+       $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($data["matricule"]);
+       //Check 
+       if($student)
+       {
+            $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($student->getId());
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
+            if($adminRegistration)
+            {
+                    $adminRegistration->setFeesDotation($data["montant"]);
+
+                    $this->entityManager->flush(); 
+                    $this->feesSumOfPayments($student->getRegistrationId());
+            }
+       }
+
+      
+   }    
 }
 
 

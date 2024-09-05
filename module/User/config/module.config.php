@@ -5,8 +5,6 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 
-
-
 return [
     'controllers' => [
         'factories' => [
@@ -57,29 +55,6 @@ return [
                     ],
                 ],
             ],
-               'newstudentlogin' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/newstudentlogin',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'newStudentLogin',
-                    ],
-                ],
-            ],
-  
-            'register' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/register',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'register',
-                    ],
-                ],
-            ],            
-
-           
                'logout' => [
                 'type' => Literal::class,
                 'options' => [
@@ -187,21 +162,11 @@ return [
                 ],
             ],
             
-               'myAcademySpace' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/myAcademySpace',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'myAcademySpace',
-                    ],
-                ],
-            ],            
         ],
     ],
     'view_manager' => [
         'template_path_stack' => [
-            'User' => __DIR__ . '/../view',
+            'user' => __DIR__ . '/../view',
         ],
     ],
     
@@ -209,7 +174,6 @@ return [
         'factories' => [
             \Laminas\Authentication\AuthenticationService::class => Service\Factory\AuthenticationServiceFactory::class,
             Service\AuthAdapter::class => Service\Factory\AuthAdapterFactory::class,
-            Service\AuthAdapter2::class => Service\Factory\AuthAdapter2Factory::class,
             Service\AuthManager::class => Service\Factory\AuthManagerFactory::class,
             Service\UserManager::class => Service\Factory\UserManagerFactory::class,
             Service\RbacManager::class => Service\Factory\RbacManagerFactory::class,
@@ -230,8 +194,7 @@ return [
     ],
 
     'session_containers' => [
-        'LoggedInUser',
-        'onlineLoggedInUser'
+        'LoggedInUser'
         ],
     // This key stores configuration for RBAC manager.
     'rbac_manager' => [
@@ -248,7 +211,7 @@ return [
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
                 ['actions' => '*', 
-                 'allow' => '*'],
+                 'allow' => '@'],
 
             ],
             Controller\ExamReportsController::class => [

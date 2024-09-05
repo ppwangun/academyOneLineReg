@@ -2,8 +2,6 @@
 namespace User\Service;
 
 use Laminas\Authentication\Result;
-use User\Service\AuthAdapter2;
-use Laminas\Authentication\AuthenticationService;
 
 /**
  * The AuthManager service is responsible for user's login/logout and simple access 
@@ -22,8 +20,6 @@ class AuthManager
      */
     private $authService;
     
-    private $authService2;
-    
     /**
      * Session manager.
      * @var Laminas\Session\SessionManager
@@ -36,40 +32,34 @@ class AuthManager
      */
     private $config;
     
-    private $entityManager;
-    
     /**
      * Constructs the service.
      */
-    public function __construct($entityManager,$authService,$authService2, $sessionManager, $config) 
+    public function __construct($authService, $sessionManager, $config) 
     {
         $this->authService = $authService;
-        $this->authService2 = $authService2;
         $this->sessionManager = $sessionManager;
         $this->config = $config;
-        $this->entityManager = $entityManager;
     }
     
     /**
      * Performs a login attempt. If $rememberMe argument is true, it forces the session
      * to last for one month (otherwise the session expires on one hour).
      */
-    public function login($matricule, $birthdate, $rememberMe)
+    public function login($email, $password, $rememberMe)
     {   
         // Check if user has already logged in. If so, do not allow to log in 
         // twice.
         if ($this->authService->getIdentity()!=null) {
                     //redirect to the login action of authController
-            //header('Location: home ');
+            header('Location: home ');
             //throw new \Exception('Already logged in');
-            //Before logging in, first clear existing session
-            // $this->authService->clearIdentity();
         }
             
         // Authenticate with login/password.
         $authAdapter = $this->authService->getAdapter();
-        $authAdapter->setMatricule($matricule);
-        $authAdapter->setBirthdate($birthdate);
+        $authAdapter->setEmail($email);
+        $authAdapter->setPassword($password);
         $result = $this->authService->authenticate();
 
         // If user wants to "remember him", we will make session to expire in 
@@ -84,73 +74,21 @@ class AuthManager
     }
     
     /**
-     * Performs a login attempt. If $rememberMe argument is true, it forces the session
-     * to last for one month (otherwise the session expires on one hour).
-     */
-    public function lecturerLogin($phoneNumber, $password, $rememberMe)
-    {   
-        // Check if user has already logged in. If so, do not allow to log in 
-        // twice.
-        if ($this->authService->getIdentity()!=null) {
-                    //redirect to the login action of authController
-            //header('Location: home ');
-            //throw new \Exception('Already logged in');
-            //Before logging in, first clear existing session
-            // $this->authService->clearIdentity();
-        }
-            
-        // Authenticate with login/password.
-        $authAdapter = $this->authService->getAdapter();
-        $authAdapter->setPhoneNumber($phoneNumber);
-        $authAdapter->setPassword($password);
-        $result = $this->authService->lecturerAuthenticate();
-
-        // If user wants to "remember him", we will make session to expire in 
-        // one month. By default session expires in 1 hour (as specified in our 
-        // config/global.php file).
-        if ($result->getCode()==Result::SUCCESS && $rememberMe) {
-            // Session cookie will expire in 1 month (30 days).
-            $this->sessionManager->rememberMe(60*60*24*30);
-        }
-        
-        return $result;
-    }
-    
-    
-    /**
-     * Performs a login attempt. If $rememberMe argument is true, it forces the session
-     * to last for one month (otherwise the session expires on one hour).
-     */
-    public function newStudentLogin($fileNumber)
-    {   
-        
-        // instantiate the authentication service
-        //$this->authService2 = new AuthenticationService();
-
-        // Set up the authentication adapter
-        $authAdapter = new AuthAdapter2($this->entityManager,$fileNumber);            
-        // Attempt authentication, saving the result
-        $result = $this->authService2->authenticate($authAdapter);
-
-
-        
-        return $result;
-    }    
-    /**
      * Performs user logout.
      */
     public function logout()
     {
+       
         // Allow to log out only when user is logged in.
-        if ($this->authService->getIdentity()==null) {
-            header("location: accueil");
+        if ($this->authService->getIdentity()==null) { 
+            header("location: login");
            // throw new \Exception('The user is not logged in');
         }
         
         // Remove identity from session.
         $this->authService->clearIdentity();               
     }
-   
+    
 /**
  * This is a simple access control filter. It is able to restrict unauthorized
  * users to visit certain pages.
@@ -161,8 +99,8 @@ class AuthManager
  */
 public function filterAccess($controllerName, $actionName)
 {
+    
 
-//echo $this->authService2->getIdentity(); exit;
     // Determine mode - 'restrictive' (default) or 'permissive'. In restrictive
     // mode all controller actions must be explicitly listed under the 'access_filter'
     // config key, and access is denied to any not listed action for unauthorized users. 
@@ -180,21 +118,21 @@ public function filterAccess($controllerName, $actionName)
             $allow = $item['allow'];
             if (is_array($actionList) && in_array($actionName, $actionList) ||
                 $actionList=='*') {
+                 if (!$this->authService->hasIdentity()) {
+                    // Only authenticated user is allowed to see the page.
+                    return self::AUTH_REQUIRED;                        
+                }               
                 if ($allow=='*')
                     // Anyone is allowed to see the page.
                     return self::ACCESS_GRANTED; 
-                else if (!$this->authService->hasIdentity()||!$this->authService2->hasIdentity()) {
-                    // Only authenticated user is allowed to see the page.
-                    return self::AUTH_REQUIRED;                        
-                }
-                    
+   
                 if ($allow=='@') {
                     // Any authenticated user is allowed to see the page.
                     return self::ACCESS_GRANTED;                         
                 } else if (substr($allow, 0, 1)=='@') {
                     // Only the user with specific identity is allowed to see the page.
                     $identity = substr($allow, 1);
-                    if ($this->authService->getIdentity()==$identity||$this->authService2->getIdentity()==$identity)
+                    if ($this->authService->getIdentity()==$identity)
                         return self::ACCESS_GRANTED; 
                     else
                         return self::ACCESS_DENIED;
@@ -217,7 +155,7 @@ public function filterAccess($controllerName, $actionName)
     // listed under 'access_filter' key and deny access to authorized users 
     // (for security reasons).
     if ($mode=='restrictive') {
-        if(!$this->authService->hasIdentity()||!$this->authService2->hasIdentity())
+        if(!$this->authService->hasIdentity())
             return self::AUTH_REQUIRED;
         else
             return self::ACCESS_DENIED;

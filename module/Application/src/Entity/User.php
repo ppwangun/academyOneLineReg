@@ -15,6 +15,9 @@ class User
     const STATUS_ACTIVE       = 1; // Active user.
     const STATUS_RETIRED      = 2; // Retired user.
     
+    const USER_CONNECTED = 1;
+    const USER_DISCONNECTED = 0;
+    
     /**
      * @ORM\Id
      * @ORM\Column(name="id")
@@ -48,9 +51,11 @@ class User
     protected $status;
     
     /**
-     * @ORM\Column(name="date_created")  
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_created", type="datetime", nullable=true)
      */
-    protected $dateCreated;
+    private $dateCreated;
         
     /**
      * @ORM\Column(name="pwd_reset_token")  
@@ -61,6 +66,27 @@ class User
      * @ORM\Column(name="pwd_reset_token_creation_date")  
      */
     protected $passwordResetTokenCreationDate;
+    
+     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="first_connection", type="boolean", nullable=true, options={"default"="1"})
+     */
+    private $firstConnection = true;
+    
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="connected_status", type="boolean", nullable=true)
+     */
+    private $connectedStatus = '0';
+    
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="last_connected_date", type="datetime", nullable=true)
+     */
+    private $lastConnectedDate;    
     
     /**
      * @ORM\ManyToMany(targetEntity="Application\Entity\Role")
@@ -222,21 +248,27 @@ class User
     }
     
     /**
-     * Returns the date of user creation.
-     * @return string     
+     * Set dateCreated.
+     *
+     * @param \DateTime|null $dateCreated
+     *
+     * @return User
      */
-    public function getDateCreated() 
-    {
-        return $this->dateCreated;
-    }
-    
-    /**
-     * Sets the date when this user was created.
-     * @param string $dateCreated     
-     */
-    public function setDateCreated($dateCreated) 
+    public function setDateCreated($dateCreated = null)
     {
         $this->dateCreated = $dateCreated;
+    
+        return $this;
+    }
+
+    /**
+     * Get dateCreated.
+     *
+     * @return \DateTime|null
+     */
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
     }    
     
     /**
@@ -274,6 +306,78 @@ class User
     {
         $this->passwordResetTokenCreationDate = $date;
     }
+    
+    /**
+     * Set firstConnection.
+     *
+     * @param bool|null $firstConnection
+     *
+     * @return User
+     */
+    public function setFirstConnection($firstConnection = null)
+    {
+        $this->firstConnection = $firstConnection;
+    
+        return $this;
+    }
+
+    /**
+     * Get firstConnection.
+     *
+     * @return bool|null
+     */
+    public function getFirstConnection()
+    {
+        return $this->firstConnection;
+    } 
+    
+    /**
+     * Set connectedStatus.
+     *
+     * @param bool|null $connectedStatus
+     *
+     * @return User
+     */
+    public function setConnectedStatus($connectedStatus = null)
+    {
+        $this->connectedStatus = $connectedStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get connectedStatus.
+     *
+     * @return bool|null
+     */
+    public function getConnectedStatus()
+    {
+        return $this->connectedStatus;
+    } 
+    
+    /**
+     * Set lastConnectedDate.
+     *
+     * @param \DateTime|null $lastConnectedDate
+     *
+     * @return User
+     */
+    public function setLastConnectedDate($lastConnectedDate = null)
+    {
+        $this->lastConnectedDate = $lastConnectedDate;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastConnectedDate.
+     *
+     * @return \DateTime|null
+     */
+    public function getLastConnectedDate()
+    {
+        return $this->lastConnectedDate;
+    }    
     
     /**
      * Returns the array of classes assigned to this user.

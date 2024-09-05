@@ -18,7 +18,9 @@ z-index: 120000}
                     <button  type="button" ng-click="$ctrl.addClasse()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="classForm.$invalid">Enrégistrer</button>
                     <span> <a href="#!/classes">Retour</a></span>
                 </div>
-                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    
+                </div>
                 <div class="col-lg-2">
                     
                     <button  type="button" ng-show="$ctrl.isUpdate" ng-click="$ctrl.deleteDegree()" ng-disabled="classForm.$invalid" class="btn btn-default">Supprimer</button>
@@ -37,37 +39,71 @@ z-index: 120000}
 
 
     <md-content layout-padding >
-
-    <div layout='column'>
-    <md-input-container class="md-block" >
-          <label>Diplôme:</label>
-          <md-autocomplete flex="70" md-search-text="$ctrl.searchText" 
-                           md-selected-item="$ctrl.selectedItem"  
-                           md-items="item in $ctrl.querySearch($ctrl.searchText)" 
-                           md-item-text="item.name" 
-                           md-min-length="0"
-                           placeholder="Faites d'un diplôme de formation" 
-                           md-selected-item-change="$ctrl.selectedItemChange(item)"
-                           md-input-name="degree"
-                           md-no-asterisk
-                           required>
-              <md-item-template>
-                <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
-
-              </md-item-template>
-              <md-not-found>
-                No states matching "{{$ctrl.searchText}}" were found.
-                <a ng-click="">Create a new one!</a>
-              </md-not-found>
-        </md-autocomplete>
-              <div ng-messages="classForm.degree.$error">
-                  <div ng-message="required">Ce champ est obligatoire</div>
-              </div> 
-    </md-input-container>
+    <div layout='row' style="padding-top: 25px;" ng-show="$ctrl.classe.isCommonCore">
+        <md-input-container class="md-block" flex='100' >
+        <label>Choisir une formation de tronc commun:</label>          
+            <md-select  name="cycle" placeholder="Choisir le cycle de formation" ng-model="$ctrl.classe.coreDegree"  md-no-asterisk  ng-required='$ctrl.classe.isCommonCore'>
+                <md-option ng-value="degree.id" ng-repeat="degree in $ctrl.troncCommuns">{{degree.name}}</md-option>
+            </md-select>
+                  <div ng-messages="classForm.cycle.$error">
+                      <div ng-message="required">Ce champ est obligatoire</div>
+                  </div> 
+        </md-input-container>
     </div>
+     <div layout='row' style="background-color: #dfe4ea; padding-top: 25px;">
+        <md-input-container class="md-block" flex="70"  >
+              <label>Formations associées:</label>
+              <md-autocomplete  md-search-text="$ctrl.searchText" 
+                               md-selected-item="$ctrl.selectedItem"  
+                               md-items="item in $ctrl.querySearch($ctrl.searchText)" 
+                               md-item-text="item.name" 
+                               md-min-length="0"
+                               placeholder="Faites d'un diplôme de formation" 
+                               md-selected-item-change="$ctrl.selectedItemChange(item)"
+                               md-input-name="degree"
+                               md-no-asterisk
+                               >
+                  <md-item-template>
+                    <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+
+                  </md-item-template>
+                  <md-not-found>
+                    No states matching "{{$ctrl.searchText}}" were found.
+                    <a ng-click="">Create a new one!</a>
+                  </md-not-found>
+            </md-autocomplete>
+                  <div ng-messages="classForm.degree.$error">
+                      <div ng-message="required">Ce champ est obligatoire</div>
+                  </div> 
+        </md-input-container>
+        <md-input-container class="md-block" flex='10'  ng-show="$ctrl.classe.isCommonCore">
+
+                    <button class="btn btn-danger" ng-click="$ctrl.addCommonCoreDegree($ctrl.selectedItem)"><i class="fa fa-plus"></i></button>
+
+        </md-input-container>           
+       
+     <md-input-container class="md-block" flex='20' >
+        Tronc commun?     
+        <md-checkbox class='md-primary' ng-model="$ctrl.classe.isCommonCore" ng-change="$ctrl.resetCommonCoreDegree()"  "aria-label="Actif ?" md-no-ink ></md-checkbox>
         
+    </md-input-container>  
+
+    </div>
+    <div  style="background-color: #dfe4ea;">
+
+        <table>
+
+           <tbody>
+               <tr ng-repeat="deg in $ctrl.selectedDegrees track by deg.id">
+                   <td class="text-primary" ng-bind="deg.name"></td>&nbsp;<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                   <td ><button class="btn btn-default btn-xs" ng-click="$ctrl.removeDegreeFromCommnCore(deg)"><i class="fa fa-trash"></i></button></td>
+               </tr>
+
+           </tbody>
+       </table> 
+    </div>        
         
-    <div layout='row'>
+    <div layout='row' style="padding-top: 25px;">
     <md-input-container class="md-block" flex='100' >
     <label>Cycle de formation:</label>          
         <md-select  name="cycle" placeholder="Choisir le cycle de formation" ng-model="$ctrl.classe.cycleId"  md-no-asterisk  ng-required='$ctrl.isCycleRequired'>
@@ -111,21 +147,7 @@ z-index: 120000}
         </md-input-container>
         
         </div>
-    <div layout-gt-sm="row">
-        <md-input-container class="md-block" flex-gt-sm>
-          <label>Option:</label>
-          <input name="option" ng-model="$ctrl.classe.option" md-no-asterisk  />
-              <div ng-messages="classForm.option.$error">
-                  <div ng-message="required">le champ nom est obligatoire</div>
-
-              </div>   
-        </md-input-container>
-
-        <md-input-container class="md-block" flex-gt-sm>
-
-        </md-input-container>
         
-        </div>        
         <div layout-gt-sm='row' >
         <div class = "col-lg-12">
    
@@ -145,7 +167,12 @@ z-index: 120000}
                         Correspond à la fin de formation
                     </md-checkbox>
 
-           
+                    <md-checkbox ng-model="$ctrl.classe.isEndCommonCore"  ng-show="$ctrl.commonCore"              
+                        aria-label="Actif?"
+                        ng-true-value="1"
+                        ng-false-value="0"> 
+                        Correspond à la fin du tronc commun
+                    </md-checkbox>           
            
         </div>
 

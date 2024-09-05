@@ -1,0 +1,75 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="    max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 60%;
+    border-radius: 0;" aria-label="Ajouter une faculté">
+  <form   name="myForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Modifier Département</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" >
+           <form ng-cloak name="filiereForm">
+    <md-content layout-padding >
+        <form   name="myForm">
+
+   
+      <div class="md-dialog-content"  ng-init="init()">
+        
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%" >
+                    <label>Nom du cycle:</label>
+                    <input type='text'  name='name' ng-model="cycle.name" width='80%' md-no-asterisk required />
+                        <div ng-messages="myForm.name.$error">
+                            <div ng-message="required">le champ nom de la filièreest obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>                    
+        
+                </md-input-container>
+                <md-input-container flex="flex" style="width: 20%" >
+                  
+                    <label>Code Cycle:</label>
+                    <input type='text'  name="code" ng-model="cycle.code" width='80%' minlength="2" md-no-asterisk required />
+                        <div ng-messages="myForm.code.$error">
+                            <div ng-message="required">le champ code  est obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>
+                </md-input-container> 
+            </div>
+
+          <md-checkbox class='md-primary' ng-model="cycle.status"  ng-checked="(cycle.status)"aria-label="Actif ?" md-no-ink ></md-checkbox>
+      </div>
+    </form>
+  </md-content>
+                  
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+        Annuler
+      </md-button>
+      <md-button class="md-warn" ng-click="cyUpdate(cycle)" ng-disabled="myForm.$invalid">
+        Modifier
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

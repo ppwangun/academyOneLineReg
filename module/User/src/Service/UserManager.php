@@ -67,13 +67,25 @@ class UserManager
     public function updateUser($user, $data) 
     {
         // Do not allow to change user email if another user with such email already exits.
-        if($user->getEmail()!=$data['email'] && $this->checkUserExists($data['email'])) {
+       /* if($user->getEmail()!=$data['email'] && $this->checkUserExists($data['email'])) {
             throw new \Exception("Another user with email address " . $data['email'] . " already exists");
+        }*/
+        $user = $this->entityManager->getRepository(User::class)->findOneByEmail($data['email']);
+        if(!empty($data["password"]))
+        {
+       // Encrypt password and store the password in encrypted state.
+            $bcrypt = new Bcrypt();
+            $passwordHash = $bcrypt->create($data['password']);
+            $user->setPassword($passwordHash);
+            $user->setFirstConnection(1);
         }
         $user->setEmail($data['email']);
+        
         $user->setNom($data['nom']); 
         $user->setPrenom($data['prenom']); 
-        $user->setStatus($data['status']);        
+        $user->setStatus($data['status']);
+
+        
         
         // Apply changes to database.
         $this->entityManager->flush();
@@ -90,14 +102,14 @@ class UserManager
         $user = $this->entityManager->getRepository(User::class)->findOneBy([]);
         if ($user==null) {
             $user = new User();
-            $user->setEmail('admin@example.com');
+            $user->setEmail('admin@UdMAcademy.com');
             $user->setNom('Admin');
             $bcrypt = new Bcrypt();
             $passwordHash = $bcrypt->create('Secur1ty');        
             $user->setPassword($passwordHash);
             $user->setStatus(User::STATUS_ACTIVE);
             //$user->setDateCreated(\DateTime::createFromFormat('Y-m-d',date('Y-m-d H:i:s')));
-            $user->setDateCreated( new \DateTime(date('Y-m-d H:i:s')));
+            //$user->setDateCreated( new \DateTime(date('Y-m-d H:i:s')));
             
             $this->entityManager->persist($user);
             $this->entityManager->flush();

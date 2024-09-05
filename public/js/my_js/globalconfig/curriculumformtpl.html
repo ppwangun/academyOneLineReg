@@ -1,0 +1,105 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="    max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 60%;
+    border-radius: 0;" aria-label="Ajouter un cycle">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Ajouter un cycle de formation</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content >
+      <div class="md-dialog-content" >
+           <form ng-cloak name="filiereForm">
+            <div layout="row">
+
+               <!-- <md-autocomplete flex="40" md-search-text="$ctrl.searchText2" md-selected-item="$ctrl.selectedItem2" md-no-cache="$ctrl.noCache"  md-items="item in $ctrl.querySearch2($ctrl.searchText2)" md-item-text="item.name" placeholder="Faites le choix d'une filière" required>
+                 <md-item-template>
+                   <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+
+                 </md-item-template>
+                 <md-not-found>
+                   No states matching "{{$ctrl.searchText2}}" were found.
+                   <a ng-click="">Create a new one!</a>
+                 </md-not-found>
+
+               </md-autocomplete> -->
+            </div>
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%" >
+                    <label>Nom du cycle:</label>
+                    <input type='text'  name='name' ng-model="cycle.name" width='80%' md-no-asterisk required />
+                        <div ng-messages="filiereForm.name.$error">
+                            <div ng-message="required">le champ code filière est obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>                    
+        
+                </md-input-container>
+                <md-input-container flex="flex" style="width: 20%" >
+                  
+                    <label>Code du cycle:</label>
+                    <input type='text'  name="code" ng-model="cycle.code" width='80%' minlength="2" md-no-asterisk required />
+                        <div ng-messages="filiereForm.code.$error">
+                            <div ng-message="required">le champ code filière est obligatoire</div>
+                            <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+                        </div>
+                </md-input-container> 
+                </div>
+               <div layout layout-sm="column">
+                            <md-input-container flex-gt-sm flex="20">
+                            <label>Niveau du cycle</label>
+                            <md-select name="cycle_level" ng-model="cycle.cycleLevel"
+                                        md-no-asterisk ng-required='true' >
+                                <md-option ng-disabled="true"><em>---Choix du cycle---</em></md-option>
+                                <md-option value='1' >1</md-option>
+                                <md-option value='2'>2</md-option>
+                                <md-option value='3'>3</md-option>
+                            </md-select>
+                            <div class="errors" ng-messages="gradeRangeForm.points.$error">
+                              <div ng-message="required">Champ obligatoire</div>
+                            </div>
+                          </md-input-container>                     
+
+                <md-input-container flex-gt-sm flex="20">
+                  
+                    <label>Durée du cycle (Nombre d'année):</label>
+                    <input type='number'  name="code" ng-model="cycle.duration" width='80%' required />
+                        <div ng-messages="filiereForm.code.$error">
+                            <div ng-message="required">le champ code filière est obligatoire</div>
+                            
+                        </div>
+                </md-input-container>                 
+            </div>
+               <label>Générer les classes? &nbsp;</label>   <md-checkbox class='md-primary' ng-model="cycle.classesGenerationStatus"  ng-checked="(cycle.classesGenerationStatus)"aria-label="Actif ?" md-no-ink ></md-checkbox>
+
+          
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Annuler
+      </md-button>
+      <md-button class="md-warn" ng-click="createCycle()" ng-show="!isUpdate" ng-disabled="filiereForm.$invalid">
+       Ajouter
+      </md-button>
+      <md-button class="md-warn" ng-click="updateCycle()" ng-show="isUpdate" ng-disabled="filiereForm.$invalid"> Modifier</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -67,10 +67,10 @@ class ClassOfStudy extends \Application\Entity\ClassOfStudy implements \Doctrine
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'studyLevel', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndOfCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndCycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndDegreeTraining', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'cycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'degree', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'deliberation', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'grade', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'academicYear'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'studyLevel', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndOfCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndCycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndDegreeTraining', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'cycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'degree', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'deliberation', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'fieldOfStudy', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'grade'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'studyLevel', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndOfCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndCycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndDegreeTraining', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'cycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'degree', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'deliberation', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'grade', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'academicYear'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'studyLevel', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndOfCoreCurriculum', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndCycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'isEndDegreeTraining', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'cycle', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'degree', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'deliberation', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'fieldOfStudy', '' . "\0" . 'Application\\Entity\\ClassOfStudy' . "\0" . 'grade'];
     }
 
     /**
@@ -133,7 +133,7 @@ class ClassOfStudy extends \Application\Entity\ClassOfStudy implements \Doctrine
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setInitializer(\Closure $initializer = null): void
+    public function __setInitializer(?\Closure $initializer = null): void
     {
         $this->__initializer__ = $initializer;
     }
@@ -151,7 +151,7 @@ class ClassOfStudy extends \Application\Entity\ClassOfStudy implements \Doctrine
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setCloner(\Closure $cloner = null): void
+    public function __setCloner(?\Closure $cloner = null): void
     {
         $this->__cloner__ = $cloner;
     }
@@ -415,6 +415,28 @@ class ClassOfStudy extends \Application\Entity\ClassOfStudy implements \Doctrine
     /**
      * {@inheritDoc}
      */
+    public function setFieldOfStudy(\Application\Entity\FieldOfStudy $fieldOfStudy = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFieldOfStudy', [$fieldOfStudy]);
+
+        return parent::setFieldOfStudy($fieldOfStudy);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFieldOfStudy()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFieldOfStudy', []);
+
+        return parent::getFieldOfStudy();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setGrade(\Application\Entity\Grade $grade = NULL)
     {
 
@@ -432,39 +454,6 @@ class ClassOfStudy extends \Application\Entity\ClassOfStudy implements \Doctrine
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getGrade', []);
 
         return parent::getGrade();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addAcademicYear(\Application\Entity\AcademicYear $academicYear)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addAcademicYear', [$academicYear]);
-
-        return parent::addAcademicYear($academicYear);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function removeAcademicYear(\Application\Entity\AcademicYear $academicYear)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'removeAcademicYear', [$academicYear]);
-
-        return parent::removeAcademicYear($academicYear);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAcademicYear()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getAcademicYear', []);
-
-        return parent::getAcademicYear();
     }
 
 }

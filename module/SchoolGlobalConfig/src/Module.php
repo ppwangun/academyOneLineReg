@@ -43,7 +43,7 @@ class Module
         // Switch layout only for controllers belonging to our module.
         if ($moduleNamespace == __NAMESPACE__) {
             $viewModel = $event->getViewModel();
-            $viewModel->setTemplate('layout/layout');  
+            $viewModel->setTemplate('layout/layout2');  
         }        
     }
      /**

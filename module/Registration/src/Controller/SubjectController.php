@@ -11,7 +11,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
 use Application\Entity\CurrentYearTeachingUnitView;
 use Application\Entity\SubjectRegistrationView;
@@ -47,7 +47,7 @@ class SubjectController extends AbstractRestfulController
                 //$rsm = new ResultSetMapping();
                 // build rsm here
 
-                $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester FROM Application\Entity\CurrentYearTeachingUnitView c'
+                $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId FROM Application\Entity\CurrentYearTeachingUnitView c'
                         .' WHERE c.codeUe LIKE :code');
                 $query->setParameter('code', '%'.$id.'%');
 
@@ -62,7 +62,7 @@ class SubjectController extends AbstractRestfulController
 
                     foreach($userClasses as $classe)
                     {
-                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester FROM Application\Entity\CurrentYearTeachingUnitView c'
+                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\CurrentYearTeachingUnitView c'
                                 .' WHERE c.classe = :classe AND c.codeUe LIKE :code');
                         $query->setParameter('code', '%'.$id.'%')
                                 ->setParameter('classe',$classe->getClassOfStudy()->getCode());

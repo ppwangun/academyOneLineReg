@@ -1,24 +1,28 @@
 <?php
+
+
+
 namespace Application\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Application\Entity\TeachingUnit;
+use Application\Entity\Subject;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\Semester;
-use Application\Entity\Subject;
-
-
-use Doctrine\ORM\Mapping as ORM;
+use Application\Entity\Contract;
+use Application\Entity\Teacher;
 
 /**
  * ClassOfStudyHasSemester
  *
- * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"})})
+ * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class ClassOfStudyHasSemester
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -27,117 +31,117 @@ class ClassOfStudyHasSemester
     private $id;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="credits", type="float", precision=10, scale=0, nullable=true)
      */
     private $credits;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="hours_volume", type="integer", nullable=true)
      */
     private $hoursVolume;
 
     /**
-     * @var float
+     * @var float|null
      *
-     * @ORM\Column(name="subject_credits", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="subject_weight", type="float", precision=10, scale=0, nullable=true, options={"default"="1"})
      */
-    private $subjectCredits;
-    
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="subject_weight", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $subjectWeight='0.5';    
+    private $subjectWeight = 1;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="subject_hours", type="integer", nullable=true)
      */
     private $subjectHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="cm_hours", type="integer", nullable=true)
      */
     private $cmHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="tp_hours", type="integer", nullable=true)
      */
     private $tpHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="td_hours", type="integer", nullable=true)
      */
     private $tdHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="subject_cm_hours", type="integer", nullable=true)
      */
     private $subjectCmHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="subject_td_hours", type="integer", nullable=true)
      */
     private $subjectTdHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="subject_tp_hours", type="integer", nullable=true)
      */
     private $subjectTpHours;
 
     /**
-     * @var integer
+     * @var int|null
      *
-     * @ORM\Column(name="status", type="integer", nullable=true)
+     * @ORM\Column(name="status", type="integer", nullable=true, options={"default"="1"})
      */
-    private $status='1';
+    private $status = 1;
 
     /**
-     * @var integer
+     * @var bool
      *
-     * @ORM\Column(name="is_repeated_subject", type="integer", nullable=true)
+     * @ORM\Column(name="mark_calculation_status", type="boolean", nullable=false)
      */
-    private $isReapeatedYearSubject='0';
-    
+    private $markCalculationStatus = '0';
+
     /**
-     * @var integer
+     * @var bool|null
      *
-     * @ORM\Column(name="is_previous_year_subject", type="integer", nullable=true)
+     * @ORM\Column(name="is_previous_year_subject", type="boolean", nullable=true)
      */
-    private $isPreviousYearSubject='0';    
-    
+    private $isPreviousYearSubject = '0';
+
     /**
-     * @var integer
+     * @var int|null
      *
-     * @ORM\Column(name="mark_calculation_status", type="integer", nullable=true)
+     * @ORM\Column(name="is_repeated_subject", type="integer", nullable=false)
      */
-    private $markCalculationStatus='0';  
-    
+    private $isRepeatedSubject = '0';
+
     /**
-     * @var integer
+     * @var bool|null
      *
-     * @ORM\Column(name="module_consolidation_status", type="integer", nullable=true)
+     * @ORM\Column(name="module_consolidation_status", type="boolean", nullable=true)
      */
-    private $moduleConsolidationStatus='0';  
-    
+    private $moduleConsolidationStatus = '0';
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="subject_credits", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $subjectCredits;
+
     /**
      * @var ClassOfStudy
      *
@@ -169,6 +173,16 @@ class ClassOfStudyHasSemester
     private $subject;
 
     /**
+     * @var Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+    /**
      * @var TeachingUnit
      *
      * @ORM\ManyToOne(targetEntity="TeachingUnit")
@@ -181,9 +195,9 @@ class ClassOfStudyHasSemester
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -191,23 +205,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set credits
+     * Set credits.
      *
-     * @param float $credits
+     * @param float|null $credits
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setCredits($credits)
+    public function setCredits($credits = null)
     {
         $this->credits = $credits;
-
+    
         return $this;
     }
 
     /**
-     * Get credits
+     * Get credits.
      *
-     * @return float
+     * @return float|null
      */
     public function getCredits()
     {
@@ -215,23 +229,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set hoursVolume
+     * Set hoursVolume.
      *
-     * @param integer $hoursVolume
+     * @param int|null $hoursVolume
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setHoursVolume($hoursVolume)
+    public function setHoursVolume($hoursVolume = null)
     {
         $this->hoursVolume = $hoursVolume;
-
+    
         return $this;
     }
 
     /**
-     * Get hoursVolume
+     * Get hoursVolume.
      *
-     * @return integer
+     * @return int|null
      */
     public function getHoursVolume()
     {
@@ -239,71 +253,47 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subjectCredits
+     * Set subjectWeight.
      *
-     * @param float $subjectCredits
+     * @param float|null $subjectWeight
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubjectCredits($subjectCredits)
+    public function setSubjectWeight($subjectWeight = null)
     {
-        $this->subjectCredits = $subjectCredits;
-
+        $this->subjectWeight = $subjectWeight;
+    
         return $this;
     }
 
     /**
-     * Get subjectCredits
+     * Get subjectWeight.
      *
-     * @return float
-     */
-    public function getSubjectCredits()
-    {
-        return $this->subjectCredits;
-    }
-    
-    /**
-     * Set weight
-     *
-     * @param float $weight
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setSubjectWeight($weight)
-    {
-        $this->subjectWeight= $weight;
-
-        return $this;
-    }    
-    
-    /**
-     * Get weight
-     *
-     * @return float
+     * @return float|null
      */
     public function getSubjectWeight()
     {
         return $this->subjectWeight;
-    }    
+    }
 
     /**
-     * Set subjectHours
+     * Set subjectHours.
      *
-     * @param integer $subjectHours
+     * @param int|null $subjectHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubjectHours($subjectHours)
+    public function setSubjectHours($subjectHours = null)
     {
         $this->subjectHours = $subjectHours;
-
+    
         return $this;
     }
 
     /**
-     * Get subjectHours
+     * Get subjectHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getSubjectHours()
     {
@@ -311,23 +301,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set cmHours
+     * Set cmHours.
      *
-     * @param integer $cmHours
+     * @param int|null $cmHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setCmHours($cmHours)
+    public function setCmHours($cmHours = null)
     {
         $this->cmHours = $cmHours;
-
+    
         return $this;
     }
 
     /**
-     * Get cmHours
+     * Get cmHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getCmHours()
     {
@@ -335,23 +325,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set tpHours
+     * Set tpHours.
      *
-     * @param integer $tpHours
+     * @param int|null $tpHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setTpHours($tpHours)
+    public function setTpHours($tpHours = null)
     {
         $this->tpHours = $tpHours;
-
+    
         return $this;
     }
 
     /**
-     * Get tpHours
+     * Get tpHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getTpHours()
     {
@@ -359,23 +349,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set tdHours
+     * Set tdHours.
      *
-     * @param integer $tdHours
+     * @param int|null $tdHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setTdHours($tdHours)
+    public function setTdHours($tdHours = null)
     {
         $this->tdHours = $tdHours;
-
+    
         return $this;
     }
 
     /**
-     * Get tdHours
+     * Get tdHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getTdHours()
     {
@@ -383,23 +373,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subjectCmHours
+     * Set subjectCmHours.
      *
-     * @param integer $subjectCmHours
+     * @param int|null $subjectCmHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubjectCmHours($subjectCmHours)
+    public function setSubjectCmHours($subjectCmHours = null)
     {
         $this->subjectCmHours = $subjectCmHours;
-
+    
         return $this;
     }
 
     /**
-     * Get subjectCmHours
+     * Get subjectCmHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getSubjectCmHours()
     {
@@ -407,23 +397,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subjectTdHours
+     * Set subjectTdHours.
      *
-     * @param integer $subjectTdHours
+     * @param int|null $subjectTdHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubjectTdHours($subjectTdHours)
+    public function setSubjectTdHours($subjectTdHours = null)
     {
         $this->subjectTdHours = $subjectTdHours;
-
+    
         return $this;
     }
 
     /**
-     * Get subjectTdHours
+     * Get subjectTdHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getSubjectTdHours()
     {
@@ -431,167 +421,191 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subjectTpHours
+     * Set subjectTpHours.
      *
-     * @param integer $subjectTpHours
+     * @param int|null $subjectTpHours
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubjectTpHours($subjectTpHours)
+    public function setSubjectTpHours($subjectTpHours = null)
     {
         $this->subjectTpHours = $subjectTpHours;
-
+    
         return $this;
     }
 
     /**
-     * Get subjectTpHours
+     * Get subjectTpHours.
      *
-     * @return integer
+     * @return int|null
      */
     public function getSubjectTpHours()
     {
         return $this->subjectTpHours;
     }
- 
+
     /**
-     * Set status
+     * Set status.
      *
-     * @param integer $status
+     * @param int|null $status
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setStatus($status)
+    public function setStatus($status = null)
     {
         $this->status = $status;
-
+    
         return $this;
     }
 
     /**
-     * Get status
+     * Get status.
      *
-     * @return integer
+     * @return int|null
      */
     public function getStatus()
     {
         return $this->status;
     }
 
- /**
-     * Set isPreviousYearSubject
-     *
-     * @param integer $isPreviousYearSubject
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setIsPreviousYearSubject($isPreviousYearSubject)
-    {
-        $this->isPreviousYearSubject = $isPreviousYearSubject;
-
-        return $this;
-    }
-
     /**
-     * Get isPreviousYearSubject
+     * Set markCalculationStatus.
      *
-     * @return integer
-     */
-    public function getisPreviousYearSubject()
-    {
-        return $this->isPreviousYearSubject;
-    }
-
- /**
-     * Set isRepeatedSubject
-     *
-     * @param integer $isRepeatedSubject
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setIsRepeatedSubject($isRepeatedSubject)
-    {
-        $this->isRepeatedSubject = $isRepeatedSubject;
-
-        return $this;
-    }
-
-    /**
-     * Get isRepeatedSubject
-     *
-     * @return integer
-     */
-    public function getisRepeatedSubject()
-    {
-        return $this->isRepeatedSubject;
-    }
-    
-    /**
-     * Set markCalculationStatus
-     *
-     * @param integer $markCalculationStatus
+     * @param bool $markCalculationStatus
      *
      * @return ClassOfStudyHasSemester
      */
     public function setMarkCalculationStatus($markCalculationStatus)
     {
         $this->markCalculationStatus = $markCalculationStatus;
-
+    
         return $this;
     }
 
     /**
-     * Get markCalculationStatus
+     * Get markCalculationStatus.
      *
-     * @return integer
+     * @return bool
      */
     public function getMarkCalculationStatus()
     {
         return $this->markCalculationStatus;
     }
-    
+
     /**
-     * Set moduleConsolidationStatus
+     * Set isPreviousYearSubject.
      *
-     * @param integer $moduleConsolidationStatus
+     * @param bool|null $isPreviousYearSubject
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setModuleConsolidationStatus($moduleConsolidationStatus)
+    public function setIsPreviousYearSubject($isPreviousYearSubject = null)
     {
-        $this->moduleConsolidationStatus = $moduleConsolidationStatus;
-
+        $this->isPreviousYearSubject = $isPreviousYearSubject;
+    
         return $this;
     }
 
     /**
-     * Get moduleConsolidationStatus
+     * Get isPreviousYearSubject.
      *
-     * @return integer
+     * @return bool|null
+     */
+    public function getIsPreviousYearSubject()
+    {
+        return $this->isPreviousYearSubject;
+    }
+
+    /**
+     * Set isRepeatedSubject.
+     *
+     * @param int|null $isRepeatedSubject
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setIsRepeatedSubject($isRepeatedSubject = null)
+    {
+        $this->isRepeatedSubject = $isRepeatedSubject;
+    
+        return $this;
+    }
+
+    /**
+     * Get isRepeatedSubject.
+     *
+     * @return int|null
+     */
+    public function getIsRepeatedSubject()
+    {
+        return $this->isRepeatedSubject;
+    }
+
+    /**
+     * Set moduleConsolidationStatus.
+     *
+     * @param bool|null $moduleConsolidationStatus
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setModuleConsolidationStatus($moduleConsolidationStatus = null)
+    {
+        $this->moduleConsolidationStatus = $moduleConsolidationStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get moduleConsolidationStatus.
+     *
+     * @return bool|null
      */
     public function getModuleConsolidationStatus()
     {
         return $this->moduleConsolidationStatus;
     }
-    
+
     /**
-     * Set classOfStudy
+     * Set subjectCredits.
      *
-     * @param ClassOfStudy $classOfStudy
+     * @param float|null $subjectCredits
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setSubjectCredits($subjectCredits = null)
+    {
+        $this->subjectCredits = $subjectCredits;
+    
+        return $this;
+    }
+
+    /**
+     * Get subjectCredits.
+     *
+     * @return float|null
+     */
+    public function getSubjectCredits()
+    {
+        return $this->subjectCredits;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param ClassOfStudy|null $classOfStudy
      *
      * @return ClassOfStudyHasSemester
      */
     public function setClassOfStudy(ClassOfStudy $classOfStudy = null)
     {
         $this->classOfStudy = $classOfStudy;
-
+    
         return $this;
     }
 
     /**
-     * Get classOfStudy
+     * Get classOfStudy.
      *
-     * @return ClassOfStudy
+     * @return ClassOfStudy|null
      */
     public function getClassOfStudy()
     {
@@ -599,23 +613,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set semester
+     * Set semester.
      *
-     * @param Semester $semester
+     * @param Semester|null $semester
      *
      * @return ClassOfStudyHasSemester
      */
     public function setSemester(Semester $semester = null)
     {
         $this->semester = $semester;
-
+    
         return $this;
     }
 
     /**
-     * Get semester
+     * Get semester.
      *
-     * @return Semester
+     * @return Semester|null
      */
     public function getSemester()
     {
@@ -623,23 +637,23 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subject
+     * Set subject.
      *
-     * @param Subject $subject
+     * @param Subject|null $subject
      *
      * @return ClassOfStudyHasSemester
      */
     public function setSubject(Subject $subject = null)
     {
         $this->subject = $subject;
-
+    
         return $this;
     }
 
     /**
-     * Get subject
+     * Get subject.
      *
-     * @return Subject
+     * @return Subject|null
      */
     public function getSubject()
     {
@@ -647,28 +661,50 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set teachingUnit
+     * Set teacher.
      *
-     * @param TeachingUnit $teachingUnit
+     * @param Teacher|null $teacher
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setTeacher(Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+    
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
+    }
+
+    /**
+     * Set teachingUnit.
+     *
+     * @param TeachingUnit|null $teachingUnit
      *
      * @return ClassOfStudyHasSemester
      */
     public function setTeachingUnit(TeachingUnit $teachingUnit = null)
     {
         $this->teachingUnit = $teachingUnit;
-
+    
         return $this;
     }
 
     /**
-     * Get teachingUnit
+     * Get teachingUnit.
      *
-     * @return TeachingUnit
+     * @return TeachingUnit|null
      */
     public function getTeachingUnit()
     {
         return $this->teachingUnit;
     }
- 
-   
 }

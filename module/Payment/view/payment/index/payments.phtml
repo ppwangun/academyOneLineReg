@@ -13,7 +13,7 @@
 </style>
 <div class="row" ng-init="$ctrl.init() ">
                 <div class="col-lg-12">
-                    <h4 class="page-header">Détail des paiements</h4>
+                    <h4 class="page-header">Gestion des créances</h4>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -21,11 +21,17 @@
             <div class="row">
                 <div class="col-lg-12">
                     <!-- Panneau des boutton -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default small">
                         <div class="panel-heading" style="margin-bottom: 15px;">
 
-                            <a href="#!/assignnewteachingunit" class="btn btn-danger" id='newacadyr'>Créer</a>
-                            <button  ng-click="$ctrl.loadData()" class="btn btn-default fa fa-upload" id='newacadyr'>&nbsp;Importer</button>
+                            
+                            <div ng-show="<?=($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())])==1)||($this->access('manage.payment', null)==1)?true:false?>">
+                            <button  ng-click="$ctrl.importBalance()" class="btn btn-primary" id='newacadyr'><i class="fa fa-file"></i>&nbsp;Importer la balance</button>
+                            <button  ng-click="$ctrl.loadStdDotation()" class="btn btn-primary" id='newacadyr'><i class="fa fa-file"></i>&nbsp;Dotation</button>
+                            
+                            <button  ng-click="$ctrl.addStdToSubject()" class="btn btn-default " id='newacadyr'><i class="fa fa-money"></i>&nbsp;Mise à Jour des règlements</button>
+                            <button  ng-click="$ctrl.loadStdPayments()" class="btn btn-default " id='newacadyr'><i class="fa fa-money"></i>&nbsp;Importer les règlements</button>
+                            </div>
                             
                         </div>
                         
@@ -34,9 +40,10 @@
                                 <thead>
                                     <tr class="highlight">
                                         <th style="width: 8%" >Mat</th>
-                                        <th>Nom</th>
-                                        <th>Prénom</th>
+                                        <th>Nom & Prénom</th>
+                                        
                                         <th style="width: 8%">Classe</th>
+                                        <th style="width: 10%">Dette</th>
                                         <th style="width: 10%">Dotation</th>
                                         <th style="width: 10%">Montant Payé</th>
                                         <th style="width: 10%">Solde</th>
@@ -46,8 +53,9 @@
                                     <tr ng-repeat="pmt in $ctrl.payments " ng-dblclick="$ctrl.redirect(pmt.id)"  style="cursor: pointer;" >
                                       <td ng-bind="pmt.matricule"></td>
                                       <td ng-bind="pmt.nom"></td>
-                                      <td ng-bind="pmt.prenom"></td>
+                                      
                                       <td ng-bind="pmt.class"></td>
+                                      <td ng-bind="pmt.feesDebt"></td>
                                       <td ng-bind="pmt.feesDotation | currency :'':0"></td>
                                       <td ng-bind="pmt.feesPaid | currency :'':0"></td>
                                       <td ng-bind="pmt.feesBalance | currency :'':0"></td>

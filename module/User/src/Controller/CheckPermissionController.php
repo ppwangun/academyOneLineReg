@@ -8,7 +8,7 @@
 namespace User\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Mvc\Controller\AbstractRestfulController;
@@ -17,6 +17,7 @@ use Application\Entity\User;
 use Application\Entity\Role;
 use Application\Entity\UserRole;
 use Application\Entity\RegisteredStudentView;
+use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\ClassOfStudy;
 
 class CheckPermissionController extends AbstractRestfulController
@@ -107,7 +108,7 @@ class CheckPermissionController extends AbstractRestfulController
            {
                 //getting student class of study based on matricule
                $isAdmin = $this->access('global.system.admin',['user'=>$user]);
-                $std = $this->entityManager->getRepository(RegisteredStudentView::class)->findOneByMatricule($data['std_id']);
+                $std = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findOneByMatricule($data['std_id']);
                 if($std )
                 {
                     $class_code = $std->getClass();

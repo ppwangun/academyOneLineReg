@@ -1,0 +1,46 @@
+<style>
+    .timeline-title{
+        margin-left: 5px;
+    }
+    </style>
+
+<md-dialog aria-label="Timeline" style="min-width: 500px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Timeline de progression {{teachingUnitCode}}</h2>
+            <span flex></span>
+            <md-button aria-label="cancel button" class="md-icon-button" ng-click="cancel()">
+                <img src="assets/images/cancel_753345.png" width="24px" height="24px" alt="cancel"/>
+                <!--                    <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>-->
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content gap-1" layout="column">
+
+            <div class="loading-container" ng-if="!canDisplayTimeline()">
+                <div class="error-block" ng-if="hasFailedLoading()">
+                    <img class="error-icon" src="assets/images/warning_752755.png" alt=""/>
+                    <span class="error-message md-warn">Une erreur s'est produite lors du chargement des donnees</span>
+                    <md-button class="md-raised md-warn" ng-click="loadProgressions()">Re-éssayer</md-button>
+                </div>
+                <div class="loader-block" ng-if="isLoading()">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="20"></md-progress-circular>
+                </div>
+            </div>
+            <div ng-if="canDisplayTimeline()">
+                <div ng-if="progressions.length === 0" class="text-align-center" style="font-style: italic">Aucune progression n'a ete enregistree pour l'instant !</div>
+                <ul class="timeline" ng-if="progressions.length > 0">
+                    <li ng-repeat="progression in progressions" >
+                        <div class="timeline-header" >
+                            <h4 class="timeline-title" style="margin-left: 20px;">{{getProgressionLabel(progression.lectureType)}}</h4>
+                            <span class="timeline-date">{{getProgressionDateString(progression.date, progression.start_time, progression.end_time)}}</span><i ng-click='deleteProgression(progression.id)' style="cursor: pointer; color:red;" class="fa fa-trash"></i>
+                        </div>
+                        <p style="margin-left: 20px;">{{progression.description}}</p>
+                    </li>
+				                  
+                </ul>
+            </div>
+        </div>
+    </md-dialog-content>
+</md-dialog>

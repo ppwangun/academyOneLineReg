@@ -10,7 +10,7 @@ namespace Registration\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 
 use Application\Entity\RegisteredStudentView;
 use Application\Entity\SubjectRegistrationView;
@@ -36,6 +36,7 @@ class StdRegisteredToExamController extends AbstractRestfulController
         { 
             //$data = json_decode($id);
             // retrieve the sutdent ID based on the student ID 
+            
             $std = $this->entityManager->getRepository(StudentExamRegistrationView::class)->findBy(array("codeExam"=>$id),array("nom"=>"ASC","classe"=>"ASC")); 
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 

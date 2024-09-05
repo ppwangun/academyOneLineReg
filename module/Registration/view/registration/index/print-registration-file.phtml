@@ -1,0 +1,479 @@
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<?php
+//============================================================+
+// File name   : example_048.php
+// Begin       : 2009-03-20
+// Last Update : 2013-05-14
+//
+// Description : Example 048 for TCPDF class
+//               HTML tables and table headers
+//
+// Author: Nicola Asuni
+//
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com LTD
+//               www.tecnick.com
+//               info@tecnick.com
+//============================================================+
+
+/**
+ * Creates an example PDF TEST document using TCPDF
+ * @package com.tecnick.tcpdf
+ * @abstract TCPDF - Example: HTML tables and table headers
+ * @author Nicola Asuni
+ * @since 2009-03-20
+ */
+class PDF extends TCPDF {
+    //
+    // This class extends FPDF so we may customize the header and footer
+    // of the PDFs that are created
+    //
+   //Page header
+    public $faculty;
+    public $facultyCode;
+    public $filiere;
+    public $personOnChargeOfFaculty;
+    
+    public function Header() {
+        // Logo
+        
+        $headertext='';
+        $image_file = K_PATH_IMAGES.'logo.gif';
+        $this->Image($image_file,'', '', PDF_HEADER_LOGO_WIDTH,'', 'GIF', '', 'T', false, 300, 'R', false, false, 0, false, false, false);
+        // Set font
+        $this->SetFont('helvetica', 'B', 10);
+        $this->SetX(15);
+        $this->SetY(10);
+        
+        $this->Cell(0,PDF_MARGIN_LEFT, 'Institut Supérieure Agenla Academy ', 0, false, '', 0, '', 0, false, 'M', 'M');
+        $this->SetY(15);
+        $this->SetFont('helvetica', '', 10);
+        $this->Cell(0,25,$this->faculty, 0, false, '', 0, '', 0, false, 'M', 'M');
+        $this->SetY(20);
+        $this->Cell(0,25,$this->filiere, 0, false, '', 0, '', 0, false, 'M', 'M');
+        // Title
+        $this->SetY(25);
+        $html ='<hr>';
+        $this->writeHTML($html, true, false, true, false, '');
+        
+    }
+    function Footer() {
+        $footertext="Report generated with UdMAcademy 2.0 By WTECH (" . date("d-m-Y H:i") . ")";
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        $this->SetFont('helvetica', '', 6);
+        // Page number
+         
+       // $this->Cell(0, 5, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $html ='<hr>';
+        $this->writeHTML($html, true, false, true, false, '');
+        $this->writeHTML($footertext, false, true, false, true);
+        
+        $this->SetY(-20);
+        $this->SetFont('freesans','I',8);
+        $this->SetTextColor(34,68,136);
+        $this->Cell(0, 5, 'BP 208-Bangangté Cameroun  Tél. : (237) 243 02 51 41  E-mail : info@udm.aed-cm.org    Site web :  www.udm.aed-cm.org', 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $this->SetTextColor(0,0,0);
+        $this->SetFont('garamond','I',10);
+       
+    }  // end of the Footer function
+}
+
+// create new PDF document
+$pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Parfait Wangun');
+$pdf->SetTitle('Universté des Montagnes');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+$pdf->faculty = $this->faculty;
+$pdf->facultyCode = "";
+
+$pdf->filiere = $this->filiere;
+
+// set default header data
+//$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+
+
+
+// add a page
+$pdf->AddPage();
+//$pdf->Write(0, $this->classe, '', 0, 'L', true, 0, false, false, 0);
+//$pdf->Write(0, $nomUe.':    '.$codeUe, '', 0, 'L', true, 0, false, false, 0);
+//$pdf->SetFont('helvetica', '', 2);
+$pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
+//$pdf->SetFont('helvetica', '', 16);
+
+
+$pdf->setFont("coopbl",'',12); 
+$student = $this->student;
+
+$html = '<div  style="width:100%;  text-align:center; background-color:#428bca; color:#191970;">FICHE D\'INSCRIPTION ADMINISTRATIVE ET ACADEMIQUE <br>'
+        . '<span style="font-size: 8px; font-weight:normal;"><i>ADMINISTRATIVE AND ACADEMIC REGISTRATION FILE</i></span></div>';
+
+// output the HTML content
+$pdf->writeHTML($html, true, 0, true, 0);
+
+$pdf->SetFont('garamond', '', 10);
+
+$pdf->MultiCell(23, 5,$this->classe, 1, 'L', 0, 0, '', '', true);
+$pdf->MultiCell('', 5, 'Matricule: '.$this->student["matricule"], 0, 'R', 0, 1, '', '',true, true);
+
+
+// set JPEG quality
+$pdf->setJPEGQuality(100);
+//var_dump($this->student['photo']); exit;
+//var_dump($this->student['photo']); exit;
+$imgdata= base64_decode(stream_get_contents($this->student['photo']));
+//var_dump($imgdata); exit;
+$pdf->Image('@'.$imgdata,  '', '', 40, 40, '', '', 'T', false, 300, 'R', false, false, 1, false, false, false);
+ //$html = '<img width="200" height="200"   src="data:image/jpeg;base64,'. $this->student['photo'] .'" />';
+//$pdf->writeHTML($html, true, 0, true, 0);
+
+//$pdf->SetFont('helvetica', '', 10);
+$html1 ='<div style="background-color:#edf0f5; font-weight: bold; color: grey;">IDENTIFICATION DE l\'ETUDIANT</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+$pdf->SetFont('courier', '', 8);
+//$pdf->writeHTMLCell(0, 0, '', 90, $html1, 0, 0, false, 'L', true);
+
+$htmlEtudiant ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr><td colspan="3"><span style="font-weight: bold">Nom(s) et Prénom(s):</span> '.$this->student["nom"].' '.$this->student["prenom"].''
+        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Sexe:</strong>'.$this->student["gender"].'</td>'
+ 
+        . '</tr>'
+        . '<tr><td><span style="font-weight: bold">Date de naissance:</span> '.$this->student["dateOfBirth"]->format('d/m/Y').' </td> <td><span style="font-weight: bold">Lieu de naissance:</span> '.$this->student["bornAt"].'</td><td></td></tr>'
+        
+          . '<tr>'
+        . '<td ><span style="font-weight: bold">Nationalité:</span> '.$this->student["nationality"].'</td>'
+        . '<td colspan="2" ><span style="font-weight: bold">Région d\'origine:</span> '.$this->student["regionOfOrigin"]
+        . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold">Langue:</span> '.$this->student["language"].'</td>'
+        . '</tr>'
+
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Email:</span> '.$this->student["email"].'</td>'
+        . '<td ><span style="font-weight: bold">N° Téléphone:</span> '.$this->student["phoneNumber"].'</td>'
+        . '<td ></td>'
+        . '</tr>'
+        
+
+        
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Religion:</span> '.$this->student["religion"].'</td>'
+        . '<td><span style="font-weight: bold">Handicapé:</span> '.$this->student["handicap"].'</td>' 
+        . '<td></td>  '     
+        . '</tr>'     
+
+        .'<tr>'
+        . '<td><span style="font-weight: bold">Situation d\'emploi:</span> '.$this->student["workingStatus"].'</td>'
+        . '<td colspan="2"><span style="font-weight: bold">Situation matrimoniale:</span> '.$this->student["maritalStatus"].'</td>'
+        
+        . '</tr>'  
+        
+        .'<tr>'
+        
+        . '<td></td><td></td>'
+        . '</tr>'                    
+        . '</tbody></table></div>';
+$pdf->writeHTML($htmlEtudiant, true, 0, true, 0);
+
+$pdf->SetFont('garamond', '', 10);
+$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DU PERE</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+
+$pdf->SetFont('courier', '', 8);
+
+$htmlPere ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Nom(s) et prénom(s):</span> '.$this->student["fatherName"].'</td>'
+        . '<td><span style="font-weight: bold">Profession:</span> '.$this->student["fatherProfession"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">N° téléphone:</span> '.$this->student["fatherPhoneNumber"].'</td>'
+        . '<td ><span style="font-weight: bold">Email:</span> '.$this->student["fatherEmail"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Pays de résidence:</span> '.$this->student["fatherCountry"].'</td>'
+        . '<td><span style="font-weight: bold">Ville de résidence:</span> '.$this->student["fatherCity"].'</td>'
+        . '</tr>'     
+        . '</tbody></table></div>';
+$pdf->writeHTML($htmlPere, true, 0, true, 0);
+
+$pdf->SetFont('garamond', '', 10);
+$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DE LA MERE</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+$pdf->SetFont('courier', '', 8);
+$htmlMere ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Nom(s) et prénom(s):</span> '.$this->student["motherName"].'</td>'
+        . '<td><span style="font-weight: bold">Profession:</span> '.$this->student["motherProfession"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">N° téléphone:</span> '.$this->student["motherPhoneNumber"].'</td>'
+        . '<td ><span style="font-weight: bold">Email:</span> '.$this->student["motherEmail"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Pays de résidence:</span> '.$this->student["motherCountry"].'</td>'
+        . '<td><span style="font-weight: bold">Ville de résidence:</span> '.$this->student["motherCity"].'</td>'
+        . '</tr>'     
+        . '</tbody></table></div>';
+$pdf->writeHTML($htmlMere, true, 0, true, 0);
+$pdf->SetFont('garamond', '', 10);
+$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">IDENTIFICATION DU SPONSOR</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+
+$pdf->SetFont('courier', '', 8);
+$htmlSponsor ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Nom(s) et prénom(s):</span> '.$this->student["sponsorName"].'</td>'
+        . '<td><span style="font-weight: bold">Profession:</span> '.$this->student["sponsorProfession"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">N° téléphone:</span> '.$this->student["sponsorPhoneNumber"].'</td>'
+        . '<td ><span style="font-weight: bold">Email:</span> '.$this->student["sponsorEmail"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Pays de résidence:</span> '.$this->student["sponsorCountry"].'</td>'
+        . '<td><span style="font-weight: bold">Ville de résidence:</span> '.$this->student["sponsorCity"].'</td>'
+        . '</tr>'     
+        . '</tbody></table></div>';
+$pdf->writeHTML($htmlSponsor, true, 0, true, 0);
+
+$pdf->SetFont('garamond', '', 10);
+$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">ETUDES ANTERIEURES</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+
+$pdf->SetFont('courier', '', 8);
+$htmlEntudesAnterieures ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Dernier établissement:</span> '.$this->student["lastSchool"].'</td>'
+        . '<td ><span style="font-weight: bold">Diplôme d\'entrée:</span> '.$this->student["enteringDegree"].'</td>'
+        . '<td ><span style="font-weight: bold">Matricule du diplôme:</span> '.$this->student["degreeId"].'</td>'
+        . '</tr>';
+//Display theses details only if entering degree is baccalaureat or GECE
+if(($this->student["enteringDegree"]=="BACCALAUREAT") || ($this->student["enteringDegree"])=="GCE/A" )      
+        $htmlEntudesAnterieures .= '<tr>'
+        . '<td><span style="font-weight: bold">Série:</span> '.$this->student["degreeOption"].'</td>'        
+        . '<td ><span style="font-weight: bold">Session:</span> '.$this->student["degreeSession"].'</td>'       
+        . '<td ><span style="font-weight: bold">Sous centre d\'examen:</span> '.$this->student["degreeExamCenter"].'</td>'
+        
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">N° Référence:</span> '.$this->student["degreeReferenceId"].'</td>'
+        . '<td ><span style="font-weight: bold">N° Jury:</span> '.$this->student["degreeJuryNumber"].'</td>'
+
+        . '</tr>'; 
+
+        $htmlEntudesAnterieures .= '</tbody></table></div>';
+$pdf->writeHTML($htmlEntudesAnterieures, true, 0, true, 0);
+$pdf->SetFont('garamond', '', 10);
+$html1 ='<div style="background-color:#edf0f5; color:grey; font-weight: bold;">INFORMATIONS COMPLEMENTAIRES</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+$pdf->SetFont('courier', '', 8);
+$htmlSponsor ='<style> td{ height:20px;}</style><div> <table><tbody>'
+        . '<tr>'
+        . '<td><span style="font-weight: bold">Activité(s) sportive(s):</span> '.$this->student["sportiveInformation"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Activité(s) associative(s):</span> '.$this->student["associativeInformation"].'</td>'
+        . '</tr>'
+        
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Activité(s) culturelle(s):</span> '.$this->student["culturalInformation"].'</td>'
+        . '</tr>'   
+
+        . '<tr>'
+        . '<td ><span style="font-weight: bold">Connaissances informatique:</span> '.$this->student["itKnowledge"].'</td>'
+        . '</tr>' 
+           
+        . '</tbody></table></div>';
+$pdf->writeHTML($htmlSponsor, true, 0, true, 0);
+
+$pdf->AddPage();
+$pdf->setFont("coopbl",'',12);
+$html1 ='<div style="background-color:#428bca; color:#191970; font-weight: bold;">INSCRIPTION ACADEMIQUE</div>';
+// output the HTML content
+$pdf->writeHTML($html1, true, 0, true, 0);
+
+$pdf->SetFont('arialce', '', 8);
+$tblHeader = '<tr style="background-color:#edf0f5;">
+<th style = " width: 5%; text-align: center;"><strong>N°</strong></th>   
+<th style = " width: 10%;text-align: center;"><strong>Code</strong></th>
+<th style = " width: 75%; text-align: center;"><strong>Intitulé</strong></th>
+<th style = "width: 10%; text-align: center; "><strong>Credits</strong></th>
+'
+        . '</tr>';
+
+
+
+$tbl1Body = '';
+$tbl2Body ='';
+$i=0;
+$credits_1 = 0;
+$credits_2 = 0;
+foreach($this->semesters as $sem)
+{
+    $count = 1;
+    if($sem['ranking']%2==1)
+       $tbl1HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#edf0f5;;"><th  colspan="4">'.$sem["code"].'</th></tr>'; 
+    
+    if($sem['ranking']%2==0)
+       $tbl2HeaderSem = '<tr style = "text-align: center; font-weight: bold; font-size:22px; background-color:#edf0f5;"><th colspan="4">'.$sem["code"].'</th></tr>'; 
+
+    foreach ($this->subjects as $sub)
+    {
+        if(($sem['ranking']%2==$sub['semRanking']%2)&&$sem['ranking']%2==1 )
+        {
+            $tbl1Body.='<tr nobr="true"><td style = "width: 5%; text-align: center;">'.$count++.'</td>'
+                    . '<td style="text-align: center; width: 10%;">'.$sub["codeUe"].'</td>';
+            $tbl1Body.='<td style="width:75%;"> '.$sub["nomUe"].'</td>';
+            $tbl1Body.='<td style="width: 10%; text-align: center;">'.$sub["credits"].'</td></tr>';
+            $credits_1 = $credits_1+$sub["credits"];
+        }
+        else if(($sem['ranking']%2==$sub['semRanking']%2)&&$sem['ranking']%2==0 )
+        {
+            $tbl2Body.='<tr nobr="true"><td style = "width: 5%;text-align: center;">'.$count++.'</td>'
+                    . '<td style="width: 10%; text-align: center;">'.$sub["codeUe"].'</td>';
+            $tbl2Body.='<td style="width:75%;"> '.$sub["nomUe"].'</td>';
+            $tbl2Body.='<td style="width: 10%; text-align: center;">'.$sub["credits"].'</td></tr>';
+            $credits_2 = $credits_2+$sub["credits"];
+        }            
+    }
+
+}
+    $tbl1Body.='<tr><td colspan ="3" style=" text-align: center;"><b>Total crédits inscrits</b></td><td style=" text-align: center;">'.$credits_1.'</td></tr>';
+    $tbl2Body.='<tr><td colspan ="3" style=" text-align: center;"><b>Total crédits inscrits</b></td><td style=" text-align: center;">'.$credits_2.'</td></tr>';
+
+    $tbl1Body = '<tbody>'.$tbl1Body.'</tbody>';
+$tbl2Body = '<tbody>'.$tbl2Body.'</tbody>';
+$tbl1 = '<thead>'.$tbl1HeaderSem.$tblHeader.'</thead>'.$tbl1Body;
+$tbl2 = '<thead>'.$tbl2HeaderSem.$tblHeader.'</thead>'.$tbl2Body;
+$pdf->writeHtml("<p><i>Liste exhaustive des unités d'enseignement  auxquelles vous prendrez part au cours de l'année académique:</i</p><br />", true, 0, true, 0);
+$tbl = <<<EOD
+<style>
+
+i {
+    font-size: 8px;}  
+td,th  {
+   vertical-align: middle;
+   border: solid lightgrey 1px;
+        color: grey;
+       
+   }   
+</style>         
+       
+        <table>
+    $tbl1
+        </table>
+        <br /><br /><br /><br /><br /><br />
+        <table>
+    $tbl2
+        </table>        
+EOD;
+
+$pdf->writeHTML($tbl, true, false, false, false, '');
+$pdf->writeHtml("<p><i>Je certifie que les informations que je fournis à travers le présent formulaire sont exactes et vérifiables</i></p><br />", true, 0, true, 0);
+$pdf->writeHtml("<p style='text-align:right;'><br/><br/><i>"
+        . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        . "<strong>Fait à __________________________ le ____/____/________</strong></p><br />", true, 0, true, 0);
+ob_end_clean();
+//Close and output PDF document
+$pdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '','test'.$this->studentMat).'.pdf', 'F');
+?>
+
+       <style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+   <md-dialog style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Mango (Fruit)">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Impression de la fiche d'inscription</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div  class="md-dialog-content">
+
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '','test'.$this->studentMat).'.pdf'?> type="application/pdf" style="width:100%;height:600px;"  />
+                     
+
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Fermer
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

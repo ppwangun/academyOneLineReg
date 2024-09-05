@@ -36,8 +36,18 @@ z-index: 120000}
     <md-content layout-padding >
     <div>
       <form name="degreeForm">
+            <div layout layout-sm="column">
+                <md-input-container flex="flex" style="width: 60%; margin-top: 15px;" >
+                    <label>Cycle de formation:</label>
+                    <md-select name="dpt" placeholder="Choisir le cycle de formation" ng-model="$ctrl.degree.cycle_id"   style="width: 60%;" required>
+                         <md-option ng-disabled="true"><em>---Choix de la spécialité---</em></md-option>
+                         
+                        <md-option ng-value="cycle.id" ng-repeat="cycle in cyclesFormation">{{cycle.name}}</md-option>
+                    </md-select>
+               </md-input-container>
+            </div>            
           <div layout='column'>
-          <md-input-container class="md-block" style="width: 85%; margin-top: 10px;" >
+          <md-input-container class="md-block" style="width: 85%; margin-top: 20px;" >
           <label>Filière:</label>
           <md-autocomplete flex="70" md-search-text="$ctrl.searchText" md-min-length="0" md-selected-item="$ctrl.selectedItem"  
                            md-items="item in $ctrl.querySearch($ctrl.searchText)" md-selected-item-change="$ctrl.searchSpeByFil($ctrl.selectedItem.id)"
@@ -54,6 +64,7 @@ z-index: 120000}
             </md-autocomplete>
           </md-input-container>
           </div>
+        
             <div layout layout-sm="column">
                 <md-input-container flex="flex" style="width: 60%; margin-top: 15px;" >
                     <label>Spécialité:</label>
@@ -75,14 +86,7 @@ z-index: 120000}
                </md-input-container>
 
             
-                <md-input-container  class="md-block" flex-gt-sm  style=" margin-top: 15px;" >
-                    <label>Option:</label>
-                    <md-select name="dpt" placeholder="Choisir l'option" ng-model="$trl.degree.opt_id"   style="width: 60%;"  >
-                         <md-option ng-disabled="true"><em>---Choix de l'option---</em></md-option>
-                        <md-option ng-value="opt.id" ng-repeat="opt in options">{{fil.name}}</md-option>
-                    </md-select>
-               </md-input-container>
-                       
+                        
          </div>
           <div layout-gt-sm="row" style="margin-top:10px;">
           <md-input-container class="md-block" flex-gt-sm>
@@ -103,13 +107,23 @@ z-index: 120000}
                 </div> 
           </md-input-container>
         </div>
+        <md-input-container class="md-block" flex-gt-sm">
+                
+                    <md-checkbox ng-model="$ctrl.degree.isCoreCurriculum"   class="md-primary"            
+                    aria-label="Tronc commun?"
+                    ng-true-value="true"
+                    ng-false-value="false"> 
+                </md-checkbox>
+            <span>Tronc commun?</span>
+          </md-input-container>
             <md-input-container class="md-block" flex-gt-sm">
-                <span>Actif?</spanl>
+                
                 <md-checkbox ng-model="$ctrl.degree.status"   class="md-primary"            
                     aria-label="Actif?"
                     ng-true-value="1"
                     ng-false-value="0"> 
                 </md-checkbox>
+                <span>Actif?</span>
           </md-input-container>
 
 

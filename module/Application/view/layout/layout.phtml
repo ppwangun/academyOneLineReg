@@ -1,13 +1,9 @@
-<?php
-/**
- * @var Laminas\View\Renderer\PhpRenderer $this
- */
-?>
 <?= $this->doctype() ?>
-<html lang="en">
+
+<html lang="en" >
     <head>
         <meta charset="utf-8">
-        <?= $this->headTitle('Academy Software By W-tech')->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?= $this->headTitle('UdM Gestion Académique')->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <?= $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -15,117 +11,47 @@
         ?>
 
         <!-- Le styles -->
-        <?= $this->headLink([
-                                'rel' => 'shortcut icon',
-                                'type' => 'image/vnd.microsoft.icon',
-                                'href' => $this->basePath() . '/img/favicon.ico'
-                            ])
-        ->prependStylesheet($this->basePath('css/style.css'))
-        ->prependStylesheet($this->basePath('css/angular-busy.min.css'))
-        //->prependStylesheet($this->basePath('css/registration/bootstrap.min.css'))
-        //->prependStylesheet($this->basePath('css/registration/style.css'))
-        ->prependStylesheet($this->basePath('css/fas/css/fontawesome.css'))
-        ->prependStylesheet($this->basePath('css/fas/css/brands.css'))
-        ->prependStylesheet($this->basePath('css/fas/css/regular.css'))
-        ->prependStylesheet($this->basePath('css/fas/css/solid.css'))
-        ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
-        ->prependStylesheet($this->basePath('css/angular-material.css'))
-        
-        
-        
-?>
+        <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+            ->prependStylesheet($this->basePath('css/style.css'))
+            ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+            ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+        ?>
 
         <!-- Scripts -->
-        <?= $this->headScript() ?>
+        <?= $this->headScript()
+            ->prependFile($this->basePath('js/bootstrap.min.js'))
+            ->prependFile($this->basePath('js/jquery-3.1.0.min.js'))
+            ->prependFile($this->basePath('js/angular-1.6.7/angular.min.js'))
+        //->prependFile($this->basePath('js/my_js/angulartest.js'))
+        ?>
     </head>
-    <body ng-app="myApp" ng-cloak>
-
-        <nav class="navbar navbar-expand-md navbar-dark " role="navigation">
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
-                <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                    <img src="<?= $this->basePath('img/logo_agenla_2.ico') ?>" alt="Agenla academy">
-                </a>
                 <div class="navbar-header">
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
                     </button>
-
+                    <a class="navbar-brand" href="<?= $this->url('home') ?>">
+                        <img src="<?= $this->basePath('img/UdMAcademy.png') ?>" height="28" alt="UdM Gestion Académique <?= \Application\Module::VERSION ?>"/>&nbsp;Gestion Académique
+                    </a>
                 </div>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                aria-current="page"
-                                href="home"
-                            >Home
-                            </a>
-                        </li>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="<?= $this->url('home') ?>">Home</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
         <div class="container">
- 
-         
-                <?= $this->content ?>
-          
-            
-          
-
+            <?= $this->content ?>
             <hr>
             <footer>
-                <p>
-                    &copy; <?= date('Y') ?>
-                    <a href="#"></a> 
-                </p>
+                <p>&copy;2019 - <?= date('Y') ?> by W-TECH .</p>
             </footer>
         </div>
-        
-        <?= $this->inlineScript()
-        ->prependFile($this->basePath('js/angular-toastr.min.js'))
-        ->prependFile($this->basePath('js/moment.min.js'))
-        ->prependFile($this->basePath('bower_components/angular-material/angular-material.min.js'))
-        ->prependFile($this->basePath('bower_components/angular-messages/angular-messages.min.js'))
-        ->prependFile($this->basePath('bower_components/angular-animate/angular-animate.min.js'))
-        ->prependFile($this->basePath('bower_components/angular-aria/angular-aria.min.js'))
-        ->prependFile($this->basePath('bower_components/bower-angular-resource/angular-resource.js'))
-        
-        ->prependFile($this->basePath('js/angular-image-compress.js'))
-        ->prependFile($this->basePath('js/angular-busy.min.js'))      
-        ->prependFile($this->basePath('js/angular-toastr.min.js'))    
-          ->prependFile($this->basePath('js/loading-bar.js'))   
-          
-        ->prependFile($this->basePath('js/ui-bootstrap-tpls-2.5.0.min.js'))
-     
-        ->prependFile($this->basePath('js/angular-route.js'))
-        
-        
-        ->prependFile($this->basePath('js/app/onlinereg.js'))
-       
-        ->prependFile($this->basePath('js/app/app.js'))
-         ->prependFile($this->basePath("js/app/onlinereg/student.component.js"))
-        //->prependFile($this->basePath('js/registration/bootstrap.min.js'))
-        ->prependFile($this->basePath('js/angular-image-compress.js'))
-        ->prependFile($this->basePath('js/angular-busy.min.js'))
-            ->prependFile($this->basePath('js/angular-material.min.js'))
-        
-        ->prependFile($this->basePath('js/angular-messages.min.js'))
-        ->prependFile($this->basePath('js/angular-aria.min.js'))
-        ->prependFile($this->basePath('js/angular-animate.min.js'))
-        ->prependFile($this->basePath('js/angular.min.js'))
-            ->prependFile($this->basePath('js/bootstrap.min.js'))
-        ->prependFile($this->basePath('js/jquery-3.7.0.min.js'))
-        ?>
-   
-
+        <?= $this->inlineScript() ?>
     </body>
 </html>

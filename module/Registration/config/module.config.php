@@ -10,21 +10,19 @@ return [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-            Controller\CountriesController::class => Controller\Factory\CountriesControllerFactory::class,
-            Controller\OnlineRegController::class => Controller\Factory\OnlineRegControllerFactory::class,
+            Controller\RegistrationReportsController::class => Controller\Factory\RegistrationReportsControllerFactory::class,
+            Controller\StdFromPvController::class => Controller\Factory\StdFromPvControllerFactory::class,
             Controller\StdRegistrationController::class => Controller\Factory\StdRegistrationControllerFactory::class,
             Controller\SubjectRegistrationController::class => Controller\Factory\SubjectRegistrationControllerFactory::class,
-            Controller\PreRegistrationController::class => Controller\Factory\PreRegistrationControllerFactory::class,
             Controller\SubjectController::class => Controller\Factory\SubjectControllerFactory::class,
+            Controller\ProspectsController::class => Controller\Factory\ProspectsControllerFactory::class,
             Controller\StdRegisteredToSubjectController::class => Controller\Factory\StdRegisteredToSubjectControllerFactory::class,
             Controller\StdRegisteredToExamController::class => Controller\Factory\StdRegisteredToExamControllerFactory::class,
             Controller\StdAdmissionController::class => Controller\Factory\StdAdmissionControllerFactory::class,
-            Controller\PaymentController::class => Controller\Factory\PaymentControllerFactory::class,
+            Controller\CountriesController::class => Controller\Factory\CountriesControllerFactory::class,
+            Controller\StdRegistrationController::class => Controller\Factory\StdRegistrationControllerFactory::class,
         ],
     ],
-    'session_containers' => [
-        'onlineLoggedInUser'
-        ],    
     'service_manager' => [
         'factories' => [
         Service\StudentManager::class =>Service\Factory\StudentManagerFactory::class,
@@ -57,106 +55,287 @@ return [
                     // route defined above here.
                 ],
             ],
-            'home' => [
-                'type' => Literal::class,
+            'students' => [
+                'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/home',
+                    'route'    => '/students',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'home',
+                        'action'     => 'students',
                     ],
                 ],
             ],
-            'preRegistration' => [
-                'type' => Literal::class,
+            'searchStudent' => [
+                'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/preRegistration',
+                    'route'    => '/searchStudent[/:matricule][/:acadYrId][/:classeId]',
                     'defaults' => [
-                        'controller' => Controller\PreRegistrationController::class,
-                        'action'     => 'preRegistration',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'searchStudent',
+                    ],
+                ],
+            ],
+             'prospects' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/prospects',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'prospects',
+                       
+                    ],
+                ],
+            ],  
+             'getProspects' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getProspects[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\ProspectsController::class,
+                      
+                    ],
+                ],
+            ],  
+             'prospect' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/prospect[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'prospect',
+                      
+                    ],
+                ],
+            ],  
+             'getProspectCursus' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getProspectCursus[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'getProspectCursus',
+                      
+                    ],
+                ],
+            ], 
+             'showpaymentproof' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/showpaymentproof[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'showpaymentproof',
+                      
+                    ],
+                ],
+            ],            
+             'admission' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/admission',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'admission',
+                       
+                    ],
+                ],
+            ],
+            'stdAdmitted' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdAdmitted[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\StdAdmissionController::class,
+                       
+                    ],
+                ],
+            ], 
+            'stdList' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdList[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'stdList'
+                       
                     ],
                 ],
             ],   
-            'savePreRegistration' => [
-                'type' => Literal::class,
+            'registrationStat' => [
+                'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/savePreRegistration',
+                    'route'    => '/registrationStat[/:id]',
                     'defaults' => [
-                        'controller' => Controller\PreRegistrationController::class,
-                        'action'     => 'savePreRegistration',
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'registrationStat'
+                       
                     ],
                 ],
             ],            
-            'chkPayment' => [
-                'type' => Literal::class,
+             'importAdmittedStudent' => [
+                'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/chkPayment',
+                    'route'    => '/importAdmittedStudent',
                     'defaults' => [
-                        'controller' => Controller\PaymentController::class,
-                        'action'     => 'chkPayment',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'importAdmittedStudent',
+                       
                     ],
                 ],
             ],            
-            'chkNewStudentPayment' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route'    => '/chkNewStudentPayment',
-                    'defaults' => [
-                        'controller' => Controller\PaymentController::class,
-                        'action'     => 'chkNewStudentPayment',
-                    ],
-                ],
-            ],
-            'studentRegistration' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/studentRegistration',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'studentRegistration',
-                    ],
-                ],
-            ],
-            'newStudentRegistration' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/newStudentRegistration',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'newStudentRegistration',
-                    ],
-                ],
-            ],
-            'saveNewStudentRegistration' => [
+            'studentinfostpl' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/saveNewStudentRegistration[/:student]',
+                    'route'    => '/studentinfostpl[/:id]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'saveNewStudentRegistration',
+                        'action'     => 'studentinfostpl',
                     ],
                 ],
             ],
-            'students' => [
+            'pedagogicalregtpl' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/students[/:id]',
+                    'route'    => '/pedagogicalregtpl[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'pedagogicalregtpl',
+                    ],
+                ],
+            ],            
+            'printStdList' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printStdList[/:classeCode][/:ueId]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'printStdList',
+                    ],
+                ],
+            ], 
+            'printRegistrationFile' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printRegistrationFile[/:id][/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'printRegistrationFile',
+                    ],
+                ],
+            ],
+            'printStudentCard' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printStudentCard[/:id][/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'printStudentCard',
+                    ],
+                ],
+            ],            
+            'subjectregistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/subjectregistration[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\SubjectRegistrationController::class,
+                        
+                    ],
+                ],
+            ],
+            'stdregistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdregistration[/:id]',
                     'defaults' => [
                         'controller' => Controller\StdRegistrationController::class,
-                       // 'action'     => 'students',
+                       
                     ],
                 ],
             ],
-            'getPreRegisteredStd' => [
+            'stdFromPv' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/getPreRegisteredStd[/:id]',
+                    'route'    => '/stdFromPv[/:id]',
                     'defaults' => [
-                        'controller' => Controller\PreRegistrationController::class,
-                        'action'     => 'getPreRegisteredStd',
+                        'controller' => Controller\StdFromPvController::class,
+                       
                     ],
                 ],
             ],            
+             'stdregisteredbyclasse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdregisteredbyclasse[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'stdregisteredbyclasse',
+                       
+                    ],
+                ],
+            ],            
+            'furthersubjectregistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/furthersubjectregistration[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\SubjectRegistrationController::class,
+                                               
+                    ],
+                ],
+            ],
+            'subjectsearch' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/subjectsearch[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\SubjectController::class,
+                       
+                    ],
+                ],
+            ], 
+            'stdregisteredtosubject' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdregisteredtosubject[/:id/:sem_id]',
+                    'defaults' => [
+                        'controller' => Controller\StdRegisteredToSubjectController::class,
+                       
+                    ],
+                ],
+            ], 
+            'stdregisteredtoexam' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/stdregisteredtoexam[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\StdRegisteredToExamController::class,
+                       
+                    ],
+                ],
+            ],
+             'importstudents' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importstudents',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'importstudents',
+                       
+                    ],
+                ],
+            ],
+             'clearUnitRegistrationDuplicates' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/clearUnitRegistrationDuplicates',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'clearUnitRegistrationDuplicates',
+                       
+                    ],
+                ],
+            ],
             'countries' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -178,6 +357,16 @@ return [
                     ],
                 ],
             ],
+            'studentInfoDetails' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/studentInfoDetails[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\StdRegistrationController::class,
+                       // 'action'     => 'students',
+                    ],
+                ],
+            ],
             'cities' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -188,239 +377,170 @@ return [
                        
                     ],
                 ],
-            ],
-            'searchFilByFaculty' => [
-                'type'    => Segment::class,
+            ],            
+             'picturesGenerator' => [
+                'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/searchFilByFaculty[/:id]',
+                    'route'    => '/picturesGenerator',
                     'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'searchFilByFaculty',
-                       
-                    ],
-                ],
-            ],   
-            'searchCycleFormation' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/searchCycleFormation[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'searchCycleFormation',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'picturesGenerator',
                        
                     ],
                 ],
             ],  
-            'searchDegree' => [
-                'type'    => Segment::class,
+             'studentsDataGenerator' => [
+                'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/searchDegree[/:id]',
+                    'route'    => '/studentsDataGenerator',
                     'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'searchDegree',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'studentsDataGenerator',
                        
                     ],
                 ],
-            ],
-            '/' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],             
-            'home' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/home',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],            
-            'apply' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/apply',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'apply',
-                    ],
-                ],
-            ],             
-             'submitRegistrationForm' => [
+            ], 
+             'resetPedagogicRegistration' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/submitRegistrationForm[/:classe]',
+                    'route'    => '/resetPedagogicRegistration[/:matricule]',
                     'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'submitregistrationform',
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'resetPedagogicRegistration',
+                       
+                    ],
+                ],
+            ], 
+             'resetAdministrativeRegistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/resetAdministrativeRegistration[/:matricule]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'resetAdministrativeRegistration',
+                       
+                    ],
+                ],
+            ], 
+             'suspendRegistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/suspendRegistration[/:matricule]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'suspendRegistration',
+                       
+                    ],
+                ],
+            ], 
+             'leaveTraining' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/leaveTraining[/:matricule]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'leaveTraining',
+                       
+                    ],
+                ],
+            ],                         
+             'importStudentPv' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importStudentPv',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'importStudentPv',
+                       
+                    ],
+                ],
+            ], 
+             'importStudentMpc' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importStudentMpc',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'importStudentMpc',
+                       
+                    ],
+                ],
+            ],             
+             'importStudentFinance' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importStudentFinance',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'importStudentFinance',
                        
                     ],
                 ],
             ],  
-             'searchapplicationfile' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/searchapplicationfile[/:classe]',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'searchapplicationfile',
-                       
-                    ],
-                ],
-            ],            
-             'endApplication' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/endApplication[/:classe]',
-                    'defaults' => [
-                        'controller' => Controller\OnlineRegController::class,
-                        'action'     => 'endApplication',
-                       
-                    ],
-                ],
-            ],            
-             'saveRegistration' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/saveRegistration[/:classe]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'saveRegistration',
-                       
-                    ],
-                ],
-            ],            
-            'insPedagogique' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/insPedagogique[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'insPedagogique',
-                                               
-                    ],
-                ],
-            ],
-            'saveInsPedagogique' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/saveInsPedagogique[/:student]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'saveInsPedagogique',
-                                               
-                    ],
-                ],
-            ],   
-            'endRegistration' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/endRegistration[/:student]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'endRegistration',
-                                               
-                    ],
-                ],
-            ],
-            'subjectsearch' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/subjectsearch[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\SubjectController::class,
-                       
-                    ],
-                ],
-            ], 
-            'admittedStudent' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/admittedStudent[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\StdAdmissionController::class,
-                       
-                    ],
-                ],
-            ],             
-            'stdregisteredtosubject' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/stdregisteredtosubject[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\StdRegisteredToSubjectController::class,
-                       
-                    ],
-                ],
-            ], 
-            'stdregisteredtosubject' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/stdregisteredtosubject[/:id]',
-                    'defaults' => [
-                        'controller' => Controller\StdRegisteredToSubjectController::class,
-                       
-                    ],
-                ],
-            ],             
-            'subjectsByClasse' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/subjectsByClasse[/:classe]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'=>'subjectsByClasse'
-                       
-                    ],
-                ],
-            ],
-            'registeredSubjectsByStudent' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/registeredSubjectsByStudent[/:matricule]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'=>'registeredSubjectsByStudent'
-                       
-                    ],
-                ],
-            ],            
-             'importstudents' => [
+             'transcripts' => [
                 'type'    => Literal::class,
                 'options' => [
-                    'route'    => '/importstudents',
+                    'route'    => '/transcripts',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'importstudents',
+                        'controller' => Controller\RegistrationReportsController::class,
+                        'action'     => 'transcripts',
                        
                     ],
                 ],
-            ],
+            ],  
+             'scholarshipCertificates' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/scholarshipCertificates',
+                    'defaults' => [
+                        'controller' => Controller\RegistrationReportsController::class,
+                        'action'     => 'scholarshipCertificates',
+                       
+                    ],
+                ],
+            ], 
+             'generateTranscriptsReferences' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/generateTranscriptsReferences',
+                    'defaults' => [
+                        'controller' => Controller\RegistrationReportsController::class,
+                        'action'     => 'generateTranscriptsReferences',
+                       
+                    ],
+                ],
+            ],            
+             'getTranscriptReferenceGenerationStatus' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getTranscriptReferenceGenerationStatus',
+                    'defaults' => [
+                        'controller' => Controller\RegistrationReportsController::class,
+                        'action'     => 'getTranscriptReferenceGenerationStatus',
+                       
+                    ],
+                ],
+            ],            
+             'printScholarshipCertificates' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printScholarshipCertificates[/:classe_code][/:stdId]',
+                    'defaults' => [
+                        'controller' => Controller\RegistrationReportsController::class,
+                        'action'     => 'printScholarshipCertificates',
+                       
+                    ],
+                ],
+            ],            
         ],
     ],
-
     'view_manager' => [
-        'template_map' => [
-            'registration/online-reg/index' => __DIR__ .'/../view/Registration/onlinereg/index.phtml',
-            'registration/online-reg/apply' => __DIR__ .'/../view/Registration/onlinereg/apply.phtml',
-            'registration/online-reg/submitregistrationform' => __DIR__ .'/../view/Registration/onlinereg/submitregistrationform.phtml',
-            'registration/online-reg/searchapplicationfile' => __DIR__ .'/../view/Registration/onlinereg/searchapplicationfile.phtml',
-            'registration/online-reg/end-application' => __DIR__ .'/../view/Registration/onlinereg/endapplication.phtml',
-   
-        ],
         'template_path_stack' => [
-            __DIR__ . '/../view',
+           __DIR__ . '/../view',
         ],
-       'strategies' => [
-            'ViewJsonStrategy',
-        ],
-
+    'strategies' => [
+        'ViewJsonStrategy',
+    ],
     ],
     // The 'access_filter' key is used by the User module to restrict or permit
     // access to certain controller actions for unauthorized visitors.
@@ -428,26 +548,26 @@ return [
         'controllers' => [
 
             Controller\IndexController::class => [
+
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
-                ['actions' => '*','allow' => '@'],
+                ['actions' => '*', 
+                 'allow' => '@'],
+
             ],
-            Controller\PaymentController::class => [
+            Controller\RegistrationReportsController::class => [
+
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
-                ['actions' => '*','allow' => '@'],
-            ],            
-            Controller\PreRegistrationController::class => [
-                // Give access to "index", "add", "edit", "view", "changePassword" actions 
-                // to users having the "user.manage" permission.
-                ['actions' => ['preRegistration','savePreRegistration','getPreRegisteredStd'],'allow' => '*'],
-               // ['actions' => '*','allow' => '@'],
+                ['actions' => '*', 
+                 'allow' => '@'],
+
             ],            
             Controller\CountriesController::class => [
                 // Give access to "index", "add", "edit", "view", "changePassword" actions 
                 // to users having the "user.manage" permission.
                 ['actions' => '*','allow' => '@'],
-            ],
+            ],            
         ]
     ],
 ];

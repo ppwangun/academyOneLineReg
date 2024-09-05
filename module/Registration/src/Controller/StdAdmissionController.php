@@ -12,10 +12,11 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Laminas\Http\Request;
 use Laminas\Http\Client;
-use Laminas\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Hydrator\ReflectionHydrator;
 use Violet\StreamingJsonEncoder\StreamJsonEncoder; 
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 
+use Application\Entity\AdmittedStudentForActiveRegistrationYearView;
 use Application\Entity\AdmittedStudentView;
 use Application\Entity\Admission;
 use Application\Entity\User;
@@ -37,12 +38,7 @@ class StdAdmissionController extends AbstractRestfulController
     public function get($id) {
         $this->entityManager->getConnection()->beginTransaction();
         try
-        { 
-            $query = $this->entityManager->createQuery('SELECT c.id, c.nom,c.prenom,c.classe,c.filiere,c.faculte FROM Application\Entity\AdmittedStudentForActiveRegistrationYearView c'
-                    .' WHERE (c.nom LIKE :nom OR c.prenom LIKE :nom) AND c.status<1') ;
-            $query->setParameter('nom', '%'.$id.'%');
-            //$query->setParameter('userId', $userId);
-            $data= $query->getResult();            
+        {      
 
             $this->entityManager->getConnection()->commit();
             
@@ -70,7 +66,7 @@ class StdAdmissionController extends AbstractRestfulController
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
 
-                   $registeredStd = $this->entityManager->getRepository(AdmittedStudentView::class)->findBy(array(),array("nom"=>"ASC"));
+                   $registeredStd = $this->entityManager->getRepository(AdmittedStudentForActiveRegistrationYearView::class)->findBy(array(),array("nom"=>"ASC"));
             }
             
             else{
@@ -82,7 +78,7 @@ class StdAdmissionController extends AbstractRestfulController
                 {
                     foreach($userClasses as $classe)
                     {
-                        $registeredStd_1 = $this->entityManager->getRepository(AdmittedStudentView::class)->findBy(array("classe"=>$classe->getClassOfStudy()->getCode()),array("nom"=>"ASC"));
+                        $registeredStd_1 = $this->entityManager->getRepository(AdmittedStudentForActiveRegistrationYearView::class)->findBy(array("classe"=>$classe->getClassOfStudy()->getCode()),array("nom"=>"ASC"));
                         $registeredStd = array_merge($registeredStd,$registeredStd_1);
                         
                     }
@@ -128,10 +124,10 @@ class StdAdmissionController extends AbstractRestfulController
             $admission->setNom($data["nom"]);
             $admission->setPrenom($data["prenom"]);
             $admission->setPhoneNumber($data["phoneNumber"]);
-            
-            $admission->setFileNumber($numDossier);
-            $admission->setStatus(1);
-            $data["numDossier"] = $numDossier;
+            $admission->setFeesPaid($data["feesPaid"]);
+            //$admission->setFileNumber($numDossier);
+            //$admission->setStatus(1);
+            $data["numDossier"] = $admission->getFileNumber();
             $data["status"]=1;
                                     
             $this->entityManager->flush();
@@ -140,14 +136,10 @@ class StdAdmissionController extends AbstractRestfulController
             //Sending sms
             
 
-            $msge=  urlencode( "Bonjour et bienvenue à l'UdM.Votre code d'admission est ".$numDossier.".Connectez vous sur le lien http://udmacademy.aed-cm.org pour finaliser votre inscription.");
+            $msge=  urlencode( "Bonjour et bienvenue à l'UdM.Votre code d'admission est ".$numDossier.".Connectez vous sur le lien http://UdMAcademy.aed-cm.org pour finaliser votre inscription.");
             $phoneNumber = "+237".$data["phoneNumber"];
            
-            $data["msgeStatus"]=$this->studentManager->sendSMS($phoneNumber,$msge);
-            
-
-          
-
+            //$data["msgeStatus"]=$this->studentManager->sendSMS($phoneNumber,$msge);
 
             $this->entityManager->getConnection()->commit();
             
