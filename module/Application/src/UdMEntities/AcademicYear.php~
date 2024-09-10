@@ -1,0 +1,151 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * AcademicYear
+ *
+ * @ORM\Table(name="academic_year", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_academic_year_academic_year1_idx", columns={"previous_year"})})
+ * @ORM\Entity
+ */
+class AcademicYear
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="starting_date", type="datetime", nullable=true)
+     */
+    private $startingDate;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="ending_date", type="datetime", nullable=true)
+     */
+    private $endingDate;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="is_default", type="integer", nullable=true)
+     */
+    private $isDefault;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="online_registration_default_year", type="integer", nullable=true)
+     */
+    private $onlineRegistrationDefaultYear = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status = '0';
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="admission_starting_date", type="datetime", nullable=true)
+     */
+    private $admissionStartingDate;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="admission_ending_date", type="datetime", nullable=true)
+     */
+    private $admissionEndingDate;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="admin_registration_starting_date", type="datetime", nullable=true)
+     */
+    private $adminRegistrationStartingDate;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="admin_registration_ending_date", type="datetime", nullable=true)
+     */
+    private $adminRegistrationEndingDate;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="previous_year", type="integer", nullable=true)
+     */
+    private $previousYear;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="prefix", type="string", length=4, nullable=true)
+     */
+    private $prefix;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="entrance_fees", type="decimal", precision=10, scale=0, nullable=true)
+     */
+    private $entranceFees;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="registration_fees", type="decimal", precision=10, scale=0, nullable=true)
+     */
+    private $registrationFees;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="totalSmsSent", type="integer", nullable=true)
+     */
+    private $totalsmssent;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="ClassOfStudy", mappedBy="academicYear")
+     */
+    private $classOfStudy = array();
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->classOfStudy = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}

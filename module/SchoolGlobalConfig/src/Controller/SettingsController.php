@@ -32,7 +32,7 @@ use Application\Entity\StudentSemRegistration;
 use Application\Entity\CurrentYearTeachingUnitView;
 use PhpOffice\PhpSpreadsheet;
 
-class IndexController extends AbstractActionController
+class SettingsController extends AbstractActionController
 {
     
     private $entityManager;

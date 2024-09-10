@@ -192,6 +192,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
               template: '<new-grade></new-grade>'
           }).when('/newgrade/:id',{
               template: '<new-grade></new-grade>'
+          }).when('/settings',{
+              template: '<settings></settings>'
           }).when('/deliberation',{
               template: '<delib-config></delib-config>'
           }).when('/deliberation/:id',{

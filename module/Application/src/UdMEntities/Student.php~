@@ -1,0 +1,371 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Student
+ *
+ * @ORM\Table(name="student", uniqueConstraints={@ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})}, indexes={@ORM\Index(name="fk_student_admission1_idx", columns={"admission_id"})})
+ * @ORM\Entity
+ */
+class Student
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="matricule", type="string", length=45, nullable=false)
+     */
+    private $matricule;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="nom", type="string", length=255, nullable=true)
+     */
+    private $nom;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="prenom", type="string", length=255, nullable=true)
+     */
+    private $prenom;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_of_birth", type="datetime", nullable=true)
+     */
+    private $dateOfBirth;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="born_at", type="string", length=45, nullable=true)
+     */
+    private $bornAt;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
+     */
+    private $phoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="gender", type="string", length=45, nullable=true)
+     */
+    private $gender;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="email", type="string", length=45, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="nationality", type="string", length=45, nullable=true)
+     */
+    private $nationality;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="region_of_origin", type="string", length=255, nullable=true)
+     */
+    private $regionOfOrigin;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="photo", type="blob", length=0, nullable=true)
+     */
+    private $photo;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="handicap", type="string", length=45, nullable=true)
+     */
+    private $handicap;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="religion", type="string", length=45, nullable=true)
+     */
+    private $religion;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="language", type="string", length=45, nullable=true)
+     */
+    private $language;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="marital_status", type="string", length=45, nullable=true)
+     */
+    private $maritalStatus;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="working_status", type="string", length=45, nullable=true)
+     */
+    private $workingStatus;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_name", type="string", length=255, nullable=true)
+     */
+    private $fatherName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_profession", type="string", length=45, nullable=true)
+     */
+    private $fatherProfession;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_phone_number", type="string", length=45, nullable=true)
+     */
+    private $fatherPhoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_email", type="string", length=45, nullable=true)
+     */
+    private $fatherEmail;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_country", type="string", length=45, nullable=true)
+     */
+    private $fatherCountry;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_name", type="string", length=255, nullable=true)
+     */
+    private $motherName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_profession", type="string", length=45, nullable=true)
+     */
+    private $motherProfession;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_phone_number", type="string", length=45, nullable=true)
+     */
+    private $motherPhoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_email", type="string", length=45, nullable=true)
+     */
+    private $motherEmail;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_country", type="string", length=45, nullable=true)
+     */
+    private $motherCountry;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="last_school", type="string", length=255, nullable=true)
+     */
+    private $lastSchool;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="entering_degree", type="string", length=45, nullable=true)
+     */
+    private $enteringDegree;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_ID", type="string", length=45, nullable=true)
+     */
+    private $degreeId;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_exam_center", type="string", length=45, nullable=true)
+     */
+    private $degreeExamCenter;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_option", type="string", length=45, nullable=true)
+     */
+    private $degreeOption;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_reference_id", type="string", length=45, nullable=true)
+     */
+    private $degreeReferenceId;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="studentcol", type="string", length=45, nullable=true)
+     */
+    private $studentcol;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_jury_number", type="string", length=45, nullable=true)
+     */
+    private $degreeJuryNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="degree_session", type="string", length=45, nullable=true)
+     */
+    private $degreeSession;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sportive_information", type="text", length=65535, nullable=true)
+     */
+    private $sportiveInformation;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="cultural_information", type="text", length=65535, nullable=true)
+     */
+    private $culturalInformation;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="associative_information", type="text", length=65535, nullable=true)
+     */
+    private $associativeInformation;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="it_knowledge", type="text", length=65535, nullable=true)
+     */
+    private $itKnowledge;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true, options={"default"="1"})
+     */
+    private $status = 1;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_name", type="string", length=255, nullable=true)
+     */
+    private $sponsorName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_profession", type="string", length=255, nullable=true)
+     */
+    private $sponsorProfession;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_phone_number", type="string", length=255, nullable=true)
+     */
+    private $sponsorPhoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_email", type="string", length=255, nullable=true)
+     */
+    private $sponsorEmail;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_country", type="string", length=255, nullable=true)
+     */
+    private $sponsorCountry;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sponsor_city", type="string", length=255, nullable=true)
+     */
+    private $sponsorCity;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="father_city", type="string", length=255, nullable=true)
+     */
+    private $fatherCity;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mother_city", type="string", length=255, nullable=true)
+     */
+    private $motherCity;
+
+    /**
+     * @var \Admission
+     *
+     * @ORM\ManyToOne(targetEntity="Admission")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admission_id", referencedColumnName="id")
+     * })
+     */
+    private $admission;
+
+
+}

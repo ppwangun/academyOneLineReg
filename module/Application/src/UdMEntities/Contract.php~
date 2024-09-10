@@ -1,0 +1,124 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Contract
+ *
+ * @ORM\Table(name="contract", indexes={@ORM\Index(name="fk_contract_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_contract_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_contract_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_contract_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_contract_teacher1_idx", columns={"teacher_id"})})
+ * @ORM\Entity
+ */
+class Contract
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_number", type="string", length=45, nullable=false)
+     */
+    private $refNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="status", type="string", length=45, nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="volume_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $volumeHrs;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amount;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="cm_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $cmHrs;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="td_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $tdHrs;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="tp_hrs", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $tpHrs;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
+
+    /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+
+}

@@ -11,6 +11,7 @@ return [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+            Controller\SettingsController::class => Controller\Factory\SettingsControllerFactory::class,
             Controller\AcadYearController::class => Controller\Factory\AcadYearControllerFactory::class,
             Controller\SemesterController::class => Controller\Factory\SemesterControllerFactory::class,
             Controller\FacultyController::class => Controller\Factory\FacultyControllerFactory::class,
@@ -591,6 +592,16 @@ return [
                         'action'        => 'onlineRegistrationDefault',
                     ],
                 ],
+            ], 
+            'settingstpl' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/settingstpl',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'settings',
+                    ],
+                ],
             ],             
         ],
     ],
@@ -620,6 +631,7 @@ return [
             'school-global-config/index/teachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/teachingunitpl.phtml',
             'school-global-config/index/newteachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/newteachingunitpl.phtml',
             'school-global-config/index/dashboard' => __DIR__ .'/../view/schoolglobalconfig/Index/dashboard.phtml',
+            'school-global-config/settings/settings' => __DIR__ .'/../view/schoolglobalconfig/Settings/settings.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
@@ -644,6 +656,14 @@ return [
                  'allow' => '@'],
 
             ],
+            Controller\SettingsController::class => [
+
+                // Give access to "index", "add", "edit", "view", "changePassword" actions 
+                // to users having the "user.manage" permission.
+                ['actions' => '*', 
+                 'allow' => '@'],
+
+            ],            
         ]
     ],
 ];
