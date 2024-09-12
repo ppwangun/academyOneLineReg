@@ -13,11 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class OdooSettings
 {
     /**
-     * @var string
+     * @var int
      *
-     * @ORM\Column(name="url", type="string", length=45, nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="url", type="string", length=45, nullable=true)
      */
     private $url;
 
@@ -42,12 +49,43 @@ class OdooSettings
      */
     private $password;
 
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="activate_status", type="boolean", nullable=true)
+     */
+    private $activateStatus = '0';
 
+
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set url.
+     *
+     * @param string|null $url
+     *
+     * @return OdooSettings
+     */
+    public function setUrl($url = null)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
 
     /**
      * Get url.
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -124,5 +162,29 @@ class OdooSettings
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set activateStatus.
+     *
+     * @param bool|null $activateStatus
+     *
+     * @return OdooSettings
+     */
+    public function setActivateStatus($activateStatus = null)
+    {
+        $this->activateStatus = $activateStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get activateStatus.
+     *
+     * @return bool|null
+     */
+    public function getActivateStatus()
+    {
+        return $this->activateStatus;
     }
 }

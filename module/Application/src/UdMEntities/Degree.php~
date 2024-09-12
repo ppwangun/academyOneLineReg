@@ -50,6 +50,16 @@ class Degree
     private $iscorecurriculum;
 
     /**
+     * @var \FieldOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
+     * })
+     */
+    private $fieldStudy;
+
+    /**
      * @var \Speciality
      *
      * @ORM\ManyToOne(targetEntity="Speciality")
@@ -68,16 +78,6 @@ class Degree
      * })
      */
     private $specialityOption;
-
-    /**
-     * @var \FieldOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
-     * })
-     */
-    private $fieldStudy;
 
 
 }

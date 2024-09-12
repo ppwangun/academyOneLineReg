@@ -85,16 +85,6 @@ class StudentParent
     private $tutorRalationWithStudent;
 
     /**
-     * @var \Student
-     *
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
-     * })
-     */
-    private $student;
-
-    /**
      * @var \ProspectiveStudent
      *
      * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
@@ -103,6 +93,16 @@ class StudentParent
      * })
      */
     private $prospectiveStudent;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
 
 
 }

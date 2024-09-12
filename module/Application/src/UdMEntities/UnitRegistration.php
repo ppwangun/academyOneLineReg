@@ -162,6 +162,16 @@ class UnitRegistration
     private $calculationstatus = '0';
 
     /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
      * @var \TeachingUnit
      *
      * @ORM\ManyToOne(targetEntity="TeachingUnit")
@@ -180,16 +190,6 @@ class UnitRegistration
      * })
      */
     private $semester;
-
-    /**
-     * @var \Subject
-     *
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
-     * })
-     */
-    private $subject;
 
 
 
@@ -684,6 +684,30 @@ class UnitRegistration
     }
 
     /**
+     * Set subject.
+     *
+     * @param \Subject|null $subject
+     *
+     * @return UnitRegistration
+     */
+    public function setSubject(\Subject $subject = null)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    /**
+     * Get subject.
+     *
+     * @return \Subject|null
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
      * Set teachingUnit.
      *
      * @param \TeachingUnit|null $teachingUnit
@@ -729,29 +753,5 @@ class UnitRegistration
     public function getSemester()
     {
         return $this->semester;
-    }
-
-    /**
-     * Set subject.
-     *
-     * @param \Subject|null $subject
-     *
-     * @return UnitRegistration
-     */
-    public function setSubject(\Subject $subject = null)
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
-
-    /**
-     * Get subject.
-     *
-     * @return \Subject|null
-     */
-    public function getSubject()
-    {
-        return $this->subject;
     }
 }

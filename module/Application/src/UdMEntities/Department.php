@@ -43,16 +43,6 @@ class Department
     private $status;
 
     /**
-     * @var \PersonInCharge
-     *
-     * @ORM\ManyToOne(targetEntity="PersonInCharge")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="person_in_charge_id", referencedColumnName="id")
-     * })
-     */
-    private $personInCharge;
-
-    /**
      * @var \Faculty
      *
      * @ORM\ManyToOne(targetEntity="Faculty")
@@ -61,6 +51,16 @@ class Department
      * })
      */
     private $faculty;
+
+    /**
+     * @var \PersonInCharge
+     *
+     * @ORM\ManyToOne(targetEntity="PersonInCharge")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="person_in_charge_id", referencedColumnName="id")
+     * })
+     */
+    private $personInCharge;
 
 
 
@@ -147,30 +147,6 @@ class Department
     }
 
     /**
-     * Set personInCharge.
-     *
-     * @param \PersonInCharge|null $personInCharge
-     *
-     * @return Department
-     */
-    public function setPersonInCharge(\PersonInCharge $personInCharge = null)
-    {
-        $this->personInCharge = $personInCharge;
-
-        return $this;
-    }
-
-    /**
-     * Get personInCharge.
-     *
-     * @return \PersonInCharge|null
-     */
-    public function getPersonInCharge()
-    {
-        return $this->personInCharge;
-    }
-
-    /**
      * Set faculty.
      *
      * @param \Faculty|null $faculty
@@ -192,5 +168,29 @@ class Department
     public function getFaculty()
     {
         return $this->faculty;
+    }
+
+    /**
+     * Set personInCharge.
+     *
+     * @param \PersonInCharge|null $personInCharge
+     *
+     * @return Department
+     */
+    public function setPersonInCharge(\PersonInCharge $personInCharge = null)
+    {
+        $this->personInCharge = $personInCharge;
+
+        return $this;
+    }
+
+    /**
+     * Get personInCharge.
+     *
+     * @return \PersonInCharge|null
+     */
+    public function getPersonInCharge()
+    {
+        return $this->personInCharge;
     }
 }

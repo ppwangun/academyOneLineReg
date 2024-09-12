@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AdmissionBatch
  *
- * @ORM\Table(name="admission_batch", indexes={@ORM\Index(name="fk_admission_batch_admin_registration1_idx", columns={"admin_registration_id"}), @ORM\Index(name="fk_admission_batch_admission1_idx", columns={"admission_id"}), @ORM\Index(name="fk_admission_batch_student1_idx", columns={"student_id"})})
+ * @ORM\Table(name="admission_batch", indexes={@ORM\Index(name="fk_admission_batch_admission1_idx", columns={"admission_id"}), @ORM\Index(name="fk_admission_batch_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_admission_batch_admin_registration1_idx", columns={"admin_registration_id"})})
  * @ORM\Entity
  */
 class AdmissionBatch
@@ -43,6 +43,16 @@ class AdmissionBatch
     private $admissionDate;
 
     /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
+
+    /**
      * @var \AdminRegistration
      *
      * @ORM\ManyToOne(targetEntity="AdminRegistration")
@@ -61,16 +71,6 @@ class AdmissionBatch
      * })
      */
     private $admission;
-
-    /**
-     * @var \Student
-     *
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
-     * })
-     */
-    private $student;
 
 
 
@@ -157,6 +157,30 @@ class AdmissionBatch
     }
 
     /**
+     * Set student.
+     *
+     * @param \Student|null $student
+     *
+     * @return AdmissionBatch
+     */
+    public function setStudent(\Student $student = null)
+    {
+        $this->student = $student;
+
+        return $this;
+    }
+
+    /**
+     * Get student.
+     *
+     * @return \Student|null
+     */
+    public function getStudent()
+    {
+        return $this->student;
+    }
+
+    /**
      * Set adminRegistration.
      *
      * @param \AdminRegistration|null $adminRegistration
@@ -202,29 +226,5 @@ class AdmissionBatch
     public function getAdmission()
     {
         return $this->admission;
-    }
-
-    /**
-     * Set student.
-     *
-     * @param \Student|null $student
-     *
-     * @return AdmissionBatch
-     */
-    public function setStudent(\Student $student = null)
-    {
-        $this->student = $student;
-
-        return $this;
-    }
-
-    /**
-     * Get student.
-     *
-     * @return \Student|null
-     */
-    public function getStudent()
-    {
-        return $this->student;
     }
 }

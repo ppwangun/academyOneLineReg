@@ -602,6 +602,26 @@ return [
                         'action'        => 'settings',
                     ],
                 ],
+            ], 
+            'updateOdooSettings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/updateOdooSettings',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'updateOdooSettings',
+                    ],
+                ],
+            ],  
+            'getOdooSettings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getOdooSettings',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'getOdooSettings',
+                    ],
+                ],
             ],             
         ],
     ],

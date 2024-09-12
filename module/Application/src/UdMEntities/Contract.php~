@@ -71,6 +71,16 @@ class Contract
     private $tpHrs;
 
     /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -109,16 +119,6 @@ class Contract
      * })
      */
     private $academicYear;
-
-    /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
 
 
 }

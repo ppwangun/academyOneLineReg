@@ -92,6 +92,16 @@ class Admission
     private $prospectiveStudentId;
 
     /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -110,16 +120,6 @@ class Admission
      * })
      */
     private $classOfStudy;
-
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
 
 
 }

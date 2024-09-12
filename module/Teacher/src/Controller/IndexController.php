@@ -31,6 +31,8 @@ use Application\Entity\CurrentYearUesAndSubjectsView;
 use Application\Entity\ContractFollowUp;
 use Application\Entity\AllContractsView;
 use Application\Entity\CourseScheduled;
+use Njine\Odoo\Synchronisation;
+use Application\Entity\OdooSettings;
 
 
 
@@ -183,7 +185,7 @@ class IndexController extends AbstractActionController
         try
         { 
             $data = $this->params()->fromPost(); // 
-            //var_dump($data); exit;
+           
         
             $contract = $this->entityManager->getRepository(Contract::class)->find($data["contractId"]);    
             $progression = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);  
@@ -725,7 +727,7 @@ class IndexController extends AbstractActionController
             $bills = [];
             $actualBilledTime = 0;
             $overtime = 0;
-          
+      
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             
@@ -790,9 +792,9 @@ class IndexController extends AbstractActionController
                             $con->setTeacherPaymentBill($pymtBill);
                             $this->entityManager->flush();
                             $hydrator = new ReflectionHydrator();
-                            $data = $hydrator->extract($con);
-                            $data["paymentRate"] = $pymtRate;
-                            $data["paymentAmount"] = $billedTime * $pymtRate;
+                            $data_1 = $hydrator->extract($con);
+                            $data_1["paymentRate"] = $pymtRate;
+                            $data_1["paymentAmount"] = $billedTime * $pymtRate;
                             $paymentDetails[$k] = $data; $k++; 
                             
                             $actualBilledTime = $billedTime;
@@ -814,11 +816,11 @@ class IndexController extends AbstractActionController
                             }*/
                             
                             $hydrator = new ReflectionHydrator();
-                            $data = $hydrator->extract($con);
-                            $data["paymentRate"] = $pymtRate;
-                            $data["overtime"] = $overtime;
-                            $data["paymentAmount"] = $billedTime * $pymtRate;
-                            $paymentDetails[$k] = $data; $k++; 
+                            $data_1 = $hydrator->extract($con);
+                            $data_1["paymentRate"] = $pymtRate;
+                            $data_1["overtime"] = $overtime;
+                            $data_1["paymentAmount"] = $billedTime * $pymtRate;
+                            $paymentDetails[$k] = $data_1; $k++; 
                             
                             }
   
@@ -840,10 +842,42 @@ class IndexController extends AbstractActionController
                 $pymtBill->setTotalTimePreviouslyBilled($alreadyBilledTime);
                 $pymtBill->setTotalTimeCurrentlyBilled($actualBilledTime);
                 $pymtBill->setTotalTime($billedTime);
-
+                
                 $this->entityManager->flush();
+                $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+                $odooSettings = $odooSettings[0];
+                
+                //Perform the odoo Sync only when it is activated
+                if($odooSettings->getActivateStatus())
+                {
+                    /***** Synchronisation des données avec Odoo - Ajout d'une facture *****/;
+                    $odoo = new Synchronisation();
+                    $info = $odoo->connexionOdoo();
+                    if($info["resultat"] == "success")
+                    {
+                        $description = $contract->getTeachingUnit()->getName()." (";
+                        $description .= $contract->getTeachingUnit()->getCode().") - ";
+                        $description .= "Volume horaire total : ".$contract->getVolumeHrs()." - ";
+                        $description .= "Heure(s) déjà facturée(s) : ".($alreadyBilledTime)." - ";
+                        $description .= "Heure(s) actuellement facturée(s) : ".$actualBilledTime." - ";
+                        $description .= "Volume horaire restant : ".($contract->getVolumeHrs() - ($alreadyBilledTime+$actualBilledTime));
+                        $info = $odoo->factureEnseignant(
+                            $data["teacherID"],
+                            date("Y-m-d H:i:s"),
+                            $refNum,
+                            $description,
+                            $totalTime,
+                            $pymtRate
+                        ); 
+                        
+                        if($info["resultat"] =="echec")                            return new JSONmodel(["info"=>$info]);
+                    }
+                    /***** Fin de la synchronisation *****/;  
+                }
+
+                
             
-           
+          
 
 
             $this->entityManager->getConnection()->commit();
@@ -858,7 +892,8 @@ class IndexController extends AbstractActionController
                 "alreadyBilledTime"=>$alreadyBilledTime,
                 "overtime"=>$overtime,
                 "paymentRate"=>$pymtRate,
-                "totalHoursAffected"=>$contract->getVolumeHrs()]
+                "totalHoursAffected"=>$contract->getVolumeHrs(),
+                   "info"=>$info]
             ]);
 
             return $output;       }

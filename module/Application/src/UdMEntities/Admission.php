@@ -92,6 +92,16 @@ class Admission
     private $prospectiveStudentId;
 
     /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -110,16 +120,6 @@ class Admission
      * })
      */
     private $classOfStudy;
-
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
 
 
 
@@ -374,6 +374,30 @@ class Admission
     }
 
     /**
+     * Set degree.
+     *
+     * @param \Degree|null $degree
+     *
+     * @return Admission
+     */
+    public function setDegree(\Degree $degree = null)
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+
+    /**
+     * Get degree.
+     *
+     * @return \Degree|null
+     */
+    public function getDegree()
+    {
+        return $this->degree;
+    }
+
+    /**
      * Set academicYear.
      *
      * @param \AcademicYear|null $academicYear
@@ -419,29 +443,5 @@ class Admission
     public function getClassOfStudy()
     {
         return $this->classOfStudy;
-    }
-
-    /**
-     * Set degree.
-     *
-     * @param \Degree|null $degree
-     *
-     * @return Admission
-     */
-    public function setDegree(\Degree $degree = null)
-    {
-        $this->degree = $degree;
-
-        return $this;
-    }
-
-    /**
-     * Get degree.
-     *
-     * @return \Degree|null
-     */
-    public function getDegree()
-    {
-        return $this->degree;
     }
 }

@@ -85,16 +85,6 @@ class StudentParent
     private $tutorRalationWithStudent;
 
     /**
-     * @var \Student
-     *
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
-     * })
-     */
-    private $student;
-
-    /**
      * @var \ProspectiveStudent
      *
      * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
@@ -103,6 +93,16 @@ class StudentParent
      * })
      */
     private $prospectiveStudent;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
 
 
 
@@ -333,30 +333,6 @@ class StudentParent
     }
 
     /**
-     * Set student.
-     *
-     * @param \Student|null $student
-     *
-     * @return StudentParent
-     */
-    public function setStudent(\Student $student = null)
-    {
-        $this->student = $student;
-
-        return $this;
-    }
-
-    /**
-     * Get student.
-     *
-     * @return \Student|null
-     */
-    public function getStudent()
-    {
-        return $this->student;
-    }
-
-    /**
      * Set prospectiveStudent.
      *
      * @param \ProspectiveStudent|null $prospectiveStudent
@@ -378,5 +354,29 @@ class StudentParent
     public function getProspectiveStudent()
     {
         return $this->prospectiveStudent;
+    }
+
+    /**
+     * Set student.
+     *
+     * @param \Student|null $student
+     *
+     * @return StudentParent
+     */
+    public function setStudent(\Student $student = null)
+    {
+        $this->student = $student;
+
+        return $this;
+    }
+
+    /**
+     * Get student.
+     *
+     * @return \Student|null
+     */
+    public function getStudent()
+    {
+        return $this->student;
     }
 }

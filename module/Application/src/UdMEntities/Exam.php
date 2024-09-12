@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Exam
  *
- * @ORM\Table(name="exam", indexes={@ORM\Index(name="fk_exam_exam_session1_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_exam_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_exam_exam_type1_idx", columns={"exam_type_code"})})
+ * @ORM\Table(name="exam", indexes={@ORM\Index(name="fk_exam_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_exam_exam_type1_idx", columns={"exam_type_code"}), @ORM\Index(name="fk_exam_exam_session1_idx", columns={"exam_session_id"})})
  * @ORM\Entity
  */
 class Exam
@@ -120,16 +120,6 @@ class Exam
     private $isCatchUpExamPerformed = '0';
 
     /**
-     * @var \ClassOfStudyHasSemester
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudyHasSemester;
-
-    /**
      * @var \ExamSession
      *
      * @ORM\ManyToOne(targetEntity="ExamSession")
@@ -138,6 +128,16 @@ class Exam
      * })
      */
     private $examSession;
+
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
 
 
 
@@ -488,30 +488,6 @@ class Exam
     }
 
     /**
-     * Set classOfStudyHasSemester.
-     *
-     * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
-     *
-     * @return Exam
-     */
-    public function setClassOfStudyHasSemester(\ClassOfStudyHasSemester $classOfStudyHasSemester = null)
-    {
-        $this->classOfStudyHasSemester = $classOfStudyHasSemester;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudyHasSemester.
-     *
-     * @return \ClassOfStudyHasSemester|null
-     */
-    public function getClassOfStudyHasSemester()
-    {
-        return $this->classOfStudyHasSemester;
-    }
-
-    /**
      * Set examSession.
      *
      * @param \ExamSession|null $examSession
@@ -533,5 +509,29 @@ class Exam
     public function getExamSession()
     {
         return $this->examSession;
+    }
+
+    /**
+     * Set classOfStudyHasSemester.
+     *
+     * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
+     *
+     * @return Exam
+     */
+    public function setClassOfStudyHasSemester(\ClassOfStudyHasSemester $classOfStudyHasSemester = null)
+    {
+        $this->classOfStudyHasSemester = $classOfStudyHasSemester;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudyHasSemester.
+     *
+     * @return \ClassOfStudyHasSemester|null
+     */
+    public function getClassOfStudyHasSemester()
+    {
+        return $this->classOfStudyHasSemester;
     }
 }

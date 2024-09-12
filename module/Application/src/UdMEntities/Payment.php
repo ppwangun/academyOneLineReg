@@ -50,16 +50,6 @@ class Payment
     private $mobilePaymentId;
 
     /**
-     * @var \AdminRegistration
-     *
-     * @ORM\ManyToOne(targetEntity="AdminRegistration")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
-     * })
-     */
-    private $adminRegistration;
-
-    /**
      * @var \AcademicYear
      *
      * @ORM\Id
@@ -70,6 +60,16 @@ class Payment
      * })
      */
     private $academicYear;
+
+    /**
+     * @var \AdminRegistration
+     *
+     * @ORM\ManyToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
+     * })
+     */
+    private $adminRegistration;
 
 
 
@@ -194,30 +194,6 @@ class Payment
     }
 
     /**
-     * Set adminRegistration.
-     *
-     * @param \AdminRegistration|null $adminRegistration
-     *
-     * @return Payment
-     */
-    public function setAdminRegistration(\AdminRegistration $adminRegistration = null)
-    {
-        $this->adminRegistration = $adminRegistration;
-
-        return $this;
-    }
-
-    /**
-     * Get adminRegistration.
-     *
-     * @return \AdminRegistration|null
-     */
-    public function getAdminRegistration()
-    {
-        return $this->adminRegistration;
-    }
-
-    /**
      * Set academicYear.
      *
      * @param \AcademicYear $academicYear
@@ -239,5 +215,29 @@ class Payment
     public function getAcademicYear()
     {
         return $this->academicYear;
+    }
+
+    /**
+     * Set adminRegistration.
+     *
+     * @param \AdminRegistration|null $adminRegistration
+     *
+     * @return Payment
+     */
+    public function setAdminRegistration(\AdminRegistration $adminRegistration = null)
+    {
+        $this->adminRegistration = $adminRegistration;
+
+        return $this;
+    }
+
+    /**
+     * Get adminRegistration.
+     *
+     * @return \AdminRegistration|null
+     */
+    public function getAdminRegistration()
+    {
+        return $this->adminRegistration;
     }
 }

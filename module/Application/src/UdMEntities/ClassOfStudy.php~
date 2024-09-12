@@ -71,6 +71,26 @@ class ClassOfStudy
     private $isEndDegreeTraining = '0';
 
     /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
+     * @var \Grade
+     *
+     * @ORM\ManyToOne(targetEntity="Grade")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="grade_id", referencedColumnName="id")
+     * })
+     */
+    private $grade;
+
+    /**
      * @var \Deliberation
      *
      * @ORM\ManyToOne(targetEntity="Deliberation")
@@ -99,26 +119,6 @@ class ClassOfStudy
      * })
      */
     private $fieldOfStudy;
-
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
-
-    /**
-     * @var \Grade
-     *
-     * @ORM\ManyToOne(targetEntity="Grade")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="grade_id", referencedColumnName="id")
-     * })
-     */
-    private $grade;
 
     /**
      * @var \Doctrine\Common\Collections\Collection

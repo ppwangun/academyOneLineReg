@@ -162,6 +162,16 @@ class UnitRegistration
     private $calculationstatus = '0';
 
     /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
      * @var \TeachingUnit
      *
      * @ORM\ManyToOne(targetEntity="TeachingUnit")
@@ -180,16 +190,6 @@ class UnitRegistration
      * })
      */
     private $semester;
-
-    /**
-     * @var \Subject
-     *
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
-     * })
-     */
-    private $subject;
 
 
 }

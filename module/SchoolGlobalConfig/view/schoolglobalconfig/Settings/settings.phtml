@@ -56,8 +56,8 @@ li.active a.ng-binding {
                 <md-content layout-padding >
                     <form   name="formSync">
 
-                <md-checkbox class='md-primary' ng-model="odooSettings.status"  ng-checked="(odooSettings.status)"aria-label="Actif ?" md-no-ink > Activer la synchronisation avec odoo?</md-checkbox>
-                <div class="md-dialog-content"  ng-init="init()" ng-show="odooSettings.status">
+                <md-checkbox class='md-primary' ng-model="odooSettings.activateStatus"  ng-checked="(odooSettings.activateStatus)"aria-label="Actif ?" md-no-ink > Activer la synchronisation avec odoo?</md-checkbox>
+                <div class="md-dialog-content"  ng-init="init()" ng-show="odooSettings.activateStatus">
 
                      
                         <div layout layout-sm="column" style="padding-top: 20px;">
@@ -104,9 +104,9 @@ li.active a.ng-binding {
                                     </div>
                             </md-input-container> 
                         </div>                      
-                    <button  ng-show=" <?=($this->access('global.system.admin', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.updateOdooSettings(odooSettings)" class="btn btn-danger" ng-disabled="formSync.$invalid" ><span class="fa fa-plus-square"></span>&nbsp;Enregistrer </button>                     
+                    <button  ng-show=" <?=($this->access('global.system.admin', null))?true:false?> &&odooSettings.activateStatus " type="button" ng-click="$ctrl.updateOdooSettings(odooSettings)" class="btn btn-danger" ng-disabled="formSync.$invalid" ><span class="fa fa-plus-square"></span>&nbsp;Enregistrer </button>                     
                   </div>
-                <button  ng-show=" <?=($this->access('global.system.admin', null))?true:false?> && !odooSettings.status" type="button" ng-click="$ctrl.updateOdooSettings(odooSettings)" class="btn btn-danger" ><span class="fa fa-plus-square"></span>&nbsp;Enregistrer </button>
+                <button  ng-show=" <?=($this->access('global.system.admin', null))?true:false?> && !odooSettings.activateStatus" type="button" ng-click="$ctrl.updateOdooSettings(odooSettings)" class="btn btn-danger" ><span class="fa fa-plus-square"></span>&nbsp;Enregistrer </button>
                 </form>
               </md-content>
          </div>

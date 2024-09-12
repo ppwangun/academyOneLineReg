@@ -77,6 +77,27 @@ class User
      */
     private $pwdResetTokenCreationDate;
 
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="first_connection", type="boolean", nullable=true, options={"default"="1"})
+     */
+    private $firstConnection = true;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="connected_status", type="boolean", nullable=true)
+     */
+    private $connectedStatus;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="last_connected_date", type="string", length=45, nullable=true)
+     */
+    private $lastConnectedDate;
+
 
 
     /**
@@ -279,5 +300,77 @@ class User
     public function getPwdResetTokenCreationDate()
     {
         return $this->pwdResetTokenCreationDate;
+    }
+
+    /**
+     * Set firstConnection.
+     *
+     * @param bool|null $firstConnection
+     *
+     * @return User
+     */
+    public function setFirstConnection($firstConnection = null)
+    {
+        $this->firstConnection = $firstConnection;
+
+        return $this;
+    }
+
+    /**
+     * Get firstConnection.
+     *
+     * @return bool|null
+     */
+    public function getFirstConnection()
+    {
+        return $this->firstConnection;
+    }
+
+    /**
+     * Set connectedStatus.
+     *
+     * @param bool|null $connectedStatus
+     *
+     * @return User
+     */
+    public function setConnectedStatus($connectedStatus = null)
+    {
+        $this->connectedStatus = $connectedStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get connectedStatus.
+     *
+     * @return bool|null
+     */
+    public function getConnectedStatus()
+    {
+        return $this->connectedStatus;
+    }
+
+    /**
+     * Set lastConnectedDate.
+     *
+     * @param string|null $lastConnectedDate
+     *
+     * @return User
+     */
+    public function setLastConnectedDate($lastConnectedDate = null)
+    {
+        $this->lastConnectedDate = $lastConnectedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get lastConnectedDate.
+     *
+     * @return string|null
+     */
+    public function getLastConnectedDate()
+    {
+        return $this->lastConnectedDate;
     }
 }

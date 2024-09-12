@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PersonInCharge
  *
- * @ORM\Table(name="person_in_charge", indexes={@ORM\Index(name="fk_person_in_charge_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_person_in_charge_school_employee1_idx", columns={"school_employee_id"}), @ORM\Index(name="fk_person_in_charge_department1_idx", columns={"department_id"}), @ORM\Index(name="fk_person_in_charge_school1_idx", columns={"school_id"}), @ORM\Index(name="fk_person_in_charge_faculty1_idx", columns={"faculty_id"})})
+ * @ORM\Table(name="person_in_charge", indexes={@ORM\Index(name="fk_person_in_charge_department1_idx", columns={"department_id"}), @ORM\Index(name="fk_person_in_charge_school1_idx", columns={"school_id"}), @ORM\Index(name="fk_person_in_charge_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_person_in_charge_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_person_in_charge_school_employee1_idx", columns={"school_employee_id"})})
  * @ORM\Entity
  */
 class PersonInCharge
@@ -43,6 +43,26 @@ class PersonInCharge
     private $status = '0';
 
     /**
+     * @var \Speciality
+     *
+     * @ORM\ManyToOne(targetEntity="Speciality")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
+     */
+    private $department;
+
+    /**
+     * @var \SchoolEmployee
+     *
+     * @ORM\ManyToOne(targetEntity="SchoolEmployee")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="school_employee_id", referencedColumnName="id")
+     * })
+     */
+    private $schoolEmployee;
+
+    /**
      * @var \Faculty
      *
      * @ORM\ManyToOne(targetEntity="Faculty")
@@ -71,26 +91,6 @@ class PersonInCharge
      * })
      */
     private $school;
-
-    /**
-     * @var \Speciality
-     *
-     * @ORM\ManyToOne(targetEntity="Speciality")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
-     * })
-     */
-    private $department;
-
-    /**
-     * @var \SchoolEmployee
-     *
-     * @ORM\ManyToOne(targetEntity="SchoolEmployee")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="school_employee_id", referencedColumnName="id")
-     * })
-     */
-    private $schoolEmployee;
 
 
 
@@ -177,6 +177,54 @@ class PersonInCharge
     }
 
     /**
+     * Set department.
+     *
+     * @param \Speciality|null $department
+     *
+     * @return PersonInCharge
+     */
+    public function setDepartment(\Speciality $department = null)
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * Get department.
+     *
+     * @return \Speciality|null
+     */
+    public function getDepartment()
+    {
+        return $this->department;
+    }
+
+    /**
+     * Set schoolEmployee.
+     *
+     * @param \SchoolEmployee|null $schoolEmployee
+     *
+     * @return PersonInCharge
+     */
+    public function setSchoolEmployee(\SchoolEmployee $schoolEmployee = null)
+    {
+        $this->schoolEmployee = $schoolEmployee;
+
+        return $this;
+    }
+
+    /**
+     * Get schoolEmployee.
+     *
+     * @return \SchoolEmployee|null
+     */
+    public function getSchoolEmployee()
+    {
+        return $this->schoolEmployee;
+    }
+
+    /**
      * Set faculty.
      *
      * @param \Faculty|null $faculty
@@ -246,53 +294,5 @@ class PersonInCharge
     public function getSchool()
     {
         return $this->school;
-    }
-
-    /**
-     * Set department.
-     *
-     * @param \Speciality|null $department
-     *
-     * @return PersonInCharge
-     */
-    public function setDepartment(\Speciality $department = null)
-    {
-        $this->department = $department;
-
-        return $this;
-    }
-
-    /**
-     * Get department.
-     *
-     * @return \Speciality|null
-     */
-    public function getDepartment()
-    {
-        return $this->department;
-    }
-
-    /**
-     * Set schoolEmployee.
-     *
-     * @param \SchoolEmployee|null $schoolEmployee
-     *
-     * @return PersonInCharge
-     */
-    public function setSchoolEmployee(\SchoolEmployee $schoolEmployee = null)
-    {
-        $this->schoolEmployee = $schoolEmployee;
-
-        return $this;
-    }
-
-    /**
-     * Get schoolEmployee.
-     *
-     * @return \SchoolEmployee|null
-     */
-    public function getSchoolEmployee()
-    {
-        return $this->schoolEmployee;
     }
 }

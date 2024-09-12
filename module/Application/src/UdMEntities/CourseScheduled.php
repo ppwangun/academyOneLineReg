@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CourseScheduled
  *
- * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"})})
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"})})
  * @ORM\Entity
  */
 class CourseScheduled
@@ -50,6 +50,26 @@ class CourseScheduled
     private $scheduleType;
 
     /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -88,26 +108,6 @@ class CourseScheduled
      * })
      */
     private $teachingUnit;
-
-    /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
 
 
 
@@ -218,6 +218,54 @@ class CourseScheduled
     }
 
     /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return CourseScheduled
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return CourseScheduled
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
+    }
+
+    /**
      * Set subject.
      *
      * @param \Subject|null $subject
@@ -311,53 +359,5 @@ class CourseScheduled
     public function getTeachingUnit()
     {
         return $this->teachingUnit;
-    }
-
-    /**
-     * Set semester.
-     *
-     * @param \Semester|null $semester
-     *
-     * @return CourseScheduled
-     */
-    public function setSemester(\Semester $semester = null)
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    /**
-     * Get semester.
-     *
-     * @return \Semester|null
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy|null $classOfStudy
-     *
-     * @return CourseScheduled
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy|null
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
     }
 }

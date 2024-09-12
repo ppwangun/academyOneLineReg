@@ -30,6 +30,7 @@ use Application\Entity\Subject;
 use Application\Entity\UnitRegistration;
 use Application\Entity\StudentSemRegistration;
 use Application\Entity\CurrentYearTeachingUnitView;
+use Application\Entity\OdooSettings;
 use PhpOffice\PhpSpreadsheet;
 
 class SettingsController extends AbstractActionController
@@ -54,462 +55,94 @@ class SettingsController extends AbstractActionController
         return [];
     }
     
-   public function importSubjectAction()
-    { 
-        $this->entityManager->getConnection()->beginTransaction();
-        try
-        {     
-
-            // Getting file name 
-           $filename = $_FILES['file']['name'];
-           // Location 
-           $location = './public/upload/';
-
-           $csv_mimetypes = array(
-               'text/csv',
-               'application/csv',
-               'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-               'text/comma-separated-values',
-               'application/excel',
-               'application/vnd.ms-excel',
-               'application/vnd.msexcel',
-            ); 
-        // Check if fill type is allowed  
-          if(!in_array($_FILES['file']['type'],$csv_mimetypes))
-          {
-             $result = false;
-
-              $view = new JsonModel([
-                $result
-              ]);
-              return $view; 
-          }
-
-            // Upload file 
-            move_uploaded_file($_FILES['file']['tmp_name'],$location.$filename);
-
-    
-            //$reader = new Csv(); 
-            $reader =  PhpSpreadsheet\IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(TRUE);
-            $spreadsheet = $reader->load($location.$filename);
-            
-            
-            $worksheet = $spreadsheet->getActiveSheet();
-            // Get the highest row number and column letter referenced in the worksheet
-            $highestRow = $worksheet->getHighestDataRow(); // e.g. 10
-            $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'
-            //
-      
-            // Increment the highest column letter
-            ++$highestColumn;            
-            //$spreadsheet = $reader->load($location.$filename);
-            //$sheetData = $spreadsheet->getActiveSheet()->toArray();
-
-            $teachingUnit = null; 
-            for ($row = 1; $row <= $highestRow; ++$row) {
-
-            if(empty($worksheet->getCell('D' . $row)->getValue()))
-            {
+ 
         
-                //check if UE already exists
-                $teachingunit  = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
-                $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);                
-
-                if($teachingunit)
-                {
-                    $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
-                    $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue()); 
-                    $this->entityManager->flush();
-                    
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                 
-                    $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingUnit]);
-                    if($class_study_semester)
-                    {
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $this->entityManager->flush();                     
-                    }
-                    else{ 
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setTeachingUnit($teachingunit); 
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $this->entityManager->persist($class_study_semester);  
-                        $this->entityManager->flush();
-                    }
-                }else
-                {   
-                    $teachingunit= new TeachingUnit();
-                    $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
-                    $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue());
-                    $this->entityManager->persist($teachingunit);
-                    $this->entityManager->flush();
-
-                    $class_study_semester = new ClassOfStudyHasSemester();
-                    $class_study_semester->setTeachingUnit($teachingunit);
-
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
-
-                    $class_study_semester->setClassOfStudy($class);
-                    $class_study_semester->setSemester($semester);
-                    $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                    $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
-                    $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
-                    $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
-                    $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                    $this->entityManager->persist($class_study_semester);
-                    $this->entityManager->flush();
-                    
-                }
+    
+    public function updateOdooSettingsAction()
+    {
+      $this->entityManager->getConnection()->beginTransaction();
+      try
+      {
+            $data = $this->params()->fromQuery();
+            $data = json_decode($data["settings"],true); 
+        
+          
+            $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+           
+            if(sizeof($odooSettings)<=0)
+            { 
+                $settings = new OdooSettings();
+                if(isset($data["activateStatus"]))$settings->setActivateStatus($data["activateStatus"]);
+                if(isset($data["url"]))$settings->setUrl($data["url"]);
+                if(isset($data["login"]))$settings->setLogin($data["login"]);
+                if(isset($data["password"]))$settings->setPassword($data["password"]);
+                if(isset($data["databaseName"]))$settings->setDatabaseName($data["databaseName"]);
+                
+                $this->entityManager->persist($settings);
+                $this->entityManager->flush();
             }
             else{
-              
-                $subject = $this->entityManager->getRepository(Subject::class)->findOneBySubjectCode($worksheet->getCell('D' . $row)->getValue());  
-                  
-                if($subject)
-                {
-                    $subject->setSubjectName($worksheet->getCell('E' . $row)->getValue());
-                    $subject->setSubjectCode($worksheet->getCell('D' . $row)->getValue());
-                    $teachingunit = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                    $subject->setTeachingUnit($teachingunit);
-                    $this->entityManager->flush();
+                $odooSettings = $odooSettings[0];
+                if($data["activateStatus"])
+                { 
+                    if(isset($data["activateStatus"]))$odooSettings->setActivateStatus($data["activateStatus"]);
+                    if(isset($data["url"]))$odooSettings->setUrl($data["url"]); 
+                    if(isset($data["login"]))$odooSettings->setLogin($data["login"]);
+                    if(isset($data["password"]))$odooSettings->setPassword($data["password"]); 
+                    if(isset($data["databaseName"]))$odooSettings->setDatabaseName($data["databaseName"]); 
                     
-                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                    $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["teachingUnit"=>$teachingUnit,"semester"=>$semester,"classOfStudy"=>$class]);
-                    if($class_study_semester)
-                    {
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject); 
-                        
-                    }
-                    else{
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);
-                        $this->entityManager->persist($class_study_semester);
-                        $this->entityManager->flush();                        
-                    }
-                      
-                }else
+                }
+                else
                 {
-                    $subject= new Subject();
-                    $subject->setSubjectName($worksheet->getCell('E' . $row)->getValue());
-                    $subject->setSubjectCode($worksheet->getCell('D' . $row)->getValue());
-                    $teachingunit = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                    $subject->setTeachingUnit($teachingunit);
-
-                    $this->entityManager->persist($subject);
-
-                    //increment the number of subject inside the teaching unit
-                    $n = $teachingunit->getNumberOfSubjects(); 
-                    $teachingunit->setNumberOfSubjects($n+1);
-
-
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                   $class_study_semester= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester,"classOfStudy"=>$class]);
-                   if($class_study_semester)
-                   {
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);  
-                        $this->entityManager->flush();  
-                   }
-                   else
-                   {
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);
-
-                        $this->entityManager->persist($class_study_semester);
-                        $this->entityManager->flush();  
-                   }
+                    if(isset($data["activateStatus"]))$odooSettings->setActivateStatus($data["activateStatus"]);
+                    $odooSettings->setUrl(null) ;
+                    $odooSettings->setLogin(null);
+                    $odooSettings->setPassword(null);
+                    $odooSettings->setDatabaseName(null);                    
                 }
-                }
+                    
             }
-            
- 
-
-
-
-        $this->entityManager->getConnection()->commit();
-
-        $result = true;
-
-          $view = new JsonModel([
-              $result
-         ]);
-
-// Disable layouts; `MvcEvent` will use this View Model instead
-       // $view->setTerminal(true);
-
-            return $view;      
-        }
-        catch(Exception $e)
-        {
-           $this->entityManager->getConnection()->rollBack();
-            throw $e;
-
-        }
-    } 
-        
-    
-    public function filfrmdegreeAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $data = $this->params()->fromQuery(); 
-            $conn = $this->entityManager->getConnection();
-            $sql = '
-                SELECT *
-                FROM degree d
-                INNER JOIN field_of_study f  ON d.field_study_id = f.id
-                WHERE d.id = :id
-                ';
-            $stmt = $conn->prepare($sql);
-            $stmt->execute(array('id' => $data['id']));
-            $results = $stmt->fetch();
-        
-        return new JsonModel([
-                $results
-        ]);          
-      }
-      catch(Exception $e){
-            $this->entityManager->getConnection()->rollBack();
-            throw $e; 
-      }
-    }
-    public function changeOnlineRegistrationDefaultAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $data = $this->params()->fromQuery();
-            $onlineRegYrs = $this->entityManager->getRepository(AcademicYear::class)->findAll();
-            foreach($onlineRegYrs as $regYer)
-            {
-                $regYer->setOnlineRegistrationDefaultYear(0);
-                
-            }
-            $onlineRegYr = $this->entityManager->getRepository(AcademicYear::class)->find($data["id"]);
-             
-            $onlineRegYr->setOnlineRegistrationDefaultYear(1);
             $this->entityManager->flush();
-            
             $this->entityManager->getConnection()->commit();
-            
-        return new JsonModel([
-                
-        ]);          
-      }
-      catch(Exception $e){
-            $this->entityManager->getConnection()->rollBack();
-            throw $e; 
-      }
-    }    
-    public function onlineRegistrationDefaultAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $data = $this->params()->fromQuery();
 
-            $onlineRegYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBY(["onlineRegistrationDefaultYear"=>1]);
-
-            $result = $onlineRegYr->getId();
-            $this->entityManager->getConnection()->commit();
-            
+       
         return new JsonModel([
-           $result
-                
+               true
         ]);          
       }
-      catch(Exception $e){
-            $this->entityManager->getConnection()->rollBack();
-            throw $e; 
-      }
-    }    
-    public function searchAcademicYearAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $activeYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
-            $data = $this->params()->fromQuery(); 
-            $conn = $this->entityManager->getConnection();
-            $sql = '
-                SELECT *
-                FROM academic_year a
-                
-                WHERE a.code like :id And A.starting_date <= :date 
-                ';
-            $stmt = $conn->prepare($sql);
-            $stmt->execute(array('id' => "%".$data['id']."%",'date' => $activeYr->getStartingDate()->format('Y-m-d H:i:s')));
-            $results = $stmt->fetchAll();
-            
-        return new JsonModel([
-                $results
-        ]);          
-      }
-      catch(Exception $e){
-            $this->entityManager->getConnection()->rollBack();
-            throw $e; 
-      }
-    }
-    public function currentAcademicYearAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $activeYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
-            
-            $hydrator = new ReflectionHydrator();
-            $data = $hydrator->extract($activeYr);
-
-                    
-            
-        return new JsonModel([
-                $data
-        ]);          
-      }
-      catch(Exception $e){
-            $this->entityManager->getConnection()->rollBack();
-            throw $e; 
-      }
-    }    
-    public function searchSemByClasseAndAcadYrAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-      try
-      {
-            $data = $this->params()->fromQuery(); 
-            $conn = $this->entityManager->getConnection();
-            $sql = '
-                SELECT *
-                FROM academic_year a
-                
-                WHERE a.code like :id
-                ';
-            $stmt = $conn->prepare($sql);
-            $stmt->execute(array('id' => "%".$data['id']."%"));
-            $results = $stmt->fetchAll();
-            
-        return new JsonModel([
-                $results
-        ]);          
-      }
+      
+       
       catch(Exception $e){
             $this->entityManager->getConnection()->rollBack();
             throw $e; 
       }
     }
     
-    public function subjectbyueAction()
+
+    public function getOdooSettingsAction()
     {
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-        $data = $this->params()->fromQuery();  
-        $ue = [];
-        if($data)
-        {
-            $query = $this->entityManager->createQuery('SELECT  s.id,s.subjectName,s.subjectCode,c1.code as classCode,c.subjectCredits,c.subjectWeight,'
-            . 'c.subjectHours,c.subjectCmHours,c.subjectTdHours,c.subjectTpHours  FROM Application\Entity\ClassOfStudyHasSemester c '
-            . 'JOIN c.classOfStudy c1 '
-            . 'JOIN c.semester sem '
-            . 'JOIN sem.academicYear acad '
-            . 'JOIN c.subject s '
-            . 'WHERE s.teachingUnit = ?1 AND acad.isDefault=1 AND c.status = 1'
-            );
-            $query->setParameter(1, $data["id"]);
-            $ue = $query->getResult(); 
+
+            $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+            $hydrator = new ReflectionHydrator();
+            $odooSettings = $hydrator->extract($odooSettings[0]);
            
-        }
-        $this->entityManager->getConnection()->commit();
+
+
+       
         return new JsonModel([
-                $ue
+                $odooSettings
         ]);          
       }
       catch(Exception $e){
             $this->entityManager->getConnection()->rollBack();
-                    $this->entityManager->getConnection()->commit();
-          
-          
             throw $e; 
-            
       }
-        
-    }
-    public function semesterbyacademicyearAction()
-    {
-      $this->entityManager->getConnection()->beginTransaction();
-       try
-        { 
-           $data = $this->params()->fromQuery();  
-            $acadyr = $this->entityManager->getRepository(AcademicYear::class)->findOneById($data["id"]);
-            $sem =  $this->entityManager->getRepository(Semester::class)->findByAcademicYear($acadyr);
-           
-            foreach($sem as $key=>$value)
-            {
-                $hydrator = new ReflectionHydrator();
-                $data = $hydrator->extract($value);
-
-                $sem[$key] = $data;
-            }
-            $this->entityManager->getConnection()->commit();
-            return new JsonModel([
-                $sem
-             ]);
-
-        } catch (Exception $ex) {
-           $this->entityManager->getConnection()->rollBack();
-           throw $ex;
-        }
-        
     }    
+
+    
     //Collect degrees bases  on training curriculum
     public function cyclebydegreeAction()
     {

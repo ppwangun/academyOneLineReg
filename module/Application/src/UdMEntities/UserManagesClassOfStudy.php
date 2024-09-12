@@ -22,16 +22,6 @@ class UserManagesClassOfStudy
     private $id;
 
     /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
-
-    /**
      * @var \User
      *
      * @ORM\ManyToOne(targetEntity="User")
@@ -40,6 +30,16 @@ class UserManagesClassOfStudy
      * })
      */
     private $user;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 
@@ -51,30 +51,6 @@ class UserManagesClassOfStudy
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy|null $classOfStudy
-     *
-     * @return UserManagesClassOfStudy
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy|null
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
     }
 
     /**
@@ -99,5 +75,29 @@ class UserManagesClassOfStudy
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return UserManagesClassOfStudy
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
     }
 }

@@ -50,6 +50,16 @@ class Degree
     private $iscorecurriculum;
 
     /**
+     * @var \FieldOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
+     * })
+     */
+    private $fieldStudy;
+
+    /**
      * @var \Speciality
      *
      * @ORM\ManyToOne(targetEntity="Speciality")
@@ -68,16 +78,6 @@ class Degree
      * })
      */
     private $specialityOption;
-
-    /**
-     * @var \FieldOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
-     * })
-     */
-    private $fieldStudy;
 
 
 
@@ -188,6 +188,30 @@ class Degree
     }
 
     /**
+     * Set fieldStudy.
+     *
+     * @param \FieldOfStudy|null $fieldStudy
+     *
+     * @return Degree
+     */
+    public function setFieldStudy(\FieldOfStudy $fieldStudy = null)
+    {
+        $this->fieldStudy = $fieldStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get fieldStudy.
+     *
+     * @return \FieldOfStudy|null
+     */
+    public function getFieldStudy()
+    {
+        return $this->fieldStudy;
+    }
+
+    /**
      * Set speciality.
      *
      * @param \Speciality|null $speciality
@@ -233,29 +257,5 @@ class Degree
     public function getSpecialityOption()
     {
         return $this->specialityOption;
-    }
-
-    /**
-     * Set fieldStudy.
-     *
-     * @param \FieldOfStudy|null $fieldStudy
-     *
-     * @return Degree
-     */
-    public function setFieldStudy(\FieldOfStudy $fieldStudy = null)
-    {
-        $this->fieldStudy = $fieldStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get fieldStudy.
-     *
-     * @return \FieldOfStudy|null
-     */
-    public function getFieldStudy()
-    {
-        return $this->fieldStudy;
     }
 }

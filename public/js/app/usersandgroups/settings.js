@@ -5,8 +5,9 @@ angular.module('users')
             templateUrl: 'settingstpl',
             controller: settingsCtrl 
 })
-function settingsCtrl($timeout,$http,$location){
+function settingsCtrl($timeout,$http,$location,toastr,$scope){
     var $ctrl = this;
+    $scope.odooSettings = [{status:0}]
     
 $ctrl.formatDate = function(date){
   var dateOut = new Date(date);
@@ -30,17 +31,32 @@ $ctrl.formatDate = function(date){
  $ctrl.init = function(){
 
      $timeout(
-     $http.get('adduser').then(function(response){
+     $http.get('getOdooSettings').then(function(response){
          //convert all loaded data to lower case
          var i = 0;
-         $ctrl.users = response.data[0];
-        angular.forEach(response.data[0],function(item){
+         $scope.odooSettings = response.data[0];
 
-          item.num = i+1;
-          i++;
-
-        });
      }),500); 
+ }
+ 
+ $ctrl.updateOdooSettings = function(settings){
+        var data = {settings: settings};
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };
+        //Loading selected class information for update
+        $timeout(
+
+                $http.get('updateOdooSettings',config).then(
+
+                function(response){
+                    var resp = response.data[0];
+                    if(resp.info.resultat==="echec") toastr.error("Une erreur inattendue s'est produite");
+                    
+                    else toastr.success("Opération effectuée avec succès");
+
+                }),1000);      
  }
 };
 

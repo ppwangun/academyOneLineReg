@@ -22,16 +22,6 @@ class UserManagesClassOfStudy
     private $id;
 
     /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
-
-    /**
      * @var \User
      *
      * @ORM\ManyToOne(targetEntity="User")
@@ -40,6 +30,16 @@ class UserManagesClassOfStudy
      * })
      */
     private $user;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 }

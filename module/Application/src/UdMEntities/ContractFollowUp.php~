@@ -78,6 +78,16 @@ class ContractFollowUp
     private $courseScheduledId;
 
     /**
+     * @var \Contract
+     *
+     * @ORM\ManyToOne(targetEntity="Contract")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
+     * })
+     */
+    private $contract;
+
+    /**
      * @var \TeacherPaymentBill
      *
      * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
@@ -96,16 +106,6 @@ class ContractFollowUp
      * })
      */
     private $classOfStudyHasSemester;
-
-    /**
-     * @var \Contract
-     *
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
-     * })
-     */
-    private $contract;
 
 
 }

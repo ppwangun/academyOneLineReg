@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TeacherPaymentBill
  *
- * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"})})
+ * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"})})
  * @ORM\Entity
  */
 class TeacherPaymentBill
@@ -85,16 +85,6 @@ class TeacherPaymentBill
     private $totalTimeCurrentlyBilled;
 
     /**
-     * @var \Contract
-     *
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
-     * })
-     */
-    private $contract;
-
-    /**
      * @var \Teacher
      *
      * @ORM\ManyToOne(targetEntity="Teacher")
@@ -103,6 +93,16 @@ class TeacherPaymentBill
      * })
      */
     private $teacher;
+
+    /**
+     * @var \Contract
+     *
+     * @ORM\ManyToOne(targetEntity="Contract")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
+     * })
+     */
+    private $contract;
 
 
 
@@ -333,30 +333,6 @@ class TeacherPaymentBill
     }
 
     /**
-     * Set contract.
-     *
-     * @param \Contract|null $contract
-     *
-     * @return TeacherPaymentBill
-     */
-    public function setContract(\Contract $contract = null)
-    {
-        $this->contract = $contract;
-
-        return $this;
-    }
-
-    /**
-     * Get contract.
-     *
-     * @return \Contract|null
-     */
-    public function getContract()
-    {
-        return $this->contract;
-    }
-
-    /**
      * Set teacher.
      *
      * @param \Teacher|null $teacher
@@ -378,5 +354,29 @@ class TeacherPaymentBill
     public function getTeacher()
     {
         return $this->teacher;
+    }
+
+    /**
+     * Set contract.
+     *
+     * @param \Contract|null $contract
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setContract(\Contract $contract = null)
+    {
+        $this->contract = $contract;
+
+        return $this;
+    }
+
+    /**
+     * Get contract.
+     *
+     * @return \Contract|null
+     */
+    public function getContract()
+    {
+        return $this->contract;
     }
 }

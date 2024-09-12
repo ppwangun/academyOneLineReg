@@ -13,7 +13,7 @@ angular.module('teachingunit')
             controller: teacherListController 
 });
 
-function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuilder,DTColumnDefBuilder,$routeParams){
+function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuilder,DTColumnDefBuilder,$routeParams,toastr){
     // $scope.teachers = [
     //     {id: 1, names: 'Tiger Nixon', speciality: 'System Architect'},
     //     {id: 2, names: 'Garrett Winters', speciality: 'Accountant'},
@@ -261,6 +261,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         $ctrl.overtime = response.data[0].overtime;
         $ctrl.paymentRate = response.data[0].paymentRate;
         $scope.tableBillsShow = 1;
+        toastr.success("Opération effectuée avec succès");
        
     });    
   }  

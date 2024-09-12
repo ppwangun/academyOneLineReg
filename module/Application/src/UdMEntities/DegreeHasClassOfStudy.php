@@ -7,11 +7,23 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasClassOfStudy
  *
- * @ORM\Table(name="degree_has_class_of_study", indexes={@ORM\Index(name="fk_degree_has_class_of_study_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_class_of_study_training_curriculum1_idx", columns={"training_curriculum_id"}), @ORM\Index(name="fk_degree_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="degree_has_class_of_study", indexes={@ORM\Index(name="fk_degree_has_class_of_study_training_curriculum1_idx", columns={"training_curriculum_id"}), @ORM\Index(name="fk_degree_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_degree_has_class_of_study_degree1_idx", columns={"degree_id"})})
  * @ORM\Entity
  */
 class DegreeHasClassOfStudy
 {
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
     /**
      * @var \Degree
      *
@@ -36,19 +48,31 @@ class DegreeHasClassOfStudy
      */
     private $trainingCurriculum;
 
+
+
     /**
-     * @var \ClassOfStudy
+     * Set classOfStudy.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
+     * @param \ClassOfStudy $classOfStudy
+     *
+     * @return DegreeHasClassOfStudy
      */
-    private $classOfStudy;
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
+    {
+        $this->classOfStudy = $classOfStudy;
 
+        return $this;
+    }
 
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
+    }
 
     /**
      * Set degree.
@@ -96,29 +120,5 @@ class DegreeHasClassOfStudy
     public function getTrainingCurriculum()
     {
         return $this->trainingCurriculum;
-    }
-
-    /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy $classOfStudy
-     *
-     * @return DegreeHasClassOfStudy
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
     }
 }

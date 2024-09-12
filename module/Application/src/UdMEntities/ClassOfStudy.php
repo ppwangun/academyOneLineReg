@@ -71,6 +71,26 @@ class ClassOfStudy
     private $isEndDegreeTraining = '0';
 
     /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
+     * @var \Grade
+     *
+     * @ORM\ManyToOne(targetEntity="Grade")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="grade_id", referencedColumnName="id")
+     * })
+     */
+    private $grade;
+
+    /**
      * @var \Deliberation
      *
      * @ORM\ManyToOne(targetEntity="Deliberation")
@@ -99,26 +119,6 @@ class ClassOfStudy
      * })
      */
     private $fieldOfStudy;
-
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
-
-    /**
-     * @var \Grade
-     *
-     * @ORM\ManyToOne(targetEntity="Grade")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="grade_id", referencedColumnName="id")
-     * })
-     */
-    private $grade;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -323,6 +323,54 @@ class ClassOfStudy
     }
 
     /**
+     * Set degree.
+     *
+     * @param \Degree|null $degree
+     *
+     * @return ClassOfStudy
+     */
+    public function setDegree(\Degree $degree = null)
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+
+    /**
+     * Get degree.
+     *
+     * @return \Degree|null
+     */
+    public function getDegree()
+    {
+        return $this->degree;
+    }
+
+    /**
+     * Set grade.
+     *
+     * @param \Grade|null $grade
+     *
+     * @return ClassOfStudy
+     */
+    public function setGrade(\Grade $grade = null)
+    {
+        $this->grade = $grade;
+
+        return $this;
+    }
+
+    /**
+     * Get grade.
+     *
+     * @return \Grade|null
+     */
+    public function getGrade()
+    {
+        return $this->grade;
+    }
+
+    /**
      * Set deliberation.
      *
      * @param \Deliberation|null $deliberation
@@ -392,54 +440,6 @@ class ClassOfStudy
     public function getFieldOfStudy()
     {
         return $this->fieldOfStudy;
-    }
-
-    /**
-     * Set degree.
-     *
-     * @param \Degree|null $degree
-     *
-     * @return ClassOfStudy
-     */
-    public function setDegree(\Degree $degree = null)
-    {
-        $this->degree = $degree;
-
-        return $this;
-    }
-
-    /**
-     * Get degree.
-     *
-     * @return \Degree|null
-     */
-    public function getDegree()
-    {
-        return $this->degree;
-    }
-
-    /**
-     * Set grade.
-     *
-     * @param \Grade|null $grade
-     *
-     * @return ClassOfStudy
-     */
-    public function setGrade(\Grade $grade = null)
-    {
-        $this->grade = $grade;
-
-        return $this;
-    }
-
-    /**
-     * Get grade.
-     *
-     * @return \Grade|null
-     */
-    public function getGrade()
-    {
-        return $this->grade;
     }
 
     /**

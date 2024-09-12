@@ -78,6 +78,16 @@ class ContractFollowUp
     private $courseScheduledId;
 
     /**
+     * @var \Contract
+     *
+     * @ORM\ManyToOne(targetEntity="Contract")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
+     * })
+     */
+    private $contract;
+
+    /**
      * @var \TeacherPaymentBill
      *
      * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
@@ -96,16 +106,6 @@ class ContractFollowUp
      * })
      */
     private $classOfStudyHasSemester;
-
-    /**
-     * @var \Contract
-     *
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contract_id", referencedColumnName="id")
-     * })
-     */
-    private $contract;
 
 
 
@@ -312,6 +312,30 @@ class ContractFollowUp
     }
 
     /**
+     * Set contract.
+     *
+     * @param \Contract|null $contract
+     *
+     * @return ContractFollowUp
+     */
+    public function setContract(\Contract $contract = null)
+    {
+        $this->contract = $contract;
+
+        return $this;
+    }
+
+    /**
+     * Get contract.
+     *
+     * @return \Contract|null
+     */
+    public function getContract()
+    {
+        return $this->contract;
+    }
+
+    /**
      * Set teacherPaymentBill.
      *
      * @param \TeacherPaymentBill|null $teacherPaymentBill
@@ -357,29 +381,5 @@ class ContractFollowUp
     public function getClassOfStudyHasSemester()
     {
         return $this->classOfStudyHasSemester;
-    }
-
-    /**
-     * Set contract.
-     *
-     * @param \Contract|null $contract
-     *
-     * @return ContractFollowUp
-     */
-    public function setContract(\Contract $contract = null)
-    {
-        $this->contract = $contract;
-
-        return $this;
-    }
-
-    /**
-     * Get contract.
-     *
-     * @return \Contract|null
-     */
-    public function getContract()
-    {
-        return $this->contract;
     }
 }

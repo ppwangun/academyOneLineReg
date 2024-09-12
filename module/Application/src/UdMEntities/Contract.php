@@ -71,6 +71,16 @@ class Contract
     private $tpHrs;
 
     /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -109,16 +119,6 @@ class Contract
      * })
      */
     private $academicYear;
-
-    /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
 
 
 
@@ -301,6 +301,30 @@ class Contract
     }
 
     /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return Contract
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
+    }
+
+    /**
      * Set semester.
      *
      * @param \Semester|null $semester
@@ -394,29 +418,5 @@ class Contract
     public function getAcademicYear()
     {
         return $this->academicYear;
-    }
-
-    /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return Contract
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
     }
 }
