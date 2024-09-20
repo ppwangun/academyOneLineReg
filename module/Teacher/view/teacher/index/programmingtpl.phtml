@@ -25,9 +25,17 @@ z-index: 120000}
         
             <div class="row">
                 <div class='col-md-4'>
-
+                    <div ng-show="!$ctrl.schedlingUpdate">
                     <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Enrégistrer</button>
                     <span> <a href="home">Annuler</a></span>
+                    </div>
+                    <div ng-show="$ctrl.schedlingUpdate">
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-primary" ng-disabled="examForm.$invalid" >Modifier</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Supprimer</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
+                       <span> <a href="#!/courseProgramming">Nouvelle Programmation</a></span>
+                    </div>
+                    
                 </div>
                 <div class="col-md-2"></div>
 
@@ -110,7 +118,7 @@ z-index: 120000}
             <label>Matière</label>
             <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="matiere" ng-model="$ctrl.selectedSubject" 
                        ng-model-options="{trackBy: '$value.id'}"  
-                       ng-change="$ctrl.loadPedagogicalRegStd($ctrl.selectedSubject,$ctrl.selectedClasse);" md-no-asterisk>
+                       md-on-open="$ctrl.loadSubjects($ctrl.selectedUe);" md-no-asterisk>
               <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
 
               <md-option ng-repeat="subject in $ctrl.subjects" ng-value="subject" >

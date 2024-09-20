@@ -263,6 +263,16 @@ return [
                         'action'=>'getSchedulingCourses'
                     ],
                 ],
+            ],   
+            'getScheduledCourse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getScheduledCourse[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'getScheduledCourse'
+                    ],
+                ],
             ],            
              /*  'home' => [
                 'type' => Literal::class,

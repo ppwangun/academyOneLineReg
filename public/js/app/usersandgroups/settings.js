@@ -51,10 +51,9 @@ $ctrl.formatDate = function(date){
                 $http.get('updateOdooSettings',config).then(
 
                 function(response){
-                    var resp = response.data[0];
-                    if(resp.info.resultat==="echec") toastr.error("Une erreur inattendue s'est produite");
+
                     
-                    else toastr.success("Opération effectuée avec succès");
+                toastr.success("Opération effectuée avec succès");
 
                 }),1000);      
  }

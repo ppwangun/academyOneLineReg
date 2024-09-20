@@ -240,6 +240,11 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     headers : {'Accept' : 'application/json'}
     };      
     $http.get('generateBill',config).then(function(response){
+        var resp = response;
+        console.log(resp)
+        if(resp.data.info.resultat==="echec") toastr.error("Une erreur inattendue s'est produite");
+        else
+        {
         
 
             var errorValue = response.data[0].error;
@@ -253,6 +258,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
                 alert("Absence d'heure de cours à facturer")
             }
 
+        
         $ctrl.billDetails = response.data[0].paymentDetails;
         $ctrl.totalHrsBilled = response.data[0].totalBilledTime;
         $ctrl.totalHrsPreviouslyBilled = response.data[0].alreadyBilledTime;
@@ -262,6 +268,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         $ctrl.paymentRate = response.data[0].paymentRate;
         $scope.tableBillsShow = 1;
         toastr.success("Opération effectuée avec succès");
+    }
        
     });    
   }  

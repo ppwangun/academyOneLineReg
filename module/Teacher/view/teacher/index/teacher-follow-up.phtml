@@ -211,7 +211,7 @@ max-width: 900px;
                                         ng-style="{'background-color': contract.id === selectedContractId ? 'lightblue' : 'initial'}"
                                         ng-click="onSelectContract(contract.id)">
                                         <td>{{$index+1}}</td>
-                                        <td>{{contract.codeUe}}</td>
+                                        <td>{{contract.codeUe}}[{{contract.nomUe}}]</td>
                                         <td>{{contract.semester}}</td>
                                         <td>{{contract.classe}}</td>
                                         <td>{{contract.totalHrs}}H</td>

@@ -9,7 +9,7 @@ angular.module('teachingunit')
 function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr){
     var $ctrl = this;
     
-    $ctrl.time = [{id:0,time:"7:30:00",name:"7h30"},{id:1,time:"8:00:00",name:"8h00"},{id:2,time:"8:30:00",name:"8h30"},{id:3,time:"9:00:00",name:"9h00"},{id:4,time:"9:30:00",name:"9h30"},
+    $ctrl.time = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
     {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
     {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
     {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
@@ -17,6 +17,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
     $ctrl.startingTime = null;
     $ctrl.endingTime = null;
+    $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
     $scope.eventSources = [ ];
         
@@ -51,8 +52,50 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     
     $scope.alertEventOnClick = function(info)
   {
-      console.log(info);
-      alert("je suis dedans"+info.id)
+        $ctrl.schedlingUpdate = true;
+     
+       var  dataString = {id: info.id},
+          config = {
+            params: dataString,
+            headers : {'Accept' : 'application/json; charset=utf-8'}
+            };
+    
+            return  $http.get('getScheduledCourse',config).then(function(response){
+                
+                   $ctrl.startingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].startingTime; }); 
+                   $ctrl.startingTime = $ctrl.startingTime[0];
+                   $ctrl.endingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].endingTime; }); 
+                   $ctrl.endingTime = $ctrl.endingTime[0]; 
+                   
+                   $ctrl.date = response.data[0].dateScheduled.date;
+                   
+                   $ctrl.selectedSem = response.data[0].semester;
+                   
+                   //**************************************************
+                    $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)
+
+    
+                   $ctrl.selectedUe =  response.data[0].teachingUnit;
+                   
+                   $ctrl.loadSubjects($ctrl.selectedUe)
+                   
+                   $ctrl.selectedSubject =  response.data[0].subject;
+                });
+     };
+
+       /* $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+          // Appending dialog to document.body to cover sidenav in docs app
+          // Modal dialogs should fully cover application to prevent interaction outside of dialog
+          parent: angular.element(document.body),
+          targetEvent: info,
+          clickOutsideToClose: true
+        }).then(function (answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function () {
+          $scope.status = 'You cancelled the dialog.';
+        });
   }  
     /* config object */
     $scope.uiConfig = {
@@ -89,6 +132,8 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                 });
      };
      
+    
+     
          
 
    
@@ -101,7 +146,14 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
    //   angular.forEach($scope.eventSources[0].events,function(value, key){
           //$scope.eventSources[0].events.splice(key,1);
-     // });     
+     // }); 
+
+                   $ctrl.startingTime = null;
+                   $ctrl.endingTime = null; 
+                   $ctrl.date = null;
+                   $ctrl.selectedSem = null;
+                   $ctrl.selectedUe =  null;
+                   $ctrl.selectedSubject =  null;     
     
       if(item)
        var data = {classe:item.id}
@@ -126,6 +178,23 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     })
     $scope.eventSources[0] = events;
     });
+    
+    if($ctrl.selectedClasse)
+    {
+        $ctrl.semesters = [];
+        var data = {id: $ctrl.selectedClasse.code};
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('assignsemtoclass',config).then(function(response){
+            $ctrl.semesters = response.data[0];
+            $ctrl.isActivatedUeSelect = true;
+
+        });
+    }
+    
+
 
  };
  
@@ -212,41 +281,24 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
  };
  
  
-  //Looad all student who are registered to the subject
+ //Looad all student who are registered to the subject
  //Load all subjects associated with the UE as well
- $ctrl.loadPedagogicalRegStd = function(selectedUe,classe){
-                            $ctrl.isActivatedMatiereSelect = false;
-                            $ctrl.isMatiereRequired = false;
-                            
-                            $scope.items = [];
-                            if($ctrl.selectedSubject) var data ={id: {ueId: $ctrl.selectedUe.id,subjectId: $ctrl.selectedSubject.id,classId : classe.id}};
-                            else    var data ={id: {ueId: $ctrl.selectedUe.id,classId : classe.id}};
-                             
-                            var i;
-                            var config = {
-                            params: data,
-                            headers : {'Accept' : 'application/json'}
-                            };
-
-
-                                data ={id: $ctrl.selectedUe.id}
+ $ctrl.loadSubjects = function(selectedUe){
+     
+                               var  data ={id:selectedUe.id}
                                     var config = {
                                     params: data,
                                     headers : {'Accept' : 'application/json'}
                                     };   
-                                    if($ctrl.subjects<=0)
+                                   
                                         $http.get('subjectbyue',config).then(function(response){
 
                                             $ctrl.subjects = response.data[0];
  
 
                                         });
-                                                $ctrl.isActivatedMatiereSelect = true;
-                                                $ctrl.isMatiereRequired = true;                                    
-  
-                        
-                           
-                        };
+                                 
+                       };
                         
 
      
@@ -354,6 +406,21 @@ $scope.uploadSubject = function(){
     };   
     
        
+
+
+  function DialogController($scope, $mdDialog) {
+    $scope.hide = function () {
+      $mdDialog.hide();
+    };
+
+    $scope.cancel = function () {
+      $mdDialog.cancel();
+    };
+
+    $scope.answer = function (answer) {
+      $mdDialog.hide(answer);
+    };
+  }
 };
 
 
