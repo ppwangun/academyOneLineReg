@@ -105,11 +105,11 @@ z-index: 120000}
                 <div layout-gt-sm="row"  style='margin-top: 15px;'>
                     <md-input-container>
                       <label>Date de la tansaction</label>
-                      <md-datepicker ng-model="selectedStd.transactionDate" aria-label="Enter date"></md-datepicker>
+                      <md-datepicker ng-model="selectedStd.transactionDate" aria-label="Enter date" required></md-datepicker>
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label>Montant versé</label>
-                        <input name="feesPaid" ng-model="selectedStd.amountPaid" style="background-color:#fab1a0; color: #fff; font-weight: bold" />
+                        <input name="feesPaid" ng-model="selectedStd.montant" style="background-color:#fab1a0; color: #fff; font-weight: bold"  required/>
                         <div ng-messages="stdRegistrationForm.feesPaid.$error">
                             <div ng-message="required">le champ numéro de téléphone est obligatoire</div>
                             <div ng-message="pattern">Numéro de téléphone invalid</div>
@@ -127,7 +127,7 @@ z-index: 120000}
       <span flex></span>
       <md-button ng-click="cancel()"> Fermer</md-button>
 
-      <md-button class="bg-primary" ng-click="savePymtTransaction(selectedStd)"  >
+      <md-button class="bg-primary" ng-click="savePymtTransaction(selectedStd)"  ng-disabled="stdRegistrationForm.$invalid" >
           <span class="fa fa-check">  Enrégistrer </span>
       </md-button>
     </md-dialog-actions>

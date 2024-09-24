@@ -256,7 +256,7 @@ class Synchronisation
 					$info["details"]["status_odoo"] = $php_obj->result->status;
 					$info["details"]["message_odoo"] = $php_obj->result->msg;
 					$info["details"]["requete_wadm"] = $requetehttp->toString();
-					$info["details"]["reponse_odoo"] = $reponsehttp->getBody()?$reponsehttp->getBody:null;
+					$info["details"]["reponse_odoo"] = $responsehttp->getBody()?$responsehttp->getBody():null;
 				}					
 			}
 			else
@@ -267,7 +267,7 @@ class Synchronisation
 				else
 				{ $info["details"]["erreur_odoo"] = "Erreur inconnue !"; }
 				$info["details"]["requete_wadm"] = $requetehttp->toString();
-				$info["details"]["reponse_odoo"] = $reponsehttp->getBody();
+				$info["details"]["reponse_odoo"] = $responsehttp->getBody();
 			}
 		}
 		else

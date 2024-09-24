@@ -102,6 +102,16 @@ return [
                     ],
                 ],
             ],
+            'updateStdPymt' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/updateStdPymt',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'updateStdPymt',
+                    ],
+                ],
+            ],            
              'newStdRegistrationFeesMgt' => [
                 'type'    => Literal::class,
                 'options' => [

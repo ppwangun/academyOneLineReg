@@ -9,8 +9,8 @@ and open the template in the editor.
 
 $totalAdmis = $this->totalStudent - $this->totalFailure;
 $grode_of_failures = ["F","E"," ",null];
-//if($this->cycle_level == 1)  $grode_of_failures = ["F","E","D","D+","C-"];
-//else $grode_of_failures = ["F","E","D","D+","C-","C","C+"];
+if($this->cycle_level == 1)  $grode_of_failures = ["F","E","D","D+","C-"];
+else $grode_of_failures = ["F","E","D","D+","C-","C","C+"];
 //($this->typeExam=="CC")||($this->typeExam=="CCTP")?$width="16.6%":$width="12.5%";
 $width="9%";
 

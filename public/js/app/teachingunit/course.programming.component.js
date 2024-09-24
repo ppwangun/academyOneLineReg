@@ -83,21 +83,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                 });
      };
 
-       /* $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
-          // Appending dialog to document.body to cover sidenav in docs app
-          // Modal dialogs should fully cover application to prevent interaction outside of dialog
-          parent: angular.element(document.body),
-          targetEvent: info,
-          clickOutsideToClose: true
-        }).then(function (answer) {
-          $scope.status = 'You said the information was "' + answer + '".';
-        }, function () {
-          $scope.status = 'You cancelled the dialog.';
-        });
-  }  
-    /* config object */
+
     $scope.uiConfig = {
       calendar:{
         //height: 450,
@@ -299,8 +285,25 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                                         });
                                  
                        };
-                        
 
+                $ctrl.loadForValidation = function(ev)
+                {
+                         $mdDialog.show({
+                          controller: DialogController,
+                          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+                          // Appending dialog to document.body to cover sidenav in docs app
+                          // Modal dialogs should fully cover application to prevent interaction outside of dialog
+                          parent: angular.element(document.body),
+                          targetEvent: ev,
+                          clickOutsideToClose: true
+                        }).then(function (answer) {
+                          $scope.status = 'You said the information was "' + answer + '".';
+                        }, function () {
+                          $scope.status = 'You cancelled the dialog.';
+                        });
+
+                    /* config object */
+                }
      
     /*--------------------------------------------------------------------------
      *--------------------------- updating curriculum---------------------------
@@ -332,60 +335,73 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
  //Dialog Controller
   function DialogController($scope, $mdDialog) {
       
-$scope.subject = {code:'',name:'',credits: '',hours_vol:'',cm_hrs:'',tp_hrs:'',td_hrs:'',ue_classe_id: '', ue_id:''};
 
-$scope.uploadSubject = function(){
- console.log("je suis dednas")
-    var fd = new FormData();
-    var files = document.getElementById('file').files[0];
-    fd.append('file',files);
 
-    // AJAX request
-    $http({
-     method: 'post',
-     url: 'importSubject',
-     data: fd,
-     headers: {'Content-Type': undefined},
-    }).then(function successCallback(response) { 
-      // Store response data
-      $scope.response = response.data[0];
-      response.data[0]?toastr.success('Import effectué avec succès'):toastr.error('Type de fichier incorrect', 'Erreur');
-      
-    } ,function errorCallback(){
-        toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
-    });
- };
+    $scope.teachingUnitId = teachingUnitId;
+    $scope.teachingUnitCode = teachingUnitCode;
+    $scope.contractId= contractId;
+    $scope.isProcessing = false;
 
- $scope.createSubject = function(){
-     
-     $http.post('subject',$scope.subject).then(function successCallback(response){
-         $scope.subject=response.data[0];
-         $mdDialog.cancel();
-         
-     }, function errorCallback(response){
-        alert(" Une erreur inattendue s'est produite") ;
-     });
- };
- 
- $scope.updateCycle = function(){
-        var data = {id: $scope.cycle.id,data:$scope.cycle}; 
-        var config = {
-        params: data,
-        headers : {'Accept' : 'application/json'}
-      };
-       $ctrl.degree.filiere_id=$ctrl.selectedItem.id;
-       $http.put('cycle',data,config).then(
-            function successCallback(response){
-                //reinitialise form
-                //$location.path("/degree");
-                $mdDialog.cancel();
-            },
-            function errorCallback(response){
-                alert("Une erreur inattendue s'est produite");
-           
+    $scope.progression = {
+        // date: null,
+        // start_time: null,
+        // end_time: null,
+        // description: null,
+        date: new Date(),
+        start_time: new Date(),
+        end_time: new Date(),
+        description: null,
+        target: 'cm',
+        teaching_unit_id: teachingUnitId,
+        teacher_id: teacherId,
+        contract_id: contractId
+    }
+
+    $scope.saveProgression = function(progressionForm) {
+        if (!progressionForm.$valid) {
+            alert('Formulaire invalide !');
+            return;
+        }
+
+        if ($scope.isProcessing) return;
+
+        const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
+        // const startDate = $scope.progression.date;
+        // const endDate = $scope.progression.date;
+        const startTime = $scope.progression.start_time;
+        const endTime = $scope.progression.end_time;
+        // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+        // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
+
+        if (startTime.getTime() > endTime.getTime()) {
+            alert('L\'heure de fin doit etre inferieure a celle de fin !');
+            return;
+        }
+
+        const data = {
+            ...$scope.progression,
+            date: dateInISO,
+            start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
+            end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
+        }
+        
+        var config  = {
+          params: data,
+          headers: {'Accept': 'application/json'}
+        }
+
+        $scope.isProcessing = true;
+        $http.post("unitProgression", data,config)
+            .then(function (response) {
+                $mdDialog.hide({teaching_unit_id: $scope.teachingUnitId, target: $scope.progression.target, duration: ((endTime.getTime() - startTime.getTime())/3600000)});
+                alert('La progression a ete ajoutee avec succes !');
+                $scope.isProcessing = false;
+            }, function (error) {
+                console.error(error);
+                $scope.isProcessing = false;
+                alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
-     
- };
+    }
  
 
       

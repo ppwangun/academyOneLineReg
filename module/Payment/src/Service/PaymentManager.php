@@ -240,9 +240,12 @@ class PaymentManager {
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($student->getId());
             $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
             $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
+            $time = date("H:i:s");
+            $date = date('Y-m-d ', strtotime($data['transactionDate']));
+            
             if($adminRegistration)
             {
-                (isset($data["transactionDate"]))? $currentDate=date_create($data["transactionDate"]): $currentDate  = date_create(date('Y-m-d H:i:s'));
+                (isset($data["transactionDate"]))? $currentDate=date_create(date('Y-m-d H:i:s', strtotime($date.''.$time))): $currentDate  = date_create(date('Y-m-d H:i:s'));
 
                     $payment = new Payment();
                     $payment->setAcademicYear($academicYear);

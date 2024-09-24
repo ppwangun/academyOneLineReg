@@ -23,6 +23,8 @@ use Port\Filter\OffsetFilter;
 use Port\Reader\ArrayReader;
 use Port\Writer\ArrayWriter;
 use Port\Steps\Step\ConverterStep;
+use Application\Entity\OdooSettings;
+use Njine\Odoo\Synchronisation;
 
 class IndexController extends AbstractActionController
 {
@@ -100,11 +102,87 @@ class IndexController extends AbstractActionController
             ($data["amountPaid"])?$data["montant"]=$data["amountPaid"]:$data["montant"]=null;
             $this->paymentManager->importPayments($data);
             //$message = $this->paymentManager->updatePymtAPI($data);
+            //Perform the odoo Sync only when it is activated
+            $odooSettings = new OdooSettings();
+            if($odooSettings->getActivateStatus())
+            {            
+                /***** Synchronisation des données avec Odoo - Ajout d'un règlement d'étudiant *****/;
+                $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+                $odooSettings = $odooSettings[0];
+                $info = $odoo->connexionOdoo();
+                if($info["resultat"] == "success")
+                {
+                                    $description = "Règlement des frais d'inscription de ".$data["nom"]." ".$data["prenom"]." (".$data["code"].")";
+                                    $info = $odoo->factureEtudiant($data["matricule"],date("Y-m-d H:i:s"),12,$description,1,$data["montant"]);
+                                    if($info["resultat"]=="echec") 
+                                        header("HTTP/1.1 500 Internal Server Error"); exit;
+                                      /*  $view = new JsonModel([
+                                           "session"=>true,
+                                            $info
+                                         ]);
+                                    return $view; */
+                            }
+                /***** Fin de la synchronisation *****/;            
+                //$message = $this->paymentManager->updatePymtAPI($data);
+            }
 
 
             $this->entityManager->getConnection()->commit();
             $view = new JsonModel([
                "session"=>true  
+             ]);
+            // Disable layouts; `MvcEvent` will use this View Model instead
+            $view->setTerminal(true);
+
+            return $view;            
+        }
+        catch(Exception $e)
+        {
+            $this->entityManager->getConnection()->rollBack();
+            throw $e;
+
+        }       
+
+    } 
+    public function updateStdPymtAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {
+            $data = $this->params()->fromQuery();
+            $data = json_decode($data ["pymtDetails"],true);           
+
+            $this->paymentManager->importPayments($data);
+            
+            $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+            $odooSettings = $odooSettings[0];            
+            //Perform the odoo Sync only when it is activated
+            if($odooSettings->getActivateStatus())
+            {            
+                /***** Synchronisation des données avec Odoo - Ajout d'un règlement d'étudiant *****/;
+                $odoo = new Synchronisation();
+                $info = $odoo->connexionOdoo();
+                if($info["resultat"] == "success")
+                {
+                                    $description = "Règlement des frais d'inscription de ".$data["nom"]." ".$data["prenom"]." (".$data["code"].")";
+                                    $info = $odoo->factureEtudiant($data["matricule"],date("Y-m-d H:i:s"),12,$description,1,$data["montant"]);
+                                    if($info["resultat"]=="echec") 
+                                        header("HTTP/1.1 500 Internal Server Error"); exit;
+                                      /*  $view = new JsonModel([
+                                           "session"=>true,
+                                            $info
+                                         ]);
+                                    return $view; */
+                            }
+                /***** Fin de la synchronisation *****/;            
+                //$message = $this->paymentManager->updatePymtAPI($data);
+            }
+
+
+            $this->entityManager->getConnection()->commit();
+            $view = new JsonModel([
+               "session"=>true,
+                $info
              ]);
             // Disable layouts; `MvcEvent` will use this View Model instead
             $view->setTerminal(true);

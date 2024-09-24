@@ -206,13 +206,13 @@ class IndexController extends AbstractActionController
                   $std->setNoteFinal($note);
                   if( $class->getCycle()->getCycleLevel()==1)
                   {
-                      $std->setGrade("D");
-                      $std->setPoints(1.3);
+                      $std->setGrade("C");
+                      $std->setPoints(2);
                   }
                   if( $class->getCycle()->getCycleLevel()==2)
                   {
-                     $std->setGrade("C");
-                     $std->setPoints(2);
+                     $std->setGrade("B-");
+                     $std->setPoints(2.7);
                   }
                   $std->setIsFromDeliberation(1);
                   if(!$data["isModularComputation"])

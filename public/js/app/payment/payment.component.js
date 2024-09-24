@@ -5,7 +5,7 @@ angular.module('payment')
             templateUrl: 'payments',
             controller: paymentCtrl 
 });
-function paymentCtrl($timeout,$http,$location,$mdDialog,DTOptionsBuilder,DTColumnDefBuilder,$scope){
+function paymentCtrl($timeout,$http,$location,$mdDialog,DTOptionsBuilder,DTColumnDefBuilder,$scope,toastr){
     var $ctrl = this;
         $ctrl.payments = [];
         
@@ -304,23 +304,23 @@ $scope.uploadStdPayments = function(){
  }
  
      /*--------------------------------------------------------------------------
-     *--------------------------- loading all filières by faculty   ---------------------
+     *--------------------------- update student payment  ---------------------
      *----------------------------------------------------------------------- */
-    $scope.loadFilieres = function(id){
-      var data = {fac_id: id}; 
+    $scope.savePymtTransaction = function(pymtDetails){ 
+      var data = {pymtDetails: pymtDetails}; 
       var config = {
       params: data,
       headers : {'Accept' : 'application/json'}
       };
-        $http.get('searchFilByFaculty',config).then(
+        $http.get('updateStdPymt',config).then(
             function successCallback(response){
-                $ctrl.cpt =1;
-                $scope.filieres = response.data[0];
-                
+                toastr.success("opération effectuée avec succès")
+            
             },
             function errorCallback(response){
                 toastr.error("une erreur inattendue s'est produite");
-            });    
+            });         
+        
         
     }
 
@@ -341,7 +341,9 @@ $scope.uploadStdPayments = function(){
             },
             function errorCallback(response){
                 toastr.error("une erreur inattendue s'est produite");
-            });    
+            });
+            
+            $mdDialog.cancel();
         
     }     
     /*--------------------------------------------------------------------------
