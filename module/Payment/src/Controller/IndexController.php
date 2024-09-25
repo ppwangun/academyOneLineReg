@@ -155,27 +155,35 @@ class IndexController extends AbstractActionController
             $this->paymentManager->importPayments($data);
             
             $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
-            $odooSettings = $odooSettings[0];            
-            //Perform the odoo Sync only when it is activated
-            if($odooSettings->getActivateStatus())
-            {            
-                /***** Synchronisation des données avec Odoo - Ajout d'un règlement d'étudiant *****/;
-                $odoo = new Synchronisation();
-                $info = $odoo->connexionOdoo();
-                if($info["resultat"] == "success")
-                {
-                                    $description = "Règlement des frais d'inscription de ".$data["nom"]." ".$data["prenom"]." (".$data["code"].")";
-                                    $info = $odoo->factureEtudiant($data["matricule"],date("Y-m-d H:i:s"),12,$description,1,$data["montant"]);
-                                    if($info["resultat"]=="echec") 
-                                        header("HTTP/1.1 500 Internal Server Error"); exit;
-                                      /*  $view = new JsonModel([
-                                           "session"=>true,
-                                            $info
-                                         ]);
-                                    return $view; */
-                            }
-                /***** Fin de la synchronisation *****/;            
-                //$message = $this->paymentManager->updatePymtAPI($data);
+            if(sizeof($odooSettings)>0)
+            {
+                $odooSettings = $odooSettings[0];            
+                //Perform the odoo Sync only when it is activated
+                if($odooSettings->getActivateStatus())
+                {            
+                    /***** Synchronisation des données avec Odoo - Ajout d'un règlement d'étudiant *****/;
+                        $paramerter = ["user"=>$odooSettings->getLogin(),
+                          "pass"=>$odooSettings->getPassword(),
+                          "db"=>$odooSettings->getDatabaseName(),
+                          "host"=>$odooSettings->getUrl()];
+
+                      $odoo = new Synchronisation($paramerter);
+                    $info = $odoo->connexionOdoo();
+                    if($info["resultat"] == "success")
+                    {
+                                        $description = "Règlement des frais d'inscription de ".$data["nom"]." ".$data["prenom"]." (".$data["code"].")";
+                                        $info = $odoo->factureEtudiant($data["matricule"],date("Y-m-d H:i:s"),12,$description,1,$data["montant"]);
+                                        if($info["resultat"]=="echec") 
+                                            header("HTTP/1.1 500 Internal Server Error"); exit;
+                                          /*  $view = new JsonModel([
+                                               "session"=>true,
+                                                $info
+                                             ]);
+                                        return $view; */
+                                }
+                    /***** Fin de la synchronisation *****/;            
+                    //$message = $this->paymentManager->updatePymtAPI($data);
+                }
             }
 
 

@@ -845,60 +845,68 @@ class IndexController extends AbstractActionController
                 
                 $this->entityManager->flush();
                 $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
-                $odooSettings = $odooSettings[0];
-                
-                //Perform the odoo Sync only when it is activated
-                if($odooSettings->getActivateStatus())
+                if(sizeof($odooSettings)>0)
                 {
-                    /***** Synchronisation des données avec Odoo - Ajout d'une facture *****/;
-                    $odoo = new Synchronisation();
-                    $info = $odoo->connexionOdoo();
-                    if($info["resultat"] == "success")
+                    $odooSettings = $odooSettings[0];
+
+                    //Perform the odoo Sync only when it is activated
+                    if($odooSettings->getActivateStatus())
                     {
-                        $description = $contract->getTeachingUnit()->getName()." (";
-                        $description .= $contract->getTeachingUnit()->getCode().") - ";
-                        $description .= "Volume horaire total : ".$contract->getVolumeHrs()." - ";
-                        $description .= "Heure(s) déjà facturée(s) : ".($alreadyBilledTime)." - ";
-                        $description .= "Heure(s) actuellement facturée(s) : ".$actualBilledTime." - ";
-                        $description .= "Volume horaire restant : ".($contract->getVolumeHrs() - ($alreadyBilledTime+$actualBilledTime));
-                        
-                        $teacherId = (string)$data["teacherID"];
-                        //$teacherId = $data["teacherID"];
-                        $refNum = 10;
-                        $info = $odoo->factureEnseignant(
-                            $teacherId,
-                            date("Y-m-d H:i:s"),
-                            $refNum,
-                            $description,
-                            $actualBilledTime,
-                            $pymtRate
-                        ); 
-                        
-                        if($info["resultat"] == "echec")  return new JsonModel(["info"=>$info]); 
+                        /***** Synchronisation des données avec Odoo - Ajout d'une facture *****/;
+                          $paramerter = ["user"=>$odooSettings->getLogin(),
+                            "pass"=>$odooSettings->getPassword(),
+                            "db"=>$odooSettings->getDatabaseName(),
+                            "host"=>$odooSettings->getUrl()];
 
-                        $this->entityManager->getConnection()->commit();
+                        $odoo = new Synchronisation($paramerter);
+                        $info = $odoo->connexionOdoo();                   
+                        if($info["resultat"] == "success")
+                        {
+                            $description = $contract->getTeachingUnit()->getName()." (";
+                            $description .= $contract->getTeachingUnit()->getCode().") - ";
+                            $description .= "Volume horaire total : ".$contract->getVolumeHrs()." - ";
+                            $description .= "Heure(s) déjà facturée(s) : ".($alreadyBilledTime)." - ";
+                            $description .= "Heure(s) actuellement facturée(s) : ".$actualBilledTime." - ";
+                            $description .= "Volume horaire restant : ".($contract->getVolumeHrs() - ($alreadyBilledTime+$actualBilledTime));
+
+                            $teacherId = (string)$data["teacherID"];
+                            //$teacherId = $data["teacherID"];
+                            $refNum = 10;
+                            $info = $odoo->factureEnseignant(
+                                $teacherId,
+                                date("Y-m-d H:i:s"),
+                                $refNum,
+                                $description,
+                                $actualBilledTime,
+                                $pymtRate
+                            ); 
+
+                            if($info["resultat"] == "echec")  return new JsonModel(["info"=>$info]); 
+
+                            $this->entityManager->getConnection()->commit();
 
 
-                        $output = new JsonModel([
-                           [ 
+                            $output = new JsonModel([
+                               [ 
 
-                            "paymentDetails"=>$paymentDetails,
-                            "totalBilledTime"=>$billedTime,
-                            "totalActualBilledTime"=>$actualBilledTime,
-                            "alreadyBilledTime"=>$alreadyBilledTime,
-                            "overtime"=>$overtime,
-                            "paymentRate"=>$pymtRate,
-                            "totalHoursAffected"=>$contract->getVolumeHrs(),
-                               "info"=>$info]
-                        ]);
+                                "paymentDetails"=>$paymentDetails,
+                                "totalBilledTime"=>$billedTime,
+                                "totalActualBilledTime"=>$actualBilledTime,
+                                "alreadyBilledTime"=>$alreadyBilledTime,
+                                "overtime"=>$overtime,
+                                "paymentRate"=>$pymtRate,
+                                "totalHoursAffected"=>$contract->getVolumeHrs(),
+                                   "info"=>$info]
+                            ]);
 
-                        return $output; 
-                       }                        
+                            return $output; 
+                           }                        
 
-                     
-                     
-                    
-                    /***** Fin de la synchronisation *****/;  
+
+
+
+                        /***** Fin de la synchronisation *****/;  
+                    }
                 }
 
                 

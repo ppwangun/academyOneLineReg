@@ -314,12 +314,16 @@ $scope.uploadStdPayments = function(){
       };
         $http.get('updateStdPymt',config).then(
             function successCallback(response){
-                toastr.success("opération effectuée avec succès")
-            
+
+                $mdDialog.cancel();
             },
             function errorCallback(response){
                 toastr.error("une erreur inattendue s'est produite");
-            });         
+                $mdDialog.cancel();
+                
+            });  
+            
+             
         
         
     }
@@ -343,7 +347,7 @@ $scope.uploadStdPayments = function(){
                 toastr.error("une erreur inattendue s'est produite");
             });
             
-            $mdDialog.cancel();
+           
         
     }     
     /*--------------------------------------------------------------------------

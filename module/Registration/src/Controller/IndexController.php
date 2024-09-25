@@ -30,6 +30,9 @@ use Application\Entity\CursusAcademique;
 use Application\Entity\ProspectiveStudent;
 use Application\Entity\ProspetiveRegistration;
 use Application\Entity\UserManagesClassOfStudy;
+use Application\Entity\OdooSettings;
+
+use Njine\Odoo\Synchronisation;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Student\Service\StudentManager;
@@ -1133,8 +1136,48 @@ class IndexController extends AbstractActionController
                     $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
                     
                     $this->entityManager->flush();
+                    
                 }
-            }            
+            
+
+                   
+                $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
+                if(sizeof($odooSettings)>0)
+                {
+                    $odooSettings = $odooSettings[0];            
+                    //Perform the odoo Sync only when it is activated
+                    if($odooSettings->getActivateStatus())
+                    {            
+                        /***** Synchronisation des données avec Odoo - Ajout d'un règlement d'étudiant *****/;
+                            $paramerter = ["user"=>$odooSettings->getLogin(),
+                              "pass"=>$odooSettings->getPassword(),
+                              "db"=>$odooSettings->getDatabaseName(),
+                              "host"=>$odooSettings->getUrl()];
+
+                          $odoo = new Synchronisation($paramerter);
+                        $info = $odoo->connexionOdoo();
+                        if($info["resultat"] == "success")
+                        {  
+                            for ($i=1; $i<count($sheetData); $i++) { //skipping first row
+                                $row["matricule"] = $sheetData[$i][0];
+                                $row["nom"] = $sheetData[$i][1];
+                                $row["prenom"] = $sheetData[$i][2];
+                                $row["date_naissance"] = $sheetData[$i][3];
+                                $row["lieu_naissance"] = $sheetData[$i][4];
+                                $row["classe"] = $sheetData[$i][5];
+                                $row["fees"] = $sheetData[$i][6];
+                                $row["debt"] = $sheetData[$i][7];
+                                $row["mpc"] = $sheetData[$i][8];
+                                
+                                $data["odoo"] = $odoo->ajouterEtudiant($row["matricule"],$row["nom"]." ".$row["prenom"],"agenla@gmail.com","00000000","Yaoundé, Cameroun"); }			
+                        }
+                                        
+                    } 
+                }
+            }
+                
+                
+                       
   /*      foreach ($reader as $row) {
             //$id=$this->studentManager->getRegistrationID(10);
            

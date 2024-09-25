@@ -89,12 +89,18 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         //height: 450,
         height: 900,
         editable: true,
+        lang: 'fr',
         header:{
           //left: 'month basicWeek basicDay agendaWeek agendaDay',
           left: ' month agendaWeek',
           center: 'title',
           right: 'today prev,next'
         },
+        selectable: true,
+		monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+		dayNamesShort: ["Dim", "Lun", "Mar", "Merc", "Jeudi", "Vend", "Sam"],  
+                timeFormat:'HH:mm', // Month 24 hour timeformat
+                axisFormat: 'HH:mm', // Week & Day 24 hour timeformat
         eventClick: $scope.alertEventOnClick,
         eventDrop: $scope.alertOnDrop,
         eventResize: $scope.alertOnResize,
@@ -157,12 +163,16 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
               id : event.id,
           title  : event.eventName,
           start  : event.startingTime.date,
-          end    : event.endingTime.date
+          end    : event.endingTime.date,
         })
         
       
     })
-    $scope.eventSources[0] = events;
+   
+    //$scope.eventSources[0] = events;
+$scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
+    
+    console.log( $scope.eventSources)
     });
     
     if($ctrl.selectedClasse)
