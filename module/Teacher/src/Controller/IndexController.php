@@ -1036,6 +1036,7 @@ class IndexController extends AbstractActionController
                 $bill,
                 $paymentRate,
                 $totalHrs
+                
             ]);
 
             return $output;       }
@@ -1048,12 +1049,102 @@ class IndexController extends AbstractActionController
         
     }
     
+    public function printBillAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        { 
+            $data= $this->params()->fromRoute();                                       
+       
+            $subjects=[];
+            $billItems = [];
+            $teacher =[];
+            $subject = [];
+           
+            $userId = $this->sessionContainer->userId;
+            $user = $this->entityManager->getRepository(User::class)->find($userId );
+            
+           /* $contract= $this->entityManager->getRepository(Contract::class)->find($data["contractID"] );
+            $teacher= $this->entityManager->getRepository(Teacher::class)->find($data["teacherID"] );*/
+        
+            $bill = $this->entityManager->getRepository(TeacherPaymentBill::class)->findOneBy(["refNumber"=>$data["numRef"]]);
+            $teacher["id"]= $bill->getTeacher()->getId();
+            $teacher["name"]= $bill->getTeacher()->getName();
+            $contract = $bill->getContract();
+            
+           
+            
+            $pymtRate = $bill->getTeacher()->getAcademicRanck()->getPaymentRate();
+            if($contract->getTeachingUnit())
+            {
+                $subject["id"] =  $contract->getTeachingUnit()->getId();
+                $subject["codeUe"] =  $contract->getTeachingUnit()->getCode();
+                $subject["nomUe"] =  $contract->getTeachingUnit()->getName();
+            }
+            else if($contract->getSubject())
+            {
+                $subject["id"] =  $contract->getSubject()->getId();
+                $subject["codeUe"] =  $contract->getSubject()->getCode();
+                $subject["nomUe"] =  $contract->getgetSubject()->getName();              
+            }
+
+            $billItems = $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["teacherPaymentBill"=>$bill]);
+          
+            $hydrator = new ReflectionHydrator();
+           // $teacher = $bill->getTeacher(); 
+           // $teacher= $this->entityManager->getRepository(Teacher::class)->findBy($teacher->getId());
+           // $data = $hydrator->extract($teacher);  
+            //print_r($data); exit;
+            $totalHrsDone = 0;
+            foreach($billItems as $key=>$value)
+            {
+                $billItems[$key]= $hydrator->extract($value);
+                $billItems[$key]["paymentRate"] = $pymtRate;
+                $billItems[$key]["paymentAmount"] = $value->getTotalTime() * $pymtRate;  
+                $totalHrsDone +=$value->getTotalTime();
+            }
+            $paymentRate = $bill->getTeacher()->getAcademicRanck()->getPaymentRate();
+            $overTime = $bill->getOverTime();
+            $totalHrs["totalHrsPreviouslyBilled"] = $bill->getTotalTimePreviouslyBilled();
+            $totalHrs["totalHrsCurrentlyBilled"] = $bill->getTotalTimeCurrentlyBilled();
+            $totalHrs["vacationDeduction"] = $bill->getVacationDeduction();
+            $totalHrs["totalHrsDone"] = $totalHrsDone;
+            $bill = $hydrator->extract($bill); 
+            $totalHrs["totalHrsAffected"] = $contract->getVolumeHrs(); 
+            
+            
+            $totalHrs["overTime"] =  $overTime;
+            
+            
+            $this->entityManager->getConnection()->commit();
+
+            $output = new ViewModel([
+               "billItems"=>$billItems,
+                "teacher"=>$teacher,
+                "subject"=>$subject,
+                "bill"=>$bill,
+                "paymentRate"=>$paymentRate,
+                "totalHrs"=>$totalHrs
+            ]);
+             $output->setTerminal(true);
+            return $output;       
+            
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+            
+        }         
+        
+    }    
+    
     public function schedulingCourseAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            $data= $this->params()->fromQuery();  
+            $data= $this->params()->fromQuery();            
             $subject = null;
             $teacher =null;
             $resource = null;
@@ -1089,6 +1180,7 @@ class IndexController extends AbstractActionController
             $courseScheduled->setDateScheduled($dateScheduled);
             $courseScheduled->setStartingTime($startingTime);
             $courseScheduled->setEndingTime($endingTime);
+            $courseScheduled->setScheduleType($data["scheduleType"]);
             
             $courseScheduled->setResource($resource);
     
@@ -1142,12 +1234,13 @@ public function getSchedulingCoursesAction()
                 {
                     $hydrator = new ReflectionHydrator();
                     $teachingUnit = $course->getTeachingUnit();
+                    $scheduleType = $course->getScheduleType();
                     
-                    if($course->getTeacher())$teacher = $course->getTeacher()->getName()." ".$course->getTeacher()->getSurname(); else $teacher = ""; 
+                    if($course->getTeacher())$teacher = $course->getTeacher()->getCivility()." ".$course->getTeacher()->getName()." ".$course->getTeacher()->getSurname(); else $teacher = ""; 
                     $course = $hydrator->extract($course);
-                    $course["eventName"] = $classOfStudy->getCode()." \n".$teachingUnit->getCode();
-                   
-                    $course["eventName"] .= "\n".$teacher;
+                   // $course["eventName"] = $classOfStudy->getCode()." ".$teachingUnit->getCode()." \n".$teacher;
+                   $course["eventName"] = "(".$scheduleType.") ".$teachingUnit->getCode()." \n".$teacher;
+                    //$course["eventName"] .= "\n".$teacher;
                     
                     $myCourse[$key] = $course;
                     $key++;
@@ -1199,6 +1292,7 @@ public function getScheduledCourseAction()
                 $classOfStudy["id"] = $course->getClassOfStudy()->getId(); 
                 $classOfStudy["code"] = $course->getClassOfStudy()->getCode();
                 $classOfStudy["name"] = $course->getClassOfStudy()->getName();
+                $scheduleType = $course->getScheduleType();
                 
                 $semester["id"] = $course->getSemester()->getId();
                 $semester["code"] = $course->getSemester()->getCode();
@@ -1217,6 +1311,8 @@ public function getScheduledCourseAction()
                 $dateScheduled = $course->getDateScheduled();
                 $startingTime = $course->getStartingTime()->format('H:i:s');
                 $endingTime = $course->getEndingTime()->format('H:i:s');
+                
+                
                 
                
                      $hydrator = new ReflectionHydrator();
@@ -1249,7 +1345,8 @@ public function getScheduledCourseAction()
                     "subject"=>$subject,
                     "dateScheduled"=>$dateScheduled,
                     "startingTime"=>$startingTime,
-                    "endingTime"=>$endingTime
+                    "endingTime"=>$endingTime,
+                    "scheduleType"=>$scheduleType
                 ]
                     
             ]);

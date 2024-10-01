@@ -49,6 +49,13 @@ class CourseScheduled
      * @ORM\Column(name="ending_time", type="datetime", nullable=true)
      */
     private $endingTime;
+    
+     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="schedule_type", type="string", length=45, nullable=true)
+     */
+    private $scheduleType;
 
     /**
      * @var Resource
@@ -193,6 +200,31 @@ class CourseScheduled
     {
         return $this->endingTime;
     }
+    
+    /**
+     * Set scheduleType.
+     *
+     * @param string|null $scheduleType
+     *
+     * @return CourseScheduled
+     */
+    public function setScheduleType($scheduleType = null)
+    {
+        $this->scheduleType = $scheduleType;
+
+        return $this;
+    }
+
+    /**
+     * Get scheduleType.
+     *
+     * @return string|null
+     */
+    public function getScheduleType()
+    {
+        return $this->scheduleType;
+    }
+    
 
     /**
      * Set resource.

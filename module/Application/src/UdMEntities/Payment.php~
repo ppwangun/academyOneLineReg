@@ -50,6 +50,16 @@ class Payment
     private $mobilePaymentId;
 
     /**
+     * @var \AdminRegistration
+     *
+     * @ORM\ManyToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
+     * })
+     */
+    private $adminRegistration;
+
+    /**
      * @var \AcademicYear
      *
      * @ORM\Id
@@ -60,16 +70,6 @@ class Payment
      * })
      */
     private $academicYear;
-
-    /**
-     * @var \AdminRegistration
-     *
-     * @ORM\ManyToOne(targetEntity="AdminRegistration")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
-     * })
-     */
-    private $adminRegistration;
 
 
 }

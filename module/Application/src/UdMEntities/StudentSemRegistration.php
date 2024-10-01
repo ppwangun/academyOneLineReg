@@ -162,16 +162,6 @@ class StudentSemRegistration
     private $transcriptreferenceid;
 
     /**
-     * @var \Student
-     *
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
-     * })
-     */
-    private $student;
-
-    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -180,6 +170,16 @@ class StudentSemRegistration
      * })
      */
     private $semester;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
 
 
 
@@ -674,30 +674,6 @@ class StudentSemRegistration
     }
 
     /**
-     * Set student.
-     *
-     * @param \Student|null $student
-     *
-     * @return StudentSemRegistration
-     */
-    public function setStudent(\Student $student = null)
-    {
-        $this->student = $student;
-
-        return $this;
-    }
-
-    /**
-     * Get student.
-     *
-     * @return \Student|null
-     */
-    public function getStudent()
-    {
-        return $this->student;
-    }
-
-    /**
      * Set semester.
      *
      * @param \Semester|null $semester
@@ -719,5 +695,29 @@ class StudentSemRegistration
     public function getSemester()
     {
         return $this->semester;
+    }
+
+    /**
+     * Set student.
+     *
+     * @param \Student|null $student
+     *
+     * @return StudentSemRegistration
+     */
+    public function setStudent(\Student $student = null)
+    {
+        $this->student = $student;
+
+        return $this;
+    }
+
+    /**
+     * Get student.
+     *
+     * @return \Student|null
+     */
+    public function getStudent()
+    {
+        return $this->student;
     }
 }

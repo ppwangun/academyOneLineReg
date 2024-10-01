@@ -1,0 +1,272 @@
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<?php
+
+$tblBody = '
+<div class="container invoice">
+  <div class="invoice-header">
+    <div class="ui left aligned grid">
+      <div class="row">
+        <div class="left floated left aligned six wide column">
+          <div class="ui">
+            <h1 class = "ui header pageTitle">Invoice <small class = "ui sub header">With Credit</small></h1>
+            <h4 class="ui sub header invDetails">NO: 554775/R1 | Date: 01/01/2015</h4>
+          </div>
+        </div>
+        <div class="right floated left aligned six wide column">
+          <div class="ui">
+            <div class="column two wide right floated">
+              <img class="logo" src="https://scontent.fmel5-1.fna.fbcdn.net/v/t1.0-9/10358691_1595827163984651_6845505980791568353_n.png?_nc_cat=109&_nc_ohc=We4wwT6M2Q0AX8qY8-b&_nc_ht=scontent.fmel5-1.fna&oh=69bd30fc152063c470afd928919c8734&oe=5E94664A" />
+              <ul class="">
+                <li><strong>RCJA Australia</strong></li>
+                <li>Lorem Ipsum</li>
+                <li>2 Alliance Lane VIC</li>
+                <li>info@rcja.com</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui segment cards">
+    <div class="ui card">
+      <div class="content">
+        <div class="header">Company Details</div>
+      </div>
+      <div class="content">
+        <ul>
+          <li> <strong> Name: RCJA </strong> </li>
+          <li><strong> Address: </strong> 1 Unknown Street VIC</li>
+          <li><strong> Phone: </strong> (+61)404123123</li>
+          <li><strong> Email: </strong> admin@rcja.com</li>
+          <li><strong> Contact: </strong> John Smith</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ui card customercard">
+      <div class="content">
+        <div class="header">Customer Details</div>
+      </div>
+      <div class="content">
+        <ul>
+          <li> <strong> Name: RCJA </strong> </li>
+          <li><strong> Address: </strong> 1 Unknown Street VIC</li>
+          <li><strong> Phone: </strong> (+61)404123123</li>
+          <li><strong> Email: </strong> admin@rcja.com</li>
+          <li><strong> Contact: </strong> John Smith</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ui segment itemscard">
+      <div class="content">
+        <table class="ui celled table">
+          <thead>
+            <tr>
+              <th>Item / Details</th>
+              <th class="text-center colfix">Unit Cost</th>
+              <th class="text-center colfix">Sum Cost</th>
+              <th class="text-center colfix">Discount</th>
+              <th class="text-center colfix">Tax</th>
+              <th class="text-center colfix">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                Lorem Ipsum Dolor
+                <br>
+                <small class="text-muted">The best lorem in town, try it now or leave forever</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">$1,000.00</span>
+                <br>
+                <small class="text-muted">Before Tax</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">$18,000.00</span>
+                <br>
+                <small class="text-muted">18 Units</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">- $1,800.00</span>
+                <br>
+                <small class="text-muted">Special -10%</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">+ $3,240.00</span>
+                <br>
+                <small class="text-muted">VAT 20%</small>
+              </td>
+              <td class="text-right">
+                <strong class="mono">$19,440.00</strong>
+                <br>
+                <small class="text-muted mono">$16,200.00</small>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                Sit Amet Dolo
+                <br>
+                <small class="text-muted">Now you may sit</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">$120.00</span>
+                <br>
+                <small class="text-muted">Before Tax</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">$240.00</span>
+                <br>
+                <small class="text-muted">2 Units</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">- $0.00</span>
+                <br>
+                <small class="text-muted">-</small>
+              </td>
+              <td class="text-right">
+                <span class="mono">+ $72.00</span>
+                <br>
+                <small class="text-muted">VAT:20% S:10%</small>
+              </td>
+              <td class="text-right">
+                <strong class="mono">$312.00</strong>
+                <br>
+                <small class="text-muted mono">$240.00</small>
+              </td>
+            </tr>
+          </tbody>
+         <tfoot class="full-width">
+    <tr>
+      <th> Total: </th>
+      <th colspan="2"></th>
+      <th colspan = "1"> $500 </th>
+      <th colspan = "1"> $800 </th>
+      <th colspan = "1"> $20000.00 </th>
+    </tr>
+  </tfoot>
+        </table>
+
+      </div>
+    </div>
+
+    <div class="ui card">
+      <div class="content center aligned text segment">
+        <small class="ui sub header"> Amount Due (AUD): </small>
+        <p class="bigfont"> $5000.25 </p>
+      </div>
+    </div>
+        <div class="ui card">
+      <div class="content">
+        <div class="header">Payment Details</div>
+      </div>
+      <div class="content">
+        <p> <strong> Account Name: </strong> "RJCA" </p>
+        <p> <strong> BSB: </strong> 111-111 </p>
+        <p> <strong>Account Number: </strong> 1234101 </p>
+      </div>
+    </div>
+    <div class="ui card">
+      <div class="content">
+        <div class="header">Notes</div>
+      </div>
+      <div class="content">
+        Payment is requested within 15 days of recieving this invoice.
+      </div>
+    </div>
+  </div>
+</div>
+';
+$billItems . $tblBody.$billItems;
+
+
+
+$mpdf = new \Mpdf\Mpdf([
+	'margin_left' => 20,
+	'margin_right' => 15,
+	'margin_top' => 35,
+	'margin_bottom' => 25,
+	'margin_header' => 2,
+	'margin_footer' => 5
+]);
+
+
+
+
+$mpdf->SetProtection(array('print')); 
+$mpdf->SetTitle("Vacation billing");
+$mpdf->SetAuthor("W-TECH"); 
+$mpdf->SetWatermarkText("test");
+$mpdf->showWatermarkText = true;
+$mpdf->watermark_font = 'DejaVuSansCondensed';
+$mpdf->watermarkTextAlpha = 0.1;
+$mpdf->SetDisplayMode('fullpage');
+
+
+$mpdf->AddFont('opensans','R');
+
+$stylesheet = file_get_contents('assets/mpdfstyleA4k.css');
+$mpdf->WriteHTML($stylesheet,1);
+
+$mpdf->WriteHTML($tblBody);
+
+
+
+
+
+ob_end_clean();
+//Close and output PDF document
+$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',"facture").'-'.date("d-m-Y-H-i").'.pdf', 'F');
+
+?>
+
+        <style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+   <md-dialog style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Mango (Fruit)">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Impression PV Individuel</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div  class="md-dialog-content">
+
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '',"facture").'-'.date("d-m-Y-H-i").'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
+                     
+
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Fermer
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

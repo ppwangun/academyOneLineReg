@@ -20,8 +20,10 @@ use Application\Entity\Cities;
 use Application\Entity\Faculty;
 use Application\Entity\Teacher;
 use Application\Entity\Contract;
+use Application\Entity\ContractFollowUp;
 use Application\Entity\FileDocument;
 use Application\Entity\AllContractsView;
+use Application\Entity\AllContractsFollowUpView;
 use Application\Entity\OdooSettings;
 
 use Njine\Odoo\Synchronisation;
@@ -85,13 +87,34 @@ class TeacherController extends AbstractRestfulController
                 if($data["birthDate"])
                     $teacher["birthdate"]=$data["birthDate"]->format('Y-m-d');
                 $teacher["documents"] = $documents;
-                //$query = $this->entityManager->createQuery('SELECT c.coshs as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,con.volumeHrs  as totalHrs  FROM Application\Entity\ClassOfStudyHasSemster c'
+                
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
                         .'WHERE c.teacher = :teacher' );
                 $query->setParameter('teacher',$id);
+                
+                $contracts = $query->getResult();
+                foreach ($contracts as $key=>$con) 
+                {
+                   
+                    $query = $this->entityManager->createQuery('SELECT con.id as id,c.totalTime   FROM Application\Entity\ContractFollowUp c '
+                        .'JOIN c.contract con WHERE con.id = :contractID' );
+                     $query->setParameter('contractID',$con["id"]);
+                     $contract_follow_up = $query->getResult(); 
+                    $totalTime = 0;
+                    foreach($contract_follow_up as $key1=>$cfu)
+                    { 
+                        $totalTime += $cfu["totalTime"];
+                    }
+                    
+                    $contracts[$key]["totalHrsDone"] = $totalTime;
+                    $contracts[$key]["ecart"] = $con["totalHrs"]-$totalTime;
+                    
+                }
+              
+                
 
-                $subjects_1 = $query->getResult();
-                $teacher["teaching_units"] = $subjects_1;
+                //$subjects_1 = $query->getResult();
+                $teacher["teaching_units"] = $contracts;
             return new JsonModel([
                 "date"=>$data["birthDate"]->format('Y-m-d'),
                 $teacher

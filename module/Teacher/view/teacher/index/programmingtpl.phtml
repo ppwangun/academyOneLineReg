@@ -168,7 +168,21 @@ z-index: 120000}
             </div>
         </md-input-container>  
         </div>            
+        <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
+        <md-input-container flex="100">
+            <label>Type de cours</label>
+            <md-select name="scheduleType" ng-model="$ctrl.scheduleType"  md-no-asterisk ng-required>
+              <md-option ng-disabled="true"><em>---Type de programmation---</em></md-option>
+              <md-option value="CM">Cours Magistral</md-option>
+              <md-option value="TD">Travaux Dirigés</md-option>
+              <md-option value="TP">Travaux Pratiques</md-option>
 
+            </md-select>
+            <div class="errors" ng-messages="examForm.scheduleType.$error">
+              <div ng-message="required">Champ obligatoire</div>
+            </div>
+        </md-input-container>  
+        </div> 
 
 
         </form>

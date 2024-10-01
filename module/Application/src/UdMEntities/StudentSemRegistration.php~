@@ -162,16 +162,6 @@ class StudentSemRegistration
     private $transcriptreferenceid;
 
     /**
-     * @var \Student
-     *
-     * @ORM\ManyToOne(targetEntity="Student")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
-     * })
-     */
-    private $student;
-
-    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -180,6 +170,16 @@ class StudentSemRegistration
      * })
      */
     private $semester;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
 
 
 }

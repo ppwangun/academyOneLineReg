@@ -26,13 +26,13 @@ z-index: 120000}
                 <div class="pul-middle" >
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Autres options
+                                        Autres options 
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="" ng-click="$ctrl.printNotes()"><span>Imprimer la facture</span></a>
+                                        <li><a href="" ng-click="$ctrl.printBill(ev)"><span>Imprimer la facture</span></a>
                                         </li>
-                                        <li><a href="" ng-click="$ctrl.printNotesFailures()"><span></span></a>
+                                        <li><a href="" ng-click=""><span></span></a>
                                         </li>
                                         <!--<li><a href="" ng-click="$ctrl.clotureCalculNotes($ctrl.selectedUe.ue_class_id)"><span>Imprimer liste étudiants</span></a>
                                         </li> -->
@@ -278,8 +278,8 @@ z-index: 120000}
                                     <tr><td colspan="3" style="text-align: right">Volume horaire facturé</td><td>{{$ctrl.totalActuaBilledTime}}H </td><td>{{$ctrl.totalActuaBilledTime*$ctrl.paymentRate}}</td></tr>    
                                     
                                     <tr><td colspan="4" style="text-align: right">Retenue sur vacation 25%</td><td>{{$ctrl.vacationDeduction}}</td></tr> 
-                                    <tr><td colspan="4" style="text-align: right">IR 5.5%</td><td>{{$ctrl.totalHrsCurrentlyBilled*$ctrl.paymentRate*0.055}}</td></tr>  
-                                    <tr><td colspan="4" style="text-align: right">NAP</td><td>{{($ctrl.totalHrsCurrentlyBilled*$ctrl.paymentRate)-($ctrl.totalHrsCurrentlyBilled*$ctrl.paymentRate*0.055)-$ctrl.vacationDeduction}}</td></tr> 
+                                    <tr><td colspan="4" style="text-align: right">IR 5.5%</td><td>{{$ctrl.totalActuaBilledTime*$ctrl.paymentRate*0.055}}</td></tr>  
+                                    <tr><td colspan="4" style="text-align: right">NAP</td><td>{{($ctrl.totalActuaBilledTime*$ctrl.paymentRate)-($ctrl.totalActuaBilledTime*$ctrl.paymentRate*0.055)-$ctrl.vacationDeduction}}</td></tr> 
 
                                 </tbody>
                             </table>

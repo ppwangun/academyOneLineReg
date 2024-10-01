@@ -15,15 +15,6 @@ class StudentAttendance
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
-     * @var int
-     *
      * @ORM\Column(name="course_scheduled_id", type="integer", nullable=false)
      */
     private $courseScheduledId;
@@ -44,6 +35,18 @@ class StudentAttendance
      * })
      */
     private $student;
+
+    /**
+     * @var \CourseScheduled
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="CourseScheduled")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id", referencedColumnName="id")
+     * })
+     */
+    private $id;
 
 
 }

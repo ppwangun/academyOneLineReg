@@ -17,6 +17,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
     $ctrl.startingTime = null;
     $ctrl.endingTime = null;
+
     $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
     $scope.eventSources = [ ];
@@ -80,6 +81,8 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    $ctrl.loadSubjects($ctrl.selectedUe)
                    
                    $ctrl.selectedSubject =  response.data[0].subject;
+                   
+                   $ctrl.scheduleType = response.data[0].scheduleType;
                 });
      };
 
@@ -195,13 +198,13 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
  };
  
  $scope.addEvent = function(ev)
- {
+ {console.log($ctrl.scheduleType)
      $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
      if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
      else var eventName= $ctrl.selectedUe.code;
      
-     if($ctrl.selectedSubject)         var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,subject:$ctrl.selectedSubject.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time}
-     else var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time}
+     if($ctrl.selectedSubject)         var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,subject:$ctrl.selectedSubject.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
+     else var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
         var config = {
         params: data,
         headers : {'Accept' : 'application/json'}

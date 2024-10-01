@@ -111,12 +111,14 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     $ctrl.searchTeacher = "";
     $ctrl.selectedTeacher = null;
     $scope.tableBillsShow = 0;
+    
+   $ctrl.billNumRef = null;
 
     $ctrl.formatDate = function(date){
       var dateOut = new Date(date);
       return dateOut;
     };
-    var numRef =$routeParams.numRef;  
+    $ctrl.billNumRef =$routeParams.numRef;  
 
     $ctrl.init = function(){
      
@@ -193,9 +195,9 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
   
   $ctrl.showbillDetails = false;
       //chech if numRef is setted
-    if(numRef)
+    if($ctrl.billNumRef)
     {
-        var  dataString = {numRef: numRef},
+        var  dataString = {numRef: $ctrl.billNumRef},
         config = {
             params: dataString,
             headers : {'Accept' : 'application/json; charset=utf-8'}
@@ -217,7 +219,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             
         });        
     }
-  console.log($ctrl.showbillDetails);
+
   $ctrl.loadBills = function(selectectedTeacher,selectedUe)
   {
     var data = {teacherID: selectectedTeacher.id,contractID : selectedUe.id};
@@ -307,6 +309,37 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             $scope.hasLoadedCurrentTeacher = false;
         });
     }
+    
+    $ctrl.printBill = function (ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'printBill/'+$ctrl.billNumRef,
+      // Appending dialog to document.body to cover sidenav in docs app
+      // Modal dialogs should fully cover application to prevent interaction outside of dialog
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+    }).then(function (answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }, function () {
+      $scope.status = 'You cancelled the dialog.';
+    });
+  };
+  function DialogController($scope, $mdDialog) {
+    $scope.hide = function () {
+      $mdDialog.hide();
+    };
+
+    $scope.cancel = function () {
+      $mdDialog.cancel();
+    };
+
+    $scope.answer = function (answer) {
+      $mdDialog.hide(answer);
+    };
+  }    
+
 
     $scope.loadCurrentProgressionStats = function () {
         $scope.hasLoadedCurrentProgressionStats = null;

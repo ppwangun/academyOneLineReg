@@ -50,24 +50,11 @@ class CourseScheduled
     private $scheduleType;
 
     /**
-     * @var \Semester
+     * @var string|null
      *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="type_cours", type="string", length=4, nullable=true)
      */
-    private $semester;
-
-    /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
+    private $typeCours;
 
     /**
      * @var \Subject
@@ -108,6 +95,26 @@ class CourseScheduled
      * })
      */
     private $teachingUnit;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 
@@ -218,51 +225,27 @@ class CourseScheduled
     }
 
     /**
-     * Set semester.
+     * Set typeCours.
      *
-     * @param \Semester|null $semester
+     * @param string|null $typeCours
      *
      * @return CourseScheduled
      */
-    public function setSemester(\Semester $semester = null)
+    public function setTypeCours($typeCours = null)
     {
-        $this->semester = $semester;
+        $this->typeCours = $typeCours;
 
         return $this;
     }
 
     /**
-     * Get semester.
+     * Get typeCours.
      *
-     * @return \Semester|null
+     * @return string|null
      */
-    public function getSemester()
+    public function getTypeCours()
     {
-        return $this->semester;
-    }
-
-    /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy|null $classOfStudy
-     *
-     * @return CourseScheduled
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy|null
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
+        return $this->typeCours;
     }
 
     /**
@@ -359,5 +342,53 @@ class CourseScheduled
     public function getTeachingUnit()
     {
         return $this->teachingUnit;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return CourseScheduled
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return CourseScheduled
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
     }
 }

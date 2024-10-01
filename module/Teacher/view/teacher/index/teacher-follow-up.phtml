@@ -195,7 +195,7 @@ max-width: 900px;
                         </div>
                         <br/>
                         <div layout="row" class="gap-1">
-                            <div flex-gt-sm flex="50">
+                            <div flex-gt-sm flex="65">
                                 <table class="table table-bordered bordered table-striped table-condensed datatable" style="font-size:0.8em; background-color: #dfe4ea; color: #0c2461;" ui-jq="dataTable" ui-options="dataTableOpt">
                                     <thead>
                                     <tr>
@@ -203,7 +203,9 @@ max-width: 900px;
                                         <th>UE</th>
                                         <th>Sem</th>
                                         <th>Classe</th>
-                                        <th>Volume</th>
+                                        <th>Prév</th>
+                                        <th>Réal</th>
+                                        <th>Ecart</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -215,13 +217,19 @@ max-width: 900px;
                                         <td>{{contract.semester}}</td>
                                         <td>{{contract.classe}}</td>
                                         <td>{{contract.totalHrs}}H</td>
+                                        <td>{{contract.totalHrsDone}}H</td>
+                                        <td>{{contract.ecart}}H</td>
                                        
                                     </tr>
-                                    <tr style="text-align:center;font-weight : bold; color: #fff; background-color:#708090;"><td  colspan="4">Total Volume Horaire</td><td align="left">{{currentTeacher.teaching_units|sumByKey:'totalHrs'}}H</td></tr>
+                                    <tr style="text-align:center;font-weight : bold; color: #fff; background-color:#708090;"><td  colspan="4">Total Volume Horaire</td>
+                                        <td align="left">{{currentTeacher.teaching_units|sumByKey:'totalHrs'}}H</td>
+                                        <td align="left">{{currentTeacher.teaching_units|sumByKey:'totalHrsDone'}}H</td>
+                                        <td align="left">{{currentTeacher.teaching_units|sumByKey:'ecart'}}H</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div flex-gt-sm flex="50" id="teaching_unit_details_container">
+                            <div flex-gt-sm flex="35" id="teaching_unit_details_container">
                                 <div id="teaching_unit_details_placeholder" ng-if="!selectedContractId">
                                     <img src="assets/images/pointer_178432.png" alt=""/>
                                     <span>Selectionnez une UE pour avoir ses informations</span>

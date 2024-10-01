@@ -183,16 +183,6 @@ class Teacher
     private $isFirstConnection = true;
 
     /**
-     * @var \Faculty
-     *
-     * @ORM\ManyToOne(targetEntity="Faculty")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
-     * })
-     */
-    private $faculty;
-
-    /**
      * @var \AcademicRanck
      *
      * @ORM\ManyToOne(targetEntity="AcademicRanck")
@@ -201,6 +191,16 @@ class Teacher
      * })
      */
     private $academicRanck;
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
 
 
 
@@ -767,30 +767,6 @@ class Teacher
     }
 
     /**
-     * Set faculty.
-     *
-     * @param \Faculty|null $faculty
-     *
-     * @return Teacher
-     */
-    public function setFaculty(\Faculty $faculty = null)
-    {
-        $this->faculty = $faculty;
-
-        return $this;
-    }
-
-    /**
-     * Get faculty.
-     *
-     * @return \Faculty|null
-     */
-    public function getFaculty()
-    {
-        return $this->faculty;
-    }
-
-    /**
      * Set academicRanck.
      *
      * @param \AcademicRanck|null $academicRanck
@@ -812,5 +788,29 @@ class Teacher
     public function getAcademicRanck()
     {
         return $this->academicRanck;
+    }
+
+    /**
+     * Set faculty.
+     *
+     * @param \Faculty|null $faculty
+     *
+     * @return Teacher
+     */
+    public function setFaculty(\Faculty $faculty = null)
+    {
+        $this->faculty = $faculty;
+
+        return $this;
+    }
+
+    /**
+     * Get faculty.
+     *
+     * @return \Faculty|null
+     */
+    public function getFaculty()
+    {
+        return $this->faculty;
     }
 }

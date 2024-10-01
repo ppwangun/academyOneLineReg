@@ -43,26 +43,6 @@ class PersonInCharge
     private $status = '0';
 
     /**
-     * @var \Speciality
-     *
-     * @ORM\ManyToOne(targetEntity="Speciality")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
-     * })
-     */
-    private $department;
-
-    /**
-     * @var \SchoolEmployee
-     *
-     * @ORM\ManyToOne(targetEntity="SchoolEmployee")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="school_employee_id", referencedColumnName="id")
-     * })
-     */
-    private $schoolEmployee;
-
-    /**
      * @var \Faculty
      *
      * @ORM\ManyToOne(targetEntity="Faculty")
@@ -91,6 +71,26 @@ class PersonInCharge
      * })
      */
     private $school;
+
+    /**
+     * @var \Speciality
+     *
+     * @ORM\ManyToOne(targetEntity="Speciality")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
+     */
+    private $department;
+
+    /**
+     * @var \SchoolEmployee
+     *
+     * @ORM\ManyToOne(targetEntity="SchoolEmployee")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="school_employee_id", referencedColumnName="id")
+     * })
+     */
+    private $schoolEmployee;
 
 
 }

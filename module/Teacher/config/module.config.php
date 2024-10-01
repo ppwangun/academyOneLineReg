@@ -74,6 +74,16 @@ return [
                         'action'        => 'billDetails',
                     ],
                 ],
+            ], 
+            'printBill' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printBill[/:numRef]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'printBill',
+                    ],
+                ],
             ],            
             'teacherUnitFollowUp' => [
                 'type'    => Literal::class,
