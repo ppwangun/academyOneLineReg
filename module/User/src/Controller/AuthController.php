@@ -406,6 +406,8 @@ class AuthController extends AbstractActionController
                             // Get redirect URL.
                             $redirectUrl = $this->params()->fromPost('redirect_url', '');
                             $teacher= $this->entityManager->getRepository(Teacher::class)->findOneByPhoneNumber($data['phoneNumber']);
+                            if($teacher == null)
+                                $teacher= $this->entityManager->getRepository(Teacher::class)->findOneByEmail($data['phoneNumber']);
 
                              $name = $teacher->getName()." ".$teacher->getSurname();
                              $this->sessionContainer->LoggedInUser = ["id"=>$teacher->getId(), "phoneNumber"=>$teacher->getPhoneNumber(),"name"=>$teacher->getName()." ".$teacher->getSurname()];
