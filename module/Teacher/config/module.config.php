@@ -84,7 +84,17 @@ return [
                         'action'        => 'printBill',
                     ],
                 ],
-            ],            
+            ],   
+            'printWorkloadFollowUp' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printWorkloadFollowUp[/:numRef]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'printWorkloadFollowUp',
+                    ],
+                ],
+            ],             
             'teacherUnitFollowUp' => [
                 'type'    => Literal::class,
                 'options' => [

@@ -1,0 +1,17 @@
+.selected-teaching-unit-item {
+    border-bottom-right-radius: 4px;
+    margin-bottom: 4px;
+    box-shadow: 1px 2px 2px lightgray;
+    position: relative;
+}
+
+.selected-teaching-unit-item.disabled .details-item {
+    opacity: 0.5;
+}
+
+.selected-teaching-unit-item .delete-button {
+    position: absolute;
+    right: -49px;
+    top: -23px;
+    z-index: 99;
+}

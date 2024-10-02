@@ -1359,7 +1359,68 @@ public function getScheduledCourseAction()
             
         }         
         
-    }    
+    } 
+    
+    public function printWorkloadFollowUpAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        { 
+            $data= $this->params()->fromRoute();                                       
+       
+            $subjects=[];
+            $billItems = [];
+            $teacher =[];
+            $subject = [];
+           
+            $userId = $this->sessionContainer->userId;
+            $user = $this->entityManager->getRepository(User::class)->find($userId );
+            
+            //retrive all current year contract
+            $teacher = $this->entityManager->getRepository(Teacher::class)->findAll();
+            $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll();
+            foreach($teacher as $key=>$teach)
+            {
+                $contracts = $this->entityManager->getRepository(Contract::class)->findByTeacher($teach); 
+                $totalVolumeAllocated = 0;
+                $totalVolumeDone = 0;
+                
+                foreach($contracts as $con)
+                {
+                    $totalVolumeAllocated += $con->getVolumeHrs();
+                    $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
+                    foreach($contractsFwu as $conFwu)
+                        $totalVolumeDone += $conFwu->getTotalTime();
+                    
+                    
+                }
+                
+                $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
+                $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
+                $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
+                $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
+            }
+
+
+            
+            
+            $this->entityManager->getConnection()->commit();
+
+            $output = new ViewModel([
+               "teachers"=>$teachers,
+
+            ]);
+             $output->setTerminal(true);
+            return $output;       
+            
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+            
+        }   
+    }
     
     private function checkTimeConflictByClass($classe,$startingTime)
     {
@@ -1378,4 +1439,6 @@ public function getScheduledCourseAction()
         
         
     }
+    
+    
 }

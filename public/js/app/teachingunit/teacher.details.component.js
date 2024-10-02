@@ -326,6 +326,22 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
       $scope.status = 'You cancelled the dialog.';
     });
   };
+    $ctrl.printWorkloadFollowUp = function (ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'printWorkloadFollowUp',
+      // Appending dialog to document.body to cover sidenav in docs app
+      // Modal dialogs should fully cover application to prevent interaction outside of dialog
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+    }).then(function (answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }, function () {
+      $scope.status = 'You cancelled the dialog.';
+    });
+  };  
   function DialogController($scope, $mdDialog) {
     $scope.hide = function () {
       $mdDialog.hide();

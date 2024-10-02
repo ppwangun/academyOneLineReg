@@ -24,10 +24,12 @@
                     <div class="panel panel-default small">
                         <div class="panel-heading" style="margin-bottom: 15px;">
 
-                            <a href="#!/assignnewteachingunit" class="btn btn-danger" id='newacadyr'>Créer</a>
+                            <a href="#!/teacher-follow-up" class="btn btn-danger" id='newacadyr'>Créer</a>
 
-                        </div>
-                        
+
+                            <button  ng-click=" $ctrl.printWorkloadFollowUp(ev)" class="btn btn-primary" id='newacadyr'>Imprimer la fiche de suivi des volumes horaires</button>
+
+                        </div>                        
                   <!--class="table table-striped table-bordered table-hover table-condensed datatable"-->
                             <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="table table-striped table-bordered table-hover table-condensed datatable">
                                 

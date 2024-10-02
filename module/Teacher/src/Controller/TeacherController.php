@@ -44,7 +44,8 @@ class TeacherController extends AbstractRestfulController
  
     
     public function get($id)
-    {        
+    {  
+        try{
         
         if(is_numeric($id))
         {
@@ -119,7 +120,13 @@ class TeacherController extends AbstractRestfulController
                 "date"=>$data["birthDate"]->format('Y-m-d'),
                 $teacher
             ]);
+            }
+        
+        }catch (\Doctrine\ORM\Exception $e) {
+            throw $e;
         }
+            
+        
 
 
         
