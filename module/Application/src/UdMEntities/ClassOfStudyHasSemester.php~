@@ -1,0 +1,187 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ClassOfStudyHasSemester
+ *
+ * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"})})
+ * @ORM\Entity
+ */
+class ClassOfStudyHasSemester
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="credits", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $credits;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="hours_volume", type="integer", nullable=true)
+     */
+    private $hoursVolume;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="subject_weight", type="float", precision=10, scale=0, nullable=true, options={"default"="1"})
+     */
+    private $subjectWeight = 1;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="subject_hours", type="integer", nullable=true)
+     */
+    private $subjectHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="cm_hours", type="integer", nullable=true)
+     */
+    private $cmHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="tp_hours", type="integer", nullable=true)
+     */
+    private $tpHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="td_hours", type="integer", nullable=true)
+     */
+    private $tdHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="subject_cm_hours", type="integer", nullable=true)
+     */
+    private $subjectCmHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="subject_td_hours", type="integer", nullable=true)
+     */
+    private $subjectTdHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="subject_tp_hours", type="integer", nullable=true)
+     */
+    private $subjectTpHours;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true, options={"default"="1"})
+     */
+    private $status = 1;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="mark_calculation_status", type="boolean", nullable=true)
+     */
+    private $markCalculationStatus = '0';
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_previous_year_subject", type="boolean", nullable=true)
+     */
+    private $isPreviousYearSubject = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="is_repeated_subject", type="integer", nullable=true)
+     */
+    private $isRepeatedSubject = '0';
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="module_consolidation_status", type="boolean", nullable=true)
+     */
+    private $moduleConsolidationStatus = '0';
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="subject_credits", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $subjectCredits;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
+
+    /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+
+}

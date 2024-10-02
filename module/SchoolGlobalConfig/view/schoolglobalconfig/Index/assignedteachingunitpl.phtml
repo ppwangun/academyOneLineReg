@@ -1,0 +1,83 @@
+
+<link rel="stylesheet" type="text/css" href="css/datatables.bootstrap.css">
+<link rel="stylesheel" type="text/css" href="css/buttons.datables.min.css">
+<style>
+  /*.table th{
+  background-color:#337ab7;
+ // color:white;
+  text-align:left;
+  vertical-align:center;
+}*/
+  
+
+</style>
+<div class="row" ng-init="$ctrl.init()">
+                <div class="col-lg-12">
+                    <h4 class="page-header">Grille des enseignements</h4>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Panneau des boutton -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="margin-bottom: 15px;">
+
+                            <a href="#!/assignnewteachingunit" class="btn btn-danger" id='newacadyr'>Créer</a>
+                            <a ng-click="$ctrl.loadData()" class=" btn btn-primary " ><span class="fa fa-refresh"></span>&nbsp;Charger</a>
+                            <a ng-disabled="true"  class="btn btn-default " id='newacadyr'><span class="fa fa-upload"></span>&nbsp;Importer</a>
+                        </div>
+                        
+                  <!--class="table table-striped table-bordered table-hover table-condensed datatable"-->
+                            <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="table table-striped table-bordered table-hover table-condensed datatable">
+                                
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Unité d'enseignement</th>
+                                        <th rowspan="2" style="width:10%">Code</th>
+                                        <th rowspan="2" style="width:10%">classe</th>
+                                        <th rowspan="2" style="width:10%">Sem</th>
+                                        <th rowspan="2" style="width:10%"> credits</th>
+                                        <th style="width:10%" colspan="4">Vol horaire</th>
+
+                                        <th rowspan="2" style="width:20%">Enseignant</th>
+                                        
+                                        <!--<th style="width:10%"></th>-->
+                                    </tr>
+                                    <tr><td>Total</td><td>CM</td><td>TD</td><td>TP</td></tr>
+                                </thead>
+                                <tbody>
+    
+                                    <tr ng-repeat="ue in $ctrl.ue" style="cursor: hand;cursor: pointer;" ng-dblclick="$ctrl.redirect(ue.id,ue.ue_class_id,ue.sem_id)">
+                                      <!-- alla the teaching unit having at least two subjects will be displayed with *-->  
+                                      <td ng-bind='ue.subjects>0?ue.name+"*":ue.name'> {{}}</td>
+                                      <td ng-bind="ue.code">toto</td>
+                                       <td ng-bind='ue.class'></td>
+                                       <td ng-bind='ue.sem_code'></td>
+                                      <td ng-bind="ue.credits"></td>
+                                      <td ng-bind="ue.hoursVolume"></td>
+                                      <td ng-bind="ue.cm_hrs"></td>
+                                      <td ng-bind="ue.td_hrs"></td>
+                                      <td ng-bind="ue.tp_hrs"></td>
+                                      <td ng-bind="ue.lecturer" ></td>
+                                      
+                              
+                                   <!--   <td>
+                                          <div class="btn-group">
+                                          <a href="#!/updatedegree/{{degree.id}}" class="btn btn-default btn"><i class="fa fa-edit"></i></a>
+                                          <button  type="button" ng-click="$ctrl.deleteDegree(degree);" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                      </div>
+                                      </td>-->
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+            

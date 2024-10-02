@@ -1,0 +1,71 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="    max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 60%;
+    border-radius: 0;" aria-label="Ajouter une faculté">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Ajouter un semestre</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" >
+           <form ng-cloak name="semForm">
+
+
+    <div layout-gt-sm layout-gt-xs layout-xs='row' >
+        <md-input-container class="md-block"  flex='40'>
+
+            <label>Code</label>
+            <input type="text"  name="code" ng-model="sem.code" ng-required="true" md-no-asterisk /> 
+            <div ng-messages="semForm.code.$error">
+                    <div ng-message="required">le champ code est obligatoire</div>
+            </div> 
+        </md-input-container>
+        <md-input-container class="md-block"  flex='60'>
+            <label>Intitulé</label>
+            <input type="text"  name="name" ng-model="sem.name" ng-required="true" md-no-asterisk  /> 
+            <div ng-messages="semForm.name.$error">
+                    <div ng-message="required">le champ nom est obligatoire</div>
+            </div>
+        </md-input-container>
+    </div>
+
+      <md-datepicker ng-model="sem.startingDate"  md-placeholder="Date de début">
+                        
+      </md-datepicker>
+   
+      <md-datepicker ng-model="sem.endingDate"  md-placeholder="Date de fin">
+                         
+      </md-datepicker>
+
+
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Annuler
+      </md-button>
+      <md-button class="md-warn" ng-click="saveSemester()" ng-disabled="semForm.$invalid">
+        Ajouter
+      </md-button>
+    </md-dialog-actions>
+  </form>
+      </div>
+              </md-dialog-content>
+</md-dialog>

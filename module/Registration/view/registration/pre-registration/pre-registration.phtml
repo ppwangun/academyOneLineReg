@@ -1,0 +1,208 @@
+<style>
+.mat-datepicker-content .mat-calendar
+{ 
+     zoom: 0.85;
+}
+</style>
+
+<div ng-app="myApp" ng-controller="preRegistrationCtrl as $ctrl"  ng style="margin-top: 50px; ">
+    <md-content id="std-main-content" ng-init='init()'>
+      <!-- Display workflow bar -->
+<br /> <br />
+      <!-- End -->
+      <div class="alert alert-warning small"><span class='fa fa-warning'></span>Prière de bien vouloir remplir les différents champs du formulaire. Tous les champs suivis de l'astérisk<span class="text-danger">(*) </span> sont obligatoires.
+              LE formulaire ne pourra être soumis que si les champs sont bien remplis
+      </div>
+      <!--Showing tabs -->
+                  
+    <div class="panel panel-primary">
+    <div class="panel-heading">Pré-inscription</div>
+    <div class="panel-body">
+        <p class="text-justify text-info">
+            Si vous êtes admis à poursuivre vos études à l'Institut Supérieure Agenla Academy  par concours interne, concours national du minesup, ou sur titre,
+            prière de bien vouloir rechercher votre nom en le saisissant soit parteillement ou complètement. une fois la saisie des premières
+            initiales de votre nom, une liste déroulante vous proposera  tous les noms contenants les initiales saisies.
+            Sélectionnez le nom qui convient  en cliquant desssus. Passer cette étape, il ne vous restera plus qu'à compléter les informations du formulaire.
+        </p>
+                          
+        <md-content >
+                <div  layout="column" ng-cloak class="md-inline-form">
+                     
+ 
+                    <form  method="POST" action="savePreRegistration" enctype="multipart/form-data" name="stdRegistrationForm">   
+    <div layout-gt-sm='row' >
+    <md-input-container class="md-block" flex-gt-sm flex='40'>
+          <label>Rechercher votre nom:</label>
+          <md-autocomplete  md-search-text="$ctrl.searchText" 
+                           md-selected-item="$ctrl.selectedItem"  
+                           md-items="item in $ctrl.query($ctrl.searchText)" 
+                           md-item-text="item.nom+' '+item.prenom" 
+                           md-min-length="0"
+                           placeholder="veuillez rechercher votre nom ici" 
+                           md-selected-item-change="$ctrl.selectedItemChange(item)"
+                           md-input-name="student"
+                           md-no-asterisk
+                           required>
+              <md-item-template>
+                <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.nom+" "+item.prenom}}</span>
+
+              </md-item-template>
+              <md-not-found>
+                Aucun nom correspondant à  "{{$ctrl.searchText}}" n'a été trouvé.
+                <a ng-click="">Create a new one!</a>
+              </md-not-found>
+        </md-autocomplete>
+              <div ng-messages="teachingUnitForm.classe.$error">
+                  <div ng-message="required">Ce champ est obligatoire</div>
+              </div> 
+    </md-input-container>
+
+    </div>
+                    <div class="row" style='margin-top:15px; color:#636e72;'>
+                        <div class="col-md-9">
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom de l'établicement:</label>
+                            <input name="faculty" ng-model="$ctrl.selectedItem.faculte" readonly />
+                                <div ng-messages="stdRegistrationForm.faculty.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container> 
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom de la filière:</label>
+                            <input name="training" ng-model="$ctrl.selectedItem.filiere" readonly />
+                                <div ng-messages="stdRegistrationForm.training.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>   
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Classe:</label>
+                            
+                            <input name="classe"   ng-model='$ctrl.selectedItem.classe' readonly />
+                            
+                                <div ng-messages="stdRegistrationForm.classe.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div> <br />
+                          <span class="text-info small"><?=$this->studentName?></span>  
+                          </md-input-container>                             
+                            
+       
+                        </div>                        
+                        <div class="col-md-3">
+                          <img style="width:200px; height:200px;" ng-src="{{$ctrl.student.imageSrc}}" />      
+                           
+   
+                        </div>
+
+                    </div>
+                     
+                            <md-toolbar>
+                            <div class="md-toolbar-tools">
+                              <h2>Identifcation de l'étudiant</h2>
+                            </div>
+                          </md-toolbar>
+                        
+                        <md-input-container class="md-block" flex-gt-sm ng-hide="true">
+                            <label>Nom de l'établicement:</label>
+                            <input name="id" ng-model="$ctrl.selectedItem.id" readonly />
+                                <div ng-messages="stdRegistrationForm.faculty.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>  
+                        
+                          <div layout-gt-sm="row"  style='margin-top: 15px;'>
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Nom:</label>
+                            <input name="nom" ng-model="$ctrl.selectedItem.nom" required readonly />
+                                <div ng-messages="stdRegistrationForm.nom.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+
+                                </div>   
+                          </md-input-container>
+
+                          <md-input-container class="md-block" flex-gt-sm>
+                            <label>Prénom:</label>
+                            <input name="prenom" ng-model="$ctrl.selectedItem.prenom" readonly  />
+                                <div ng-messages="stdRegistrationForm.prenom.$error">
+                                    <div ng-message="required">le champ Prénom est obligatoire</div>
+                                    
+                                </div> 
+                          </md-input-container>
+                        </div>
+
+                          <div layout-gt-sm="row"  >
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Sexe</label>
+                                    <md-select name='gender' ng-model="$ctrl.selectedItem.gender" required  >
+                                        <md-option value="M">Masculin</md-option>
+                                        <md-option value="F">Féminin</md-option>
+                                    </md-select>
+                                    <div ng-messages="stdRegistrationForm.gender.$error">
+                                        <div ng-message="required">le champ Sexe est obligatoire</div>
+
+                                    </div>                                    
+                                </md-input-container>
+                          
+     
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Numéro de téléphone</label>
+                                    <input name="phoneNumber" ng-model="$ctrl.selectedItem.phoneNumber" ng-pattern="/^[0-9]{9}$/" required />
+                                    <div ng-messages="stdRegistrationForm.phoneNumber.$error">
+                                        <div ng-message="required">le champ numéro de téléphone est obligatoire</div>
+                                        <div ng-message="pattern">Numéro de téléphone invalid</div>
+                         
+                                    </div>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Email</label>
+                                    <input name="email" ng-model="$ctrl.selectedItem.email"  type="email" required  minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/"  />
+                                    <div ng-messages="stdRegistrationForm.email.$error" role="alert">
+                                       <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                                          votre email doit contenir au moins 10 et être semblable à un email.
+                                        </div>
+                                    </div>
+                                </md-input-container>
+   
+                        </div>
+
+<br /> <br />
+            <div layout-gt-sm="row" style="background-color: white">
+
+                <md-input-container class="md-block " flex-gt-sm>
+                    <div class="pull-right " >
+
+                        <md-button type='submit'   class="md-raised md-primary" ng-disabled="stdRegistrationForm.$invalid">Enrégistrer</md-button>
+                    </div>
+                    
+                </md-input-container>
+                
+            </div>
+                        
+         </form>               
+
+                        
+                          
+               
+            </div>
+
+
+ <!-- FIn informations complémentaires -->
+                      
+                  
+                </div>
+            </md-content>
+         </div>
+                    </div>
+ <!-- FIn informations complémentaires -->
+                      </form>
+                  
+                </div>
+
+  
+    
+</div>
+

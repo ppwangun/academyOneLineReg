@@ -1,0 +1,215 @@
+<link rel="stylesheet" href='js/datatables-plugins/dataTables.bootstrap.css'>
+
+
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+
+</style>
+
+
+<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+        
+            <div class="row">
+                <div class='col-md-4'>
+                    <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.cancel', null))?true:false;?>&&$ctrl.markCalculationStatus===false"  type="button" ng-click="$ctrl.cancelExam()" class="btn btn-danger"  ng-disabled="examForm.$invalid">Annuler l'examen</button>
+                    <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.newExam()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Enrégistrer</button>
+                    <span> <a href="#!/examlist">Retour</a></span>
+                </div>
+                <div class="col-md-2"></div>
+
+                
+                <div class="pul-middle" ng-show="$ctrl.isUpdate">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Autres options
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.cancel', null))?true:false?>" href="" ng-click="$ctrl.cancelExam()" ><span>Annuler examen</span></a>
+                            </li>
+                            <li><a href="" ng-click="$ctrl.showPrintExamEtiquette()"><span>Imprimer étiquette</span></a>
+                            </li>
+                            <li><a href="" ng-click="$ctrl.showPrintList()" ><span>Imprimer liste étudiants</span></a>
+                            <li><a href="" ng-click="$ctrl.showPrintNotes()" ><span>Imprimer notes</span></a>    
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+</div>
+
+<div class="form-view-main">
+    <div class="form-view">
+        <div   ng-cloak class="md-inline-form">
+
+
+    <md-content layout-padding >
+        <form   name="examForm">
+            <div layout-gt-sm='row' >
+                <div layout-gt-sm='column' >
+                    <label>Code Examen: </label>
+                </div>
+                <div flex="60"><span class="text-primary" style=" font-size: 18px;">&nbsp;&nbsp; {{$ctrl.examCode}}</span></div>
+
+                 <div layout-gt-sm='column' >
+                       <md-datepicker name="dateExam" ng-model="$ctrl.dateExam" md-placeholder="Date de l'examen" md-is-open="$ctrl.isOpen" required></md-datepicker>   
+
+                </div>  
+            </div>
+   
+        <div layout-gt-sm='row' >
+            <md-input-container class="md-block" flex-gt-sm flex='40'>
+                  <label>Classe:</label>
+                  <md-autocomplete  md-search-text="$ctrl.searchClasse" 
+                                   md-selected-item="$ctrl.selectedClasse"  
+                                   md-items="item in $ctrl.query($ctrl.searchClasse)" 
+                                   md-item-text="item.code" 
+                                   md-min-length="0"
+                                   placeholder="Faites de la classe" 
+                                   md-selected-item-change="$ctrl.selectedItemChange(item)"
+                                   md-input-name="classe"
+                                   md-no-asterisk
+                                   required>
+                      <md-item-template>
+                        <span md-highlight-text="$ctrl.searchClasse" md-highlight-flags="^i">{{item.code}}</span>
+
+                      </md-item-template>
+                      <md-not-found>
+                        Aucun élément correspondant à "{{$ctrl.searchClasse}}" n'a été trouvé.
+
+                      </md-not-found>
+                </md-autocomplete>
+                      <div ng-messages="examForm.classe.$error">
+                          <div ng-message="required">Ce champ est obligatoire</div>
+                      </div> 
+            </md-input-container >
+        <div layout-gt-sm='column' flex="35" >
+        <md-input-container>
+        <label>Semestre</label>
+        <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.code'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)"
+                    md-no-asterisk required >
+            <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
+          <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
+            {{sem.name}}
+          </md-option>
+        </md-select>
+        <div class="errors" ng-messages="examForm.semester.$error">
+          <div ng-message="required">Champ obligatoire</div>
+        </div>
+      </md-input-container>  
+        </div> 
+        <div layout-gt-sm='column' flex="35" >
+        <md-input-container >
+            <label>Type d'examen</label>
+            <md-select name="typeExam" ng-model="$ctrl.selectedExam" ng-model-options="{trackBy: '$value.id'}" md-no-asterisk required>
+                <md-option ng-disabled="true"><em>---Choix type d'évaluation---</em></md-option>
+              <md-option ng-repeat="examtype in $ctrl.examtypes" ng-value="examtype" >
+                {{examtype.name}}
+              </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.typeExam.$error">
+              <div ng-message="required">Champ obligatoire</div>
+            </div>
+        </md-input-container>
+        </div>
+    </div>
+     
+            <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
+        <md-input-container flex="50">
+            <label>Unité d'enseignement</label>
+            <md-select   name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe"  
+                       ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id);" 
+                       ng-change="$ctrl.loadStd();"  md-no-asterisk ng-required="true">
+                <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1}"><em>Choisissez une UE</em></md-option>
+              <md-option ng-repeat="ue in $ctrl.ues" ng-value="ue" >
+                {{ue.code}}[{{ue.name}}]
+                {{$ctrl.markCalculationStatus=$ctrl.selectedUe.mark_calculation_status}}
+              </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.ue.$error">
+                <div ng-message="required">Champ obligatoire</div>
+            </div>
+        </md-input-container>  
+    
+        <md-input-container flex="50">
+            <label>Matière</label>
+            <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="matiere" ng-model="$ctrl.selectedSubject"
+                       ng-change="$ctrl.loadStd();"
+                       ng-model-options="{trackBy: '$value.id'}"  ng-required="$ctrl.isMatiereRequired" md-no-asterisk>
+              <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
+
+              <md-option ng-repeat="subject in $ctrl.subjects" ng-value="subject" >
+                {{subject.subjectCode}}[{{subject.subjectName}}]
+              </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.matiere.$error">
+              <div ng-message="required">Champ obligatoire</div>
+            </div>
+        </md-input-container>  
+        </div>           
+
+
+
+
+        </form>
+  </md-content>
+</div>
+        
+<div layout='row' style="padding-top: 25px" ng-show="showButtonGroup===true&&$ctrl.markCalculationStatus===false">
+    <div style='justifyContent: space-between;'><a class="btn btn-success"  ng-click="$ctrl.showPrintList()"><span class="fa fa-print"></span>&nbsp;Imprimer la liste d'étudiants</a></div>&nbsp;&nbsp;
+    <div style='justifyContent: space-between;'><a ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.attendance.validation', null))?true:false?>" class="btn btn-primary" ng-click="!isAttendanceButtonActive || $ctrl.showUpdateAttendance()" ng-disabled="!isAttendanceButtonActive"><span class="fa fa-save"></span>&nbsp;Valider Présence effective à l'examen</a></div>&nbsp;&nbsp;
+    <div style='justifyContent: space-between;'><a ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.anonymat.reporting', null))?true:false?>" class="btn btn-primary" ng-click="!isAnonymatButtonActive || $ctrl.showUpdateAttendance()" ng-disabled="!isAnonymatButtonActive"><span class="fa fa-eye-slash"></span>&nbsp;Anonymats</a></div>&nbsp;&nbsp;
+    <div style='justifyContent: space-between;'><a ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.mark.reporting', null))?true:false?>" class="btn btn-danger" ng-click="!isReportNoteButtonActive || $ctrl.showUpdateAttendance()" ng-disabled="!isReportNoteButtonActive"><span class="fa fa-pencil-square-o"></span>&nbsp;Report des notes</a></div>&nbsp;&nbsp;
+    <div style='justifyContent: space-between;'><a class="btn btn-danger" ng-click="$ctrl.rollBack()" title="rollback" ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.mark.reporting.rollback', null))?true:false?>"><span class="fa fa-undo"></span></a></div>
+</div>
+        
+<p>&nbsp;</p>
+              <!--tabs widget-->
+                <div class="row" >
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href=""> Liste des étudiants participants à l'examen &nbsp; <i title='Synchroniser  les listes' style="color:lightgrey;  font-size: 22px; cursor: pointer;" class="fa fa-cogs" ng-click="$ctrl.updateExamRegistration()"></i>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<i style="color:lightgrey; font-size: 22px; cursor: pointer;" title="Dupliquer la note" class="fa fa-copy" ng-click="$ctrl.duplicateNotes()"></i></a></li>
+
+                    </ul>
+
+                                        <table class="table table-striped table-condensed">
+                                            <thead>
+                                                <tr class="bg-primary">
+                                                    <th>Num</th>
+                                                    <th>Matricule</th>
+                                                    <th>Nom</th>
+                                                    <th >Classe</th>
+                                                    <th >Présence</th>
+                                                    <th>Anonymat</th>
+                                                    <th>Note_E</th>
+                                                    <th>Note_V</th>
+                                                    <th>Note_F</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="std in $ctrl.registeredStd" >
+                                                  <td ng-bind="std.num"></td>
+                                                  <td ng-bind="std.matricule"></td>
+                                                  <td ng-bind="std.nom"></td>
+                                                  <td ng-bind="std.studentCurrentClasse"></td>
+                                                  <td ng-bind='std.attendance==="P"?"":"A"' ng-class="{'zf-green fa fa-check': std.attendance==='P','zf-red': std.attendance==='A' }"> </td>
+                                                  <td ng-bind="std.anonymat"></td>
+                                                  <td ng-bind='std.isMarkFromCatchUpExam===1?std.registeredMark+"[R]":std.registeredMark' ng-class="{'zf-red': std.isMarkFromCatchUpExam===1}"></td>
+                                                  <td ng-bind='(std.isMarkFromCatchUpExam===1&&std.isMarkValidated===1)?std.validatedMark+"[R]":std.validatedMark' ng-class="{'zf-red': (std.isMarkFromCatchUpExam===1&&isMarkValidated===1)}"></td>
+                                                  <td ng-bind='(std.isMarkFromCatchUpExam===1&&std.isMarkConfirmed===1)?std.confirmedMark+"[R]":std.confirmedMark' ng-class="{'zf-red': (std.isMarkFromCatchUpExam===1&&std.isMarkConfirmed===1)}" ></td>
+       
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                 </div>
+                <!--End tab-->
+                
+            </div>  
+        </div>
+

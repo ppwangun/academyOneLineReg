@@ -1,0 +1,261 @@
+<?php
+namespace Application\Entity;
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+use Application\Entity\TrainingCurriculum;
+use Application\Entity\Degree;
+
+/**
+ * ClassOfStudy
+ *
+ * @ORM\Table(name="class_of_study", uniqueConstraints={@ORM\UniqueConstraint(name="code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_class_of_study_cycle1_idx", columns={"cycle_id"}), @ORM\Index(name="fk_class_of_study_degree1_idx", columns={"degree_id"})})
+ * @ORM\Entity
+ */
+class ClassOfStudy
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="study_level", type="integer", nullable=true)
+     */
+    private $studyLevel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="is_end_cycle", type="integer", nullable=true)
+     */
+    private $isEndCycle = '0';
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="is_end_degree_training", type="integer", nullable=true)
+     */
+    private $isEndDegreeTraining = '0';
+
+    /**
+     * @var TrainingCurriculum
+     *
+     * @ORM\ManyToOne(targetEntity="TrainingCurriculum")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="cycle_id", referencedColumnName="id", nullable=true)
+     * })
+     */
+    private $cycle;
+
+    /**
+     * @var Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree", inversedBy="classOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return ClassOfStudy
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set studyLevel
+     *
+     * @param integer $studyLevel
+     *
+     * @return ClassOfStudy
+     */
+    public function setStudyLevel($studyLevel)
+    {
+        $this->studyLevel = $studyLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get studyLevel
+     *
+     * @return integer
+     */
+    public function getStudyLevel()
+    {
+        return $this->studyLevel;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return ClassOfStudy
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set isEndCycle
+     *
+     * @param integer $isEndCycle
+     *
+     * @return ClassOfStudy
+     */
+    public function setIsEndCycle($isEndCycle)
+    {
+        $this->isEndCycle = $isEndCycle;
+
+        return $this;
+    }
+
+    /**
+     * Get isEndCycle
+     *
+     * @return integer
+     */
+    public function getIsEndCycle()
+    {
+        return $this->isEndCycle;
+    }
+
+    /**
+     * Set isEndDegreeTraining
+     *
+     * @param integer $isEndDegreeTraining
+     *
+     * @return ClassOfStudy
+     */
+    public function setIsEndDegreeTraining($isEndDegreeTraining)
+    {
+        $this->isEndDegreeTraining = $isEndDegreeTraining;
+
+        return $this;
+    }
+
+    /**
+     * Get isEndDegreeTraining
+     *
+     * @return integer
+     */
+    public function getIsEndDegreeTraining()
+    {
+        return $this->isEndDegreeTraining;
+    }
+
+    /**
+     * Set cycle
+     *
+     * @param TrainingCurriculum $cycle
+     *
+     * @return ClassOfStudy
+     */
+    public function setCycle(TrainingCurriculum $cycle = null)
+    {
+        $this->cycle = $cycle;
+
+        return $this;
+    }
+
+    /**
+     * Get cycle
+     *
+     * @return TrainingCurriculum
+     */
+    public function getCycle()
+    {
+        return $this->cycle;
+    }
+
+    /**
+     * Set degree
+     *
+     * @param Degree $degree
+     *
+     * @return ClassOfStudy
+     */
+    public function setDegree(Degree $degree = null)
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+
+    /**
+     * Get degree
+     *
+     * @return Degree
+     */
+    public function getDegree()
+    {
+        return $this->degree;
+    }
+}

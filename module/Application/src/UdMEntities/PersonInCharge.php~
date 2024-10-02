@@ -1,0 +1,96 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * PersonInCharge
+ *
+ * @ORM\Table(name="person_in_charge", indexes={@ORM\Index(name="fk_person_in_charge_department1_idx", columns={"department_id"}), @ORM\Index(name="fk_person_in_charge_school1_idx", columns={"school_id"}), @ORM\Index(name="fk_person_in_charge_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_person_in_charge_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_person_in_charge_school_employee1_idx", columns={"school_employee_id"})})
+ * @ORM\Entity
+ */
+class PersonInCharge
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="from", type="datetime", nullable=true)
+     */
+    private $from;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="to", type="datetime", nullable=true)
+     */
+    private $to;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="status", type="boolean", nullable=true)
+     */
+    private $status = '0';
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
+
+    /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
+     * @var \School
+     *
+     * @ORM\ManyToOne(targetEntity="School")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="school_id", referencedColumnName="id")
+     * })
+     */
+    private $school;
+
+    /**
+     * @var \Speciality
+     *
+     * @ORM\ManyToOne(targetEntity="Speciality")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
+     */
+    private $department;
+
+    /**
+     * @var \SchoolEmployee
+     *
+     * @ORM\ManyToOne(targetEntity="SchoolEmployee")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="school_employee_id", referencedColumnName="id")
+     * })
+     */
+    private $schoolEmployee;
+
+
+}

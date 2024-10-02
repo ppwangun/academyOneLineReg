@@ -1,0 +1,108 @@
+{
+    "name": "laminas/laminas-mvc-skeleton",
+    "description": "Laminas MVC Skeleton Application",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "laminas",
+        "mvc",
+        "skeleton",
+        "framework"
+    ],
+    
+    "autoload": {
+        "psr-4": {
+            "Application\\": "module/Application/src/",
+            "User\\": "module/User/src/",
+            "SchoolGlobalConfig\\": "module/SchoolGlobalConfig/src/",
+            "Registration\\": "module/Registration/src/",
+            "Payment\\": "module/Payment/src/",
+            "Exam\\": "module/Exam/src/",
+            "Teacher\\": "module/Teacher/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApplicationTest\\": "module/Application/test/"
+        }
+    },
+    "scripts": {
+        "clear-config-cache": "php bin/clear-config-cache.php",
+        "cs-check": "vendor/bin/phpcs",
+        "cs-fix": "vendor/bin/phpcbf",
+        "development-disable": "laminas-development-mode disable",
+        "development-enable": "laminas-development-mode enable",
+        "development-status": "laminas-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable",
+            "php bin/update-gitignore.php",
+            "php -r 'if (file_exists(\"bin/remove-package-artifacts.php\")) include \"bin/remove-package-artifacts.php\";'",
+            "php -r 'if (file_exists(\"CHANGELOG.md\")) unlink(\"CHANGELOG.md\");'"
+        ],
+        "post-install-cmd": "@clear-config-cache",
+        "post-update-cmd": "@clear-config-cache",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "php -S 0.0.0.0:8080 -t public"
+        ],
+        "test": "vendor/bin/phpunit",
+        "static-analysis": "vendor/bin/psalm --shepherd --stats"
+    },
+    "scripts-descriptions": {
+        "clear-config-cache": "Clears merged config cache. Required for config changes to be applied.",
+        "cs-check": "Run coding standards checks.",
+        "cs-fix": "Automatically fix coding standard issues.",
+        "development-disable": "Disable development mode.",
+        "development-enable": "Enable development mode.",
+        "development-status": "Detail whether or not the application is in development mode.",
+        "serve": "Start the built-in PHP web server and serve the application.",
+        "test": "Run unit tests."
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true,
+            "laminas/laminas-skeleton-installer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "c:/xampp/htdocs/wacademy/public/repositories/njine/odoo"
+        }
+    ],
+    "require": {
+        "laminas/laminas-permissions-rbac": "^3.6",
+        "njine/odoo": "*",
+        "laminas/laminas-mvc": "^3.7",
+        "laminas/laminas-session": "^2.21",
+        "laminas/laminas-crypt": "^4.0",
+        "onokumus/metismenu": "^3.0",
+        "laminas/laminas-hydrator": "^4.15",
+        "portphp/csv": "^2.0",
+        "portphp/steps": "^1.6",
+        "violet/streaming-json-encoder": "^1.1",
+        "tecnickcom/tcpdf": "^6.7",
+        "laminas/laminas-cache": "^3.12",
+        "laminas/laminas-serializer": "^2.17",
+        "phpoffice/phpspreadsheet": "^2.2",
+        "laminas/laminas-authentication": "^2.17",
+        "patrickmaken/web2sms-client": "^1.0",
+        "laminas/laminas-mvc-form": "^2.1",
+        "patrickmaken/avlytext-client": "^1.0",
+        "g105b/phpcsv": "^1.0",
+        "icanboogie/datetime": "^2.0",
+        "doctrine/orm": "^2.19",
+        "doctrine/dbal": "^3.9",
+        "laminas/laminas-mvc-plugin-fileprg": "^1.7",
+        "laminas/laminas-mvc-plugin-flashmessenger": "^1.10",
+        "laminas/laminas-mvc-plugin-identity": "^1.6",
+        "laminas/laminas-mvc-plugin-prg": "^1.8",
+        "laminas/laminas-mvc-middleware": "^2.4",
+        "laminas/laminas-i18n": "^2.28",
+        "laminas/laminas-mvc-i18n": "^1.8",
+        "laminas/laminas-log": "^2.17",
+        "doctrine/doctrine-orm-module": "^6.1",
+        "mpdf/mpdf": "*",
+        "symfony/cache": "^5.4"
+    }
+}

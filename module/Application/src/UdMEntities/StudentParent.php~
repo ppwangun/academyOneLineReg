@@ -1,0 +1,108 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * StudentParent
+ *
+ * @ORM\Table(name="student_parent", indexes={@ORM\Index(name="fk_student_parent_prospective_student1_idx", columns={"prospective_student_id"}), @ORM\Index(name="fk_student_parent_student1_idx", columns={"student_id"})})
+ * @ORM\Entity
+ */
+class StudentParent
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="profession", type="string", length=45, nullable=true)
+     */
+    private $profession;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
+     */
+    private $phoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="email", type="string", length=45, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="country", type="string", length=45, nullable=true)
+     */
+    private $country;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="city", type="string", length=45, nullable=true)
+     */
+    private $city;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="parent_tye", type="string", length=45, nullable=true)
+     */
+    private $parentTye;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="adresse", type="string", length=45, nullable=true)
+     */
+    private $adresse;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="tutor_ralation_with_student", type="string", length=45, nullable=true)
+     */
+    private $tutorRalationWithStudent;
+
+    /**
+     * @var \ProspectiveStudent
+     *
+     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
+     * })
+     */
+    private $prospectiveStudent;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
+
+
+}

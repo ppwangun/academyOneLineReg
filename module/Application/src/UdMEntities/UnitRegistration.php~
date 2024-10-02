@@ -1,0 +1,195 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * UnitRegistration
+ *
+ * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_unit_registration_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"})})
+ * @ORM\Entity
+ */
+class UnitRegistration
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="student_id", type="integer", nullable=false)
+     */
+    private $studentId;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_CC", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteCc;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_CCTP", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteCctp;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_EXAMTP", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteExamtp;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_EXAM", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteExam;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_before_RATTRAPAGE", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteBeforeRattrapage;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_STAGEC", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteStagec;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_EXAMC", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteExamc;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_STAGEE", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteStagee;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="note_FINAL", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $noteFinal;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="grade", type="string", length=45, nullable=true)
+     */
+    private $grade;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="points", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $points;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_from_deliberation", type="boolean", nullable=true)
+     */
+    private $isFromDeliberation = '0';
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_from_ratrappage", type="boolean", nullable=true)
+     */
+    private $isFromRatrappage = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="mention", type="integer", nullable=true)
+     */
+    private $mention;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_repeated", type="boolean", nullable=true)
+     */
+    private $isRepeated = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="year_first_inscription", type="integer", nullable=true)
+     */
+    private $yearFirstInscription;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="equivalent_subject", type="integer", nullable=true)
+     */
+    private $equivalentSubject;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="admission_decision", type="integer", nullable=true)
+     */
+    private $admissionDecision = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="calculationStatus", type="integer", nullable=true)
+     */
+    private $calculationstatus = '0';
+
+    /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+
+}
