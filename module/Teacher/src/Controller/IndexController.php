@@ -1316,6 +1316,7 @@ public function getScheduledCourseAction()
                 
                
                      $hydrator = new ReflectionHydrator();
+                     $course = $hydrator->extract($course);
                     // $classOfStudy= $hydrator->extract($classOfStudy);
                /*     if($course->getTeacher())$teacher = $course->getTeacher()->getName()." ".$course->getTeacher()->getSurname(); else $teacher = ""; 
                     $course = $hydrator->extract($course);
@@ -1346,7 +1347,8 @@ public function getScheduledCourseAction()
                     "dateScheduled"=>$dateScheduled,
                     "startingTime"=>$startingTime,
                     "endingTime"=>$endingTime,
-                    "scheduleType"=>$scheduleType
+                    "scheduleType"=>$scheduleType,
+                    "id"=>$course["id"]
                 ]
                     
             ]);
@@ -1377,7 +1379,7 @@ public function getScheduledCourseAction()
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             
             //retrive all current year contract
-            $teacher = $this->entityManager->getRepository(Teacher::class)->findAll();
+            $teacher = $this->entityManager->getRepository(Teacher::class)->findAll([],["name"=>"ASC"]);
             $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll();
             foreach($teacher as $key=>$teach)
             {
@@ -1401,7 +1403,11 @@ public function getScheduledCourseAction()
                 $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
             }
 
-
+            //Sorting the $std array according to the key "nom"
+            $tmp = Array();
+            foreach($teachers as &$ma)
+                $tmp[] = &$ma["teacherName"];
+            array_multisort($tmp, $teachers);
             
             
             $this->entityManager->getConnection()->commit();

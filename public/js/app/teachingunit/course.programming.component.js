@@ -9,7 +9,7 @@ angular.module('teachingunit')
 function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr){
     var $ctrl = this;
     
-    $ctrl.time = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
+    $ctrl.times = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
     {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
     {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
     {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
@@ -50,8 +50,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
     },
 ];*/
-    
-    $scope.alertEventOnClick = function(info)
+     $scope.alertEventOnClick = function(info)
   {
         $ctrl.schedlingUpdate = true;
      
@@ -63,9 +62,9 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     
             return  $http.get('getScheduledCourse',config).then(function(response){
                 
-                   $ctrl.startingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].startingTime; }); 
+                   $ctrl.startingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].startingTime; }); 
                    $ctrl.startingTime = $ctrl.startingTime[0];
-                   $ctrl.endingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].endingTime; }); 
+                   $ctrl.endingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].endingTime; }); 
                    $ctrl.endingTime = $ctrl.endingTime[0]; 
                    
                    $ctrl.date = response.data[0].dateScheduled.date;
@@ -83,7 +82,37 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    $ctrl.selectedSubject =  response.data[0].subject;
                    
                    $ctrl.scheduleType = response.data[0].scheduleType;
+                   
+                   $ctrl.progressionData ={classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType}                   
+                  
+                   console.log($ctrl.progressionData)
+               /*   $scope.eventSources[0].events.filter(item=>{ return item.id === response.data[0].id}).map(
+                           (item, idx) => {
+
+                            item.color="black";
+                    item.textColor = "white";
+                    
+                           });*/
+                           
+
+                   $scope.eventSources[0].events.forEach(event => {  console.log(event.title)
+    event.backgroundColor= '#fff'; 
+     $('#calendar').fullCalendar('rerenderEvents');
+});          
+                          
+                   // $scope.eventSources = createCalendarEventsFromCoreEvents(filterEvents());
+                 
+                   // uiCalendarConfig.calendars['calendar'].fullCalendar('removeEvents'); 
+                    // uiCalendarConfig.calendars.calendar.fullCalendar('addEventSource', $scope.eventSources);
+                    info.backgroundColor = '#2bbbad';
+                    $('#calendar').fullCalendar('rerenderEvents');
+                   // $('#calendar').fullCalendar('refetchEvents')
+                   // console.log($scope.eventSources)
+                    
+                    $(this).css("background-color", "#2bbbad"); 
                 });
+                
+               
      };
 
 
@@ -107,6 +136,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         eventClick: $scope.alertEventOnClick,
         eventDrop: $scope.alertOnDrop,
         eventResize: $scope.alertOnResize,
+        eventColor: '#378006'
         
       }
     };    
@@ -173,9 +203,19 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     })
    
     //$scope.eventSources[0] = events;
-$scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
+    $scope.eventSources[0] = {
+    events:events,
+        eventRender: function(event, element) {
+            if (event.className == 'booked') {
+                element.css({
+                    'background-color': '#333333',
+                    'border-color': '#333333'
+                });
+            }
+        }    
+}
     
-    console.log( $scope.eventSources)
+
     });
     
     if($ctrl.selectedClasse)
@@ -298,35 +338,41 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
                                         });
                                  
                        };
+                       
+    
 
-                $ctrl.loadForValidation = function(ev)
-                {
-                         $mdDialog.show({
-                          controller: DialogController,
-                          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
-                          // Appending dialog to document.body to cover sidenav in docs app
-                          // Modal dialogs should fully cover application to prevent interaction outside of dialog
-                          parent: angular.element(document.body),
-                          targetEvent: ev,
-                          clickOutsideToClose: true
-                        }).then(function (answer) {
-                          $scope.status = 'You said the information was "' + answer + '".';
-                        }, function () {
-                          $scope.status = 'You cancelled the dialog.';
-                        });
+    $ctrl.loadForValidation = function(ev)
+    {
+             $mdDialog.show({
+              controller: DialogController,
+              locals:{progr:$ctrl.progressionData,times:$ctrl.times},
+              templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+              // Appending dialog to document.body to cover sidenav in docs app
+              // Modal dialogs should fully cover application to prevent interaction outside of dialog
+              parent: angular.element(document.body),
+              targetEvent: ev,
+              clickOutsideToClose: true
+            }).then(function (answer) {
+              $scope.status = 'You said the information was "' + answer + '".';
+            }, function () {
+              $scope.status = 'You cancelled the dialog.';
+            });
 
-                    /* config object */
-                }
+        /* config object */
+    }
      
     /*--------------------------------------------------------------------------
      *--------------------------- updating curriculum---------------------------
      *----------------------------------------------------------------------- */
+    
     $ctrl.loadData = function(ev){
         $scope.isUpdate= true;
        
        
         $mdDialog.show({
+          
           controller: DialogController,
+          controllerAs: 'ctrl',
           templateUrl: 'js/my_js/globalconfig/loadteachingunit.html',
           parent: angular.element(document.body),
          // parent: angular.element(document.querySelector('#component-tpl')),
@@ -335,7 +381,8 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
           autoWrap: false,
           targetEvent: ev,
           clickOutsideToClose:false,
-          fullscreen: true // Only for -xs, -sm breakpoints.
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          
         })
         .then(function(answer) {
           
@@ -345,16 +392,23 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         });        
     }; 
     
+  function convertStringToTime(timeString)
+  {
+         
+        let [hours, minutes, seconds] = timeString.split(':').map(Number);  
+        let date = new Date();  
+        date.setHours(hours);  
+        date.setMinutes(minutes);  
+        date.setSeconds(seconds);  
+
+        return date;       
+  }
+  
+  
+  
  //Dialog Controller
-  function DialogController($scope, $mdDialog) {
-      
-
-
-    $scope.teachingUnitId = teachingUnitId;
-    $scope.teachingUnitCode = teachingUnitCode;
-    $scope.contractId= contractId;
-    $scope.isProcessing = false;
-
+  function DialogController($scope, $mdDialog,progr,times) {
+      $scope.times = times;
     $scope.progression = {
         // date: null,
         // start_time: null,
@@ -365,10 +419,18 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         end_time: new Date(),
         description: null,
         target: 'cm',
-        teaching_unit_id: teachingUnitId,
-        teacher_id: teacherId,
-        contract_id: contractId
-    }
+      //  teaching_unit_id: teachingUnitId,
+       // teacher_id: teacherId,
+       // contract_id: contractId
+    }      
+   $scope.progr = progr;
+   $scope.progression.date =  new Date (progr.date);
+   $scope.progression.start_time = progr.startingTime;
+   $scope.progression.end_time = progr.endingTime;
+   $scope.progression.target = progr.scheduleType;
+
+
+
 
     $scope.saveProgression = function(progressionForm) {
         if (!progressionForm.$valid) {
@@ -419,7 +481,7 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
 
       
 
-  }
+ 
   
       $scope.cancel = function() {
       //$scope.faculties=[];
@@ -434,22 +496,10 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
       $mdDialog.hide(answer);
     };   
     
-       
+ }       
 
 
-  function DialogController($scope, $mdDialog) {
-    $scope.hide = function () {
-      $mdDialog.hide();
-    };
 
-    $scope.cancel = function () {
-      $mdDialog.cancel();
-    };
-
-    $scope.answer = function (answer) {
-      $mdDialog.hide(answer);
-    };
-  }
 };
 
 

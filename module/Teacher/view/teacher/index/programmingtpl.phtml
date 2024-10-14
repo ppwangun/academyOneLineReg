@@ -32,8 +32,9 @@ z-index: 120000}
                     <div ng-show="$ctrl.schedlingUpdate">
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-primary" ng-disabled="examForm.$invalid" >Modifier</button>
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Supprimer</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Repéter</button>
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
-                       <span> <a href="#!/courseProgramming">Nouvelle Programmation</a></span>
+                       <span> <a href="#!/courseProgramming">Nouvelle Programmation </a></span>
                     </div>
                     
                 </div>
@@ -105,7 +106,7 @@ z-index: 120000}
                 <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1}"><em>Choisissez une UE</em></md-option>
               <md-option ng-repeat="ue in $ctrl.ues" ng-value="ue" >
                 {{ue.code}}[{{ue.name}}]
-                {{$ctrl.markCalculationStatus=$ctrl.selectedUe.mark_calculation_status}}
+              
               </md-option>
             </md-select>
             <div class="errors" ng-messages="examForm.ue.$error">
@@ -145,7 +146,7 @@ z-index: 120000}
                        md-no-asterisk>
               <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
 
-              <md-option  ng-value="time" ng-repeat="time in $ctrl.time" > {{time.name}} </md-option>
+              <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
 
             </md-select>
             <div class="errors" ng-messages="examForm.startingTime.$error">
@@ -161,7 +162,7 @@ z-index: 120000}
                        md-no-asterisk>
               <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
 
-                    <md-option  ng-value="time" ng-repeat="time in $ctrl.time" > {{time.name}} </md-option>
+                    <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
             </md-select>
             <div class="errors" ng-messages="examForm.endingTime.$error">
               <div ng-message="required">Champ obligatoire</div>
@@ -176,6 +177,8 @@ z-index: 120000}
               <md-option value="CM">Cours Magistral</md-option>
               <md-option value="TD">Travaux Dirigés</md-option>
               <md-option value="TP">Travaux Pratiques</md-option>
+              <md-option value="CC">Controle continnue</md-option>
+              <md-option value="EXAM">Examen</md-option>
 
             </md-select>
             <div class="errors" ng-messages="examForm.scheduleType.$error">
@@ -236,7 +239,7 @@ z-index: 120000}
                         </li>
                     </ul>
 
-                    <div ui-calendar="uiConfig.calendar" ng-model="eventSources"></div>
+                    <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar="calendar" class="span8 calendar" id="calendar"></div>
                  </div>
                 <!--End tab-->
                 

@@ -36,8 +36,8 @@ $index=1;
  foreach($teachers as $teach):
      
  $tblBody .=' <tr>
-            <td class="service">'.$index++.'</td>
-            <td class="service">'.$teach["teacherName"].'</td>
+            <td class="service" >'.$index++.'</td>
+            <td class="service" style="text-align:left;">'.$teach["teacherName"].'</td>
             <td class="service">'.$teach["totalVolumeAllocated"].'</td>
             <td class="service">'.$teach["totalVolumeDone"].'</td>
             <td class="service">'.$teach["volumeGap"].'</td>
@@ -72,7 +72,7 @@ $mpdf = new \Mpdf\Mpdf([
 $mpdf->SetProtection(array('print')); 
 $mpdf->SetTitle("Vacation billing");
 $mpdf->SetAuthor("W-TECH"); 
-$mpdf->SetWatermarkText("test");
+//$mpdf->SetWatermarkText("test");
 $mpdf->showWatermarkText = true;
 $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;

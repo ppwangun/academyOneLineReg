@@ -1,0 +1,21 @@
+{
+    "name": "patrickmaken/web2sms-client",
+    "description": "PHP library for sending SMS using web2sms237 API (https://web2sms237.com)",
+    "authors": [
+        {
+            "name": "Patrick Madeng",
+            "email": "patrickmaken@gmail.com",
+            "role": "IT Engineer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "^6.5"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Patrickmaken\\Web2Sms\\": "src/"
+        }
+    }
+}
