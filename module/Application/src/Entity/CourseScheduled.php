@@ -56,6 +56,13 @@ class CourseScheduled
      * @ORM\Column(name="schedule_type", type="string", length=45, nullable=true)
      */
     private $scheduleType;
+    
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_validated", type="boolean", nullable=true)
+     */
+    private $isValidated = '0';    
 
     /**
      * @var Resource
@@ -224,6 +231,30 @@ class CourseScheduled
     {
         return $this->scheduleType;
     }
+    
+    /**
+     * Get typeCours.
+     *
+     * @return string|null
+     */
+    public function getTypeCours()
+    {
+        return $this->typeCours;
+    }
+
+    /**
+     * Set isValidated.
+     *
+     * @param bool|null $isValidated
+     *
+     * @return CourseScheduled
+     */
+    public function setIsValidated($isValidated = null)
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }    
     
 
     /**

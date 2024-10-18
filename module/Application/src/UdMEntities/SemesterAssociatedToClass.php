@@ -43,16 +43,6 @@ class SemesterAssociatedToClass
     private $transcriptreferencegenerationstatus = '0';
 
     /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -71,6 +61,16 @@ class SemesterAssociatedToClass
      * })
      */
     private $classOfStudy;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
 
 
 
@@ -157,30 +157,6 @@ class SemesterAssociatedToClass
     }
 
     /**
-     * Set semester.
-     *
-     * @param \Semester|null $semester
-     *
-     * @return SemesterAssociatedToClass
-     */
-    public function setSemester(\Semester $semester = null)
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    /**
-     * Get semester.
-     *
-     * @return \Semester|null
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
      * Set academicYear.
      *
      * @param \AcademicYear|null $academicYear
@@ -226,5 +202,29 @@ class SemesterAssociatedToClass
     public function getClassOfStudy()
     {
         return $this->classOfStudy;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
     }
 }

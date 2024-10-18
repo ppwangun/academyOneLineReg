@@ -57,6 +57,13 @@ class CourseScheduled
     private $typeCours;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_validated", type="boolean", nullable=true)
+     */
+    private $isValidated = '0';
+
+    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")

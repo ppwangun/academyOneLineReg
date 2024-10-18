@@ -32,9 +32,11 @@
                 <div ng-if="progressions.length === 0" class="text-align-center" style="font-style: italic">Aucune progression n'a ete enregistree pour l'instant !</div>
                 <ul class="timeline" ng-if="progressions.length > 0">
                     <li ng-repeat="progression in progressions" >
-                        <div class="timeline-header" >
+                        <div class="timeline-header">
                             <h4 class="timeline-title" style="margin-left: 20px;">{{getProgressionLabel(progression.lectureType)}}</h4>
-                            <span class="timeline-date">{{getProgressionDateString(progression.date, progression.start_time, progression.end_time)}}</span><i ng-click='deleteProgression(progression.id)' style="cursor: pointer; color:red;" class="fa fa-trash"></i>
+                            <span class="timeline-date">{{getProgressionDateString(progression.date, progression.start_time, progression.end_time)}}</span>
+                            <i ng-hide='progression.is_from_schedule' ng-click='deleteProgression(progression.id)' style="cursor: pointer; color:red;" class="fa fa-trash"></i>
+                            <i ng-show='progression.is_from_schedule'  style="cursor: pointer; color:grey;" class="fa fa-trash"></i>
                         </div>
                         <p style="margin-left: 20px;">{{progression.description}}</p>
                     </li>

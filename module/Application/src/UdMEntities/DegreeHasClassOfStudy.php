@@ -13,18 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class DegreeHasClassOfStudy
 {
     /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
-
-    /**
      * @var \Degree
      *
      * @ORM\Id
@@ -48,31 +36,19 @@ class DegreeHasClassOfStudy
      */
     private $trainingCurriculum;
 
-
-
     /**
-     * Set classOfStudy.
+     * @var \ClassOfStudy
      *
-     * @param \ClassOfStudy $classOfStudy
-     *
-     * @return DegreeHasClassOfStudy
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
      */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
-    {
-        $this->classOfStudy = $classOfStudy;
+    private $classOfStudy;
 
-        return $this;
-    }
 
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
-    }
 
     /**
      * Set degree.
@@ -120,5 +96,29 @@ class DegreeHasClassOfStudy
     public function getTrainingCurriculum()
     {
         return $this->trainingCurriculum;
+    }
+
+    /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy $classOfStudy
+     *
+     * @return DegreeHasClassOfStudy
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
     }
 }

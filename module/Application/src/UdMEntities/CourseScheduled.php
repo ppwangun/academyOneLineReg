@@ -57,6 +57,13 @@ class CourseScheduled
     private $typeCours;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_validated", type="boolean", nullable=true)
+     */
+    private $isValidated = '0';
+
+    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -246,6 +253,30 @@ class CourseScheduled
     public function getTypeCours()
     {
         return $this->typeCours;
+    }
+
+    /**
+     * Set isValidated.
+     *
+     * @param bool|null $isValidated
+     *
+     * @return CourseScheduled
+     */
+    public function setIsValidated($isValidated = null)
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }
+
+    /**
+     * Get isValidated.
+     *
+     * @return bool|null
+     */
+    public function getIsValidated()
+    {
+        return $this->isValidated;
     }
 
     /**

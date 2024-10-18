@@ -30,11 +30,11 @@ z-index: 120000}
                     <span> <a href="home">Annuler</a></span>
                     </div>
                     <div ng-show="$ctrl.schedlingUpdate">
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-primary" ng-disabled="examForm.$invalid" >Modifier</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Supprimer</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Repéter</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
-                       <span> <a href="#!/courseProgramming">Nouvelle Programmation </a></span>
+                        <button   ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="updateSchedule(ev,$ctrl.progressionData.scheduledId)"  class="btn btn-primary" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Modifier</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="deleteSchedule($ctrl.progressionData.scheduledId)" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Supprimer</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Repéter</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Vailder</button>
+                        <span> <a href="#!/courseProgramming" ng-click="$ctrl.resetSchedule()">Nouvelle Programmation </a></span>
                     </div>
                     
                 </div>
@@ -172,13 +172,15 @@ z-index: 120000}
         <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
         <md-input-container flex="100">
             <label>Type de cours</label>
-            <md-select name="scheduleType" ng-model="$ctrl.scheduleType"  md-no-asterisk ng-required>
+            <md-select name="scheduleType" ng-model="$ctrl.scheduleType"  md-no-asterisk ng-required='true'>
               <md-option ng-disabled="true"><em>---Type de programmation---</em></md-option>
               <md-option value="CM">Cours Magistral</md-option>
               <md-option value="TD">Travaux Dirigés</md-option>
               <md-option value="TP">Travaux Pratiques</md-option>
               <md-option value="CC">Controle continnue</md-option>
               <md-option value="EXAM">Examen</md-option>
+              <md-option value="STAGE">STAGE</md-option>
+              <md-option value="ECN">ECN</md-option>
 
             </md-select>
             <div class="errors" ng-messages="examForm.scheduleType.$error">

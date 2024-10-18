@@ -277,7 +277,7 @@ return [
             'getSchedulingCourses' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/getSchedulingCourses[/:id]',
+                    'route'    => '/getSchedulingCourses[/:classe]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'=>'getSchedulingCourses'
@@ -291,6 +291,26 @@ return [
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'=>'getScheduledCourse'
+                    ],
+                ],
+            ],  
+            'deleteScheduledCourse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/deleteScheduledCourse[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'deleteScheduledCourse'
+                    ],
+                ],
+            ], 
+            'updateScheduledCourse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/updateScheduledCourse[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'updateScheduledCourse'
                     ],
                 ],
             ],            

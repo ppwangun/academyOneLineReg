@@ -4,6 +4,7 @@ namespace Application\Entity;
 use Application\Entity\TeacherPaymentBill;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\Contract;
+use Application\Entity\Teacher;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -93,6 +94,16 @@ class ContractFollowUp
      * })
      */
     private $contract;
+        
+    /**
+     * @var \CourseScheduled
+     *
+     * @ORM\ManyToOne(targetEntity="CourseScheduled")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="course_scheduled_id", referencedColumnName="id")
+     * })
+     */
+    private $courseScheduled;
 
     /**
      * @var TeacherPaymentBill
@@ -355,4 +366,28 @@ class ContractFollowUp
     {
         return $this->teacherPaymentBill;
     }
+    
+    /**
+     * Set courseScheduled.
+     *
+     * @param CourseScheduled|null $courseScheduled
+     *
+     * @return ContractFollowUp
+     */
+    public function setCourseScheduled(CourseScheduled $courseScheduled = null)
+    {
+        $this->courseScheduled = $courseScheduled;
+
+        return $this;
+    }
+
+    /**
+     * Get courseScheduled.
+     *
+     * @return CourseScheduled|null
+     */
+    public function getCourseScheduled()
+    {
+        return $this->courseScheduled;
+    }    
 }

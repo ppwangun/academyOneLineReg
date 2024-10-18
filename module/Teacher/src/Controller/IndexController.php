@@ -1159,6 +1159,14 @@ class IndexController extends AbstractActionController
             $contract = $this->entityManager->getRepository(Contract::class)->findOneBy(["teachingUnit"=>$teachingUnit,"subject"=>$subject,"semester"=>$semester]); 
              if($contract)
                 $teacher = $contract->getTeacher();
+             //insuring that only courses that are allocated can be scheduled
+             else          return new JsonModel([    "contractNotFound"=>true ]);//contract not found  
+             
+             
+             //CHecking voume houor done
+             $contract_fup = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract); 
+             
+                 
              
               $dateScheduled  = new \DateTime( $data["date"]." ".$data["startingTime"]);
                         $startingTime =new \DateTime( $data["date"]." ".$data["startingTime"]);
@@ -1166,6 +1174,8 @@ class IndexController extends AbstractActionController
 
             if($this->checkTimeConflictByClass($data["classe"], $startingTime))
               return new JsonModel([ "timeConflict"=>true ]); 
+            
+            
               
      
             $courseScheduled = new CourseScheduled();
@@ -1212,7 +1222,89 @@ class IndexController extends AbstractActionController
             
         }         
         
+    }  
+    
+    public function updateScheduledCourseAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        { 
+            $data= $this->params()->fromQuery();                 
+            $subject = null;
+            $teacher =null;
+            $resource = null;
+            $classOfStudy = $this->entityManager->getRepository(ClassOfStudy::class)->find($data["classe"]);
+           // $teacher = $this->entityManager->getRepository(Teacher::class)->find($data["teacher"]);
+            
+            $teachingUnit = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ue"]);
+            if(isset($data["subject"]))
+                $subject = $this->entityManager->getRepository(Subject::class)->find($data["subject"]);
+            $semester = $this->entityManager->getRepository(Semester::class)->find($data["sem"]);
+    
+            $contract = $this->entityManager->getRepository(Contract::class)->findOneBy(["teachingUnit"=>$teachingUnit,"subject"=>$subject,"semester"=>$semester]); 
+             if($contract)
+                $teacher = $contract->getTeacher();
+             //insuring that only courses that are allocated can be scheduled
+             else          return new JsonModel([    "contractNotFound"=>true ]);//contract not found      
+                 
+             
+              $dateScheduled  = new \DateTime( $data["date"]." ".$data["startingTime"]);
+                        $startingTime =new \DateTime( $data["date"]." ".$data["startingTime"]);
+            $endingTime = new \DateTime($data["date"]." ".$data["endingTime"]); 
+
+            if($this->checkTimeConflictByClass($data["classe"], $startingTime))
+              return new JsonModel([ "timeConflict"=>true ]); 
+            
+            
+              
+     
+            $courseScheduled  = $this->entityManager->getRepository(CourseScheduled::class)->find($data["idScheduledCourse"]);;
+            
+            $courseScheduled->setClassOfStudy($classOfStudy);
+            $courseScheduled->setTeacher($teacher);
+            $courseScheduled->setTeachingUnit($teachingUnit);
+            $courseScheduled->setSubject($subject);
+            $courseScheduled->setSemester($semester);
+            
+            
+            $courseScheduled->setDateScheduled($dateScheduled);
+            $courseScheduled->setStartingTime($startingTime);
+            $courseScheduled->setEndingTime($endingTime);
+            $courseScheduled->setScheduleType($data["scheduleType"]);
+            
+            $courseScheduled->setResource($resource);
+    
+            //$this->entityManager->persist($courseScheduled);
+            $this->entityManager->flush();
+           
+           $hydrator = new ReflectionHydrator();
+
+            $data = $hydrator->extract($courseScheduled);
+            $data["eventName"] = $classOfStudy->getCode()." \n".$teachingUnit->getCode();
+                
+
+           // }
+
+
+            $this->entityManager->getConnection()->commit();
+            
+           
+            $output = new JsonModel([
+                $data
+                    
+            ]);
+
+            return $output;       }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+           print($e->getMessage());
+            throw $e;
+            
+        }         
+        
     }     
+    
     
 public function getSchedulingCoursesAction()
     {
@@ -1222,6 +1314,7 @@ public function getSchedulingCoursesAction()
             $key = 0;
             $myCourse = [];
             $data= $this->params()->fromQuery(); 
+           
             
             $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1); 
             $semester = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($acadYr); 
@@ -1239,7 +1332,7 @@ public function getSchedulingCoursesAction()
                     if($course->getTeacher())$teacher = $course->getTeacher()->getCivility()." ".$course->getTeacher()->getName()." ".$course->getTeacher()->getSurname(); else $teacher = ""; 
                     $course = $hydrator->extract($course);
                    // $course["eventName"] = $classOfStudy->getCode()." ".$teachingUnit->getCode()." \n".$teacher;
-                   $course["eventName"] = "(".$scheduleType.") ".$teachingUnit->getCode()." \n".$teacher;
+                   $course["eventName"] = "(".$scheduleType.") ".$teachingUnit->getCode()."\n \n".$teachingUnit->getName()."\n \n".$teacher;
                     //$course["eventName"] .= "\n".$teacher;
                     
                     $myCourse[$key] = $course;
@@ -1265,6 +1358,7 @@ public function getSchedulingCoursesAction()
         catch(Exception $e)
         {
            $this->entityManager->getConnection()->rollBack();
+           print( $e->getMessage());
             throw $e;
             
         }         
@@ -1300,19 +1394,25 @@ public function getScheduledCourseAction()
                 
                 $teachingUnit["id"] = $course->getTeachingUnit()->getId();
                 $teachingUnit["code"] = $course->getTeachingUnit()->getCode();
-                $teachingUnit["name"] = $course->getTeachingUnit()->getName();                
+                $teachingUnit["name"] = $course->getTeachingUnit()->getName();  
+                
+                $contract = $this->entityManager->getRepository(Contract::class)->findOneBy(["teachingUnit"=>$course->getTeachingUnit(),
+                    "subject"=>$course->getSubject(),
+                    "semester"=>$course->getSemester(),
+                    "teacher"=>$course->getTeacher()]); 
                 
                 if($course->getSubject())
                 { 
                     $subject["id"] = $course->getSubject()->getId(); 
                     $subject["subjectCode"] = $course->getSubject()->getSubjectCode(); 
                     $subject["subjectName"] = $course->getSubject()->getSubjectName();
+                   
                 }
                 $dateScheduled = $course->getDateScheduled();
                 $startingTime = $course->getStartingTime()->format('H:i:s');
                 $endingTime = $course->getEndingTime()->format('H:i:s');
                 
-                
+               
                 
                
                      $hydrator = new ReflectionHydrator();
@@ -1348,7 +1448,10 @@ public function getScheduledCourseAction()
                     "startingTime"=>$startingTime,
                     "endingTime"=>$endingTime,
                     "scheduleType"=>$scheduleType,
-                    "id"=>$course["id"]
+                    "id"=>$course["id"],
+                    "contractId"=>$contract->getId(),
+                    "scheduledId"=>$data['id'],
+                    "isScheduleValidated"=>$course["isValidated"]
                 ]
                     
             ]);
@@ -1362,6 +1465,47 @@ public function getScheduledCourseAction()
         }         
         
     } 
+    
+public function deleteScheduledCourseAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        { 
+            $key = 0;
+            $myCourse = [];
+            $data= $this->params()->fromQuery();    
+            $idCourse = (int)$data["id"];
+
+                $course= $this->entityManager->getRepository(CourseScheduled::class)->find($idCourse);  
+               
+                $this->entityManager->remove($course);
+                $this->entityManager->flush();
+                
+
+            $this->entityManager->getConnection()->commit(); 
+           
+            
+           
+            $output = new JsonModel([
+                [
+
+                ]
+                    
+            ]);
+
+            return $output;       
+            
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            
+           print( $e->getMessage());
+           throw $e;
+            
+        }         
+        
+    }     
     
     public function printWorkloadFollowUpAction()
     {

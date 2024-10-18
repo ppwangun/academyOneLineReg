@@ -20,9 +20,38 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
     $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
+    $ctrl.isScheduleValidated = false
     $scope.eventSources = [ ];
+    
+    $ctrl.resetSchedule = function(){
+                  
+                   $ctrl.startingTime = null;
+
+                   $ctrl.endingTime = null; 
+                   
+                   $ctrl.date = null;
+                   
+                   $ctrl.selectedSem = null;
+
+    
+                   $ctrl.selectedUe =  null;
+                   
+                   $ctrl.selectedClasse = null;
+                   
+                   $ctrl.selectedSubject =  null;
+                   
+                   $ctrl.scheduleType = null;
+                   $ctrl.schedlingUpdate = false;
+                   $ctrl.progressionData = null;
+                  
+                   
+                   
+                   
+
         
-    /*    {
+    }
+        
+    $scope.eventSources = [     {
            
       events: [ // put the array in the `events` property
         {
@@ -49,7 +78,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
      //textColor: 'yellow' // an option!
 
     },
-];*/
+];
      $scope.alertEventOnClick = function(info)
   {
         $ctrl.schedlingUpdate = true;
@@ -83,9 +112,13 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    
                    $ctrl.scheduleType = response.data[0].scheduleType;
                    
-                   $ctrl.progressionData ={classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType}                   
+                   $ctrl.isScheduleValidated = response.data[0].isScheduleValidated;
                   
-                   console.log($ctrl.progressionData)
+                 
+                   
+                   $ctrl.progressionData ={scheduledId:response.data[0].scheduledId,contractId:response.data[0].contractId,classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType}                   
+                  
+                  console.log($ctrl.progressionData.scheduledId)
                /*   $scope.eventSources[0].events.filter(item=>{ return item.id === response.data[0].id}).map(
                            (item, idx) => {
 
@@ -95,7 +128,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                            });*/
                            
 
-                   $scope.eventSources[0].events.forEach(event => {  console.log(event.title)
+                   $scope.eventSources[0].events.forEach(event => {  
     event.backgroundColor= '#fff'; 
      $('#calendar').fullCalendar('rerenderEvents');
 });          
@@ -169,16 +202,17 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
      // remove all existing events
      
 
-   //   angular.forEach($scope.eventSources[0].events,function(value, key){
-          //$scope.eventSources[0].events.splice(key,1);
-     // }); 
+      angular.forEach($scope.eventSources[0].events,function(value, key){
+          $scope.eventSources[0].events.splice(key);
+      }); 
 
                    $ctrl.startingTime = null;
                    $ctrl.endingTime = null; 
                    $ctrl.date = null;
                    $ctrl.selectedSem = null;
                    $ctrl.selectedUe =  null;
-                   $ctrl.selectedSubject =  null;     
+                   $ctrl.selectedSubject =  null;   
+                //   $scope.eventSources[0].events =[];
     
       if(item)
        var data = {classe:item.id}
@@ -189,24 +223,29 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         headers : {'Accept' : 'application/json'}
         };      
         $http.get('getSchedulingCourses',config).then(function(response){
-            toastr.success("Opération effectuée avec succès");
+         
  
             angular.forEach(response.data[0], function(event, key) { 
             events.push({
-              id : event.id,
-          title  : event.eventName,
-          start  : event.startingTime.date,
-          end    : event.endingTime.date,
-        })
+                id : event.id,
+                title  : event.eventName,
+                start  : event.startingTime.date,
+                end    : event.endingTime.date,
+                color: (event.isValidated)?'#C0C0C0' : ((event.scheduleType === "CC" || event.scheduleType=="EXAM")?"red":(event.scheduleType === "STAGE" || event.scheduleType=="ECN")?"#082567":''),
+                textColor: (event.isValidated)?'grey' : ((event.scheduleType === "CC" || event.scheduleType=="EXAM")?"white":(event.scheduleType === "STAGE" || event.scheduleType=="ECN")?"red":'')
+                
+               
+            })
         
       
     })
    
     //$scope.eventSources[0] = events;
     $scope.eventSources[0] = {
-    events:events,
-        eventRender: function(event, element) {
-            if (event.className == 'booked') {
+        events:events,
+        
+        render: function(event, element) {
+            if (event.isValidated) {
                 element.css({
                     'background-color': '#333333',
                     'border-color': '#333333'
@@ -238,7 +277,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
  };
  
  $scope.addEvent = function(ev)
- {console.log($ctrl.scheduleType)
+ {
      $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
      if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
      else var eventName= $ctrl.selectedUe.code;
@@ -252,6 +291,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         $http.get('schedulingCourse',config).then(function(response){
      
             var timeConflict = response.data.timeConflict;
+            var contractNotFound = response.data.contractNotFound;
             if(timeConflict)
             {
                     $mdDialog.show(
@@ -268,15 +308,107 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                 return;    
             }
             
+            if(contractNotFound)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Cours non affecté, ne peut être programmé ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }            
+            
             
             toastr.success("Opération effectuée avec succès");
             event = response.data[0];
-            $scope.eventSources[0].push({
+            $scope.eventSources[0].events.push({
                 id : event.id,
                 title  : event.eventName,
                 start  : event.startingTime.date,
                 end    : event.endingTime.date
             })
+
+        });     
+     
+ }
+ 
+  $scope.updateSchedule = function(ev,idEvent)
+ {console.log(idEvent)
+     $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
+     if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
+     else var eventName= $ctrl.selectedUe.code;
+     
+     if($ctrl.selectedSubject)         var data = {idScheduledCourse:idEvent,classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,subject:$ctrl.selectedSubject.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
+     else var data = {idScheduledCourse:idEvent,classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
+      console.log(data);  
+      var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('updateScheduledCourse',config).then(function(response){
+     
+            var timeConflict = response.data.timeConflict;
+            var contractNotFound = response.data.contractNotFound;
+            if(timeConflict)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Conflit sur l'heure de planification  ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }
+            
+            if(contractNotFound)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Cours non affecté, ne peut être programmé ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }            
+            
+            
+            toastr.success("Opération effectuée avec succès");
+            event = response.data[0];
+
+
+        });     
+     
+ }
+ 
+  $scope.deleteSchedule = function(idEvent)
+ { 
+        var config = {
+        params: {id:idEvent},
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('deleteScheduledCourse',config).then(function(response){
+         
+            
+            
+            toastr.success("Opération effectuée avec succès");
+            $ctrl.resetSchedule()
+
 
         });     
      
@@ -339,10 +471,11 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                                  
                        };
                        
-    
+
 
     $ctrl.loadForValidation = function(ev)
     {
+        
              $mdDialog.show({
               controller: DialogController,
               locals:{progr:$ctrl.progressionData,times:$ctrl.times},
@@ -351,13 +484,14 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
               // Modal dialogs should fully cover application to prevent interaction outside of dialog
               parent: angular.element(document.body),
               targetEvent: ev,
-              clickOutsideToClose: true
+              clickOutsideToClose: true,
+              fullscreen: true
             }).then(function (answer) {
               $scope.status = 'You said the information was "' + answer + '".';
             }, function () {
               $scope.status = 'You cancelled the dialog.';
             });
-
+$ctrl.resetSchedule();
         /* config object */
     }
      
@@ -418,7 +552,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         start_time: new Date(),
         end_time: new Date(),
         description: null,
-        target: 'cm',
+        target: 'CM',
       //  teaching_unit_id: teachingUnitId,
        // teacher_id: teacherId,
        // contract_id: contractId
@@ -428,37 +562,41 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
    $scope.progression.start_time = progr.startingTime;
    $scope.progression.end_time = progr.endingTime;
    $scope.progression.target = progr.scheduleType;
+   $scope.progression.contract_id = progr.contractId;
+   $scope.progression.scheduled_id = progr.scheduledId;
 
 
 
 
     $scope.saveProgression = function(progressionForm) {
-        if (!progressionForm.$valid) {
-            alert('Formulaire invalide !');
-            return;
-        }
+    if (!progressionForm.$valid) {
+        alert('Formulaire invalide !');
+        return;
+    }
 
-        if ($scope.isProcessing) return;
+    if ($scope.isProcessing) return;
 
-        const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
-        // const startDate = $scope.progression.date;
-        // const endDate = $scope.progression.date;
-        const startTime = $scope.progression.start_time;
-        const endTime = $scope.progression.end_time;
-        // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
-        // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
+    const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
+    // const startDate = $scope.progression.date;
+    // const endDate = $scope.progression.date;
+    const startTime = convertStringToTime($scope.progression.start_time.time);
+    const endTime = convertStringToTime($scope.progression.end_time.time);
+    // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+    // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
-        if (startTime.getTime() > endTime.getTime()) {
-            alert('L\'heure de fin doit etre inferieure a celle de fin !');
-            return;
-        }
+    if (startTime.getTime() > endTime.getTime()) {
+        alert('L\'heure de fin doit etre inferieure a celle de fin !');
+        return;
+    }
 
-        const data = {
-            ...$scope.progression,
-            date: dateInISO,
-            start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
-            end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
-        }
+    const data = {
+        ...$scope.progression,
+        date: dateInISO,
+        start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
+        end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
+        contract_id: progr.contractId,
+        scheduled_id: progr.scheduledId
+    }
         
         var config  = {
           params: data,
@@ -476,6 +614,11 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                 $scope.isProcessing = false;
                 alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
+    }
+    
+    
+    $ctrl.loadStudentAdmittedToclasse = function(){
+        
     }
  
 

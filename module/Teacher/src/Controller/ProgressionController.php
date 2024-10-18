@@ -20,6 +20,7 @@ use Application\Entity\Teacher;
 
 use Application\Entity\FileDocument;
 use Application\Entity\ContractFollowUp;
+use Application\Entity\CourseScheduled;
 use Application\Entity\Contract;
 use Application\Entity\ClassOfStudyHasSemester;
 
@@ -50,21 +51,27 @@ class ProgressionController extends AbstractRestfulController
                 {
  
                     $hydrator = new ReflectionHydrator();
-                    $data = $hydrator->extract($value); 
+                    $data = $hydrator->extract($value);
+                    $dataOutPut["is_from_schedule"] = 0;
                     $dataOutPut["id"]= $data["id"];
                     $dataOutPut["date"]= $data["date"]->format('Y-m-d H:i:s');
                     $dataOutPut["start_time"] = $data["startTime"]->format('H:i:s');
                     $dataOutPut["end_time"] = $data["endTime"]->format('H:i:s');
                     $dataOutPut["lectureType"] = $data["lectureType"];
                     $dataOutPut["description"] = $data["description"];
-                    $progressions[$key] = $dataOutPut;
+                    //Check if the progression is issued from the schedules
+                    //Progression commng from the schedule can not be deleted
+                    
+                    if($value->getCourseScheduled())
+                        $dataOutPut["is_from_schedule"] = 1;
+                    $progr[$key] = $dataOutPut;
                 }   
               
 
 
             
             return new JsonModel([
-                $progressions
+                $progr
             ]);
         
         
@@ -119,8 +126,14 @@ class ProgressionController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
-            $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']);
-            $teacher =$this->entityManager->getRepository(Teacher::class)->find($data['teacher_id']);
+            $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
+            $courseScheduled = null;
+            if(isset($data['scheduled_id']))
+            {
+                $courseScheduled =$this->entityManager->getRepository(CourseScheduled::class)->find($data['scheduled_id']);
+                $courseScheduled->setIsValidated(1);
+            }
+            
             $progression = new ContractFollowUp();
                     $progression->setDate(new \DateTime($data["date"]));
                     $progression->setStartTime(new \DateTime ($data["start_time"]));
@@ -131,7 +144,8 @@ class ProgressionController extends AbstractRestfulController
                     $endTime = new \DateTime ($data["end_time"]);
                     $timeDiff = $startTime->diff($endTime);  
                     $progression->setTotalTime($timeDiff->h);
-                    $progression->setContract($contract);
+                    $progression->setContract($contract); 
+                    $progression->setCourseScheduled($courseScheduled);
                     
 
 

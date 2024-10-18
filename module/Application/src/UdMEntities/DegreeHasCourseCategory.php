@@ -22,16 +22,6 @@ class DegreeHasCourseCategory
     private $id;
 
     /**
-     * @var \CourseCategory
-     *
-     * @ORM\ManyToOne(targetEntity="CourseCategory")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
-     * })
-     */
-    private $courseCategory;
-
-    /**
      * @var \Degree
      *
      * @ORM\ManyToOne(targetEntity="Degree")
@@ -51,6 +41,16 @@ class DegreeHasCourseCategory
      */
     private $fieldOfStudy;
 
+    /**
+     * @var \CourseCategory
+     *
+     * @ORM\ManyToOne(targetEntity="CourseCategory")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
+     * })
+     */
+    private $courseCategory;
+
 
 
     /**
@@ -61,30 +61,6 @@ class DegreeHasCourseCategory
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set courseCategory.
-     *
-     * @param \CourseCategory|null $courseCategory
-     *
-     * @return DegreeHasCourseCategory
-     */
-    public function setCourseCategory(\CourseCategory $courseCategory = null)
-    {
-        $this->courseCategory = $courseCategory;
-
-        return $this;
-    }
-
-    /**
-     * Get courseCategory.
-     *
-     * @return \CourseCategory|null
-     */
-    public function getCourseCategory()
-    {
-        return $this->courseCategory;
     }
 
     /**
@@ -133,5 +109,29 @@ class DegreeHasCourseCategory
     public function getFieldOfStudy()
     {
         return $this->fieldOfStudy;
+    }
+
+    /**
+     * Set courseCategory.
+     *
+     * @param \CourseCategory|null $courseCategory
+     *
+     * @return DegreeHasCourseCategory
+     */
+    public function setCourseCategory(\CourseCategory $courseCategory = null)
+    {
+        $this->courseCategory = $courseCategory;
+
+        return $this;
+    }
+
+    /**
+     * Get courseCategory.
+     *
+     * @return \CourseCategory|null
+     */
+    public function getCourseCategory()
+    {
+        return $this->courseCategory;
     }
 }

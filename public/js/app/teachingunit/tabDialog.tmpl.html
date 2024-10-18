@@ -1,5 +1,5 @@
-<md-dialog aria-label="Mango (Fruit)">
-  <form>
+<md-dialog aria-label="Mango (Fruit)" style="max-width: 100%; max-height: 100%; width:100%; height:100%; ">
+
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>{{progr.classe.code}}</h2>
@@ -9,7 +9,7 @@
         </md-button>
       </div>
     </md-toolbar>
-    <md-dialog-content style="width:800px; height:810px; ">
+    <md-dialog-content >
       <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Nouvelle progression">
           <md-content class="md-padding">
@@ -24,7 +24,9 @@
                                         <md-radio-button value="TD">Travail Dirige</md-radio-button>
                                         <md-radio-button value="TP">Travail Pratique</md-radio-button>
                                         <md-radio-button value="CC">Contrôle continnue</md-radio-button>
-                                        <md-radio-button value="EXAM">examen</md-radio-button>
+                                        <md-radio-button value="EXAM">Examen</md-radio-button>
+                                        <md-radio-button value="STAGE">Stage</md-radio-button>
+                                        <md-radio-button value="ECN">ECN</md-radio-button>
                                     </md-radio-group>
                                 </div>
                                 <div layout-gt-sm="row">
@@ -69,7 +71,7 @@
                                 <div>
                                     <md-input-container class="md-block">
                                         <label for="description">Desciption</label>
-                                        <textarea id="description" name="desciption"
+                                        <textarea id="description" name="desciption" style='background-color: #fff'
                                               rows="5"
                                               placeholder="Entrez le resume de la seance ici"
                                               ng-model="progression.description" required maxlength="500"></textarea>
@@ -86,7 +88,7 @@
                             <md-button type="button" class="warn" ng-click="cancel()">
                                 Annuler
                             </md-button>
-                            <md-button ng-if="!isProcessing" class="md-primary" type="submit" ng-click="saveProgression(progressionForm)">
+                            <md-button ng-if="!isProcessing" ng-disabled="progressionForm.$invalid" class="md-primary" type="submit" ng-click="saveProgression(progressionForm)">
                                 Enregistrer
                             </md-button>
                             <md-button aria-label="loader" ng-if="isProcessing" layout="row" layout-align="center"
@@ -124,17 +126,12 @@
     </md-dialog-content>
 
     <md-dialog-actions layout="row">
-      <md-button href="http://en.wikipedia.org/wiki/Mango" target="_blank" md-autofocus>
-        More on Wikipedia
+      <md-button   md-autofocus>
+        &nbsp;
       </md-button>
       <span flex></span>
-      <md-button ng-click="answer('not useful')" >
-        Not Useful
-      </md-button>
-      <md-button ng-click="answer('useful')" style="margin-right:20px;" >
-        Useful
-      </md-button>
+
     </md-dialog-actions>
-  </form>
+
 </md-dialog>
-Open a dialog over the app's content. Press escape or click 
+

@@ -13,18 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class DegreeHasClassOfStudy
 {
     /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
-
-    /**
      * @var \Degree
      *
      * @ORM\Id
@@ -47,6 +35,18 @@ class DegreeHasClassOfStudy
      * })
      */
     private $trainingCurriculum;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
 
 
 }
