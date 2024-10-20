@@ -454,46 +454,43 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
  
  //Looad all student who are registered to the subject
  //Load all subjects associated with the UE as well
- $ctrl.loadSubjects = function(selectedUe){
+$ctrl.loadSubjects = function(selectedUe){
      
-                               var  data ={id:selectedUe.id}
-                                    var config = {
-                                    params: data,
-                                    headers : {'Accept' : 'application/json'}
-                                    };   
-                                   
-                                        $http.get('subjectbyue',config).then(function(response){
+    var  data ={id:selectedUe.id}
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('subjectbyue',config).then(function(response){
 
-                                            $ctrl.subjects = response.data[0];
- 
-
-                                        });
+            $ctrl.subjects = response.data[0];
+     });
                                  
-                       };
+};
                        
 
 
-    $ctrl.loadForValidation = function(ev)
-    {
-        
-             $mdDialog.show({
-              controller: DialogController,
-              locals:{progr:$ctrl.progressionData,times:$ctrl.times},
-              templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
-              // Appending dialog to document.body to cover sidenav in docs app
-              // Modal dialogs should fully cover application to prevent interaction outside of dialog
-              parent: angular.element(document.body),
-              targetEvent: ev,
-              clickOutsideToClose: true,
-              fullscreen: true
-            }).then(function (answer) {
-              $scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
-              $scope.status = 'You cancelled the dialog.';
-            });
-$ctrl.resetSchedule();
-        /* config object */
-    }
+$ctrl.loadForValidation = function(ev)
+{
+
+         $mdDialog.show({
+          controller: DialogController,
+          locals:{progr:$ctrl.progressionData,times:$ctrl.times},
+          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+          // Appending dialog to document.body to cover sidenav in docs app
+          // Modal dialogs should fully cover application to prevent interaction outside of dialog
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          fullscreen: true
+        }).then(function (answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function () {
+          $scope.status = 'You cancelled the dialog.';
+        });
+        $ctrl.resetSchedule();
+    /* config object */
+}
      
     /*--------------------------------------------------------------------------
      *--------------------------- updating curriculum---------------------------
@@ -569,34 +566,34 @@ $ctrl.resetSchedule();
 
 
     $scope.saveProgression = function(progressionForm) {
-    if (!progressionForm.$valid) {
-        alert('Formulaire invalide !');
-        return;
-    }
+        if (!progressionForm.$valid) {
+            alert('Formulaire invalide !');
+            return;
+        }
 
-    if ($scope.isProcessing) return;
+        if ($scope.isProcessing) return;
 
-    const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
-    // const startDate = $scope.progression.date;
-    // const endDate = $scope.progression.date;
-    const startTime = convertStringToTime($scope.progression.start_time.time);
-    const endTime = convertStringToTime($scope.progression.end_time.time);
-    // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
-    // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
+        const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
+        // const startDate = $scope.progression.date;
+        // const endDate = $scope.progression.date;
+        const startTime = convertStringToTime($scope.progression.start_time.time);
+        const endTime = convertStringToTime($scope.progression.end_time.time);
+        // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+        // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
-    if (startTime.getTime() > endTime.getTime()) {
-        alert('L\'heure de fin doit etre inferieure a celle de fin !');
-        return;
-    }
+        if (startTime.getTime() > endTime.getTime()) {
+            alert('L\'heure de fin doit etre inferieure a celle de fin !');
+            return;
+        }
 
-    const data = {
-        ...$scope.progression,
-        date: dateInISO,
-        start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
-        end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
-        contract_id: progr.contractId,
-        scheduled_id: progr.scheduledId
-    }
+        const data = {
+            ...$scope.progression,
+            date: dateInISO,
+            start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
+            end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
+            contract_id: progr.contractId,
+            scheduled_id: progr.scheduledId
+        }
         
         var config  = {
           params: data,
@@ -615,13 +612,60 @@ $ctrl.resetSchedule();
                 alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
     }
+    $scope.stdRegisteredToClass = [];
+    $scope.selected = [];
     
-    
-    $ctrl.loadStudentAdmittedToclasse = function(){
+    $scope.loadStudentAdmittedToclasse = function(classe){
+        
+        var config = {
+        params: {classe:classe},
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('studentsByClasse',config).then(function(response){
+         
+            $scope.stdRegisteredToClass = response.data[0];
+            $scope.selected = $scope.stdRegisteredToClass;
+            
+            
+
+
+        }); 
         
     }
+    
+    
+    
  
+        $scope.toggle = function (item, list) {
+        var idx = list.indexOf(item);
+        if (idx > -1) {
+          list.splice(idx, 1);
+        }
+        else {
+          list.push(item);
+        }
+      };
 
+      $scope.exists = function (item, list) {
+        return list.indexOf(item) > -1;
+      };
+
+      $scope.isIndeterminate = function() {
+        return ($scope.selected.length !== 0 &&
+            $scope.selected.length !== $scope.stdRegisteredToClass.length);
+      };
+
+      $scope.isChecked = function() {
+        return $scope.selected.length === $scope.stdRegisteredToClass.length;
+      };
+
+      $scope.toggleAll = function() {
+        if ($scope.selected.length === $scope.stdRegisteredToClass.length) {
+          $scope.selected = [];
+        } else if ($scope.selected.length === 0 || $scope.selected.length > 0) {
+          $scope.selected = $scope.stdRegisteredToClass.slice(0);
+        }
+      };
       
 
  
