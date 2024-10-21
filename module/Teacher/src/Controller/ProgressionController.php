@@ -65,8 +65,8 @@ class ProgressionController extends AbstractRestfulController
                     //Check if the progression is issued from the schedules
                     //Progression commng from the schedule can not be deleted
                     
-                    if($value->getCourseScheduled())
-                        $dataOutPut["is_from_schedule"] = 1;
+                   // if($value->getCourseScheduled())
+                   //     $dataOutPut["is_from_schedule"] = 1;
                     $progr[$key] = $dataOutPut;
                 }   
               

@@ -131,10 +131,11 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                            });*/
                            
 
-                   $scope.eventSources[0].events.forEach(event => {  
-    event.backgroundColor= '#fff'; 
-     $('#calendar').fullCalendar('rerenderEvents');
-});          
+                    $scope.eventSources[0].events.forEach(event => {  
+                        event.backgroundColor= '#fff'; 
+                        $('#calendar').fullCalendar('rerenderEvents');
+                       
+                    });          
                           
                    // $scope.eventSources = createCalendarEventsFromCoreEvents(filterEvents());
                  
@@ -654,29 +655,21 @@ $ctrl.loadForValidation = function(ev)
         var idx = list.indexOf(item);
         if (idx > -1) {
           list.splice(idx, 1);
+
+           var id = $scope.stdRegisteredToClass.indexOf(item)
+           $scope.stdRegisteredToClass[id].attendance = 0;
           
-          idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
-          $scope.items[idx].attendance = false;
-          
-           idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
-           $scope.stdRegisteredToClass[idx].attendance = false
         }
         else {
           list.push(item);
-          idx = $scope.items.findIndex((obj => obj.id == item.id))
-          $scope.stdRegisteredToClass[idx].attendance = true; 
           
-          idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
-          $scope.stdRegisteredToClass[idx].attendance = true;
+          var id = $scope.stdRegisteredToClass.indexOf(item)
+          $scope.stdRegisteredToClass[id].attendance = 1;
+          
         }
       };
 
       $scope.exists = function (item, list) {
-        /*  var idx = list.indexOf(item);
-          if(item.attendance === false)
-             list[idx].attendance = true;
-         else list[idx].attendance = false;
-        return list[idx].attendance; */
         return (list.indexOf(item) > -1);
       };
 
@@ -692,10 +685,10 @@ $ctrl.loadForValidation = function(ev)
       $scope.toggleAll = function() {
         if ($scope.selected.length === $scope.items.length) {
           $scope.selected = [];
-          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = false})
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = 0})
         } else if ($scope.selected.length === 0 || $scope.selected.length > 0) {
           $scope.selected = $scope.items.slice(0);
-          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = true})
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = 1})
         }
 
       };
