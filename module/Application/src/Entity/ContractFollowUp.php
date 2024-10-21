@@ -95,15 +95,7 @@ class ContractFollowUp
      */
     private $contract;
         
-    /**
-     * @var \CourseScheduled
-     *
-     * @ORM\ManyToOne(targetEntity="CourseScheduled")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="course_scheduled_id", referencedColumnName="id")
-     * })
-     */
-    private $courseScheduled;
+
 
     /**
      * @var TeacherPaymentBill
@@ -367,27 +359,5 @@ class ContractFollowUp
         return $this->teacherPaymentBill;
     }
     
-    /**
-     * Set courseScheduled.
-     *
-     * @param CourseScheduled|null $courseScheduled
-     *
-     * @return ContractFollowUp
-     */
-    public function setCourseScheduled(CourseScheduled $courseScheduled = null)
-    {
-        $this->courseScheduled = $courseScheduled;
-
-        return $this;
-    }
-
-    /**
-     * Get courseScheduled.
-     *
-     * @return CourseScheduled|null
-     */
-    public function getCourseScheduled()
-    {
-        return $this->courseScheduled;
-    }    
+   
 }

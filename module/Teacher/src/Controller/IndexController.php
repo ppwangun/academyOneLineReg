@@ -33,6 +33,9 @@ use Application\Entity\AllContractsView;
 use Application\Entity\CourseScheduled;
 use Njine\Odoo\Synchronisation;
 use Application\Entity\OdooSettings;
+use Application\Entity\StudentAttendance;
+use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\Student;
 
 
 
@@ -1387,6 +1390,7 @@ public function getScheduledCourseAction()
                 $classOfStudy["code"] = $course->getClassOfStudy()->getCode();
                 $classOfStudy["name"] = $course->getClassOfStudy()->getName();
                 $scheduleType = $course->getScheduleType();
+                $isScheduleValidated = $course->getIsValidated(); 
                 
                 $semester["id"] = $course->getSemester()->getId();
                 $semester["code"] = $course->getSemester()->getCode();
@@ -1412,11 +1416,40 @@ public function getScheduledCourseAction()
                 $startingTime = $course->getStartingTime()->format('H:i:s');
                 $endingTime = $course->getEndingTime()->format('H:i:s');
                 
-               
+          
+                
+                $description = null;
+                $student = []; 
+                
+                $registeredStd = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findBy(array("class"=>$classOfStudy["code"])); 
+                $hydrator = new ReflectionHydrator();
+                foreach($registeredStd as $key=>$value)
+                {
+                    $std = $this->entityManager->getRepository(Student::class)->find($value->getStudentId()); 
+                    $stdAttendance = $this->entityManager->getRepository(StudentAttendance::class)->findOneBy(["courseScheduled"=>$course,"student"=>$std]);
+
+                        
+                        $student[$key]["matricule"] = $value->getMatricule();
+                        $student[$key]["nom"] = $value->getNom();
+                        $student[$key]["prenom"] = $value->getPrenom();
+                        if($stdAttendance)
+                            $student[$key]["attendance"] = $stdAttendance->getStatus();
+                        else $student[$key]["attendance"]=0;
+                }
+      
+                if($course->getContractFollowUp())
+                { 
+                    $description= $course->getContractFollowUp()->getDescription();
+                      
+                  
+                    $startingTime = $course->getContractFollowUp()->getStartTime()->format('H:i:s');
+                    $endingTime =   $course->getContractFollowUp()->getEndTime()->format('H:i:s');     
+
+                }
+                
                 
                
-                     $hydrator = new ReflectionHydrator();
-                     $course = $hydrator->extract($course);
+                     
                     // $classOfStudy= $hydrator->extract($classOfStudy);
                /*     if($course->getTeacher())$teacher = $course->getTeacher()->getName()." ".$course->getTeacher()->getSurname(); else $teacher = ""; 
                     $course = $hydrator->extract($course);
@@ -1440,6 +1473,8 @@ public function getScheduledCourseAction()
            
             $output = new JsonModel([
                 [
+                    "contractId"=>$contract->getId(),
+                    "scheduledId"=>$course->getId(),
                     "classOfStudy"=>$classOfStudy,
                     "semester"=>$semester,
                     "teachingUnit"=>$teachingUnit,
@@ -1448,10 +1483,9 @@ public function getScheduledCourseAction()
                     "startingTime"=>$startingTime,
                     "endingTime"=>$endingTime,
                     "scheduleType"=>$scheduleType,
-                    "id"=>$course["id"],
-                    "contractId"=>$contract->getId(),
-                    "scheduledId"=>$data['id'],
-                    "isScheduleValidated"=>$course["isValidated"]
+                    "isScheduleValidated"=>$isScheduleValidated,
+                    "description"=>$description,
+                    "students"=>$student
                 ]
                     
             ]);
@@ -1460,6 +1494,7 @@ public function getScheduledCourseAction()
         catch(Exception $e)
         {
            $this->entityManager->getConnection()->rollBack();
+            print($e->getMessage());
             throw $e;
             
         }         

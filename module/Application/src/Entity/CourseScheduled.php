@@ -8,6 +8,7 @@ use Application\Entity\Semester;
 use Application\Entity\Subject;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\Resource;
+use Application\Entity\ContractFollowUp;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -62,7 +63,17 @@ class CourseScheduled
      *
      * @ORM\Column(name="is_validated", type="boolean", nullable=true)
      */
-    private $isValidated = '0';    
+    private $isValidated = '0';  
+    
+    /**
+     * @var ContractFollowUp
+     *
+     * @ORM\ManyToOne(targetEntity="ContractFollowUp")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contract_follow_up_id", referencedColumnName="id")
+     * })
+     */
+    private $contractFollowUp;    
 
     /**
      * @var Resource
@@ -254,8 +265,43 @@ class CourseScheduled
         $this->isValidated = $isValidated;
 
         return $this;
-    }    
+    } 
     
+    
+    /**
+     * Get isValidated.
+     *
+     * @return bool|null
+     */
+    public function getIsValidated()
+    {
+        return $this->isValidated;
+    }
+    
+
+    /**
+     * Set contractFollowUp.
+     *
+     * @param ContractFollowUp|null $contractFollowUp
+     *
+     * @return CourseScheduled
+     */
+    public function setContractFollowUp(ContractFollowUp $contractFollowUp = null)
+    {
+        $this->contractFollowUp = $contractFollowUp;
+
+        return $this;
+    }
+
+    /**
+     * Get contractFollowUp.
+     *
+     * @return ContractFollowUp|null
+     */
+    public function getContractFollowUp()
+    {
+        return $this->contractFollowUp;
+    }    
 
     /**
      * Set resource.

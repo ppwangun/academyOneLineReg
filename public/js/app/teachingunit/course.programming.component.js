@@ -116,9 +116,12 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                   
                  
                    
-                   $ctrl.progressionData ={scheduledId:response.data[0].scheduledId,contractId:response.data[0].contractId,classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType}                   
+                   $ctrl.progressionData ={scheduledId:response.data[0].scheduledId,contractId:response.data[0].contractId,classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,
+                       ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,
+                       date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType,description:response.data[0].description,
+                       isScheduleValidated:$ctrl.isScheduleValidated,students:response.data[0].students}                   
                   
-                  console.log($ctrl.progressionData.scheduledId)
+                //  console.log($ctrl.progressionData.scheduledId)
                /*   $scope.eventSources[0].events.filter(item=>{ return item.id === response.data[0].id}).map(
                            (item, idx) => {
 
@@ -488,7 +491,7 @@ $ctrl.loadForValidation = function(ev)
         }, function () {
           $scope.status = 'You cancelled the dialog.';
         });
-        $ctrl.resetSchedule();
+       // $ctrl.resetSchedule();
     /* config object */
 }
      
@@ -561,8 +564,17 @@ $ctrl.loadForValidation = function(ev)
    $scope.progression.target = progr.scheduleType;
    $scope.progression.contract_id = progr.contractId;
    $scope.progression.scheduled_id = progr.scheduledId;
-
-
+   $scope.progression.description = progr.description;
+   $scope.progression.isScheduleValidated = progr.isScheduleValidated;
+   $scope.stdRegisteredToClass = progr.students;
+   
+   
+   $scope.items = progr.students;
+   $scope.selected = [];
+   
+    progr.students.forEach(function(item) {
+      if(item.attendance) $scope.selected.push(item)
+   });
 
 
     $scope.saveProgression = function(progressionForm) {
@@ -592,7 +604,9 @@ $ctrl.loadForValidation = function(ev)
             start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
             end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
             contract_id: progr.contractId,
-            scheduled_id: progr.scheduledId
+            scheduled_id: progr.scheduledId,
+            students: $scope.stdRegisteredToClass,
+            fromSchedule: true
         }
         
         var config  = {
@@ -612,7 +626,7 @@ $ctrl.loadForValidation = function(ev)
                 alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
     }
-    $scope.stdRegisteredToClass = [];
+  /*  $scope.stdRegisteredToClass = [];
     $scope.selected = [];
     
     $scope.loadStudentAdmittedToclasse = function(classe){
@@ -623,15 +637,15 @@ $ctrl.loadForValidation = function(ev)
         };      
         $http.get('studentsByClasse',config).then(function(response){
          
-            $scope.stdRegisteredToClass = response.data[0];
-            $scope.selected = $scope.stdRegisteredToClass;
+           // $scope.stdRegisteredToClass = response.data[0];
+           // $scope.selected = $scope.stdRegisteredToClass;
             
             
 
 
         }); 
         
-    }
+    }*/
     
     
     
@@ -640,31 +654,50 @@ $ctrl.loadForValidation = function(ev)
         var idx = list.indexOf(item);
         if (idx > -1) {
           list.splice(idx, 1);
+          
+          idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
+          $scope.items[idx].attendance = false;
+          
+           idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
+           $scope.stdRegisteredToClass[idx].attendance = false
         }
         else {
           list.push(item);
+          idx = $scope.items.findIndex((obj => obj.id == item.id))
+          $scope.stdRegisteredToClass[idx].attendance = true; 
+          
+          idx = $scope.stdRegisteredToClass.findIndex((obj => obj.id == item.id))
+          $scope.stdRegisteredToClass[idx].attendance = true;
         }
       };
 
       $scope.exists = function (item, list) {
-        return list.indexOf(item) > -1;
+        /*  var idx = list.indexOf(item);
+          if(item.attendance === false)
+             list[idx].attendance = true;
+         else list[idx].attendance = false;
+        return list[idx].attendance; */
+        return (list.indexOf(item) > -1);
       };
 
       $scope.isIndeterminate = function() {
         return ($scope.selected.length !== 0 &&
-            $scope.selected.length !== $scope.stdRegisteredToClass.length);
+            $scope.selected.length !== $scope.items.length);
       };
 
       $scope.isChecked = function() {
-        return $scope.selected.length === $scope.stdRegisteredToClass.length;
+        return $scope.selected.length === $scope.items.length;
       };
 
       $scope.toggleAll = function() {
-        if ($scope.selected.length === $scope.stdRegisteredToClass.length) {
+        if ($scope.selected.length === $scope.items.length) {
           $scope.selected = [];
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = false})
         } else if ($scope.selected.length === 0 || $scope.selected.length > 0) {
-          $scope.selected = $scope.stdRegisteredToClass.slice(0);
+          $scope.selected = $scope.items.slice(0);
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = true})
         }
+
       };
       
 
