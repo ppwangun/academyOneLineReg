@@ -1,8 +1,11 @@
 <?php
 
-
+namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
+use Application\Entity\Student;
+use Application\Entity\CourseScheduled;
 
 /**
  * StudentAttendance
@@ -29,7 +32,7 @@ class StudentAttendance
     private $status = true;
 
     /**
-     * @var \Student
+     * @var Student
      *
      * @ORM\ManyToOne(targetEntity="Student")
      * @ORM\JoinColumns({
@@ -39,7 +42,7 @@ class StudentAttendance
     private $student;
 
     /**
-     * @var \CourseScheduled
+     * @var CourseScheduled
      *
      * @ORM\ManyToOne(targetEntity="CourseScheduled")
      * @ORM\JoinColumns({
@@ -87,11 +90,11 @@ class StudentAttendance
     /**
      * Set student.
      *
-     * @param \Student|null $student
+     * @param Student|null $student
      *
      * @return StudentAttendance
      */
-    public function setStudent(\Student $student = null)
+    public function setStudent(Student $student = null)
     {
         $this->student = $student;
 
@@ -101,7 +104,7 @@ class StudentAttendance
     /**
      * Get student.
      *
-     * @return \Student|null
+     * @return Student|null
      */
     public function getStudent()
     {
@@ -111,11 +114,11 @@ class StudentAttendance
     /**
      * Set courseScheduled.
      *
-     * @param \CourseScheduled|null $courseScheduled
+     * @param CourseScheduled|null $courseScheduled
      *
      * @return StudentAttendance
      */
-    public function setCourseScheduled(\CourseScheduled $courseScheduled = null)
+    public function setCourseScheduled(CourseScheduled $courseScheduled = null)
     {
         $this->courseScheduled = $courseScheduled;
 
@@ -125,7 +128,7 @@ class StudentAttendance
     /**
      * Get courseScheduled.
      *
-     * @return \CourseScheduled|null
+     * @return CourseScheduled|null
      */
     public function getCourseScheduled()
     {

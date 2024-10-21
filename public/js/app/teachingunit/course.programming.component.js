@@ -9,7 +9,7 @@ angular.module('teachingunit')
 function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr){
     var $ctrl = this;
     
-    $ctrl.time = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
+    $ctrl.times = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
     {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
     {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
     {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
@@ -20,9 +20,38 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
 
     $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
+    $ctrl.isScheduleValidated = false
     $scope.eventSources = [ ];
+    
+    $ctrl.resetSchedule = function(){
+                  
+                   $ctrl.startingTime = null;
+
+                   $ctrl.endingTime = null; 
+                   
+                   $ctrl.date = null;
+                   
+                   $ctrl.selectedSem = null;
+
+    
+                   $ctrl.selectedUe =  null;
+                   
+                   $ctrl.selectedClasse = null;
+                   
+                   $ctrl.selectedSubject =  null;
+                   
+                   $ctrl.scheduleType = null;
+                   $ctrl.schedlingUpdate = false;
+                   $ctrl.progressionData = null;
+                  
+                   
+                   
+                   
+
         
-    /*    {
+    }
+        
+    $scope.eventSources = [     {
            
       events: [ // put the array in the `events` property
         {
@@ -49,9 +78,8 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
      //textColor: 'yellow' // an option!
 
     },
-];*/
-    
-    $scope.alertEventOnClick = function(info)
+];
+     $scope.alertEventOnClick = function(info)
   {
         $ctrl.schedlingUpdate = true;
      
@@ -63,9 +91,9 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     
             return  $http.get('getScheduledCourse',config).then(function(response){
                 
-                   $ctrl.startingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].startingTime; }); 
+                   $ctrl.startingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].startingTime; }); 
                    $ctrl.startingTime = $ctrl.startingTime[0];
-                   $ctrl.endingTime = $ctrl.time.filter(function(item) { return item.time === response.data[0].endingTime; }); 
+                   $ctrl.endingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].endingTime; }); 
                    $ctrl.endingTime = $ctrl.endingTime[0]; 
                    
                    $ctrl.date = response.data[0].dateScheduled.date;
@@ -83,7 +111,45 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    $ctrl.selectedSubject =  response.data[0].subject;
                    
                    $ctrl.scheduleType = response.data[0].scheduleType;
+                   
+                   $ctrl.isScheduleValidated = response.data[0].isScheduleValidated;
+                  
+                 
+                   
+                   $ctrl.progressionData ={scheduledId:response.data[0].scheduledId,contractId:response.data[0].contractId,classe:$ctrl.selectedClasse,sem:$ctrl.selectedSem,
+                       ue:$ctrl.selectedUe,subject:$ctrl.selectedSubject,
+                       date:$ctrl.date,startingTime:$ctrl.startingTime,endingTime:$ctrl.endingTime,scheduleType:$ctrl.scheduleType,description:response.data[0].description,
+                       isScheduleValidated:$ctrl.isScheduleValidated,students:response.data[0].students}                   
+                  
+                //  console.log($ctrl.progressionData.scheduledId)
+               /*   $scope.eventSources[0].events.filter(item=>{ return item.id === response.data[0].id}).map(
+                           (item, idx) => {
+
+                            item.color="black";
+                    item.textColor = "white";
+                    
+                           });*/
+                           
+
+                    $scope.eventSources[0].events.forEach(event => {  
+                        event.backgroundColor= '#fff'; 
+                        $('#calendar').fullCalendar('rerenderEvents');
+                       
+                    });          
+                          
+                   // $scope.eventSources = createCalendarEventsFromCoreEvents(filterEvents());
+                 
+                   // uiCalendarConfig.calendars['calendar'].fullCalendar('removeEvents'); 
+                    // uiCalendarConfig.calendars.calendar.fullCalendar('addEventSource', $scope.eventSources);
+                    info.backgroundColor = '#2bbbad';
+                    $('#calendar').fullCalendar('rerenderEvents');
+                   // $('#calendar').fullCalendar('refetchEvents')
+                   // console.log($scope.eventSources)
+                    
+                    $(this).css("background-color", "#2bbbad"); 
                 });
+                
+               
      };
 
 
@@ -107,6 +173,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         eventClick: $scope.alertEventOnClick,
         eventDrop: $scope.alertOnDrop,
         eventResize: $scope.alertOnResize,
+        eventColor: '#378006'
         
       }
     };    
@@ -139,16 +206,17 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
      // remove all existing events
      
 
-   //   angular.forEach($scope.eventSources[0].events,function(value, key){
-          //$scope.eventSources[0].events.splice(key,1);
-     // }); 
+      angular.forEach($scope.eventSources[0].events,function(value, key){
+          $scope.eventSources[0].events.splice(key);
+      }); 
 
                    $ctrl.startingTime = null;
                    $ctrl.endingTime = null; 
                    $ctrl.date = null;
                    $ctrl.selectedSem = null;
                    $ctrl.selectedUe =  null;
-                   $ctrl.selectedSubject =  null;     
+                   $ctrl.selectedSubject =  null;   
+                //   $scope.eventSources[0].events =[];
     
       if(item)
        var data = {classe:item.id}
@@ -159,23 +227,38 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         headers : {'Accept' : 'application/json'}
         };      
         $http.get('getSchedulingCourses',config).then(function(response){
-            toastr.success("Opération effectuée avec succès");
+         
  
             angular.forEach(response.data[0], function(event, key) { 
             events.push({
-              id : event.id,
-          title  : event.eventName,
-          start  : event.startingTime.date,
-          end    : event.endingTime.date,
-        })
+                id : event.id,
+                title  : event.eventName,
+                start  : event.startingTime.date,
+                end    : event.endingTime.date,
+                color: (event.isValidated)?'#C0C0C0' : ((event.scheduleType === "CC" || event.scheduleType=="EXAM")?"red":(event.scheduleType === "STAGE" || event.scheduleType=="ECN")?"#082567":''),
+                textColor: (event.isValidated)?'grey' : ((event.scheduleType === "CC" || event.scheduleType=="EXAM")?"white":(event.scheduleType === "STAGE" || event.scheduleType=="ECN")?"red":'')
+                
+               
+            })
         
       
     })
    
     //$scope.eventSources[0] = events;
-$scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
+    $scope.eventSources[0] = {
+        events:events,
+        
+        render: function(event, element) {
+            if (event.isValidated) {
+                element.css({
+                    'background-color': '#333333',
+                    'border-color': '#333333'
+                });
+            }
+        }    
+}
     
-    console.log( $scope.eventSources)
+
     });
     
     if($ctrl.selectedClasse)
@@ -198,7 +281,7 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
  };
  
  $scope.addEvent = function(ev)
- {console.log($ctrl.scheduleType)
+ {
      $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
      if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
      else var eventName= $ctrl.selectedUe.code;
@@ -212,6 +295,7 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         $http.get('schedulingCourse',config).then(function(response){
      
             var timeConflict = response.data.timeConflict;
+            var contractNotFound = response.data.contractNotFound;
             if(timeConflict)
             {
                     $mdDialog.show(
@@ -228,15 +312,107 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
                 return;    
             }
             
+            if(contractNotFound)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Cours non affecté, ne peut être programmé ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }            
+            
             
             toastr.success("Opération effectuée avec succès");
             event = response.data[0];
-            $scope.eventSources[0].push({
+            $scope.eventSources[0].events.push({
                 id : event.id,
                 title  : event.eventName,
                 start  : event.startingTime.date,
                 end    : event.endingTime.date
             })
+
+        });     
+     
+ }
+ 
+  $scope.updateSchedule = function(ev,idEvent)
+ {console.log(idEvent)
+     $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
+     if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
+     else var eventName= $ctrl.selectedUe.code;
+     
+     if($ctrl.selectedSubject)         var data = {idScheduledCourse:idEvent,classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,subject:$ctrl.selectedSubject.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
+     else var data = {idScheduledCourse:idEvent,classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
+      console.log(data);  
+      var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('updateScheduledCourse',config).then(function(response){
+     
+            var timeConflict = response.data.timeConflict;
+            var contractNotFound = response.data.contractNotFound;
+            if(timeConflict)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Conflit sur l'heure de planification  ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }
+            
+            if(contractNotFound)
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur ')
+                      .textContent("Cours non affecté, ne peut être programmé ")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;    
+            }            
+            
+            
+            toastr.success("Opération effectuée avec succès");
+            event = response.data[0];
+
+
+        });     
+     
+ }
+ 
+  $scope.deleteSchedule = function(idEvent)
+ { 
+        var config = {
+        params: {id:idEvent},
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('deleteScheduledCourse',config).then(function(response){
+         
+            
+            
+            toastr.success("Opération effectuée avec succès");
+            $ctrl.resetSchedule()
+
 
         });     
      
@@ -282,51 +458,56 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
  
  //Looad all student who are registered to the subject
  //Load all subjects associated with the UE as well
- $ctrl.loadSubjects = function(selectedUe){
+$ctrl.loadSubjects = function(selectedUe){
      
-                               var  data ={id:selectedUe.id}
-                                    var config = {
-                                    params: data,
-                                    headers : {'Accept' : 'application/json'}
-                                    };   
-                                   
-                                        $http.get('subjectbyue',config).then(function(response){
+    var  data ={id:selectedUe.id}
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('subjectbyue',config).then(function(response){
 
-                                            $ctrl.subjects = response.data[0];
- 
-
-                                        });
+            $ctrl.subjects = response.data[0];
+     });
                                  
-                       };
+};
+                       
 
-                $ctrl.loadForValidation = function(ev)
-                {
-                         $mdDialog.show({
-                          controller: DialogController,
-                          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
-                          // Appending dialog to document.body to cover sidenav in docs app
-                          // Modal dialogs should fully cover application to prevent interaction outside of dialog
-                          parent: angular.element(document.body),
-                          targetEvent: ev,
-                          clickOutsideToClose: true
-                        }).then(function (answer) {
-                          $scope.status = 'You said the information was "' + answer + '".';
-                        }, function () {
-                          $scope.status = 'You cancelled the dialog.';
-                        });
 
-                    /* config object */
-                }
+$ctrl.loadForValidation = function(ev)
+{
+
+         $mdDialog.show({
+          controller: DialogController,
+          locals:{progr:$ctrl.progressionData,times:$ctrl.times},
+          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+          // Appending dialog to document.body to cover sidenav in docs app
+          // Modal dialogs should fully cover application to prevent interaction outside of dialog
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          fullscreen: true
+        }).then(function (answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function () {
+          $scope.status = 'You cancelled the dialog.';
+        });
+       // $ctrl.resetSchedule();
+    /* config object */
+}
      
     /*--------------------------------------------------------------------------
      *--------------------------- updating curriculum---------------------------
      *----------------------------------------------------------------------- */
+    
     $ctrl.loadData = function(ev){
         $scope.isUpdate= true;
        
        
         $mdDialog.show({
+          
           controller: DialogController,
+          controllerAs: 'ctrl',
           templateUrl: 'js/my_js/globalconfig/loadteachingunit.html',
           parent: angular.element(document.body),
          // parent: angular.element(document.querySelector('#component-tpl')),
@@ -335,7 +516,8 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
           autoWrap: false,
           targetEvent: ev,
           clickOutsideToClose:false,
-          fullscreen: true // Only for -xs, -sm breakpoints.
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          
         })
         .then(function(answer) {
           
@@ -345,16 +527,23 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         });        
     }; 
     
+  function convertStringToTime(timeString)
+  {
+         
+        let [hours, minutes, seconds] = timeString.split(':').map(Number);  
+        let date = new Date();  
+        date.setHours(hours);  
+        date.setMinutes(minutes);  
+        date.setSeconds(seconds);  
+
+        return date;       
+  }
+  
+  
+  
  //Dialog Controller
-  function DialogController($scope, $mdDialog) {
-      
-
-
-    $scope.teachingUnitId = teachingUnitId;
-    $scope.teachingUnitCode = teachingUnitCode;
-    $scope.contractId= contractId;
-    $scope.isProcessing = false;
-
+  function DialogController($scope, $mdDialog,progr,times) {
+      $scope.times = times;
     $scope.progression = {
         // date: null,
         // start_time: null,
@@ -364,11 +553,30 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         start_time: new Date(),
         end_time: new Date(),
         description: null,
-        target: 'cm',
-        teaching_unit_id: teachingUnitId,
-        teacher_id: teacherId,
-        contract_id: contractId
-    }
+        target: 'CM',
+      //  teaching_unit_id: teachingUnitId,
+       // teacher_id: teacherId,
+       // contract_id: contractId
+    }      
+   $scope.progr = progr;
+   $scope.progression.date =  new Date (progr.date);
+   $scope.progression.start_time = progr.startingTime;
+   $scope.progression.end_time = progr.endingTime;
+   $scope.progression.target = progr.scheduleType;
+   $scope.progression.contract_id = progr.contractId;
+   $scope.progression.scheduled_id = progr.scheduledId;
+   $scope.progression.description = progr.description;
+   $scope.progression.isScheduleValidated = progr.isScheduleValidated;
+   $scope.stdRegisteredToClass = progr.students;
+   
+   
+   $scope.items = progr.students;
+   $scope.selected = [];
+   
+    progr.students.forEach(function(item) {
+      if(item.attendance) $scope.selected.push(item)
+   });
+
 
     $scope.saveProgression = function(progressionForm) {
         if (!progressionForm.$valid) {
@@ -381,8 +589,8 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
         const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
         // const startDate = $scope.progression.date;
         // const endDate = $scope.progression.date;
-        const startTime = $scope.progression.start_time;
-        const endTime = $scope.progression.end_time;
+        const startTime = convertStringToTime($scope.progression.start_time.time);
+        const endTime = convertStringToTime($scope.progression.end_time.time);
         // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
         // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
@@ -396,6 +604,10 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
             date: dateInISO,
             start_time: startTime.getHours() + ':' + startTime.getMinutes() + ':' + startTime.getSeconds(),
             end_time: endTime.getHours() + ':' + endTime.getMinutes() + ':' + endTime.getSeconds(),
+            contract_id: progr.contractId,
+            scheduled_id: progr.scheduledId,
+            students: $scope.stdRegisteredToClass,
+            fromSchedule: true
         }
         
         var config  = {
@@ -415,11 +627,74 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
                 alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
     }
- 
+  /*  $scope.stdRegisteredToClass = [];
+    $scope.selected = [];
+    
+    $scope.loadStudentAdmittedToclasse = function(classe){
+        
+        var config = {
+        params: {classe:classe},
+        headers : {'Accept' : 'application/json'}
+        };      
+        $http.get('studentsByClasse',config).then(function(response){
+         
+           // $scope.stdRegisteredToClass = response.data[0];
+           // $scope.selected = $scope.stdRegisteredToClass;
+            
+            
 
+
+        }); 
+        
+    }*/
+    
+    
+    
+ 
+        $scope.toggle = function (item, list) {
+        var idx = list.indexOf(item);
+        if (idx > -1) {
+          list.splice(idx, 1);
+
+           var id = $scope.stdRegisteredToClass.indexOf(item)
+           $scope.stdRegisteredToClass[id].attendance = 0;
+          
+        }
+        else {
+          list.push(item);
+          
+          var id = $scope.stdRegisteredToClass.indexOf(item)
+          $scope.stdRegisteredToClass[id].attendance = 1;
+          
+        }
+      };
+
+      $scope.exists = function (item, list) {
+        return (list.indexOf(item) > -1);
+      };
+
+      $scope.isIndeterminate = function() {
+        return ($scope.selected.length !== 0 &&
+            $scope.selected.length !== $scope.items.length);
+      };
+
+      $scope.isChecked = function() {
+        return $scope.selected.length === $scope.items.length;
+      };
+
+      $scope.toggleAll = function() {
+        if ($scope.selected.length === $scope.items.length) {
+          $scope.selected = [];
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = 0})
+        } else if ($scope.selected.length === 0 || $scope.selected.length > 0) {
+          $scope.selected = $scope.items.slice(0);
+          $scope.stdRegisteredToClass.forEach(function(item) {  item.attendance = 1})
+        }
+
+      };
       
 
-  }
+ 
   
       $scope.cancel = function() {
       //$scope.faculties=[];
@@ -434,22 +709,10 @@ $scope.eventSources[0] = {color:"black",textColor:"yellow",events:events}
       $mdDialog.hide(answer);
     };   
     
-       
+ }       
 
 
-  function DialogController($scope, $mdDialog) {
-    $scope.hide = function () {
-      $mdDialog.hide();
-    };
 
-    $scope.cancel = function () {
-      $mdDialog.cancel();
-    };
-
-    $scope.answer = function (answer) {
-      $mdDialog.hide(answer);
-    };
-  }
 };
 
 

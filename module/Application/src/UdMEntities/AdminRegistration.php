@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AdminRegistration
  *
- * @ORM\Table(name="admin_registration", uniqueConstraints={@ORM\UniqueConstraint(name="contrat_ID_UNIQUE", columns={"contrat_id"})}, indexes={@ORM\Index(name="fk_admin_registration_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_admin_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_admin_registration_academic_year1_idx", columns={"academic_year_id"})})
+ * @ORM\Table(name="admin_registration", uniqueConstraints={@ORM\UniqueConstraint(name="contrat_ID_UNIQUE", columns={"contrat_id"})}, indexes={@ORM\Index(name="fk_admin_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_admin_registration_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admin_registration_class_of_study1_idx", columns={"class_of_study_id"})})
  * @ORM\Entity
  */
 class AdminRegistration

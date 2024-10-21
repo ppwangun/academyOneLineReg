@@ -4,6 +4,7 @@ namespace Application\Entity;
 use Application\Entity\TeacherPaymentBill;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\Contract;
+use Application\Entity\Teacher;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -93,6 +94,8 @@ class ContractFollowUp
      * })
      */
     private $contract;
+        
+
 
     /**
      * @var TeacherPaymentBill
@@ -355,4 +358,6 @@ class ContractFollowUp
     {
         return $this->teacherPaymentBill;
     }
+    
+   
 }

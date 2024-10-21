@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Teacher
  *
- * @ORM\Table(name="teacher", indexes={@ORM\Index(name="fk_teacher_academic_ranck1_idx", columns={"academic_ranck_id"}), @ORM\Index(name="fk_teacher_faculty1_idx", columns={"faculty_id"})})
+ * @ORM\Table(name="teacher", indexes={@ORM\Index(name="fk_teacher_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_teacher_academic_ranck1_idx", columns={"academic_ranck_id"})})
  * @ORM\Entity
  */
 class Teacher
@@ -171,7 +171,7 @@ class Teacher
     /**
      * @var string|null
      *
-     * @ORM\Column(name="password", type="string", length=45, nullable=true)
+     * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
     private $password;
 

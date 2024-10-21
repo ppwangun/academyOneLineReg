@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ContractFollowUp
  *
- * @ORM\Table(name="contract_follow_up", indexes={@ORM\Index(name="fk_contract_follow_up_teacher_payment_bill1_idx", columns={"teacher_payment_bill_id"}), @ORM\Index(name="fk_contract_follow_up_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_contract_follow_up_contract1_idx", columns={"contract_id"})})
+ * @ORM\Table(name="contract_follow_up", indexes={@ORM\Index(name="fk_contract_follow_up_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_contract_follow_up_teacher_payment_bill1_idx", columns={"teacher_payment_bill_id"}), @ORM\Index(name="fk_contract_follow_up_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"})})
  * @ORM\Entity
  */
 class ContractFollowUp
@@ -71,23 +71,6 @@ class ContractFollowUp
     private $paymentStatus = '0';
 
     /**
-     * @var int|null
-     *
-     * @ORM\Column(name="course_scheduled_id", type="integer", nullable=true)
-     */
-    private $courseScheduledId;
-
-    /**
-     * @var \TeacherPaymentBill
-     *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
-     * })
-     */
-    private $teacherPaymentBill;
-
-    /**
      * @var \ClassOfStudyHasSemester
      *
      * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
@@ -106,6 +89,16 @@ class ContractFollowUp
      * })
      */
     private $contract;
+
+    /**
+     * @var \TeacherPaymentBill
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBill;
 
 
 
@@ -288,54 +281,6 @@ class ContractFollowUp
     }
 
     /**
-     * Set courseScheduledId.
-     *
-     * @param int|null $courseScheduledId
-     *
-     * @return ContractFollowUp
-     */
-    public function setCourseScheduledId($courseScheduledId = null)
-    {
-        $this->courseScheduledId = $courseScheduledId;
-
-        return $this;
-    }
-
-    /**
-     * Get courseScheduledId.
-     *
-     * @return int|null
-     */
-    public function getCourseScheduledId()
-    {
-        return $this->courseScheduledId;
-    }
-
-    /**
-     * Set teacherPaymentBill.
-     *
-     * @param \TeacherPaymentBill|null $teacherPaymentBill
-     *
-     * @return ContractFollowUp
-     */
-    public function setTeacherPaymentBill(\TeacherPaymentBill $teacherPaymentBill = null)
-    {
-        $this->teacherPaymentBill = $teacherPaymentBill;
-
-        return $this;
-    }
-
-    /**
-     * Get teacherPaymentBill.
-     *
-     * @return \TeacherPaymentBill|null
-     */
-    public function getTeacherPaymentBill()
-    {
-        return $this->teacherPaymentBill;
-    }
-
-    /**
      * Set classOfStudyHasSemester.
      *
      * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
@@ -381,5 +326,29 @@ class ContractFollowUp
     public function getContract()
     {
         return $this->contract;
+    }
+
+    /**
+     * Set teacherPaymentBill.
+     *
+     * @param \TeacherPaymentBill|null $teacherPaymentBill
+     *
+     * @return ContractFollowUp
+     */
+    public function setTeacherPaymentBill(\TeacherPaymentBill $teacherPaymentBill = null)
+    {
+        $this->teacherPaymentBill = $teacherPaymentBill;
+
+        return $this;
+    }
+
+    /**
+     * Get teacherPaymentBill.
+     *
+     * @return \TeacherPaymentBill|null
+     */
+    public function getTeacherPaymentBill()
+    {
+        return $this->teacherPaymentBill;
     }
 }

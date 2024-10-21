@@ -47,9 +47,14 @@ function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,cont
 
     $scope.getProgressionLabel = function (progressionTarget) {
         const data = {
+            CM: 'Cours Magistral',
             cm: 'Cours Magistral',
+            TP: 'Travail Pratique',
             tp: 'Travail Pratique',
-            td: 'Travail Dirige'
+            TD: 'Travail Dirige',
+            td: 'Travail Dirige',
+            CC: 'Control Continue',
+            EXAM: 'Examen'
         }
 
         return data[progressionTarget] ?? '-';

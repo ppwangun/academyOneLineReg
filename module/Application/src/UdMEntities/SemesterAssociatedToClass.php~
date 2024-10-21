@@ -43,16 +43,6 @@ class SemesterAssociatedToClass
     private $transcriptreferencegenerationstatus = '0';
 
     /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -71,6 +61,16 @@ class SemesterAssociatedToClass
      * })
      */
     private $classOfStudy;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
 
 
 }

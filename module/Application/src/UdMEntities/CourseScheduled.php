@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CourseScheduled
  *
- * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"})})
+ * @ORM\Table(name="course_scheduled", indexes={@ORM\Index(name="fk_course_scheduled_contract_follow_up1_idx", columns={"contract_follow_up_id"}), @ORM\Index(name="fk_course_scheduled_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_course_scheduled_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_ressource_has_course_scheduled_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_course_scheduled_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_course_scheduled_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class CourseScheduled
@@ -55,6 +55,23 @@ class CourseScheduled
      * @ORM\Column(name="type_cours", type="string", length=4, nullable=true)
      */
     private $typeCours;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="is_validated", type="boolean", nullable=true)
+     */
+    private $isValidated = '0';
+
+    /**
+     * @var \ContractFollowUp
+     *
+     * @ORM\ManyToOne(targetEntity="ContractFollowUp")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contract_follow_up_id", referencedColumnName="id")
+     * })
+     */
+    private $contractFollowUp;
 
     /**
      * @var \Subject
@@ -246,6 +263,54 @@ class CourseScheduled
     public function getTypeCours()
     {
         return $this->typeCours;
+    }
+
+    /**
+     * Set isValidated.
+     *
+     * @param bool|null $isValidated
+     *
+     * @return CourseScheduled
+     */
+    public function setIsValidated($isValidated = null)
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }
+
+    /**
+     * Get isValidated.
+     *
+     * @return bool|null
+     */
+    public function getIsValidated()
+    {
+        return $this->isValidated;
+    }
+
+    /**
+     * Set contractFollowUp.
+     *
+     * @param \ContractFollowUp|null $contractFollowUp
+     *
+     * @return CourseScheduled
+     */
+    public function setContractFollowUp(\ContractFollowUp $contractFollowUp = null)
+    {
+        $this->contractFollowUp = $contractFollowUp;
+
+        return $this;
+    }
+
+    /**
+     * Get contractFollowUp.
+     *
+     * @return \ContractFollowUp|null
+     */
+    public function getContractFollowUp()
+    {
+        return $this->contractFollowUp;
     }
 
     /**

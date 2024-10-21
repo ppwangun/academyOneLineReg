@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Admission
  *
- * @ORM\Table(name="admission", indexes={@ORM\Index(name="fk_admission_prospective_student1_idx", columns={"prospective_student_id"}), @ORM\Index(name="fk_admission_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_admission_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admission_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="admission", indexes={@ORM\Index(name="fk_admission_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admission_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_admission_prospective_student1_idx", columns={"prospective_student_id"}), @ORM\Index(name="fk_admission_degree1_idx", columns={"degree_id"})})
  * @ORM\Entity
  */
 class Admission
@@ -92,6 +92,16 @@ class Admission
     private $prospectiveStudentId;
 
     /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
      * @var \Degree
      *
      * @ORM\ManyToOne(targetEntity="Degree")
@@ -110,16 +120,6 @@ class Admission
      * })
      */
     private $academicYear;
-
-    /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
 
 
 
@@ -374,6 +374,30 @@ class Admission
     }
 
     /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return Admission
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
+    }
+
+    /**
      * Set degree.
      *
      * @param \Degree|null $degree
@@ -419,29 +443,5 @@ class Admission
     public function getAcademicYear()
     {
         return $this->academicYear;
-    }
-
-    /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy|null $classOfStudy
-     *
-     * @return Admission
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy|null
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
     }
 }

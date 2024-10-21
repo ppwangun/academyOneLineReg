@@ -336,6 +336,16 @@ return [
                     ],
                 ],
             ],
+            'studentsByClasse' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/studentsByClasse[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'studentsByClasse',
+                    ],
+                ],
+            ],            
             'countries' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -367,6 +377,7 @@ return [
                     ],
                 ],
             ],
+            
             'cities' => [
                 'type'    => Segment::class,
                 'options' => [

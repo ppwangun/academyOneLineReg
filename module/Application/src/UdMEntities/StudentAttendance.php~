@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * StudentAttendance
  *
- * @ORM\Table(name="student_attendance", indexes={@ORM\Index(name="fk_student_attendance_student1_idx", columns={"student_id"})})
+ * @ORM\Table(name="student_attendance", indexes={@ORM\Index(name="fk_student_attendance_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_course_scheduled_idx", columns={"course_scheduled_id"})})
  * @ORM\Entity
  */
 class StudentAttendance
@@ -15,9 +15,11 @@ class StudentAttendance
     /**
      * @var int
      *
-     * @ORM\Column(name="course_scheduled_id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $courseScheduledId;
+    private $id;
 
     /**
      * @var bool|null
@@ -39,14 +41,12 @@ class StudentAttendance
     /**
      * @var \CourseScheduled
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="CourseScheduled")
+     * @ORM\ManyToOne(targetEntity="CourseScheduled")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="course_scheduled_id", referencedColumnName="id")
      * })
      */
-    private $id;
+    private $courseScheduled;
 
 
 }

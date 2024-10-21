@@ -733,6 +733,40 @@ class IndexController extends AbstractActionController
         }
     }
     
+    public function studentsByclasseAction()
+    {
+ 
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {  
+            $datastring = $this->params()->fromQuery(); 
+            
+            $registeredStd = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findBy(array("class"=>$datastring['classe']));
+            $hydrator = new ReflectionHydrator();
+            foreach($registeredStd  as $key=>$value)
+            {
+           
+
+                $registeredStd[$key] = $hydrator->extract($value);  
+                $registeredStd[$key]["attendance"]=1;
+                
+            }
+            
+            return new JsonModel([
+               $registeredStd 
+            ]);
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            print($e->getMessage());
+           throw $e;
+            
+        }        
+        
+    
+    }
+    
     public function importStudentPvAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
