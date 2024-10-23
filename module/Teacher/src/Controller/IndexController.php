@@ -430,17 +430,17 @@ class IndexController extends AbstractActionController
                         $nonAffectedTime = $courseHoursVolume-$totalHoursAffected;
 
                                 $contractSize = sizeof($contract);
-                                if($contractSize<10)
+                             /*   if($contractSize<10)
                                 $contractSize= str_pad($contractSize,4,0,STR_PAD_LEFT);
                                 else if ($contractSize<100)
                                     $contractSize = str_pad($contractSize,3,0,STR_PAD_LEFT);
                                 else if ($contractSize<1000) 
-                                    $contractSize = str_pad($contractSize,2,0,STR_PAD_LEFT);
+                                    $contractSize = str_pad($contractSize,2,0,STR_PAD_LEFT);*/
 
-
-                                $faculty = $teacher->getFaculty()->getCode(); 
-                                $refNum = $acadYear->getCode()."/".$faculty."/".$contractSize; 
                                 
+                                $faculty = $teacher->getFaculty()->getCode(); 
+                               // $refNum = $acadYear->getCode()."/".$faculty."/".$contractSize; 
+                                $refNum =str_pad($contractSize, 6, "0", STR_PAD_LEFT)."/".date('Y');
                                $hrToAffect = intval($value["totalHrs"]);
                                
                        
