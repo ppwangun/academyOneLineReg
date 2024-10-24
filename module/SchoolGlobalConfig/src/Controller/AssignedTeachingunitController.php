@@ -194,15 +194,35 @@ class AssignedTeachingunitController extends AbstractRestfulController
         try{
             $data= $data['data'];            
             
-            $ue =$this->entityManager->getRepository(TeachingUnit::class)->find($id);
+            $ueOld =$this->entityManager->getRepository(TeachingUnit::class)->find($id);
             $sem =$this->entityManager->getRepository(Semester::class)->find($data['sem_id']);
+            $ue = new TeachingUnit();
             $ue->setName($data["name"]);
             $ue->setCode($data['code']);
             $ue->setIsCompulsory($data['isCompulsory']);
-            $this->entityManager->flush();
+            
+            $this->entityManager->persist($ue);
+            
+
+            
+            $ueClasse= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($data["ue_class_id"]);
+            
+            $uniReg = $ue =$this->entityManager->getRepository(UnitRegistration::class)->findBy(["teachingUnit"=>$ueOld,"semester"=>$ueClasse->getSemester()]);
+            foreach($uniReg as $u)
+            {
+                $u->setTeachingUnit($ue);
+                $u->setSemester($sem);
+            }
+
+            $subjects = $this->entityManager->getRepository(Subject::class)->findBy(["teachingUnit"=>$ueOld]);
+            foreach($subjects as $sub)
+            {
+                $sub->setTeachingUnit($ue);
+            }            
             
             $ueClasse= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($data["ue_class_id"]);
             $ueClasse->setCredits($data['credits']);
+            $ueClasse->setTeachingUnit($ue);
             $ueClasse->setHoursVolume($data['hours_vol']);
             $ueClasse->setCmHours($data['cm_hrs']);
             $ueClasse->setTdHours($data['td_hrs']);
