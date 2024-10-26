@@ -152,6 +152,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
         $http.delete('teachingunit',config).then(
           function successCallback(response){
               //check the index of the current object in the array
+
              
             /*  var index = $ctrl.classes.findIndex(x=>x.id === id);
               //remove the current object from the array

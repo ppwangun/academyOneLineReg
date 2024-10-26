@@ -30,6 +30,7 @@ use Application\Entity\Subject;
 use Application\Entity\UnitRegistration;
 use Application\Entity\StudentSemRegistration;
 use Application\Entity\CurrentYearTeachingUnitView;
+use Application\Entity\Contract;
 use PhpOffice\PhpSpreadsheet;
 
 class IndexController extends AbstractActionController
@@ -998,13 +999,14 @@ class IndexController extends AbstractActionController
             $activeAcadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
             $this->activeYear = $activeAcadYr;
             $this->currentYear = $currentAcadYr;
+            $num=0;
            //Migrating all available semester from the active year to the current year
             //Afeter migrating semester, linking semesters to classes
             
            if($currentAcadYr->getId()!=$activeAcadYr->getId())
            {
                $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($activeAcadYr);
-            /* 
+             
                foreach($semesters as $sem)
                {
                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$currentAcadYr,"code"=>$sem->getCode()));
@@ -1026,10 +1028,10 @@ class IndexController extends AbstractActionController
                         
                    
                     $classes =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
-                                   $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
-               foreach($classes1 as $key=>$value)
-                   if(in_array($value->getCode(),["AU1","AU2","AU3"] ))
-                           $classes[$key]=$value;
+                                 //  $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
+             //  foreach($classes1 as $key=>$value)
+                //   if(in_array($value->getCode(),["AU1","AU2","AU3"] ))
+                //           $classes[$key]=$value;
                    
                     foreach($classes as $classe)
                     { 
@@ -1051,6 +1053,7 @@ class IndexController extends AbstractActionController
                             
 
                             //Migrating subjects from previous academic to the current one
+                            
                             $subjectPerClasseAndSemester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(array("semester"=>$sem,"classOfStudy"=>$classe,"status"=>1));
                             foreach($subjectPerClasseAndSemester as $sub)
                             {   
@@ -1078,18 +1081,75 @@ class IndexController extends AbstractActionController
                                     $subject->setStatus($sub->getStatus());
 
                                     $this->entityManager->persist($subject);
-                                    $this->entityManager->flush();
+                                    
                                  }
+                                 
+                                $contract = $this->entityManager->getRepository(Contract::class)->findOneBy(array("semester"=>$sem,"teachingUnit"=>$sub->getTeachingUnit()));
+                                if($contract)
+                                {
+                                     //check whether or not the contract exists for the new sem
+                                     $newContract = $this->entityManager->getRepository(Contract::class)->findOneBy(array("semester"=>$sem1,"teachingUnit"=>$sub->getTeachingUnit()));
+                                     if(!$newContract)
+                                     {
+                                         
+                                         $num++;
+                                         $numRef=str_pad($num, 6, "0", STR_PAD_LEFT)."/".date('Y');
+                                         
+                                         
+                                         $cont = new Contract();
+                                         $cont->setRefNumber($numRef);
+                                         $cont->setTeachingUnit($contract->getTeachingUnit());
+                                         $cont->setSemester($sem1);
+                                         $cont->setAcademicYear($this->currentYear);
+                                         $cont->setStatus(1);
+                                         $cont->setVolumeHrs($contract->getVolumeHrs());
+                                         $cont->setTpHrs($contract->getTpHrs());
+                                         $cont->setTdHrs($contract->getTdHrs());
+                                         $cont->setCmHrs($contract->getCmHrs());
+                                         $cont->setTeacher($contract->getTeacher());
+                                         
+                                         $this->entityManager->persist($cont);
+                                     }
+                                 } 
+                                 $contract = $this->entityManager->getRepository(Contract::class)->findOneBy(array("semester"=>$sem,"teachingUnit"=>$sub->getSubject()));
+                                 if($contract)
+                                 {
+                                     //check whether or not the contract exists for the new sem
+                                     $newContract = $this->entityManager->getRepository(Contract::class)->findOneBy(array("semester"=>$sem1,"teachingUnit"=>$sub->getSubject()));
+                                     if(!$newContract)
+                                     {
+                                         $num++;
+                                         $numRef=str_pad($num, 6, "0", STR_PAD_LEFT)."_".date('Y');
+                                         
+                                         $contS = new Contract();
+                                         $contS->setRefNumber($numRef);
+                                         $contS->setSubject($contract->getSubject());
+                                         $contS->setSemester($sem1);
+                                         $contS->setAcademicYear($this->currentYear);
+                                         $contS->setStatus(1);
+                                         $contS->setVolumeHrs($contract->getVolumeHrs());
+                                         $contS->setTpHrs($contract->getTpHrs());
+                                         $contS->setTdHrs($contract->getTdHrs());
+                                         $contS->setCmHrs($contract->getCmHrs());
+                                         $contS->setTeacher($contract->getTeacher());
+                                         
+                                         $this->entityManager->persist($contS);
+                                         
+                                         
+                                     }
+                                 }  
+                                 
+                                 $this->entityManager->flush();
                             } 
                             
                         }
                     }
                }
-        */        
-               $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
-               foreach($classes1 as $key=>$value)
-                   if(in_array($value->getCode(),["AU1","AU2","AU3"] ))
-                           $classes[$key]=$value; 
+                
+             //  $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
+             //  foreach($classes1 as $key=>$value)
+               //    if(in_array($value->getCode(),["AU1","AU2","AU3"] ))
+               //            $classes[$key]=$value; 
                            
                            
                foreach($classes as $classe)
@@ -1114,7 +1174,7 @@ class IndexController extends AbstractActionController
                                 $newClasse = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("degree"=>$degree,"studyLevel"=>($formerClasse->getStudyLevel()+1)));
                                 //Skip if student is already registered to his new class
                                 $stud = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("academicYear"=>$currentAcadYr,"classOfStudy"=>$newClasse,"student"=>$std->getStudent()));
-                                //if($stud) continue;
+                                if($stud) continue;
 
                                 if($std->getDecision()=="ADM")
                                 {
@@ -1184,6 +1244,7 @@ class IndexController extends AbstractActionController
 
         } catch (Exception $ex) {
            $this->entityManager->getConnection()->rollBack();
+           print($ex->getMessage());
            throw $ex;
         }
         
@@ -1371,7 +1432,9 @@ class IndexController extends AbstractActionController
    { 
  
         //Getting the second semester of the active year
-        $semesters= $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$this->activeYear));
+        $semesters= $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$this->activeYear)); 
+            if($classe->getCycle()->getCycleLevel() == 1)  $grade_of_failures = ["F","E","D","D+","C-"];
+            else $grade_of_failures = ["F","E","D","D+","C-","C","C+"];
         foreach($semesters as $formerSem)
         { 
             //Getting the first semester of the current year
@@ -1385,7 +1448,7 @@ class IndexController extends AbstractActionController
                     $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$student,"subject"=>[null,""],"semester"=>$formerSem->getSemester()));
                     foreach($unitRegistration as $unitR)
                     {
-                        if($unitR->getGrade()=="F"||$unitR->getGrade()=="E"|| is_null($unitR->getGrade()))
+                        if(in_array($unitR->getGrade(),$grade_of_failures))
                         { 
                             $unitS = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$student,"teachingUnit"=>$unitR->getTeachingUnit(),"semester"=>$formerSem->getSemester()));
                             foreach($unitS as $uReg) 
