@@ -222,6 +222,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
 
             
             $ueClasse= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($data["ue_class_id"]);
+            $ueClasse->setTeachingUnit($ue);
             
             $uniReg = $this->entityManager->getRepository(UnitRegistration::class)->findBy(["teachingUnit"=>$ueOld,"semester"=>$ueClasse->getSemester()]);
             foreach($uniReg as $u)
@@ -232,7 +233,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
             
             
             $contracts = $this->entityManager->getRepository(Contract::class)->findBy(["teachingUnit"=>$ueOld,"subject"=>null,"semester"=>$ueClasse->getSemester()]);
-            foreach($contract as $con)
+            foreach($contracts as $con)
             {
                 $con->setTeachingUnit($ue);
                 $con->setSemester($sem);
@@ -241,21 +242,28 @@ class AssignedTeachingunitController extends AbstractRestfulController
             $subjects = $this->entityManager->getRepository(Subject::class)->findBy(["teachingUnit"=>$ueOld]);
             foreach($subjects as $sub)
             {
+                $newSub = clone $sub; 
+                $newSub->setTeachingUnit($ue);  
+                $this->entityManager->persist($newSub);
+                //$this->entityManager->flush();
+                    
                     $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$sub,"semester"=>$ueClasse->getSemester()]);
                     $coshs->setSemester($sem);
+                    $coshs->setSubject($newSub);
 
                     
                     $subjectReg = $this->entityManager->getRepository(UnitRegistration::class)->findBy(["subject"=>$sub,"semester"=>$ueClasse->getSemester()]);
                     foreach($subjectReg as $subR)
                     {   
-                        $subR->setTeachingUnit($ue);
+                        $subR->setSubject($newSub);
                         $subR->setSemester($sem);
                     }
 
                     $contracts = $this->entityManager->getRepository(Contract::class)->findBy(["teachingUnit"=>$ueOld,"subject"=>$sub,"semester"=>$ueClasse->getSemester()]);
-                    foreach($contract as $con)
+                    foreach($contracts as $con)
                     {
                         $con->setTeachingUnit($ue);
+                        $con->setSubject($newSub);
                         $con->setSemester($sem);
                     }                    
 

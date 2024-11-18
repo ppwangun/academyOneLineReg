@@ -542,7 +542,18 @@ return [
                        
                     ],
                 ],
-            ],            
+            ], 
+             'saveRegistration' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/saveRegistration[/:classe]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'saveRegistration',
+                       
+                    ],
+                ],
+            ],             
         ],
     ],
     'view_manager' => [

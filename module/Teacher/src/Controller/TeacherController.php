@@ -262,26 +262,29 @@ class TeacherController extends AbstractRestfulController
             
             
             $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
-            $odooSettings = $odooSettings[0];
+            if(sizeof($odooSettings)>0)
+            {
+                $odooSettings = $odooSettings[0];
 
-            //Perform the odoo Sync only when it is activated
-            if($odooSettings->getActivateStatus())
-            {            
-            
-                /***** Synchronisation des données avec Odoo - Ajout d'un enseignant *****/;
-                $odoo = new Synchronisation();
-                $info = $odoo->connexionOdoo();
-                if($info["resultat"] == "success")
-                { 
-                                    $info = $odoo->ajouterEnseignant(
-                                            strval($data["id"]),
-                                            $data["names"],
-                                            $data["email"],
-                                            $data["phone"],
-                                            $data["living_city"]["name"].", ".$data["living_country"]["name"]
-                                    ); 
-                            }
-                /***** Fin de la synchronisation *****/;  
+                //Perform the odoo Sync only when it is activated
+                if($odooSettings->getActivateStatus())
+                {            
+
+                    /***** Synchronisation des données avec Odoo - Ajout d'un enseignant *****/;
+                    $odoo = new Synchronisation();
+                    $info = $odoo->connexionOdoo();
+                    if($info["resultat"] == "success")
+                    { 
+                                        $info = $odoo->ajouterEnseignant(
+                                                strval($data["id"]),
+                                                $data["names"],
+                                                $data["email"],
+                                                $data["phone"],
+                                                $data["living_city"]["name"].", ".$data["living_country"]["name"]
+                                        ); 
+                                }
+                    /***** Fin de la synchronisation *****/;  
+                }
             }
             $this->entityManager->getConnection()->commit(); 
             

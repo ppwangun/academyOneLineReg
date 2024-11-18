@@ -58,7 +58,7 @@
                                       <td ng-bind="$ctrl.formatDate(std.dateAdmission) | date:'dd/MM/yyyy'"></td>
                                       <td ng-bind="std.numDossier"></td>
                                       <td ng-bind="std.entranceType"></td>
-                                      <td ng-bind="(std.status===0)?'En cours':(std.status===1)?'Rejeté':'Accepté'" ng-class="{'zf-bg-warn': std.status===1,'zf-bg-green': std.status===2, 'zf-bg-red': std.status===0 }"></td>
+                                      <td ng-bind="(std.status===0)?'En attente...':(std.status===1)?'Attente d\'inscription':'Terminé'" ng-class="{'zf-bg-warn': std.status===1,'zf-bg-green': std.status===2, 'zf-bg-red': std.status===0 }"></td>
                                       
                                     </tr>
                                 </tbody>

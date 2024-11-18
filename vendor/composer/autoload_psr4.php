@@ -46,6 +46,7 @@ return array(
     'Psr\\Clock\\' => array($vendorDir . '/psr/clock/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'Port\\Steps\\' => array($vendorDir . '/portphp/steps/src'),
+    'Port\\Doctrine\\' => array($vendorDir . '/portphp/doctrine/src'),
     'Port\\Csv\\' => array($vendorDir . '/portphp/csv/src'),
     'Port\\' => array($vendorDir . '/portphp/portphp/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),

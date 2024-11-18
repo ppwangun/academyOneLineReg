@@ -4,6 +4,7 @@ namespace PhpOffice\PhpSpreadsheet;
 
 use JsonSerializable;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Cell\IValueBinder;
 use PhpOffice\PhpSpreadsheet\Document\Properties;
 use PhpOffice\PhpSpreadsheet\Document\Security;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
@@ -172,6 +173,8 @@ class Spreadsheet implements JsonSerializable
     private int $tabRatio = 600;
 
     private Theme $theme;
+
+    private ?IValueBinder $valueBinder = null;
 
     public function getTheme(): Theme
     {
@@ -1580,5 +1583,27 @@ class Spreadsheet implements JsonSerializable
     public function getExcelCalendar(): int
     {
         return $this->excelCalendar;
+    }
+
+    public function deleteLegacyDrawing(Worksheet $worksheet): void
+    {
+        unset($this->unparsedLoadedData['sheets'][$worksheet->getCodeName()]['legacyDrawing']);
+    }
+
+    public function getLegacyDrawing(Worksheet $worksheet): ?string
+    {
+        return $this->unparsedLoadedData['sheets'][$worksheet->getCodeName()]['legacyDrawing'] ?? null;
+    }
+
+    public function getValueBinder(): ?IValueBinder
+    {
+        return $this->valueBinder;
+    }
+
+    public function setValueBinder(?IValueBinder $valueBinder): self
+    {
+        $this->valueBinder = $valueBinder;
+
+        return $this;
     }
 }

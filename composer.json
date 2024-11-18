@@ -84,7 +84,7 @@
         "tecnickcom/tcpdf": "^6.7",
         "laminas/laminas-cache": "^3.12",
         "laminas/laminas-serializer": "^2.17",
-        "phpoffice/phpspreadsheet": "^2.2",
+        "phpoffice/phpspreadsheet": "^3.4",
         "laminas/laminas-authentication": "^2.17",
         "patrickmaken/web2sms-client": "^1.0",
         "laminas/laminas-mvc-form": "^2.1",
@@ -103,6 +103,7 @@
         "laminas/laminas-log": "^2.17",
         "doctrine/doctrine-orm-module": "^6.1",
         "mpdf/mpdf": "*",
-        "symfony/cache": "^5.4"
+        "symfony/cache": "^5.4",
+        "portphp/doctrine": "^1.3"
     }
 }

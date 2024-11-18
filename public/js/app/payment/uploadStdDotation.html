@@ -14,7 +14,7 @@ z-index: 120000}
 
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Importer les dotations d'étudiants</h2>
+        <h2>Dotation des frais de scolarité</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
@@ -43,7 +43,7 @@ z-index: 120000}
                     </div> 
                     <div layout-gt-sm='row'  >                    
                         <div layout-gt-sm='column' flex="100" >
-                            <md-select name="filiere" placeholder="Choix de la filiere" ng-model="school.fil_id" md-on-open="loadFilieres(school.fac_id)" >
+                            <md-select name="filiere" placeholder="Choix de la filiere" ng-model="school.fil_id" md-on-open="loadFilieres(-1,school.fac_id)" >
                                  <md-option ng-disabled="true"><em>---Choix de la faculté---</em></md-option>
                                 <md-option ng-value="filiere.id" ng-repeat="filiere in filieres">{{filiere.name}}</md-option>
                             </md-select>
