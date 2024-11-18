@@ -327,6 +327,29 @@ $scope.uploadStdPayments = function(){
         
         
     }
+    
+    /*--------------------------------------------------------------------------
+     *--------------------------- loading all specilaities  by field of study   ---------------------
+     *----------------------------------------------------------------------- */
+    $scope.loadFilieres= function(id,fac_id){
+      var data = {dpt_id:id, fac_id:fac_id}; 
+      var config = {
+      params: data,
+      headers : {'Accept' : 'application/json'}
+      };
+        $http.get('searchFilByDpt',config).then(
+            function successCallback(response){
+                $ctrl.cpt =1;
+                $scope.filieres= response.data[0];
+            
+            },
+            function errorCallback(response){
+                toastr.error("une erreur inattendue s'est produite");
+            });
+            
+           
+        
+    }     
 
     /*--------------------------------------------------------------------------
      *--------------------------- loading all specilaities  by field of study   ---------------------

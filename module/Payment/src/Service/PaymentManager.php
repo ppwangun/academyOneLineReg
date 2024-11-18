@@ -241,7 +241,9 @@ class PaymentManager {
             $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
             $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
             $time = date("H:i:s");
-            $date = date('Y-m-d ', strtotime($data['transactionDate']));
+            if(isset($data['transactionDate']))
+                $date = date('Y-m-d ', strtotime($data['transactionDate']));
+            else $date = date("Y-m-d h:i:sa");
             
             if($adminRegistration)
             {

@@ -1145,7 +1145,7 @@ public function printTranscriptsAction()
         
             $students = [];
             $studentsWithBaclogs = [];
-            $sem = $this->entityManager->getRepository(Semester::class)->findOneById($sem_id);
+            $sem = $this->entityManager->getRepository(Semester::class)->find($sem_id);
             $classe_1 = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($classe_code);
             $studyLevel = $classe_1->getStudyLevel();
             
@@ -1154,7 +1154,7 @@ public function printTranscriptsAction()
             
             foreach($registeredStd as $key=>$value1)
             {
-                $i++;
+                
                 $std = [];
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($value1);
@@ -1186,17 +1186,18 @@ public function printTranscriptsAction()
                             $recapN["mps"]=$stdSemRegistration->getMpsCurrentSem(); 
                             $recapN["semRank"] = $sem_1->getSemester()->getRanking();
 
-                            $coursesN = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            $coursesN["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
                              
-                            foreach ($coursesN as $key=>$value)
+                            foreach ($coursesN["courses"]  as $key=>$value)
                             {
                                 $value = $hydrator->extract($value);
                                 $value["date"] = $sem_1->getSemester()->getEndingDate()->format('M-y');
                                 $value["semRank"] = $sem_1->getSemester()->getRanking();
-                                $coursesN[$key] = $value;
+                                $coursesN["courses"] [$key] = $value;
 
                             }
-
+                            $coursesN["backlogs"] = $this->studentBacklogstList($stud,$acadYr,$sem_1->getSemester());
+                            $coursesN["semRanking"] = $sem_1->getSemester()->getRanking();
                         }
                         else
                         {
@@ -1209,22 +1210,25 @@ public function printTranscriptsAction()
                             $recapN1["validation"]=$stdSemRegistration->getValidationPercentage();
                             $recapN1["semRank"] = $sem_1->getSemester()->getRanking();
                             $mention = $stdSemRegistration->getAcademicProfile();
-                            $coursesN1 = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            
+                            $coursesN1["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
                            
-                            foreach ($coursesN1 as $key=>$value)
+                            foreach ($coursesN1["courses"] as $key=>$value)
                             {
                                 $value = $hydrator->extract($value);
                                 $value["date"] = $sem_1->getSemester()->getEndingDate()->format('M-y');
                                 $value["semRank"] = $sem_1->getSemester()->getRanking();
-                                $coursesN1[$key] = $value;
+                                $coursesN1["courses"][$key] = $value;
                             }
+                            $coursesN1["backlogs"] =  $this->studentBacklogstList($stud,$acadYr,$sem_1->getSemester());
+                            $coursesN1["semRanking"] = $sem_1->getSemester()->getRanking();
 
                         }
                     
                     
                 }
                          
-                $backlogs = $this->studentBacklogstList($stud,$acadYr,$sem);
+                
 
                 $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$stud,"academicYear"=>$acadYr));
                 if($adminRegistration)
@@ -1238,11 +1242,10 @@ public function printTranscriptsAction()
                     $mention = "";
                     
                 }
-                
-
-            
-            $students[$i]=array("student"=>$std,"recapN0"=>$recapN0,"coursesN"=>$coursesN,"recapN"=>$recapN,"coursesN1"=>$coursesN1,"recapN1"=>$recapN1,"decision"=>$decision,"mention"=>$mention,"backlogs"=>$backlogs);
                 $i++;
+
+                $students[$i]=array("student"=>$std,"recapN0"=>$recapN0,"coursesN"=>$coursesN,"recapN"=>$recapN,"coursesN1"=>$coursesN1,"recapN1"=>$recapN1,"decision"=>$decision,"mention"=>$mention);
+           
              
 
              } 
@@ -1602,7 +1605,7 @@ public function printTranscriptsAction()
 
                     //Retrive all courses to which student is registered for a given semester
                     $ue = $this->entityManager->getRepository(TeachingUnit::class)->find($key);
-                    $unit = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$student,"semester"=>$semester,"teachingUnit"=>$ue));
+                    $unit = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$student,"semester"=>$semester,"teachingUnit"=>$ue,"subject"=>NULL));
                     if($unit)
                     {
                         $students[$j][$value] = $unit->getGrade();
@@ -1649,18 +1652,16 @@ public function printTranscriptsAction()
                         {
                         $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));  
                         $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$acadYr,"ranking"=>$rank));
-                        $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$std,"semester"=>$semester));
-                        if($unitRegistration)
+                        $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$std,"semester"=>$semester,"subject"=>NULL));
+                        foreach ($unitRegistration as $unit)
                         {
-                            foreach ($unitRegistration as $unit)
+                            if(!in_array($unit->getTeachingUnit()->getCode(), $subjects))
                             {
-                                if(in_array($unit->getTeachingUnit()->getCode(), $subjects)==false)
-                                {
-                                    $subjects[$unit->getTeachingUnit()->getId()] = $unit->getTeachingUnit()->getCode(); 
-                                    $i++;
-                                }
+                                $subjects[$unit->getTeachingUnit()->getId()] = $unit->getTeachingUnit()->getCode(); 
+                                $i++;
                             }
                         }
+
                         }
                      
                     }
@@ -1695,7 +1696,7 @@ public function printTranscriptsAction()
                         //retrieve course object associated with the above code
                         $unit = $this->entityManager->getRepository(TeachingUnit::class)->find($backId); 
                         //check wether or not current user is registered to this course 
-                        $unit = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$student,"semester"=>$semester,"teachingUnit"=>$unit)); 
+                        $unit = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$student,"semester"=>$semester,"teachingUnit"=>$unit,"subject"=>NULL)); 
                         if($unit)
                         {
                             if(in_array($student, $students)==false)
@@ -1722,19 +1723,15 @@ public function printTranscriptsAction()
             foreach($registeredStd as $std)
             {
                 //$std = $this->entityManager->getRepository(Student::class)->findOneById($value->getStudentId());
-                $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$std,"semester"=>$sem));
-                if($unitRegistration)
-                {
-                    foreach ($unitRegistration as $unit)
-                    { 
-                        if(in_array($unit->getTeachingUnit()->getCode(), $subjects)==false)
-                        {
-                            $subjects[$unit->getTeachingUnit()->getId()] = $unit->getTeachingUnit()->getCode(); 
-                            $i++;
-                        }
+                $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$std,"semester"=>$sem,"subject"=>NULL));
+                foreach ($unitRegistration as $unit)
+                { 
+                    if(!in_array($unit->getTeachingUnit()->getCode(), $subjects))
+                    {
+                        $subjects[$unit->getTeachingUnit()->getId()] = $unit->getTeachingUnit()->getCode(); 
+                        $i++;
                     }
                 }
-
              }
 
             
@@ -1776,20 +1773,19 @@ public function printTranscriptsAction()
         $subjects = [];
         $i=0;
 
-        if($sem->getRanking()<>0)
-            $maxSem =$sem->getRanking()-1;
-        else $maxSem = $sem->getRanking()-2;
-        for($rank=1;$rank<$maxSem;$rank++)
+        
+            $maxSem =$sem->getRanking()-2;
+        
+        for($rank=1;$rank<=$maxSem;$rank++)
         {
-              
-            $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$acadYr,"ranking"=>$rank));
 
-            if($sem->getRanking()%2<>0)
-            {
                 if($rank%2==$sem->getRanking()%2)
-                {
+                {   
+                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$acadYr,"ranking"=>$rank));
 
-                    $unitRegistration = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$student->getId(),"semID"=>$semester->getId()));
+                   $unitRegistration = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$student->getId(),"semID"=>$semester->getId()));
+                   // $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$student,"semester"=>$semester));
+                   
                     foreach ($unitRegistration as $unit)
                     {
                         $hydrator = new ReflectionHydrator();
@@ -1797,23 +1793,12 @@ public function printTranscriptsAction()
                         $extractedValue["date"]=$sem->getEndingDate()->format('M-y');
                         $subjects[$i] = $extractedValue;
                         $i++;
+                       
                     }
+                     
                 }
-            }
-            else
-            {
-                $unitRegistration = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$student->getId(),"semID"=>$semester->getId()));
-                foreach ($unitRegistration as $unit)
-                {
+            
 
-                    $hydrator = new ReflectionHydrator();
-                    $extractedValue = $hydrator->extract($unit);
-                    $extractedValue["date"]=$semester->getEndingDate()->format('M-y');
-                    $subjects[$i] = $extractedValue;
-                    
-                    $i++;
-                }
-            }
 
         }
 

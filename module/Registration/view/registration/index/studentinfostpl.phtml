@@ -41,7 +41,7 @@
             <md-tab label="Inscription Administrative">
                 <md-content >
     
-                    <form  ng-submit=""  name="stdRegistrationForm" novalidate>
+                    <form  method="POST" action="saveRegistration"  name="stdRegistrationForm" novalidate>
                         <div class="well" ng-init="$ctrl.init()">
                          
                             <div class='row'>
@@ -403,7 +403,7 @@
 
                                 <md-input-container class="md-block" flex-gt-sm>
                                 <label>Ville de résidence</label>
-                                    <md-select name="fatherCity" ng-model="$ctrl.student.fatherCity" md-on-open="$ctrl.getCities($ctrl.student.fatherCountry)"  required>
+                                    <md-select name="fatherCity" ng-model="$ctrl.student.fatherCity" md-on-open="$ctrl.getCities($ctrl.student.fatherCountry)" >
                                     
                                         <md-option ng-repeat="city in $ctrl.cities" ng-value="city.name" >
                                           {{city.name}}
@@ -479,7 +479,7 @@
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Ville de résidence</label>
-                                    <md-select name="motherCity" ng-model="$ctrl.student.motherCity" md-on-open="$ctrl.getCities_1($ctrl.student.motherCountry)"  required>
+                                    <md-select name="motherCity" ng-model="$ctrl.student.motherCity" md-on-open="$ctrl.getCities_1($ctrl.student.motherCountry)" >
                                     
                                         <md-option ng-repeat="city in $ctrl.cities_1" ng-value="city.name" >
                                           {{city.name}}
@@ -570,7 +570,7 @@
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Ville de résidence</label>
-                                    <md-select name="sponsorCity" ng-model="$ctrl.student.sponsorCity" md-on-open="$ctrl.getCities_2($ctrl.student.sponsorCountry)" ng-required='!$ctrl.chkSponsor($ctrl.sponsor)' >
+                                    <md-select name="sponsorCity" ng-model="$ctrl.student.sponsorCity" md-on-open="$ctrl.getCities_2($ctrl.student.sponsorCountry)"  >
                                     
                                         <md-option ng-repeat="city in $ctrl.cities_2" ng-value="city.name" >
                                           {{city.name}}

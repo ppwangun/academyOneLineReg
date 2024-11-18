@@ -24,7 +24,7 @@ z-index: 120000}
 <div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
         
             <div class="row">
-                <div class='col-md-4'>
+                <div class='col-md-6'>
                     <div ng-show="!$ctrl.schedlingUpdate">
                     <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Enrégistrer</button>
                     <span> <a href="home">Annuler</a></span>
@@ -33,12 +33,13 @@ z-index: 120000}
                         <button   ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="updateSchedule(ev,$ctrl.progressionData.scheduledId)"  class="btn btn-primary" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Modifier</button>
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="deleteSchedule($ctrl.progressionData.scheduledId)" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Supprimer</button>
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Repéter</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="confirmEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Confirmer</button>
                         <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
                         <span> <a href="#!/courseProgramming" ng-click="$ctrl.resetSchedule()">Nouvelle Programmation </a></span>
                     </div>
                     
                 </div>
-                <div class="col-md-2"></div>
+        
 
 
                 

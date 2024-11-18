@@ -380,16 +380,25 @@ class IndexController extends AbstractActionController
       {
             $activeYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
             $data = $this->params()->fromQuery(); 
-            $conn = $this->entityManager->getConnection();
+          /*  $conn = $this->entityManager->getConnection();
             $sql = '
                 SELECT *
                 FROM academic_year a
                 
-                WHERE a.code like :id And A.starting_date <= :date 
+                WHERE a.code like :id And a.starting_date <= :date 
                 ';
             $stmt = $conn->prepare($sql);
             $stmt->execute(array('id' => "%".$data['id']."%",'date' => $activeYr->getStartingDate()->format('Y-m-d H:i:s')));
-            $results = $stmt->fetchAll();
+            $results = $stmt->fetchAll();*/
+            
+            $query = $this->entityManager->createQuery( '
+                SELECT a.id,a.code,a.name,a.startingDate as starting_date
+              FROM Application\Entity\AcademicYear a
+                WHERE a.code like ?1 AND a.startingDate <= ?2 
+                ');
+            $query->setParameter(1, "%".$data['id']."%");
+            $query->setParameter(2, $activeYr->getStartingDate()->format('Y-m-d H:i:s'));
+            $results = $query->getResult();            
             
         return new JsonModel([
                 $results
@@ -570,9 +579,30 @@ class IndexController extends AbstractActionController
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-            $data = $this->params()->fromQuery();            
-            $dpt= $this->entityManager->getRepository(Department::class)->find($data['dpt_id']);
-            $filieres = $this->entityManager->getRepository(FieldOfStudy::class)->findBy(array('department'=>$dpt,'status'=>1),array("name"=>"ASC"));
+            $data = $this->params()->fromQuery(); 
+            $filieres = [];
+            if($data['dpt_id']==-1)
+            {
+                $dpts= $this->entityManager->getRepository(Department::class)->findAll();
+                if(sizeof($dpts)>0)
+                    foreach($dpts as $dpt)
+                    {
+                        $arrays = $this->entityManager->getRepository(FieldOfStudy::class)->findBy(array('department'=>$dpt,'status'=>1),array("name"=>"ASC"));
+                        $filieres = array_merge($arrays,$filieres);
+
+                    }
+                else
+                { 
+                    $faculty = $this->entityManager->getRepository(Faculty::class)->find($data['fac_id']);
+                    $filieres = $this->entityManager->getRepository(FieldOfStudy::class)->findBy(array('faculty'=>$faculty,'status'=>1),array("name"=>"ASC"));
+                    
+                }
+            }
+            else 
+            {
+                $dpt= $this->entityManager->getRepository(Department::class)->find($data['dpt_id']); 
+                $filieres = $this->entityManager->getRepository(FieldOfStudy::class)->findBy(array('department'=>$dpt,'status'=>1),array("name"=>"ASC"));
+            }
             foreach($filieres as $key=>$value)
             {
                 $hydrator = new ReflectionHydrator();
@@ -1139,13 +1169,13 @@ class IndexController extends AbstractActionController
                                      }
                                  }  
                                  
-                                 $this->entityManager->flush();
+                                 
                             } 
-                            
+                            $this->entityManager->flush();
                         }
                     }
                }
-                
+              
              //  $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
              //  foreach($classes1 as $key=>$value)
                //    if(in_array($value->getCode(),["AU1","AU2","AU3"] ))

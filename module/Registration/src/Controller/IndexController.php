@@ -645,18 +645,18 @@ class IndexController extends AbstractActionController
                                 //check backlog if tere is a single backlog the failed
                                 if(!$this->isCompulsorySubjectCleared($std,$classe))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif($total_credits_cycle-$total_credits_valides_cycle>=30)
-                                        $stdAdminRegistration->setDecision("AJR");
-                                //elseif($this->isBacklogAvailable($std,$classe)) 
-                                   // $stdAdminRegistration->setDecision("AJR");                                
                                 elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
                                    $stdAdminRegistration->setDecision("ADM");
+                                //check backlog if there is a single backlog the failed
+                               // elseif($this->isBacklogAvailable($std,$classe))
+                                //    $stdAdminRegistration->setDecision("AJR");                                
+                                elseif($total_credits_cycle-$total_credits_valides_cycle>30)
+                                        $stdAdminRegistration->setDecision("AJR");                               
                                // elseif($ratioFailed <= 0.5)
                                  //   $stdAdminRegistration->setDecision("ADM");                                
                                 elseif($ratio < 0.5)
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(!$this->isCompulsorySubjectCleared($std,$classe))
-                                    $stdAdminRegistration->setDecision("AJR");
+
 
                                 break;
                             case 3:
@@ -1500,32 +1500,32 @@ class IndexController extends AbstractActionController
           //start writting from the 2nd row
           $i=2;
 
-          $students = $this->entityManager->getRepository(RegisteredStudentView::class)->findByStatus(1);
+          $students = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findByStatus(1);
           foreach($students as $std)
           {
-             $sheet->setCellValueByColumnAndRow(1, $i, $std->getMatricule());
-             $sheet->setCellValueByColumnAndRow(2, $i, $std->getGender());
-             $sheet->setCellValueByColumnAndRow(3, $i, $std->getNom());
-             $sheet->setCellValueByColumnAndRow(4, $i, $std->getPrenom());
-             $sheet->setCellValueByColumnAndRow(5, $i, $std->getclass());
-             $sheet->setCellValueByColumnAndRow(6, $i, $std->getStdPhoneNumber());
-             $sheet->setCellValueByColumnAndRow(7, $i, $std->getEmail());
-             $sheet->setCellValueByColumnAndRow(8, $i, $std->getBirthDate());
-             $sheet->setCellValueByColumnAndRow(9, $i, $std->getBornPlace());
-             $sheet->setCellValueByColumnAndRow(10, $i, $std->getRegionOfOrigin());
-             $sheet->setCellValueByColumnAndRow(11, $i, $std->getNationality());
-             $sheet->setCellValueByColumnAndRow(12, $i, $std->getReligion());
-             $sheet->setCellValueByColumnAndRow(13, $i, $std->getMaritalStatus());
-             $sheet->setCellValueByColumnAndRow(14, $i, $std->getWorkingStatus());
-             $sheet->setCellValueByColumnAndRow(15, $i, $std->getFatherName());
-             $sheet->setCellValueByColumnAndRow(16, $i, $std->getFatherPhoneNumber());
-             $sheet->setCellValueByColumnAndRow(17, $i, $std->getFatherEmail()); 
-             $sheet->setCellValueByColumnAndRow(18, $i, $std->getMotherName());
-             $sheet->setCellValueByColumnAndRow(19, $i, $std->getMotherPhoneNumber());
-             $sheet->setCellValueByColumnAndRow(20, $i, $std->getMotherEmail());   
-             $sheet->setCellValueByColumnAndRow(21, $i, $std->getSponsorName());
-             $sheet->setCellValueByColumnAndRow(22, $i, $std->getSponsorPhoneNumber());
-             $sheet->setCellValueByColumnAndRow(23, $i, $std->getSponsorEmail());             
+             $sheet->setCellValue([1, $i], $std->getMatricule());
+             $sheet->setCellValue([2, $i], $std->getGender());
+             $sheet->setCellValue([3, $i], $std->getNom());
+          $sheet->setCellValue([4, $i], $std->getPrenom());
+             $sheet->setCellValue([5, $i], $std->getclass());
+             $sheet->setCellValue([6, $i], $std->getStdPhoneNumber());
+             $sheet->setCellValue([7, $i], $std->getEmail());
+             $sheet->setCellValue([8, $i], $std->getBirthDate());
+             $sheet->setCellValue([9, $i], $std->getBornPlace());
+             $sheet->setCellValue([10, $i], $std->getRegionOfOrigin());
+             $sheet->setCellValue([11, $i], $std->getNationality());
+             $sheet->setCellValue([12, $i], $std->getReligion());
+             $sheet->setCellValue([13, $i], $std->getMaritalStatus());
+             $sheet->setCellValue([14, $i], $std->getWorkingStatus());
+             $sheet->setCellValue([15, $i], $std->getFatherName());
+             $sheet->setCellValue([16, $i], $std->getFatherPhoneNumber());
+             $sheet->setCellValue([17, $i], $std->getFatherEmail()); 
+             $sheet->setCellValue([18, $i], $std->getMotherName());
+             $sheet->setCellValue([19, $i], $std->getMotherPhoneNumber());
+             $sheet->setCellValue([20, $i], $std->getMotherEmail());   
+             $sheet->setCellValue([21, $i], $std->getSponsorName());
+             $sheet->setCellValue([22, $i], $std->getSponsorPhoneNumber());
+             $sheet->setCellValue([23, $i], $std->getSponsorEmail());             
              
              
              
@@ -1725,12 +1725,155 @@ class IndexController extends AbstractActionController
         }
     }
     
+    
+    public function saveRegistrationAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {
+            if ($this->getRequest()->isPost()){
+
+            $studentDetails= $this->params()->fromPost();
+
+
+
+            $studentMat= $this->sessionContainer->userId;
+            $student = $this->entityManager->getRepository(Student::class)->findOneByMatricule($studentMat);
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findByOnlineRegistrationDefaultYear(1);
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("academicYear"=>$academicYear,"student"=>$student));
+
+            //$file = addcslashes(file_get_contents($_FILES["image"]["tmp_name"]));
+            //$file = addslashes(file_get_contents($studentDetails["imageSrc"]));
+            // Check file size not exceed 65ko
+            //$image_base64 = base64_encode(file_get_contents($_FILES['imageSrc']['tmp_name']));
+            // Check file size not exceed 65ko
+            if (isset($_FILES['imageSrc']['tmp_name'])&&($_FILES["imageSrc"]["size"] > 100000)) {
+                
+                $view = new ViewModel([
+                    "studentName"=>$studentDetails["nom"]." ".$studentDetails["prenom"],
+                    "studentClasse"=>$studentDetails["classe"] ,
+                    "studentTraining"=>$studentDetails["training"],
+                    //"studentFiliere"=>$studentDetails["filiere"],
+                    "studentFaculty"=>$studentDetails["faculty"],
+                    "student"=>json_encode($studentDetails)
+                ]);
+                return $view;
+ 
+            }
+           //redirect form if non valid 
+           if(!$this->validateFormData($studentDetails))
+           {
+               $this->redirect()->toRoute("newStudentRegistration");
+               return;
+           }   
+            if (!empty($_FILES['imageSrc']['tmp_name'])&&($_FILES["imageSrc"]["size"] < 100000))
+            {
+                $image_base64 = base64_encode(file_get_contents($_FILES['imageSrc']['tmp_name']));
+                $student->setPhoto($image_base64);
+            }
+
+            
+
+            $student->setNom($studentDetails["nom"]);
+            $student->setPrenom($studentDetails["prenom"]);
+            //$date_naissance = date("Y-m-d",$studentDetails["birthdate"]);
+            // $date = new \DateTime($studentDetails["dateOfBirth"]);
+            //$student->setDateOfBirth($date);
+            $student->setBornAt($studentDetails["bornAt"]);
+            $student->setPhoneNumber($studentDetails["phoneNumber"]);
+            $student->setGender($studentDetails["gender"]);
+            $student->setEmail($studentDetails["email"]);
+            $student->setRegionOfOrigin($studentDetails["regionOfOrigin"]);
+            $student->setNationality($studentDetails["nationality"]);
+            $student->setReligion($studentDetails["religion"]);
+            $student->setLanguage($studentDetails["language"]);
+            $student->setMaritalStatus($studentDetails["maritalStatus"]);
+            $student->setWorkingStatus($studentDetails["workingStatus"]);
+            $student->setHandicap((isset($studentDetails["handicap1"])&&!empty($studentDetails["handicap1"])?$studentDetails["handicap1"]:"NON"));
+
+            $student->setfatherName($studentDetails["fatherName"]);
+            $student->setFatherProfession($studentDetails["fatherProfession"]);
+            $student->setFatherPhoneNumber($studentDetails["fatherPhoneNumber"]);
+            $student->setFatherEmail($studentDetails["fatherEmail"]);
+            $student->setFatherCountry($studentDetails["fatherCountry"]);
+            $student->setFatherCity($studentDetails["fatherCity"]);
+
+            $student->setMotherName($studentDetails["motherName"]);
+            $student->setMotherProfession($studentDetails["motherProfession"]);
+            $student->setMotherPhoneNumber($studentDetails["motherPhoneNumber"]);
+            $student->setMotherEmail($studentDetails["motherEmail"]);
+            $student->setMotherCountry($studentDetails["motherCountry"]);
+            $student->setMotherCity($studentDetails["motherCity"]);
+
+            $student->setSponsorName($studentDetails["sponsorName"]);
+            $student->setSponsorProfession($studentDetails["sponsorProfession"]);
+            $student->setSponsorPhoneNumber($studentDetails["sponsorPhoneNumber"]);
+            $student->setSponsorEmail($studentDetails["sponsorEmail"]);
+            $student->setSponsorCountry($studentDetails["sponsorCountry"]);
+            $student->setSponsorCity($studentDetails["sponsorCity"]);
+
+            $student->setLastSchool($studentDetails["lastSchool"]);
+            $student->setEnteringDegree($studentDetails["enteringDegree"]);
+            $student->setDegreeId($studentDetails["degreeId"]);
+
+            $student->setDegreeOption($studentDetails["degreeOption"]);
+            $student->setDegreeExamCenter($studentDetails["degreeExamCenter"]);
+            $student->setDegreeSession($studentDetails["degreeSession"]);
+            $student->setDegreeJuryNumber($studentDetails["degreeJuryNumber"]);
+            $student->setDegreeReferenceId($studentDetails["degreeReferenceId"]);
+
+
+            $student->setSportiveInformation($studentDetails["sport"]);
+            $student->setCulturalInformation($studentDetails["cultural"]);
+            $student->setAssociativeInformation($studentDetails["association"]);
+            $student->setItKnowledge($studentDetails["computer"]);
+
+
+            //perform student administrative registration and update registration status to 2
+            $data["matricule"]=$studentMat;
+            $data["classe"]=$studentDetails["classe"];
+
+            //Set status to 1
+            $status = 2;
+
+            $adminRegistration = $this->studentManager->stdAdminRegistration($data,$status); 
+            $currentDate = date_create(date('Y-m-d H:i:s'));
+            $adminRegistration->setRegisteringDate($currentDate);
+            //Sending class code to session variable
+            $this->sessionContainer->classeCode =  $studentDetails["classe"];
+
+
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+            $this->redirect()->toRoute('insPedagogique');
+        }
+        $this->redirect()->toRoute('studentRegistration');
+            $view = new ViewModel([
+
+           ]);
+            return $view;
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+            
+        } 
+
+        // Disable layouts; `MvcEvent` will use this View Model instead
+        //$view->setTerminal(true);
+
+                    
+
+    }     
+    
     private function findCourses($studyLevel,$degreeCode)
     {
         return $this->entityManager->createQuery('SELECT e FROM Application\Entity\CurrentYearTeachingUnitView e'
-                        .' WHERE e.studyLevel <= :studyLevel and e.degreeCode like :degreeCode')
+                .' WHERE e.studyLevel <= :studyLevel')
+                //        .' WHERE e.studyLevel <= :studyLevel and e.degreeCode like :degreeCode')
                 ->setParameter('studyLevel', $studyLevel)
-                ->setParameter('degreeCode', $degreeCode)
+               // ->setParameter('degreeCode', $degreeCode)
 
                 ->getResult();
     }

@@ -190,7 +190,7 @@ class IndexController extends AbstractActionController
             $this->entityManager->getConnection()->commit();
             $view = new JsonModel([
                "session"=>true,
-                $info
+               // $info
              ]);
             // Disable layouts; `MvcEvent` will use this View Model instead
             $view->setTerminal(true);

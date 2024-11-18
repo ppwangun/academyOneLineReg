@@ -175,8 +175,41 @@ $ctrl.asignedSemToClasse = function(class_code){
             /*  var index = $ctrl.classes.findIndex(x=>x.id === id);
               //remove the current object from the array
               $ctrl.classes.splice(index,1);*/
-              toastr.success("Opération effectuée avec succès");
-              $location.path("/assignedteachingunit");
+            const output = {
+                REGISTERED_STUDENT_ERROR: 'Impossible de supprimer: des étudiants sont inscrits sur cette unité d\'enseignement',
+                EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existes sur cette unité d\'enseignement ',
+                CONTRACTS_EXIST_ERROR: 'Impossible de supprimer: un contrat d\'enseignement existe sur cette unité d\'enseignement',
+                BILL_EXIST_ERROR: 'Impossible de supprimer: une  ou plusieurs factures   existent sur cette unité d\'enseignement',
+                PROGRESSION_EXIST_ERROR: 'Impossible de supprimer: des cours ont été réalisés sur cette unité d\'enseignement',
+                SUBJECT_REGISTERED_STUDENT_ERROR: 'Impossible de supprimer: des étudiants sont inscrit  sur une ou plusieurs matières',
+                SUBJECT_EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existes  sur une ou plusieurs matières ',
+                SUBJECT_CONTRACTS_EXIST_ERROR: 'Impossible de supprimer: un contrat d\'enseignement existe sur une ou plusieurs matières',
+                SUBJECT_BILL_EXIST_ERROR: 'Impossible de supprimer: une  ou plusieurs factures   existent sur une ou plusieurs matières',
+                SUBJECT_PROGRESSION_EXIST_ERROR: 'Impossible de supprimer: des cours ont été réalisés sur une ou plusieurs matières',
+            } 
+           
+              if(response.data[0]!="DONE")
+              {
+
+                        $mdDialog.show(
+                          $mdDialog.alert()
+                            .parent(angular.element(document.body))
+                            .clickOutsideToClose(true)
+                            .title('Erreur')
+                            .textContent(output[response.data[0]])
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('OK')
+                            .targetEvent(ev)
+                        );
+
+                  
+              }
+              else
+              {
+              
+                toastr.success("Opération effectuée avec succès");
+                $location.path("/assignedteachingunit");
+              }
 
          },
         function errorCallback(response){

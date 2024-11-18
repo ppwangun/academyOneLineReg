@@ -480,7 +480,7 @@ $ctrl.loadForValidation = function(ev)
          $mdDialog.show({
           controller: DialogController,
           locals:{progr:$ctrl.progressionData,times:$ctrl.times},
-          templateUrl: 'js/app/teachingUnit/tabDialog.tmpl.html',
+          templateUrl: 'js/app/teachingunit/tabDialog.tmpl.html',
           // Appending dialog to document.body to cover sidenav in docs app
           // Modal dialogs should fully cover application to prevent interaction outside of dialog
           parent: angular.element(document.body),
