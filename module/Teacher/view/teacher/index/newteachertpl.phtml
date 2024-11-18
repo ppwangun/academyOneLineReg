@@ -98,7 +98,7 @@ z-index: 120000}
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="birthdate">Date de naissance</label>
-                        <input id="birthdate" ng-model="teacher.birthdate" value={{teacher.birthdate}} name="birthdate" type="date" required>
+                        <input id="birthdate" ng-model="teacher.birthdate" value={{teacher.birthdate}} name="birthdate" type="date" >
 <!--                        <md-datepicker style="width: 100%" ng-model="teacher.birthdate" required aria-label="Enter date"></md-datepicker>-->
                         <div ng-messages="teacherForm.birthdate.$error" multiple md-auto-hide="true">
                             <div ng-message="required">La date de naissance est requise !</div>
@@ -106,7 +106,7 @@ z-index: 120000}
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="birthplace">Lieu de naissance</label>
-                        <input ng-model="teacher.birthplace" id="birthplace" name="birthplace" required maxlength="60">
+                        <input ng-model="teacher.birthplace" id="birthplace" name="birthplace"  maxlength="60">
                         <div ng-messages="teacherForm.birthplace.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Le lieu de naissance est requis !</div>
                             <div ng-message="md-maxlength">Le lieu de naissance doit avoir au plus 60 caracteres</div>
@@ -117,7 +117,7 @@ z-index: 120000}
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="country_id">Pays de résidence</label>
-                        <md-select ng-model="teacher.living_country" ng-model-options="{trackBy: '$value.id'}" id="living_country"  name="living_country" required>
+                        <md-select ng-model="teacher.living_country" ng-model-options="{trackBy: '$value.id'}" id="living_country"  name="living_country" >
                             <md-option ng-repeat="country in countries" ng-value="{{country}}">
                                 {{country.name}}
                             </md-option>
@@ -128,7 +128,7 @@ z-index: 120000}
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="city_id">Ville  de résidence</label>
-                        <md-select ng-model="teacher.living_city" ng-model-options="{trackBy: '$value.id'}"  id="living_city" name="living_city" md-on-open="getCities(teacher.living_country.id)" required>
+                        <md-select ng-model="teacher.living_city" ng-model-options="{trackBy: '$value.id'}"  id="living_city" name="living_city" md-on-open="getCities(teacher.living_country.id)" >
                             <md-option ng-repeat="city in cities"  ng-value="city ">
                                 {{city.name}}
                             </md-option>
@@ -141,7 +141,7 @@ z-index: 120000}
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="nationality">Nationalite</label>
-                        <md-select ng-model="teacher.nationality" id="nationality" name="nationality" required>
+                        <md-select ng-model="teacher.nationality" id="nationality" name="nationality" >
                             <md-option ng-repeat="country in countries" value="{{country.name}}">
                                 {{country.name}}
                             </md-option>
@@ -152,7 +152,7 @@ z-index: 120000}
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="marital_status">Etat civil</label>
-                        <md-select ng-model="teacher.marital_status" id="marital_status" name="marital_status" required>
+                        <md-select ng-model="teacher.marital_status" id="marital_status" name="marital_status" >
                             <md-option value="single">
                                 Célibataire
                             </md-option>
@@ -181,7 +181,7 @@ z-index: 120000}
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="contactInEmergency">Contact en cas d'urgence</label>
-                        <input ng-model="teacher.contactInEmergency" id="phone" name="contactInEmergency" type="tel" minlength="9" maxlength="25" required/>
+                        <input ng-model="teacher.contactInEmergency" id="phone" name="contactInEmergency" type="tel" minlength="9" maxlength="25" />
                         <div ng-messages="teacherForm.contactInEmergency.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Le numero de telephone est requis !</div>
                             <div ng-message="md-minlength">Le numero de telephone doit avoir au moins 9 caracteres</div>
@@ -202,7 +202,7 @@ z-index: 120000}
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="highest_degree_id">Diplome le plus élevé</label>
-                        <md-select ng-model="teacher.highest_degree" id="highest_degree_id" name="highest_degree_id" required>
+                        <md-select ng-model="teacher.highest_degree" id="highest_degree_id" name="highest_degree_id" >
                             <md-option ng-repeat="diploma in diplomas" value="{{diploma.name}}">
                                 {{diploma.name}}
                             </md-option>
@@ -213,7 +213,7 @@ z-index: 120000}
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="speciality_id">Specialite</label>
-                        <input ng-model="teacher.speciality" id="speciality_id" name="speciality_id" maxlength="60" required/>
+                        <input ng-model="teacher.speciality" id="speciality_id" name="speciality_id" maxlength="60" />
                         <div ng-messages="teacherForm.actual_employer.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Ce champ est requis !</div>
                             <div ng-message="md-maxlength">Le champ doit avoir au plus 60 caracteres !</div>
@@ -235,7 +235,7 @@ z-index: 120000}
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="actual_employer">Employeur actuel</label>
-                        <input ng-model="teacher.actual_employer" id="actual_employer" name="actual_employer" maxlength="60" required/>
+                        <input ng-model="teacher.actual_employer" id="actual_employer" name="actual_employer" maxlength="60" />
                         <div ng-messages="teacherForm.actual_employer.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Ce champ est requis !</div>
                             <div ng-message="md-maxlength">Le champ doit avoir au plus 60 caracteres !</div>
@@ -244,7 +244,7 @@ z-index: 120000}
 
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="requested_establishment_id">Etablissement sollicite</label>
-                        <md-select ng-model="teacher.requested_establishment_id" id="requested_establishment_id" name="requested_establishment_id" required>
+                        <md-select ng-model="teacher.requested_establishment_id" id="requested_establishment_id" name="requested_establishment_id" >
                             <md-option ng-repeat="establishment in establishments" value="{{establishment.id}}">
                                 {{establishment.name}}
                             </md-option>
