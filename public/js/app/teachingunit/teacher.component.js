@@ -393,8 +393,9 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined }
         }).then(function (response) {
-                alert('L\'enseignant a ete enregistre avec succes !');
+                toastr.success("Opération effectuée avec succès")
                 $scope.isProcessing = false;
+                $location.path('/teacher-list');
                /* $scope.teacher = {
                     identity_document_type: 'nic',
                 }*/

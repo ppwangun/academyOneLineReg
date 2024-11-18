@@ -244,7 +244,7 @@ z-index: 120000}
 
                     <md-input-container class="md-block" flex-gt-sm>
                         <label for="requested_establishment_id">Etablissement sollicite</label>
-                        <md-select ng-model="teacher.requested_establishment_id" id="requested_establishment_id" name="requested_establishment_id" >
+                        <md-select ng-model="teacher.requested_establishment_id" id="requested_establishment_id" name="requested_establishment_id" required>
                             <md-option ng-repeat="establishment in establishments" value="{{establishment.id}}">
                                 {{establishment.name}}
                             </md-option>

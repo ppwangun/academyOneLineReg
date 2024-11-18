@@ -10,7 +10,8 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-use Doctrine\DBAL\Driver\PDO\MySql\Driver as PDOMySqlDriver;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver as PDOMySqlDriver;
+//use Doctrine\DBAL\Driver\PDO\MySql\Driver as PDOMySqlDriver;
 use Laminas\Session\Storage\SessionArrayStorage;
 use Laminas\Session\Validator\RemoteAddr;
 use Laminas\Session\Validator\HttpUserAgent;
