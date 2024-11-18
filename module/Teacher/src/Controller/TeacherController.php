@@ -139,7 +139,7 @@ class TeacherController extends AbstractRestfulController
         { 
             
             
-            $q = $this->entityManager->createQuery("select t from Application\Entity\Teacher t ORDER BY t.name ASC");
+            $q = $this->entityManager->createQuery("select t from Application\Entity\Teacher t where t.status = 0 ORDER BY t.name ASC");
             $teachers = $q->getResult();            
        // $teachers = $this->entityManager->getRepository(Teacher::class)->findAll([],array("name"=>"ASC"));
                 
@@ -202,6 +202,7 @@ class TeacherController extends AbstractRestfulController
             $teacher->setCurrentEmployer($data["actual_employer"]);
             $teacher->setHighDegree($data["highest_degree"]); 
             $teacher->setType($data["type"]);
+            $teacher->setStatus(0);
             
             $grade =$this->entityManager->getRepository(AcademicRanck::class)->find($data['grade_id']); 
             $teacher->setAcademicRanck($grade);
@@ -353,7 +354,7 @@ class TeacherController extends AbstractRestfulController
             $teacher->setCurrentEmployer($data["actual_employer"]);
             $teacher->setHighDegree($data["highest_degree"]); 
             $teacher->setType($data["type"]);
-            
+            $teacher->setStatus($data["status"]);
             $grade =$this->entityManager->getRepository(AcademicRanck::class)->find($data['grade_id']); 
             $teacher->setAcademicRanck($grade);
             $faculty =$this->entityManager->getRepository(Faculty::class)->find($data['requested_establishment_id']);  
