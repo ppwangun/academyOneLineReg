@@ -50,7 +50,7 @@ class TeacherController extends AbstractRestfulController
         if(is_numeric($id))
         {
          
-            $teacher = $this->entityManager->getRepository(Teacher::class)->find($id);
+            $teacher = $this->entityManager->getRepository(Teacher::class)->find($id); 
             $documents = $this->entityManager->getRepository(FileDocument::class)->findOneByTeacher($id);
             if($documents)
                 foreach($documents as $key=>$value)
@@ -64,7 +64,7 @@ class TeacherController extends AbstractRestfulController
 
                 $hydrator = new ReflectionHydrator();
                 $academic_rank_id = $teacher->getAcademicRanck()->getId();
-                $requested_establishment_id = $teacher->getFaculty()->getId();
+                $requested_establishment_id = $teacher->getFaculty()->getId(); 
                 $data = $hydrator->extract($teacher);
                 $teacher = $data;
                 $teacher["names"]=$data["name"];
@@ -75,9 +75,10 @@ class TeacherController extends AbstractRestfulController
                 if($country)
                     $teacher["living_country"]=$hydrator->extract($country);
                 if($city)
-                $teacher["living_city"]=$hydrator->extract($city);
+                    $teacher["living_city"]=$hydrator->extract($city);
                 if($nationality)
-                $teacher["nationality"]= $nationality->getName() ; 
+                    $teacher["nationality"]= $nationality->getName() ; 
+                
                 $teacher["marital_status"]= $data["maritalStatus"] ;
                 $teacher["phone"]= $data["phoneNumber"] ; 
                 $teacher["highest_degree"]= $data["highDegree"] ;
@@ -92,7 +93,7 @@ class TeacherController extends AbstractRestfulController
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
                         .'WHERE c.teacher = :teacher' );
                 $query->setParameter('teacher',$id);
-                
+               
                 $contracts = $query->getResult();
                 foreach ($contracts as $key=>$con) 
                 {
@@ -111,13 +112,13 @@ class TeacherController extends AbstractRestfulController
                     $contracts[$key]["ecart"] = $con["totalHrs"]-$totalTime;
                     
                 }
-              
-                
+                $birthDate = null;
+                if(!empty($data["birthDate"])) $birthDate = $data["birthDate"]->format('Y-m-d');
 
                 //$subjects_1 = $query->getResult();
                 $teacher["teaching_units"] = $contracts;
             return new JsonModel([
-                "date"=>$data["birthDate"]->format('Y-m-d'),
+                "date"=>$birthDate,
                 $teacher
             ]);
             }
