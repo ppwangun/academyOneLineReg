@@ -130,6 +130,7 @@ class IndexController extends AbstractActionController
                     $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingUnit]);
                     if($class_study_semester)
                     {
+                        $class_study_semester->setTeachingUnit($teachingunit);
                         $class_study_semester->setClassOfStudy($class);
                         $class_study_semester->setSemester($semester);
                         $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
@@ -270,10 +271,6 @@ class IndexController extends AbstractActionController
                 }
                 }
             }
-            
- 
-
-
 
         $this->entityManager->getConnection()->commit();
 
@@ -1083,7 +1080,7 @@ class IndexController extends AbstractActionController
                             
 
                             //Migrating subjects from previous academic to the current one
-                            
+                           /*
                             $subjectPerClasseAndSemester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(array("semester"=>$sem,"classOfStudy"=>$classe,"status"=>1));
                             foreach($subjectPerClasseAndSemester as $sub)
                             {   
@@ -1170,7 +1167,7 @@ class IndexController extends AbstractActionController
                                  }  
                                  
                                  
-                            } 
+                            }*/
                             $this->entityManager->flush();
                         }
                     }
@@ -1182,7 +1179,7 @@ class IndexController extends AbstractActionController
                //            $classes[$key]=$value; 
                            
                            
-               foreach($classes as $classe)
+/*               foreach($classes as $classe)
                {
                      //Register student to their new classes
                      $students = $this->entityManager->getRepository(AdminRegistration::class)->findBy(array("academicYear"=>$activeAcadYr,"classOfStudy"=>$classe));
@@ -1263,7 +1260,7 @@ class IndexController extends AbstractActionController
                         }
                     }
                    
-               }
+               }*/
   
             }
             $this->entityManager->flush();
