@@ -1,0 +1,148 @@
+
+    
+<form  ng-submit="saveAcadYear()" name="acadForm" novalidate ng-cloak>
+        <div class="well" style="margin-left: -30px; margin-right: -30px;">
+
+            <div class="row"  ng-init="init()">
+                <div class='col-lg-2'>
+
+                    <button  type="submit" class="btn btn-danger" ng-hide="isUpdate" ng-disabled="acadForm.$invalid">Enrégistrer</button>
+                    <button  type="button" ng-click="updateAcadYear()"class="btn btn-danger" ng-show="isUpdate" ng-disabled="acadForm.$invalid">Modifier</button>
+                    <span> <a href="#!/acadyr-list">Retour</a></span>
+                </div>
+                <div class="col-lg-3"></div>
+                <div >
+                    <button  type="button" ng-click="deleteAcadYear()"class="btn btn-default" ng-disabled="acadForm.$invalid||!isUpdate"><i class="fa fa-trash-o"></i>&nbsp;Supprimer</button>
+                    <button  type="button" class="btn btn-primary" ng-disabled="acadForm.$invalid||!isUpdate"><i class="fa fa-lock"></i>&nbsp;Clôturer</button>
+                    <button  type="button" ng-click="activeYrDataMigration()" class=" btn btn-primary" ng-disabled="acadForm.$invalid||!isUpdate"><i class="fa fa-exchange"></i>&nbsp;Migrer les données</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-view-main">
+            <div class="form-view">
+<div   ng-cloak class="md-inline-form">
+
+
+    <md-content layout-padding >
+
+    <div layout-gt-sm layout-gt-xs layout-xs='row' >
+        <md-input-container class="md-block"  flex='40'>
+
+            <label>Code</label>
+            <input type="text" name="code" ng-model="acadyr.code" ng-required="true" md-no-asterisk /> 
+            <div ng-messages="acadForm.code.$error">
+                    <div ng-message="required">le champ code est obligatoire</div>
+            </div> 
+        </md-input-container>
+        <md-input-container class="md-block"  flex='60'>
+            <label>Intitulé</label>
+            <input type="text"  name="name" ng-model="acadyr.name" ng-required="true" md-no-asterisk  /> 
+            <div ng-messages="acadForm.name.$error">
+                    <div ng-message="required">le champ nom est obligatoire</div>
+            </div>
+        </md-input-container>
+    </div>
+
+      <md-datepicker ng-model="acadyr.startingDate"  md-placeholder="Date de début">
+                        
+      </md-datepicker>
+   
+      <md-datepicker ng-model="acadyr.endingDate"  md-placeholder="Date de fin">
+                         
+      </md-datepicker>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Année en cours? 
+      <md-checkbox
+             ng-model="acadyr.isDefault"
+            aria-label="Checkbox 2"
+            ng-true-value="true"
+            ng-false-value="false"
+            class="md-warn md-align-top-left" flex>
+          
+
+    </md-checkbox>
+  
+   <div layout-gt-sm layout-gt-xs layout-xs='row' >
+            
+    <div layout-gt-sm='column' >
+        <fieldset class="standard">
+            <legend>Admission</legend>
+            <div layout-gt-sm="row">   
+        
+                  <md-datepicker ng-model="acadyr.admissionStartingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de début">
+
+                  </md-datepicker>
+               
+                  <md-datepicker ng-model="acadyr.admissionEndingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de fin">
+
+                  </md-datepicker>
+               
+            </div>
+        </fieldset>
+    </div>
+    <div layout-gt-sm='column' >
+        <fieldset>
+            <legend>Inscription</legend>
+            <div layout-gt-sm="row" class="md-block" >   
+               
+               
+                  <md-datepicker ng-model="acadyr.adminRegistrationStartingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de début">
+
+                  </md-datepicker>
+               
+              
+                 
+                  <md-datepicker ng-model="acadyr.adminRegistrationEndingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de fin">
+
+                  </md-datepicker>
+               
+            </div>
+        </fieldset>
+    </div>            
+            
+
+        </div>
+                        </div>
+
+
+                </form>
+
+
+                <!--tabs widget-->
+                <div class="row" >
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#">Périodes de l'année académique</a></li>
+
+                    </ul>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-warning">
+                                                    <th>Code</th>
+                                                    <th>Nom</th>
+                                                    <th>Date de début</th>
+                                                    <th>date de fin</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="sem in semesters"  >
+                                                  <td ng-bind="sem.code"></td>
+                                                  <td ng-bind="sem.name"></td>
+                                                   <td ng-bind="formatDate(sem.startingDate) | date:'dd/MM/yyyy'"></td>
+                                                  <td ng-bind="formatDate(sem.endingDate) | date:'dd/MM/yyyy'"></td>
+                                                  <td style="width:20%">
+                                                      <div class="btn-group" style="float:right">
+                                                      <button  type="button" ng-click="showUpdateSemester(sem)" class="btn btn-default btn"><i class="fa fa-edit"></i></button>
+                                                      <button  type="button" ng-click="semDelete(sem.id)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                                  </div>
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                        <a class="btn btn-primary" ng-click="showSemester(sem)">Ajouter un semestre</a>
+
+                 </div>
+                <!--End tab-->
+            </div>  
+        </div>
+

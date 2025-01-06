@@ -162,7 +162,7 @@ class ClassesController extends AbstractRestfulController
             $this->entityManager->persist($classe);
             
             
-            foreach ($degrees as $key=>$value) 
+            /*foreach ($degrees as $key=>$value) 
             {
                 $degree =$this->entityManager->getRepository(Degree::class)->find($value); 
 
@@ -173,7 +173,7 @@ class ClassesController extends AbstractRestfulController
                 $dhcosh->setTrainingCurriculum($cycle);
                 $this->entityManager->persist($dhcosh); 
                 
-            }
+            }*/
 
             //$degree =$this->entityManager->getRepository(Degree::class)->findOneById($data['degreeId']);
             
