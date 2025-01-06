@@ -119,10 +119,10 @@ class IndexController extends AbstractActionController
                 $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
                 $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
 
-                if(!$class) echo" classe ".$worksheet->getCell('A' . $row)->getValue(). " Introuvable"; throw($class);
-                if(!$semester) echo "Semestre".$worksheet->getCell('B' . $row)->getValue()." pour la classe ".$worksheet->getCell('A' . $row)->getValue(). "introuvable". throw($semester);
+                if(!$class) {echo"ligne:".$row ." classe ".$worksheet->getCell('A' . $row)->getValue(). " Introuvable"; throw($class);}
+                if(!$semester) {echo "ligne:".$row ."Semestre".$worksheet->getCell('B' . $row)->getValue()." pour la classe ".$worksheet->getCell('A' . $row)->getValue(). "introuvable"; throw($semester);}
 
-                if($teachingunit)
+if($teachingunit)
                 {
                     $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
                     $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue()); 
