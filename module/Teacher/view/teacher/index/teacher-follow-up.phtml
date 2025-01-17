@@ -106,11 +106,11 @@ max-width: 900px;
 
                                 <div>
 
-                                    <button class="btn btn-danger" ng-click="openAffectTeachingUnitDialog()">
+                                    <button class="btn btn-danger btn-sm" ng-click="openAffectTeachingUnitDialog()">
                                         <img src="assets/images/plus_3839101.png" alt="" width="16px" height="16px"/>
                                         Affecter une UE
                                     </button>
-                                    <button class="btn btn-primary">
+                                    <button class="btn btn-primary btn-sm">
                                         <img src="assets/images/report_2912773.png" alt="" width="16px" height="16px"/>
                                         Generer la convention
                                     </button>
@@ -182,15 +182,15 @@ max-width: 900px;
                                 </div>
                                 
                                 <div ng-if="selectedContractId && hasSucceededLoadingCurrentProgressionStats()">
-                                    <button class="btn btn-danger" ng-click="openNewProgressionDialog($event)">
+                                    <button class="btn btn-danger btn-sm" ng-click="openNewProgressionDialog($event)">
                                         <i class="fa fa-plus-circle"></i>&nbsp;Ajouter une progession
                                     </button>
-                                    <button class="btn btn-info " ng-click="openProgressionsTimelineDialog($event)">
+                                    <button class="btn btn-info btn-sm" ng-click="openProgressionsTimelineDialog($event)">
                                         <i class="fa fa-plus-circle"></i>&nbsp;Afficher les details
                                     </button>
-                                   
+                                   <i class="fa fa-search" ng-click="openSearchProgressionsTimelineDialog(teachingnUnit,$event)"></i>
                                 </div>
-                               
+
                             </div>
                         </div>
                         <br/>

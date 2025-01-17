@@ -12,6 +12,7 @@ function AffectTeachingUnitController($scope, $mdDialog, $http, teacherId, teach
     $scope.currentTeachingUnit = null;
     $scope.canAddCurrentTeachingUnit = false;
     $scope.showforceToProceeButton =false
+    $scope.showErrorButton =false
     $scope.isProcessing = false;
     $scope.isProcessing = false;
     $scope.subjects = [];
@@ -123,9 +124,13 @@ function AffectTeachingUnitController($scope, $mdDialog, $http, teacherId, teach
         };
         $scope.isProcessing = true;
         $http.post(`assignSubjectToTeacher`,data,config)
-            .then(function (response) {
+            .then(function (response) { 
                 if(response.data[0])
-                    $mdDialog.hide($scope.teachingUnitsToSave());
+                {   
+                    $mdDialog.hide($scope.teachingUnitsToSave()); 
+                }
+                else if(response.data.ERROR)
+                    $scope.showErrorButton = true
                 else{
                     $scope.showforceToProceeButton = true;
                 }

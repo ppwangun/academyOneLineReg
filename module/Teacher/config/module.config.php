@@ -35,6 +35,16 @@ return [
                     ],
                 ],
             ],  
+            'importTeacher' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importTeacher',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importTeacher',
+                    ],
+                ],
+            ],            
             'searchTeacher' => [
                 'type'    => Literal::class,
                 'options' => [

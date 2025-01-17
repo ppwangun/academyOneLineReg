@@ -37,6 +37,11 @@ use Application\Entity\StudentAttendance;
 use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\Student;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Student\Service\StudentManager;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+
 
 
 
@@ -382,11 +387,11 @@ class IndexController extends AbstractActionController
         try
         {
             $cities = [];
-            $data= $this->params()->fromPost();           
-            $proceeByForce =(int) $data["proceedByForce"]; 
+            $data= $this->params()->fromPost();            
+            $proceeByForce =(int) $data["proceedByForce"];              
             $flag = 0;
             //$data = json_decode($data,true);
-      
+     
             $teacher = $this->entityManager->getRepository(Teacher::class)->find($data['teacherid']);
             $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
             
@@ -396,6 +401,7 @@ class IndexController extends AbstractActionController
                     $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($value["id"]);
                     $unit = null;
                     $subject= null;
+                    $contract = null;
                 
                    if($coshs->getTeachingUnit()) 
                     {            
@@ -403,20 +409,25 @@ class IndexController extends AbstractActionController
                         $tpHrs = $coshs->getTpHours();
                         $cmHrs = $coshs->getCmHours();
                         $tdHrs = $coshs->getTdHours();                      
-
+                        
                         $contract = $this->entityManager->getRepository(Contract::class)->findBy(["academicYear"=>$acadYear,"teachingUnit"=>$unit]);
+
 
                     }
                    if($coshs->getSubject()) 
                     {  
+                        $unit = null;
                         $subject = $coshs->getSubject();
                         $tpHrs = $coshs->getSubjectTpHours();
                         $tdHrs = $coshs->getSubjectTDHours();
-                        $cmHrs = $coshs->getSubjectCmHours();         
+                        $cmHrs = $coshs->getSubjectCmHours();
+                        
                         $contract = $this->entityManager->getRepository(Contract::class)->findBy(["academicYear"=>$acadYear,"subject"=>$subject]);
 
+
                     } 
-                 
+                      
+      
                         $totalHoursAffected = 0;
                         $courseHoursVolume = 0; 
                         ($coshs->getSubject())?$courseHoursVolume = $coshs->getSubjectHours():$courseHoursVolume = $coshs->getHoursVolume();  
@@ -428,8 +439,8 @@ class IndexController extends AbstractActionController
                        
                         //non affectd time
                         $nonAffectedTime = $courseHoursVolume-$totalHoursAffected;
-
-                                $contractSize = sizeof($contract);
+                           
+                                $contractSize = sizeof($contract); 
                              /*   if($contractSize<10)
                                 $contractSize= str_pad($contractSize,4,0,STR_PAD_LEFT);
                                 else if ($contractSize<100)
@@ -437,44 +448,53 @@ class IndexController extends AbstractActionController
                                 else if ($contractSize<1000) 
                                     $contractSize = str_pad($contractSize,2,0,STR_PAD_LEFT);*/
 
-                                
-                                $faculty = $teacher->getFaculty()->getCode(); 
+                               
+                              //  $faculty = $teacher->getFaculty()->getCode(); 
                                // $refNum = $acadYear->getCode()."/".$faculty."/".$contractSize; 
-                                $refNum =str_pad($contractSize, 6, "0", STR_PAD_LEFT)."/".date('Y');
+                               
+                                $refNum =str_pad($contractSize, 6, "0", STR_PAD_LEFT)."/".date('Y');  
                                $hrToAffect = intval($value["totalHrs"]);
                                
-                       
-                        if(isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime>=$value["volumeHrs"] )
+                      
+                        if(isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime>=intval($value["volumeHrs"]) )
                         {
                             $hrToAffect = intval($value["volumeHrs"]);
+                            if($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
                             
-                            foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           // foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
+                           // if(sizeof($contract)<=0) $contract = new Contract();
                             
 
                         }
-                        elseif((isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime<intval($value["volumeHrs"]) ))
+                        elseif((isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime<=intval($value["volumeHrs"]) ))
                         {
                             $hrToAffect = $nonAffectedTime;
+                            if($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
                                                      
-                            foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           // foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
+                           /// if(sizeof($contract)<=0) $contract = new Contract();
 
                                                         
                         }
 
-                        elseif(sizeof($contract)<=0) $contract = new Contract(); 
                         elseif($proceeByForce && !$data["partialAttribution"])
                         {
                             foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
                             $this->entityManager->flush();
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           
 
                         }
-                        elseif(!$proceeByForce) return  new JsonModel([false]);
-                        else{
-                            
-                        }
+                        elseif($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
+                        elseif(sizeof($contract)>0)
+                        {
+                            if(!$proceeByForce) return  new JsonModel([false]);
+                        }                        
+                        //elseif(!$proceeByForce) return  new JsonModel([false]);
+                        
+                        
+
+  
+                                $contract = new Contract();
                                 $contract->setAcademicYear($acadYear);
                                 $contract->setTeacher($teacher);
                                 $contract->setTeachingUnit($unit);
@@ -717,7 +737,95 @@ class IndexController extends AbstractActionController
             
         }         
         
-    }  
+    } 
+    
+    public function importTeacherAction()
+    {
+            $this->entityManager->getConnection()->beginTransaction();
+            try
+            {     
+
+                /* Getting file name */
+               $filename = $_FILES['file']['name'];
+               /* Location */
+               $location = './public/upload/';
+
+               $csv_mimetypes = array(
+                   'text/csv',
+                   'application/csv',
+                   'text/comma-separated-values',
+                   'application/excel',
+                   'application/vnd.ms-excel',
+                   'application/vnd.msexcel',
+                );
+            // Check if fill type is allowed  
+              if(!in_array($_FILES['file']['type'],$csv_mimetypes))
+              {
+                 $result = false;
+
+                  $view = new JsonModel([
+                    $result
+                  ]);
+                  return $view; 
+              }
+
+                /* Upload file */
+                move_uploaded_file($_FILES['file']['tmp_name'],$location.$filename);
+
+
+                $reader = new Csv(); 
+                $spreadsheet = $reader->load($location.$filename);
+                $sheetData = $spreadsheet->getActiveSheet()->toArray();
+
+                //set status to 0
+                //Student is currently in draft mode
+                $status = 0;
+                if (!empty($sheetData)) {
+                    for ($i=1; $i<count($sheetData); $i++) { //skipping first row
+                       
+                        $row["nom"] = $sheetData[$i][0];
+                        $row["specialite"] = $sheetData[$i][1];
+                        $row["telephone"] = $sheetData[$i][2];
+                        $row["email"] = $sheetData[$i][3];
+                       
+                        $teacher = new Teacher();
+                        
+                        $teacher->setName($row["nom"]);
+                        $teacher->setSpeciality($row["specialite"]);
+                        $teacher->setPhoneNumber($row["telephone"]);
+                        $teacher->setEmail($row["email"]);
+                        $teacher->setStatus(1);
+                        
+                        $this->entityManager->persist($teacher);
+                        $this->entityManager->flush();
+        
+                    }
+                }
+
+
+
+            $this->entityManager->getConnection()->commit();
+
+
+            $arr = array("name"=>$filename);
+            $result = true;
+
+              $view = new JsonModel([
+                  $result
+             ]);
+
+    // Disable layouts; `MvcEvent` will use this View Model instead
+           // $view->setTerminal(true);
+
+            return $view;      
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+
+        }        
+    }
     
     public function generateBillAction()
     {

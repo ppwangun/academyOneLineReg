@@ -145,7 +145,7 @@ z-index: 120000}
             <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="startingTime" ng-model="$ctrl.startingTime" 
                        ng-required="true"
                        md-no-asterisk>
-              <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
+              <md-option ng-disabled="true"><em>---Heure de debut---</em></md-option>
 
               <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
 
@@ -161,7 +161,7 @@ z-index: 120000}
             <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="endingTime"  ng-model="$ctrl.endingTime" 
                          ng-required="true"
                        md-no-asterisk>
-              <md-option ng-disabled="true"><em>---Choix de la Matière---</em></md-option>
+              <md-option ng-disabled="true"><em>---Heure de fin---</em></md-option>
 
                     <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
             </md-select>

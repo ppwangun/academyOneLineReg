@@ -15,6 +15,7 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\AcademicRanck;
+use Application\Entity\AcademicYear;
 use Application\Entity\Countries;
 use Application\Entity\Cities;
 use Application\Entity\Faculty;
@@ -63,8 +64,12 @@ class TeacherController extends AbstractRestfulController
             else $documents = [];
 
                 $hydrator = new ReflectionHydrator();
-                $academic_rank_id = $teacher->getAcademicRanck()->getId();
-                $requested_establishment_id = $teacher->getFaculty()->getId(); 
+                $academic_rank_id = null;
+                $requested_establishment_id = null;
+                if($teacher->getAcademicRanck())
+                    $academic_rank_id = $teacher->getAcademicRanck()->getId();
+                if($teacher->getFaculty())
+                    $requested_establishment_id = $teacher->getFaculty()->getId(); 
                 $data = $hydrator->extract($teacher);
                 $teacher = $data;
                 $teacher["names"]=$data["name"];
@@ -90,17 +95,24 @@ class TeacherController extends AbstractRestfulController
                     $teacher["birthdate"]=$data["birthDate"]->format('Y-m-d');
                 $teacher["documents"] = $documents;
                 
+                $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+                $acadYearId = $acadYear->getId(); 
+                
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
-                        .'WHERE c.teacher = :teacher' );
+                        .'WHERE c.teacher = :teacher AND c.academicYear = :acadYearId' );
                 $query->setParameter('teacher',$id);
+                $query->setParameter('acadYearId',$acadYearId);
                
                 $contracts = $query->getResult();
+
                 foreach ($contracts as $key=>$con) 
                 {
                    
                     $query = $this->entityManager->createQuery('SELECT con.id as id,c.totalTime   FROM Application\Entity\ContractFollowUp c '
-                        .'JOIN c.contract con WHERE con.id = :contractID' );
+                        .'JOIN c.contract con '
+                        . 'WHERE con.id = :contractID' );
                      $query->setParameter('contractID',$con["id"]);
+                    // $query->setParameter('acdYearId',$acadYearId);
                      $contract_follow_up = $query->getResult(); 
                     $totalTime = 0;
                     foreach($contract_follow_up as $key1=>$cfu)
@@ -140,7 +152,7 @@ class TeacherController extends AbstractRestfulController
         { 
             
             
-            $q = $this->entityManager->createQuery("select t from Application\Entity\Teacher t where t.status = 0 ORDER BY t.name ASC");
+            $q = $this->entityManager->createQuery("select t from Application\Entity\Teacher t where t.status = 1 ORDER BY t.name ASC");
             $teachers = $q->getResult();            
        // $teachers = $this->entityManager->getRepository(Teacher::class)->findAll([],array("name"=>"ASC"));
                 
@@ -203,7 +215,7 @@ class TeacherController extends AbstractRestfulController
             if(isset($data["actual_employer"]))$teacher->setCurrentEmployer($data["actual_employer"]);
             if(isset($data["highest_degree"]))$teacher->setHighDegree($data["highest_degree"]); 
             if(isset($data["type"]))$teacher->setType($data["type"]);
-            $teacher->setStatus(0);
+            $teacher->setStatus(1);
             
             $grade =$this->entityManager->getRepository(AcademicRanck::class)->find($data['grade_id']); 
             $teacher->setAcademicRanck($grade);

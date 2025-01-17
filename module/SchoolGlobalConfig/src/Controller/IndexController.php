@@ -121,7 +121,8 @@ class IndexController extends AbstractActionController
 
                 if(!$class) {echo"ligne:".$row ." classe ".$worksheet->getCell('A' . $row)->getValue(). " Introuvable"; throw($class);}
                 if(!$semester) {echo "ligne:".$row ."Semestre".$worksheet->getCell('B' . $row)->getValue()." pour la classe ".$worksheet->getCell('A' . $row)->getValue(). "introuvable"; throw($semester);}
-
+                $totalVolume = $worksheet->getCell('G' . $row)->getValue()+$worksheet->getCell('H' . $row)->getValue()+$worksheet->getCell('I' . $row)->getValue();
+                if ($worksheet->getCell('J' . $row)->getValue()<$totalVolume) $worksheet->getCell('J' . $row)->setValue($totalVolume);
 if($teachingunit)
                 {
                     $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
@@ -131,12 +132,16 @@ if($teachingunit)
                     $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
                  
                     $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingUnit]);
+
                     if($class_study_semester)
                     {
                         $class_study_semester->setTeachingUnit($teachingunit);
                         $class_study_semester->setClassOfStudy($class);
                         $class_study_semester->setSemester($semester);
                         $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
+                        
+                        
+                        
                         $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
                         $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
                         $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
@@ -183,6 +188,12 @@ if($teachingunit)
                 }
             }
             else{
+                
+                //check if the main subject already exist if not throw an error
+                $teachingunit  = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
+                if(empty($worksheet->getCell('D' . $row)->getValue())) {echo"ligne:".$row ." UE Introuvable"; throw($class);}
+                if(!$teachingUnit) {echo"ligne:".$row ." UE Introuvable"; throw($class);}
+                
               
                 $subject = $this->entityManager->getRepository(Subject::class)->findOneBySubjectCode($worksheet->getCell('D' . $row)->getValue());  
                   

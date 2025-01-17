@@ -1,3 +1,12 @@
+<style>
+  
+  .md-select-menu-container, 
+.md-open-menu-container {
+    z-index:999999 !important;
+}
+}
+</style>
+
 <md-dialog aria-label="Nouvelle progression d'UE" style="width: 500px;">
     <form ng-cloak name="progressionForm">
         <md-toolbar>
@@ -14,7 +23,7 @@
         <md-dialog-content>
             <div class="md-dialog-content gap-1" layout="column">
                 <div>
-                    <label class="demo-radio-button-label">Cible de la progression</label>
+                    <label class="demo-radio-button-label">Cible de la progression </label>
                     <md-radio-group layout="row" ng-model="progression.target">
                         <md-radio-button value="cm">Cours Magistral</md-radio-button>
                         <md-radio-button value="td">Travail Dirige</md-radio-button>
@@ -29,20 +38,45 @@
                             <div ng-message="required">Ce champ est requis !</div>
                         </div>
                     </md-input-container>
-                    <md-input-container class="md-block" flex-gt-sm>
+                  <!--  <md-input-container class="md-block" flex-gt-sm>
                         <label for="start_time">Heure de debut</label>
                         <input type="time" name="start_time" ng-model="progression.start_time" id="start_time"   required/>
                         <div ng-messages="progressionForm.date.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Ce champ est requis !</div>
                         </div>
-                    </md-input-container>
-                    <md-input-container class="md-block" flex-gt-sm>
+                    </md-input-container>-->
+                    <md-input-container >
+                        <label>Heure de début</label>
+                        <md-select  name="startingTime" ng-model="progression.start_time" 
+                                   ng-required="true"
+                                   >
+                          <md-option ng-disabled="true"><em>---Heure de debut---</em></md-option>
+
+                          <md-option  ng-value="time" ng-repeat="time in progtimes" > {{time.name}} </md-option>
+
+                        </md-select>
+                        <div class="errors" ng-messages="progressionForm.startingTime.$error">
+                          <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container>                      
+                  <!--  <md-input-container class="md-block" flex-gt-sm>
                         <label for="end_time">Heure de fin</label>
                         <input type="time" name="end_time" ng-model="progression.end_time" id="end_time"   required/>
                         <div ng-messages="progressionForm.date.$error" multiple md-auto-hide="true">
                             <div ng-message="required">Ce champ est requis !</div>
                         </div>
-                    </md-input-container>
+                    </md-input-container> -->
+                    <md-input-container >
+                        <label>Heure de fin</label>
+                        <md-select  name="endingTime"  ng-model="progression.end_time"  ng-required="true" >
+                            <md-option ng-disabled="true"><em>---Heure de fin---</em></md-option>
+
+                            <md-option  ng-value="time" ng-repeat="time in progtimes" > {{time.name}} </md-option>
+                        </md-select>
+                        <div class="errors" ng-messages="progressionForm.endingTime.$error">
+                          <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container>                    
                 </div>
                 <div>
                     <md-input-container class="md-block">
@@ -50,7 +84,7 @@
                         <textarea id="description" name="desciption"
                               rows="5"
                               placeholder="Entrez le resume de la seance ici"
-                              ng-model="progression.description" required maxlength="500"></textarea>
+                              ng-model="progression.description"  maxlength="500"></textarea>
                         <div ng-messages="progression.description.$error" multiple md-auto-hide="true">
                             <div ng-message="required">La description est requise !</div>
                             <div ng-message="md-maxlength">La description doit avoir au plus 500 caracteres</div>

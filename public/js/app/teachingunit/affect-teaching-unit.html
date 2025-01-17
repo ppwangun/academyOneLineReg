@@ -115,7 +115,8 @@ z-index: 120000}
                 </tr>
             
         </table>
-                <div class='alert alert-danger' ng-show='showforceToProceeButton'> Une ou plusieures Unités d'ensiegnement sélectionnées sont déja attribués! Voulez vous néanmoins forcer l'attribution?'</div>    
+                <div class='alert alert-danger' ng-show='showforceToProceeButton'> Une ou plusieures Unités d'ensiegnement sélectionnées sont déja attribués! Voulez vous néanmoins forcer l'attribution?'</div>  
+                <div class='alert alert-danger' ng-show='showErrorButton'> Volume horaire à affecter ou disponible égale à 0 impossible de proceder à l'affection'</div>
     <md-dialog-actions layout="row">
       <span flex></span>
       <md-button ng-click="cancel()"> Annuler</md-button>

@@ -408,10 +408,11 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         $scope.currentProgressionStats = null;
         $scope.loadCurrentProgressionStats();
     }
-    $scope.onSelectContract = function ($contractId) {
+    $scope.onSelectContract = function ($contractId) { 
         $scope.selectedContractId = $contractId;
         $scope.currentContract = $scope.currentTeacher?.teaching_units?.find(elt => elt.id === $contractId);
-
+        $scope.currentTeachingUnit = $scope.currentTeacher?.teaching_units?.find(elt => elt.id === $contractId); 
+        teachingUnitCode: $scope.currentTeachingUnit?.codeUe;
         $scope.currentProgressionStats = null;
         $scope.loadCurrentProgressionStats();
     }    
@@ -458,6 +459,12 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     $scope.onViewDocument = function () {
         console.log("Viewing document")
     }
+    $scope.progtimes =[{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
+    {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
+    {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
+    {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
+    {id:20,time:"17:30:00",name:"17h30"}]
+
 
     $scope.openNewProgressionDialog = function (ev) {
         $mdDialog.show({
@@ -467,15 +474,12 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: false, // Only for -xs, -sm breakpoints.
-            locals: {teachingUnitId: $scope.currentTeachingUnit?.id, teachingUnitCode: $scope.currentTeachingUnit?.code, teacherId: $scope.currentTeacher?.id,contractId:$scope.selectedContractId }
+            locals: {teachingUnitId: $scope.currentTeachingUnit?.id, teachingUnitCode: $scope.currentTeachingUnit?.codeUe, teacherId: $scope.currentTeacher?.id,contractId:$scope.selectedContractId,times:$scope.progtimes }
         }).then(function (newProgressionResult) {
             if ($scope.selectedTeachingUnitId === newProgressionResult.teaching_unit_id) {
                 const previousData = $scope.currentProgressionStats[newProgressionResult.target];
                 const newProgress = Math.min((previousData.progress + newProgressionResult.duration), previousData.total);
-                console.log(newProgress);
-                console.log(previousData);
-                console.log(newProgressionResult);
-                console.log($scope.currentProgressionStats);
+
                 $scope.currentProgressionStats = {
                     ...$scope.currentProgressionStats,
                     [newProgressionResult.target]: {
@@ -515,9 +519,19 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             targetEvent: ev,
             clickOutsideToClose: false,
             fullscreen: false, // Only for -xs, -sm breakpoints.
-            locals: { teacherId: $scope.currentTeacher.id,contractId:$scope.selectedContractId}
+            locals: { teacherId: $scope.currentTeacher.id,contractId:$scope.selectedContractId, teachingUnitCode: $scope.currentTeachingUnit?.codeUe}
         });
     };
     
-   
+    $scope.openSearchProgressionsTimelineDialog = function (ev, teachingUnit) {
+        $mdDialog.show({
+            controller: ProgressionsTimelineController,
+            templateUrl: 'js/app/teachingunit/search-progressions-timeline.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: false,
+            fullscreen: false, // Only for -xs, -sm breakpoints.
+            locals: { teacherId: $scope.currentTeacher.id,contractId:$scope.selectedContractId, teachingUnitCode: $scope.currentTeachingUnit?.codeUe}
+        });
+    };   
 };

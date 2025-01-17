@@ -1,0 +1,70 @@
+<style>
+    .timeline-title{
+        margin-left: 5px;
+    }
+    
+    .md-datepicker-calendar-pane{
+    z-index:999999 !important;
+    }    
+</style>
+
+<md-dialog aria-label="Timeline" style="min-width: 700px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2> Rechercher des progretions pour  {{teachingUnitCode}}</h2>
+            <span flex></span>
+            <md-button aria-label="cancel button" class="md-icon-button" ng-click="cancel()">
+                <img src="assets/images/cancel_753345.png" width="24px" height="24px" alt="cancel"/>
+                <!--                    <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>-->
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content gap-1" layout="column">
+            
+                    
+            <div layout-gt-sm='row' flex="100" style="margin-top:15px;" >
+
+                 <div layout-gt-sm='column' >
+                     <label>Du </label>
+                       <md-datepicker name="startignDate" ng-model="$ctrl.startignDate" md-placeholder="Date "  required></md-datepicker>   
+
+                </div>  
+                <div layout-gt-sm='column' >
+                     <label>Au </label>
+                       <md-datepicker name="endingDate" ng-model="$ctrl.endingDate" md-placeholder="Date "  required></md-datepicker>   
+
+                </div>
+                <div layout-gt-sm='column' >
+                    <button aria-label="" class="btn btn-save" ng-click="searchProgression(teachingUnit)"> Valider
+                
+                <!--        alider            <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>-->
+                    </button>  
+
+                </div>
+            </div> 
+            
+            <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
+                <table class="table table-bordered bordered table-striped table-condensed">
+                    <tr><td>Lun</td><td>Mar</td><td>Mer</td><td>Jeudi</td><td>Ven</td><td>Sam</td><td>Dim</td></tr>
+                </table>
+                
+            </div>
+
+            <div class="loading-container" ng-if="!canDisplayTimeline()">
+                <div class="error-block" ng-if="hasFailedLoading()">
+                    <img class="error-icon" src="assets/images/warning_752755.png" alt=""/>
+                    <span class="error-message md-warn">Une erreur s'est produite lors du chargement des donnees</span>
+                    <md-button class="md-raised md-warn" ng-click="loadProgressions()">Re-éssayer</md-button>
+                </div>
+                <div class="loader-block" ng-if="isLoading()">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="20"></md-progress-circular>
+                </div>
+            </div>
+            <div ng-if="canDisplayTimeline()">
+                
+
+            </div>
+        </div>
+    </md-dialog-content>
+</md-dialog>

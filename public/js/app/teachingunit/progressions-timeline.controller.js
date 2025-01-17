@@ -1,6 +1,6 @@
-function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,contractId,toastr) {
+function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,contractId,teachingUnitCode,toastr) {
    // $scope.teachingUnitId = teachingUnitId;
-   // $scope.teachingUnitCode = teachingUnitCode;
+    $scope.teachingUnitCode = teachingUnitCode;
 
     $scope.progressions = [];
     $scope.hasLoadedProgressions = null;
@@ -105,6 +105,11 @@ function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,cont
     }, function() {
      // $scope.status = 'You decided to keep your debt.';
     });         
+    }
+    
+    $scope.searchProgression = function(teachingUnit)
+    {
+        
     }
 
     $scope.cancel = function () {

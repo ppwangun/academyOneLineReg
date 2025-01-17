@@ -22,7 +22,7 @@ var studentApp = angular.module('student')
 }]);
 
 //Student controller
-function studentDetailsCtrl($timeout,$http,$location,$mdDialog,$scope,$routeParams,toastr,DTOptionsBuilder,DTColumnDefBuilder){
+function studentDetailsCtrl($timeout,$http,$location,$window,$mdDialog,$scope,$routeParams,toastr,$filter,DTOptionsBuilder,DTColumnDefBuilder){
     var $ctrl = this;
     $ctrl.imgUrl;
      $ctrl.students=[];
@@ -130,7 +130,22 @@ function studentDetailsCtrl($timeout,$http,$location,$mdDialog,$scope,$routePara
      
       
 }; //END inti function
+$scope.openNewWindow = function openInNewTab() {
+    var config = {
+       // params: {matricule: $ctrl.student.matricule,birthdate: $ctrl.student.dateOfBirth},
+        headers : {'Content-Type': 'application/x-www-form-urlencoded'}
 
+    };
+    var data= {matricule: $ctrl.student.matricule,birthdate: $filter('date')($ctrl.student.dateOfBirth, "ddMMyyyy"),remember_me:0,csrf:"ae2869d5287f3d44a6228fe23d4f2637-47449cbb37f3cb390de392b56c3ff5d4",'login-btn':""}
+     //vrate online regsitration user session before opening the windows
+     $timeout(
+     $http.post('http://localhost/udmonline/public/login',$.param(data),config).then(function(response){
+         //convert all loaded data to lower case
+
+     }),1000);
+    
+    window.open('http://localhost/udmonline/public/chkNewStudentPayment','_blank',"toolbar=no,scrollbars=yes, resizable=yes, top=200, left=500, width=900, height=500");
+}
 //Function for deleting a subject
      $ctrl.deleteSubject = function(subject,ev)
       {

@@ -535,7 +535,68 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
      // $scope.status = 'You decided to keep your debt.';
     });
      
-  };    
+  }; 
+  
+    /*--------------------------------------------------------------------------
+    *---------------------------import teacher from file ---------------------------------
+    *----------------------------------------------------------------------- */
+    $scope.loadTeachersData = function(ev){
+        $scope.isUpdate= true;
+       
+       
+        $mdDialog.show({
+          controller: DialogController1,
+          templateUrl: 'js/app/teachingunit/uploadTeacherForm.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true // Only for -xs, -sm breakpoints.
+        })
+       
+    };
+    
+ //Dialog Controller
+  function DialogController1($scope, $mdDialog) {
+      
+
+ 
+$scope.upload = function(){
+ 
+    var fd = new FormData();
+    var files = document.getElementById('file').files[0];
+    fd.append('file',files);
+
+    // AJAX request
+    $http({
+     method: 'post',
+     url: 'importTeacher',
+     data: fd,
+     headers: {'Content-Type': undefined},
+    }).then(function successCallback(response) { 
+      // Store response data
+      $scope.response = response.data[0];
+      response.data[0]?toastr.success('Import effectué avec succès'):toastr.error('Type de fichier incorrect', 'Erreur');
+      response.data[0]?$mdDialog.cancel():toastr.error('Erreur pendant le processus d\'importation', 'Erreur');
+      
+    } ,function errorCallback(){
+        toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
+    });
+ };
+ 
+
+      $scope.cancel = function() {
+      //$scope.faculties=[];
+
+      $mdDialog.cancel();
+    };      
+
+  }    
+    
+    
 };
 
 
