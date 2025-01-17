@@ -199,26 +199,6 @@ class IndexController extends AbstractActionController
         return $view;            
 
     }
-    public function createOnlineRegistrationUserSessionAction()
-    {
-        
-        $data = $this->params()->fromQuery();       
-        $student= $this->entityManager->getRepository(Student::class)->findOneByMatricule($data['matricule']);
-
-        $this->sessionContainer->userName = $student->getNom()." ".$student->getPrenom();
-        $this->sessionContainer->registrationUserId = $student->getMatricule();
-       
-            //Current loggedIn User
-
-          $view = new JsonModel([
-             
-         ]);
-        // Disable layouts; `MvcEvent` will use this View Model instead
-       // $view->setTerminal(true);
-
-        return $view;            
-
-    }    
     
     public function searchStudentAction()
     {
@@ -1174,21 +1154,18 @@ class IndexController extends AbstractActionController
             if (!empty($sheetData)) {
                 for ($i=1; $i<count($sheetData); $i++) { //skipping first row
                     $row["matricule"] = $sheetData[$i][0];
-                    $row["classe"] = $sheetData[$i][1];
-                    $row["nom"] = $sheetData[$i][2];
-                    $row["prenom"] = $sheetData[$i][3];
-                    $row["sexe"] = $sheetData[$i][4];
-                    $row["date_naissance"] = $sheetData[$i][5];
-                    $row["lieu_naissance"] = $sheetData[$i][6];
-                    $row["std_num_tel"] = $sheetData[$i][7];
-                    $row["father_num_tel"] = $sheetData[$i][8];
-                    $row["mother_num_tel"] = $sheetData[$i][9];
-                    $row["sponsor_num_tel"] = $sheetData[$i][10];
-
+                    $row["nom"] = $sheetData[$i][1];
+                    $row["prenom"] = $sheetData[$i][2];
+                    $row["date_naissance"] = $sheetData[$i][3];
+                    $row["lieu_naissance"] = $sheetData[$i][4];
+                    $row["classe"] = $sheetData[$i][5];
+                    $row["fees"] = $sheetData[$i][6];
+                    $row["debt"] = $sheetData[$i][7];
+                    $row["mpc"] = $sheetData[$i][8];
                    
                     $std = $this->studentManager->addStudent($row);
                    
-                    $this->studentManager->stdAdminRegistration($row,0,0);
+                    $this->studentManager->stdAdminRegistration($row,1,0);
                     $this->studentManager->stdPedagogicRegistration($row["classe"],$std);
                     $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
                     

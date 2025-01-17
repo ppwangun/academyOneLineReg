@@ -65,7 +65,6 @@ class StdRegistrationController extends AbstractRestfulController
                 $data['faculty']= $studentFaculty->getName();
                 $data['training'] = $classe->getDegree()->getName();
                 $data['classe'] = $classe->getCode();
-                $data['isRepeating'] = $student["isStudentRepeating"];
                 //$data['dateInscription']=$data['dateInscription']->format('Y-m-d');11
               // var_dump($data); exit; 
                 

@@ -1,84 +1,3 @@
-
-<style>
-    #std-main-content{
-        margin-left: -30px;
-        margin-right: -30px;
-        
-    }
-
-    
-    md-tabs.md-no-animation md-ink-bar {
-    transition: none;
-}
-    .tabsdemoDynamicHeight md-content {
-  background-color: transparent !important; 
-    width: fit-content;}
-  .tabsdemoDynamicHeight md-content md-tabs {
-    background: #f6f6f6;
-    border: 1px solid #e1e1e1; }
-    .tabsdemoDynamicHeight md-content md-tabs md-tabs-wrapper {
-      background: white; }
-  .tabsdemoDynamicHeight md-content h1:first-child {
-    margin-top: 0; }
-</style>
-<div ng >
-    <md-content id="std-main-content">
-      <!-- Display workflow bar -->
-      <div class="pull-left">
-          <span>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#!/students">[Retour]</a></span>
-      </div>
-        <div style="text-align:right; height:10px; margin-bottom: 30px;">
-            Draft<img src="img/icons8-forward-50.png" style="height:30px;">
-            Attente payment<img src="img/icons8-forward-50.png" style="height:30px;">
-            Attente validation<img src="img/icons8-forward-50.png" style="height:30px;">
-            Terminer<img src="img/icons8-forward-50.png" style="height:30px;">
-        </div>
-      <!-- End -->
-
-      <!--Showing tabs -->
-        <md-tabs md-dynamic-height md-border-bottom class="md-no-animation" >
-            <!--First tab -->
-            <md-tab label="Inscription Administrative">
-                <md-content >
-    
-                    <form  method="POST" action="saveRegistration"  name="stdRegistrationForm" novalidate>
-                        <div class="well" ng-init="$ctrl.init()">
-                         
-                            <div class='row'>
-                                    <div class='col-md-6'>
-
-                                        <!--<button  type="button" ng-click="$ctrl.updateStudent()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="acadForm.$invalid">INscription</button> -->
-                                       <button class="btn btn-info" type="button" ng-click="openNewWindow()">Insciption</button>
-                                    </div>
-                                    <div class='col-md-6'>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                                Autres options
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu pull-right" role="menu">
-                                                <li><a href="" ng-click="$ctrl.resetRegistration()"><span>Reinitialiser l'inscription administrative</span></a></li>
-                                                <li><a href="" ng-click="$ctrl.resetPedagogicRegistration($ctrl.student.name)"><span>Reinitialiser l'inscription pédagogique/académique</span></a></li>
-                                                <li><a href="" ng-click="$ctrl.suspendRegistration()"><span>Suspendre l'année académique</span></a></li>
-                                                <li><a href="" ng-click="$ctrl.leaveTraining()"><span>Abandonné la formation</span></a></li>
-                                                
-                                              <!--  <li><a href=""><span>Imprimer étiquette</span></a>
-                                                </li>
-                                                <li><a href=""><span>Imprimer liste étudiants</span></a>
-                                                </li> -->
-                                            </ul>
-                                        </div>
-                                    </div>                                    
-                                    
-                            </div>
-                          
-                        </div>
-                        
-        <div class="form-view-main">
-            <div class="form-view">
-       
-                <div  layout="column" ng-cloak class="md-inline-form">
-                  
 <style>
 .mat-datepicker-content .mat-calendar
 { 
@@ -86,60 +5,42 @@
 }
 </style>
 
-<div  ng   >
-    <md-content  ng-init='init()'>
-
-    <div class="panel panel-primary" style='overflow: hidden;'>
-        
-                                <md-toolbar>
-                                    <div class="row">
-                            <div class="md-toolbar-tools col-sm-8">
-                              <h2>Inscription administrative de {{$ctrl.student.nom}} matricule {{$ctrl.student.matricule}}</h2>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="pull-right">
-                                    <h2 style="cursor:pointer; margin:15px; color: #e1e1e1;"> 
-                                        <i ng-click="$ctrl.printScholarshipCertificate()" title="Certificat de scolarité" class="fa fa-certificate"></i>
-                                        <i ng-click="$ctrl.printRegistrationFile()" class="fa fa-file-pdf-o" title="Fiche d'inscription"></i> 
-                                    <i ng-click="$ctrl.printStudentCard()" title="Carte d'étudiant" class="fa fa-file-image-o"></i></h2> 
-                                </div>
-                            </div>
-                                    </div>
-                          </md-toolbar>
-                        
-    <div class="panel-body" >      
-
+<div ng-app="myApp" ng-controller="onlineregCtrl as $ctrl"  ng style="margin-top: 50px; ">
+    <md-content id="std-main-content" ng-init='$ctrl.student.classe = "<?= $this->studentClasse ?>";$ctrl.student.matricule="<?=$this->studentMat?>";init()'>
+      <!-- Display workflow bar -->
+        <div style="text-align:right; height:10px; margin-bottom: 30px;">
+            Draft<img src="img/icons8-forward-50.png" style="height:30px;">
+            Attente payment<img src="img/icons8-forward-50.png" style="height:30px;">
+            Attente validation<img src="img/icons8-forward-50.png" style="height:30px;">
+            Terminer<img src="img/icons8-forward-50.png" style="height:30px;">
+        </div>
+      <!-- End -->
+    <div class="panel panel-primary">
+    <div class="panel-heading">Inscription administrative</div>
+    <div class="panel-body">      
+      <div class="alert alert-warning small"><span class='fa fa-warning'></span>Prière de bien vouloir remplir les différents champs du formulaire. Tous les champs suivis de l'astérisk<span class="text-danger">(*) </span> sont obligatoires.
+              Le formulaire ne pourra être soumis que lorsque tous les champs seront correctement remplis</div>
       <!--Showing tabs -->
 
-                <md-content>
-                <div  layout="column" ng-cloak class="md-inline-form" style='overflow: hidden;' >
+                <md-content >
+                <div  layout="column" ng-cloak class="md-inline-form">
                      
  
-                    <form  method="POST" action="saveRegistration" enctype="multipart/form-data" name="stdRegistrationForm">                            
+                    <form  method="POST" action="saveNewStudentRegistration" enctype="multipart/form-data" name="stdRegistrationForm">                            
                     <div class="row" style=' color:#636e72;'>
                         <div class="col-md-9">
 
                           <md-input-container class="md-block" flex-gt-sm>
-                            <label>Nom de l'établissement:</label>
-                            <input name="faculty" ng-model='$ctrl.student.faculty' readonly />
+                            <label>Nom de l'établicement:</label>
+                            <input name="faculty" value='<?=$this->studentFaculty ?>' readonly />
                                 <div ng-messages="stdRegistrationForm.faculty.$error">
                                     <div ng-message="required">le champ nom est obligatoire</div>
 
                                 </div>   
                           </md-input-container> 
-                            
-                          <md-input-container class="md-block" flex-gt-sm>
-                            <label>Nom de la filière:</label>
-                            <input name="filiere" ng-model='$ctrl.student.filiere' readonly />
-                                <div ng-messages="stdRegistrationForm.filiere.$error">
-                                    <div ng-message="required">le champ nom est obligatoire</div>
-
-                                </div>   
-                          </md-input-container>  
-                            
                           <md-input-container class="md-block" flex-gt-sm>
                             <label>Nom du parcourt:</label>
-                            <input name="training" ng-model='$ctrl.student.training' readonly />
+                            <input name="training" value='<?=$this->studentTraining?>' readonly />
                                 <div ng-messages="stdRegistrationForm.training.$error">
                                     <div ng-message="required">le champ nom est obligatoire</div>
 
@@ -148,33 +49,28 @@
                           <md-input-container class="md-block" flex-gt-sm>
                             <label>Classe:</label>
                             
-                            <input name="classe"   ng-model='$ctrl.student.classe' readonly />
+                            <input name="classe" value='{{$ctrl.student.classe="<?=$this->studentClasse?>"}}'  ng-model='$ctrl.student.classe' readonly />
                             
                                 <div ng-messages="stdRegistrationForm.classe.$error">
                                     <div ng-message="required">le champ nom est obligatoire</div>
 
                                 </div> <br />
                           <span class="text-info small"><?=$this->studentName?></span>  
-                          </md-input-container>   
-                            
-                          <md-input-container class="md-block" flex-gt-sm>
-                              <md-checkbox ng-disabled="true" class='md-primary' ng-model="$ctrl.student.isRepeating"  name='teacher_status' ng-checked="($ctrl.student.isRepeating)" aria-label="Actif ?" md-no-ink > Redoublant?</md-checkbox>
                           </md-input-container>                             
+                            
        
                         </div>                        
                         <div class="col-md-3">
-                          <span class="small text-danger">Taille limite de la photo:65KO</span>
-                          <img style="width:200px; height:200px;" ng-src="{{$ctrl.student.imageSrc;}}" />      
+                          <img style="width:200px; height:200px;" ng-src="{{$ctrl.student.imageSrc}}" />      
                           <md-input-container class="md-block" flex-gt-sm>
-  
-                              <input  type ="file" name="imageSrc" ng-file-select="onFileSelect($files)" ng-model="$ctrl.student.imageSrc" accept="image/*"   />
+                            
+                              <input  type ="file" name="imageSrc" ng-file-select="onFileSelect($files)" ng-model="$ctrl.student.imageSrc" accept="image/*" required  />
                                 <div ng-messages="stdRegistrationForm.imageSrc.$error">
                                     <div ng-message="required">le champ photo est obligatoire</div>
                                     <div ng-message="extension">Format de fichier invalid</div>
                                     
                                 </div> 
-                          </md-input-container>       
-                          
+                          </md-input-container>                            
    
                         </div>
 
@@ -207,7 +103,7 @@
                         <div layout-gt-sm="row" >
                             <md-input-container class="md-block" flex-gt-sm>
                               <label>Date de naissance</label>
-                              <md-datepicker   ng-model="$ctrl.student.dateOfBirth" ng-change="dateChanged()"  required disabled></md-datepicker>
+                              <md-datepicker   ng-model="$ctrl.student.dateOfBirth" ng-change="dateChanged()"  required></md-datepicker>
                               <input type="hidden" name="dateOfBirth"  value={{$ctrl.student.dateOfBirth}}   />
                               <div ng-messages="stdRegistrationForm.dateOfBirth.$error">
                                 <div ng-message="valid">Format de date invalide</div>
@@ -407,7 +303,7 @@
 
                                 <md-input-container class="md-block" flex-gt-sm>
                                 <label>Ville de résidence</label>
-                                    <md-select name="fatherCity" ng-model="$ctrl.student.fatherCity" md-on-open="$ctrl.getCities($ctrl.student.fatherCountry)" >
+                                    <md-select name="fatherCity" ng-model="$ctrl.student.fatherCity" md-on-open="$ctrl.getCities($ctrl.student.fatherCountry)"  required>
                                     
                                         <md-option ng-repeat="city in $ctrl.cities" ng-value="city.name" >
                                           {{city.name}}
@@ -483,7 +379,7 @@
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Ville de résidence</label>
-                                    <md-select name="motherCity" ng-model="$ctrl.student.motherCity" md-on-open="$ctrl.getCities_1($ctrl.student.motherCountry)" >
+                                    <md-select name="motherCity" ng-model="$ctrl.student.motherCity" md-on-open="$ctrl.getCities_1($ctrl.student.motherCountry)"  required>
                                     
                                         <md-option ng-repeat="city in $ctrl.cities_1" ng-value="city.name" >
                                           {{city.name}}
@@ -574,7 +470,7 @@
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm>
                                     <label>Ville de résidence</label>
-                                    <md-select name="sponsorCity" ng-model="$ctrl.student.sponsorCity" md-on-open="$ctrl.getCities_2($ctrl.student.sponsorCountry)"  >
+                                    <md-select name="sponsorCity" ng-model="$ctrl.student.sponsorCity" md-on-open="$ctrl.getCities_2($ctrl.student.sponsorCountry)" ng-required='!$ctrl.chkSponsor($ctrl.sponsor)' >
                                     
                                         <md-option ng-repeat="city in $ctrl.cities_2" ng-value="city.name" >
                                           {{city.name}}
@@ -780,7 +676,6 @@
 <div layout-gt-sm="row" style="background-color: white">
     <md-input-container class="md-block" flex-gt-sm></md-input-container>
 </div> <br /> <br />
-<!--
             <div layout-gt-sm="row" style="background-color: white">
                 
                 <md-input-container class="md-block" flex-gt-sm>
@@ -793,10 +688,8 @@
                     </div>
                     
                 </md-input-container>
-                <img id="spinner" ng-src="img/spinner.gif" style="display:none;">
                 
             </div>
--->
 
  <!-- FIn informations complémentaires -->
                       </form>
@@ -808,89 +701,5 @@
 
     </md-content>
     
-</div>
-
-
-                  </md-content>
-
-                </div>
-                <!-- End First tab -->
-
-
-
-                <!--End tab-->
-            </div>  
-        </div>
-                              </md-content>
-      </md-tab>
-      <!-- EN TAB --> 
-       
-
-            <md-tab label="Inscription pédagogique">
-                <md-content class="md-padding">
-                    <br />
-                    <button  type="button" ng-click="$ctrl.addSubject()" class="btn btn-danger btn" ><i class="fa fa-plus" ></i> Ajouter une UE</button></span>
-                                <br />
-                                <br />
-                                <br />
-                                <div style='background-color: #ffffff'>          
-                    <table class="table table-condensed table-hover table-striped">
-                                            <thead>
-                                                <tr class="bg-primary">
-                                                    <th width="15%">Code</th>
-                                                    <th>Intitulé UE</th>
-                                                    <th>Classe</th>
-                                                    <th>Semestre</th>
-
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-repeat="subject in $ctrl.subjects">
-                                                  
-                                                  <td width="15%" ng-bind="subject.codeUe"></td>
-                                                  <td ng-bind="subject.nomUe"></td>
-                                                  <td ng-bind="subject.classe"></td>
-                                                  <td ng-bind="subject.semester"></td>
-                                                  <td>
-
-                                                      <i ng-show="subject.isRepeated!=1" style='cursor: pointer; color: red;'
-                                                         ng-click="$ctrl.deleteSubject(subject)" class="fa fa-trash-o"></i>   
-                                                      
-                                                      <i ng-show="subject.isRepeated===1" 
-                                                         ng-style="<?=($this->access('global.system.admin', null))?'cursor = pointer; color = red;':'cursor = pointer; color = grey;'?>" 
-                                                         ng-click="<?=($this->access('global.system.admin', null))?'$ctrl.deleteSubject(subject)':''?>" class="fa fa-trash-o"></i>                                                            
-                                                 <!--     <i ng-show="subject.isRepeated===1" style="cursor: pointer; color: grey;"  class="fa fa-trash-o"></i> -->
-                                                      <span></span>
-                                                  </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>  
-                </md-content>
-            </md-tab>
-            
-            <md-tab label="Historique des inscritpions">
-                <md-content class="md-padding">
-                    hello
-                </md-content>
-            </md-tab>
-            
-            
-            <md-tab label="Discipline">
-                <md-content class="md-padding">
-                    hello
-                </md-content>
-            </md-tab>
-            
-            <md-tab label="Notes">
-                <md-content class="md-padding">
-                    hello
-                </md-content>
-            </md-tab>
- 
-        
-        </md-tabs>       
-    </md-content>
 </div>
 
