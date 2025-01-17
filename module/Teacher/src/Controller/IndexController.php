@@ -134,11 +134,16 @@ class IndexController extends AbstractActionController
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             $ue = []; $ue_1 = [];
             
+            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            $acadYearId = $acadYear->getId();             
+            
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
                 //collect all courses affected to any semester
                     $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
+                            . 'WHERE c.academicYear = :acadYearId'
                         );
+                    $query->setParameter('acadYearId',$acadYearId);
                 $ue= $query->getResult(); 
               
                 //collect all courses affected to any semester
@@ -160,8 +165,9 @@ class IndexController extends AbstractActionController
                     {
                         //collect all courses affected to any semester
                         $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                                . 'AND c.classe= ?1 ');
+                                . 'AND c.classe= ?1 AND c.academicYear = :acadYearId');
                         $query->setParameter(1, $classe->getClassOfStudy()->getCode());
+                        $query->setParameter('acadYearId',$acadYearId);
                         $ue_1= $query->getResult(); 
                         $ue = array_merge($ue,$ue_1);
                         

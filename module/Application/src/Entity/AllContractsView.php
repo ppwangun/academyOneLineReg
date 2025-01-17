@@ -5,7 +5,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CurrentYearTeachingUnitView
+ * AllContractsView
  *
  * @ORM\Table(name="all_contracts_view")
  * @ORM\Entity
