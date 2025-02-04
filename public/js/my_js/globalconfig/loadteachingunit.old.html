@@ -1,0 +1,159 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Ajouter une matière">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Ajouter une matière à l'UE: {{ue.name}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+        <form ng-cloak name="subjectForm">
+            <div layout-gt-sm='row'>
+    <md-input-container class="md-block" flex-gt-sm flex='60'>
+    
+          <label>Classe:</label>
+          <md-autocomplete  md-search-text="$ctrl.searchText" 
+                           md-selected-item="$ctrl.selectedItem"  
+                           md-items="item in $ctrl.querySearch($ctrl.searchText)" 
+                           md-item-text="item.name" 
+                           md-min-length="0"
+                           placeholder="Faites de la classe" 
+                           md-selected-item-change="$ctrl.selectedItemChange(item)"
+                           md-input-name="classe"
+                           md-no-asterisk
+                           required>
+              <md-item-template>
+                <span md-highlight-text="$ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+
+              </md-item-template>
+              <md-not-found>
+                No states matching "{{$ctrl.searchText}}" were found.
+                <a ng-click="">Create a new one!</a>
+              </md-not-found>
+        </md-autocomplete>
+              <div ng-messages="teachingUnitForm.classe.$error">
+                  <div ng-message="required">Ce champ est obligatoire</div>
+              </div> 
+    </md-input-container>
+        
+                <md-input-container class="md-block" flex-gt-sm flex='20'>
+                <label>Choix du smestre</label>
+                <md-select name="semester" ng-model="ctrl.ue.sem" ng-required="true" md-no-asterisk>
+                   <!--<md-option><em>None</em></md-option> -->
+                   <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem.code" >
+                     {{sem.name}}
+                   </md-option>
+                 </md-select>
+              <div ng-messages="teachingUnitForm.semester.$error">
+                  <div ng-message="required">le champ semestre  est obligatoire</div>
+                  
+              </div> 
+        </md-input-container>
+            </div>
+    <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm flex='70'>
+          <label>Nom de la matière:</label>
+          <input name="name" ng-model="subject.name" md-no-asterisk required />
+              <div ng-messages="subjectForm.name.$error">
+                  <div ng-message="required">le champ nom UE est obligatoire</div>
+
+              </div>   
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm flex='10'>
+          <label>code:</label>
+          <input name="code" ng-model="subject.code"  md-no-asterisk  minlength='3'/>
+              <div ng-messages="subjectForm.code.$error">
+                  <div ng-message="required">le champ code UE  est obligatoire</div>
+                  <div ng-message="minlength">le code doit avoir au moins 3 caractères</div>
+              </div> 
+        </md-input-container>
+        
+        <md-input-container class="md-block" flex-gt-sm flex='10'>
+          <label>Cédits:</label>
+          <input name="credits" type="number"  ng-model="subject.credits" required md-no-asterisk />
+              <div ng-messages="subjectForm.credits.$error">
+                  <div ng-message="required">le champ nombre de crédits  est obligatoire</div>
+                  
+              </div> 
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm flex='10'>
+          <label>Horaire:</label>
+          <input name="vol_horaire" type="number" ng-model="subject.hours_vol" required md-no-asterisk />
+              <div ng-messages="subjectForm.vol_horaire.$error">
+                  <div ng-message="required">le champ volume horaire est obligatoire</div>
+                  
+              </div> 
+        </md-input-container>
+        
+        </div>
+                    
+   <fieldset><legend>Répartition du volume horaire</legend>
+      <div layout-gt-sm='row'>      
+     <md-input-container class="md-block" flex-gt-sm flex='10'>
+        
+          <label>CM</label>
+          <input name="cm" type='number' ng-model="subject.cm_hrs" required md-no-asterisk  />
+              <div ng-messages="teachingUnitForm.cm.$error">
+                  <div ng-message="required">le champ code UE  est obligatoire</div>
+
+              </div> 
+        </md-input-container>
+        
+        <md-input-container class="md-block" flex-gt-sm flex='10'>
+          <label>TD</label>
+          <input name="td" type="number"  ng-model="subject.td_hrs" required md-no-asterisk />
+              <div ng-messages="teachingUnitForm.td.$error">
+                  <div ng-message="required">le champ nombre de crédits  est obligatoire</div>
+                  
+              </div> 
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm flex='10' >
+          <label>TP</label>
+          <input name="tp" type="number" ng-model="subject.tp_hrs" required md-no-asterisk />
+              <div ng-messages="teachingUnitForm.vol_horaire.$error">
+                  <div ng-message="required">le champ volume horaire est obligatoire</div>
+                  
+              </div> 
+        </md-input-container>
+         
+        </div>
+            <div class="error">
+                <small ng-show="subject.cm_hrs+subject.tp_hrs+subject.td_hrs>subject.hours_vol" >bla bla bla</small>
+            </div>
+    </fieldset>
+    
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()"> Annuler</md-button>
+      <md-button class="md-warn" ng-click="createSubject()" ng-show="!isUpdate" ng-disabled="subjectForm.$invalid">
+       Ajouter
+      </md-button>
+      <md-button class="md-warn" ng-click="updateSubject()" ng-show="isUpdate" ng-disabled="subjectForm.$invalid"> Modifier</md-button>
+    </md-dialog-actions>
+        </form>    
+          </md-content>
+      </div>
+      
+
+  
+</md-dialog>
