@@ -115,70 +115,59 @@ class IndexController extends AbstractActionController
         
                 //check if UE already exists
                 if(empty($worksheet->getCell('C' . $row)->getValue())) {echo"ligne:".$row ." UE Introuvable"; throw($teachingUnit);}
-                $teachingunit  = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                
                 
                 
                 $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
                 $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
                 $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
 
+
                 if(!$class) {echo"ligne:".$row ." classe ".$worksheet->getCell('A' . $row)->getValue(). " Introuvable"; throw($class);}
                 if(!$semester) {echo "ligne:".$row ."Semestre".$worksheet->getCell('B' . $row)->getValue()." pour la classe ".$worksheet->getCell('A' . $row)->getValue(). "introuvable"; throw($semester);}
                 $totalVolume = $worksheet->getCell('G' . $row)->getValue()+$worksheet->getCell('H' . $row)->getValue()+$worksheet->getCell('I' . $row)->getValue();
                 if ($worksheet->getCell('J' . $row)->getValue()<$totalVolume) $worksheet->getCell('J' . $row)->setValue($totalVolume);
-                
-                if($teachingunit)
-                {
-                    $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
-                    $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue()); 
-                    $this->entityManager->flush();
-                    
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                 
-                    $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingunit]);
 
+                $teachingunits  = $this->entityManager->getRepository(TeachingUnit::class)->findByCode($worksheet->getCell('C' . $row)->getValue());
+                $flag = false;
+                foreach ($teachingunits as $teachingunit)
+                {
+
+                    $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingunit,'status'=>1]);
+
+                    //check if the subject already exits for all the current class
                     if($class_study_semester)
                     {
+                        $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
+                        $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue()); 
+                       // $this->entityManager->flush();
+
                         //$class_study_semester->setTeachingUnit($teachingunit);
                         $class_study_semester->setClassOfStudy($class);
                         $class_study_semester->setSemester($semester);
                         $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                        
-                        
-                        
                         $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
                         $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
                         $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
                         $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $this->entityManager->flush();                     
-                    }else{ echo "je suis dedans"; exit;
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setTeachingUnit($teachingunit); 
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $this->entityManager->persist($class_study_semester);  
-                        $this->entityManager->flush();
+
+                        $this->entityManager->flush(); 
+                        $flag =true;
+                        break;
+
                     }
-                }else
+                }
+                if(!$flag)
                 {   
                     $teachingunit= new TeachingUnit();
                     $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
                     $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue());
-                    $this->entityManager->persist($teachingunit);
+                    
                     $this->entityManager->flush();
+                    $this->entityManager->persist($teachingunit);
+                    
 
                     $class_study_semester = new ClassOfStudyHasSemester();
                     $class_study_semester->setTeachingUnit($teachingunit);
-
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
-
                     $class_study_semester->setClassOfStudy($class);
                     $class_study_semester->setSemester($semester);
                     $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
@@ -186,108 +175,107 @@ class IndexController extends AbstractActionController
                     $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
                     $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
                     $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
-                    $this->entityManager->persist($class_study_semester);
+                    
                     $this->entityManager->flush();
+                    $this->entityManager->persist($class_study_semester);
+                    
                     
                 }
-            }
-            else{
+                
+            }    
+            else
+            {
                 
 
-              
-                $subject = $this->entityManager->getRepository(Subject::class)->findOneBySubjectCode($worksheet->getCell('D' . $row)->getValue());  
-                  
-                if($subject)
+                
+                $subjects = $this->entityManager->getRepository(Subject::class)->findBySubjectCode($worksheet->getCell('D' . $row)->getValue());
+               
+                foreach($subjects as $subject)
+                {
+                    $flag =false;
+                    $class_study_subject_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester,"classOfStudy"=>$class]);
+                //we are searching that is register for the class for the current year 
+         
+                    if($class_study_subject_semester)
+                    { 
+                            $flag = true;
+                            $class_study_subject_semester->setClassOfStudy($class);
+                            $class_study_subject_semester->setSemester($semester);
+                            $class_study_subject_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
+                            $class_study_subject_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
+                            $class_study_subject_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
+                            $class_study_subject_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
+                            $class_study_subject_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
+                            $class_study_subject_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
+                            $class_study_subject_semester->setSubject($subject);
+
+                            $teachingunits  = $this->entityManager->getRepository(TeachingUnit::class)->findByCode($worksheet->getCell('C' . $row)->getValue());
+                            foreach($teachingunits as $teachingUnit)
+                            {
+                                $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingUnit,'status'=>1]);
+                                if($class_study_semester)
+                                {
+                                    $subject->setTeachingUnit($teachingUnit);
+                                    break;
+                                }
+                            }
+
+                            $this->entityManager->flush();
+                        
+                            break;
+
+                    }
+                    
+                } 
+                if(!$flag)
                 { 
+                     
+                    $subject = new Subject();
                     $subject->setSubjectName($worksheet->getCell('E' . $row)->getValue());
                     $subject->setSubjectCode($worksheet->getCell('D' . $row)->getValue());
-                    $teachingunit = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                    $subject->setTeachingUnit($teachingunit);
+
+                    $teachingunits  = $this->entityManager->getRepository(TeachingUnit::class)->findByCode($worksheet->getCell('C' . $row)->getValue());
+                    foreach($teachingunits as $teachingUnit)
+                    {
+                        $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingUnit,'status'=>1]);
+                        if($class_study_semester)
+                        {
+                            $subject->setTeachingUnit($teachingUnit);
+                            break;
+                        }
+                    }
+ 
+                    
+                    $this->entityManager->persist($subject);
+                    
+                    
+                    
+
+                    $class_study_sem = new ClassOfStudyHasSemester();
+                    
+                    $class_study_sem->setClassOfStudy($class);
+                    $class_study_sem->setSemester($semester);
+                    $class_study_sem->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
+                    $class_study_sem->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
+                    $class_study_sem->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
+                    $class_study_sem->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
+                    $class_study_sem->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
+                    $class_study_sem->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
+                    $class_study_sem->setSubject($subject);
+
+                   
+                    $this->entityManager->persist($class_study_sem);
                     $this->entityManager->flush();
                     
-                    $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                    $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester,"classOfStudy"=>$class]);
-                    
-                    if($class_study_semester)
-                    {
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject); 
-                        
-                    }
-                    else{  
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setClassOfStudy($class);
-                       // $class_study_semester->setTeachingUnit($teachingunit);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);
-                        $this->entityManager->persist($class_study_semester);
-                        $this->entityManager->flush();                        
-                    }
-                      
-                }else
-                { 
-                    $subject= new Subject();
-                    $subject->setSubjectName($worksheet->getCell('E' . $row)->getValue());
-                    $subject->setSubjectCode($worksheet->getCell('D' . $row)->getValue());
-                    $teachingunit = $this->entityManager->getRepository(TeachingUnit::class)->findOneByCode($worksheet->getCell('C' . $row)->getValue());
-                    $subject->setTeachingUnit($teachingunit);
+                  
 
-                    $this->entityManager->persist($subject);
-
-                    //increment the number of subject inside the teaching unit
-                    $n = $teachingunit->getNumberOfSubjects(); 
-                    $teachingunit->setNumberOfSubjects($n+1);
-
-
-                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                   $class_study_semester= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester,"classOfStudy"=>$class]);
-                   if($class_study_semester)
-                   {
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);  
-                        $this->entityManager->flush();  
-                   }
-                   else
-                   {
-                        $class_study_semester = new ClassOfStudyHasSemester();
-                        $class_study_semester->setClassOfStudy($class);
-                        $class_study_semester->setSemester($semester);
-                        $class_study_semester->setSubjectWeight($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setSubjectHours($worksheet->getCell('J' . $row)->getValue());
-                        $class_study_semester->setSubjectCmHours($worksheet->getCell('G' . $row)->getValue());
-                        $class_study_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
-                        $class_study_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
-                        $class_study_semester->setSubject($subject);
-
-                        $this->entityManager->persist($class_study_semester);
-                        $this->entityManager->flush();  
-                   }
                 }
-                }
+
             }
+                
+        }
 
+        $this->entityManager->flush();
         $this->entityManager->getConnection()->commit();
 
         $result = true;

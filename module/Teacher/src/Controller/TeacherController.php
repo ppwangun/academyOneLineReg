@@ -97,7 +97,7 @@ class TeacherController extends AbstractRestfulController
                 
                 $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
                 $acadYearId = $acadYear->getId(); 
-                
+              
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
                         .'WHERE c.teacher = :teacher AND c.academicYear = :acadYearId' );
                 $query->setParameter('teacher',$id);

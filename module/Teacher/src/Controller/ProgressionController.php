@@ -49,6 +49,7 @@ class ProgressionController extends AbstractRestfulController
             
             $progressions = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
             $dataOutPut = []; 
+            $progr = [];
         
                 foreach($progressions as $key=>$value)
                 {

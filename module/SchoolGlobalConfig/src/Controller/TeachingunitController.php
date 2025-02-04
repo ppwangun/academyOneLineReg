@@ -45,7 +45,9 @@ class TeachingunitController extends AbstractRestfulController
             $query = $this->entityManager->createQuery('SELECT  t.id, c.id as ue_class_id,t.name,t.code, t.numberOfSubjects as subjects, c1.id as class_id,c.credits, c.hoursVolume as hours_vol,c.cmHours as cm_hrs,c.tpHours as tp_hrs, c.tdHours as td_hrs,c.markCalculationStatus as mark_calculation_status  FROM Application\Entity\ClassOfStudyHasSemester c '
                     . 'JOIN c.classOfStudy c1 '
                     . 'JOIN c.teachingUnit t '
-                    . 'WHERE t.id = ?1 and c.status = 1'
+                    . 'JOIN c.semester s '
+                    . 'JOIN s.academicYear a '
+                    . 'WHERE t.id = ?1 AND c.status = 1 AND a.isDefault =1'
                     );  
             $query->setParameter(1, $id);
             $ue = $query->getResult()[0];
@@ -187,7 +189,7 @@ class TeachingunitController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
-            $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneById($id);
+            $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneById($id); 
            $ue = $ueClasse->getTeachingUnit();
            $ueId = $ue->getId(); 
            $ue = $this->entityManager->getRepository(TeachingUnit::class)->findOneById($ueId);
@@ -195,7 +197,7 @@ class TeachingunitController extends AbstractRestfulController
             {
                 
                 $this->entityManager->remove($ueClasse );
-                $this->entityManager->remove($ue );
+                //$this->entityManager->remove($ue );
                 $this->entityManager->flush();
                 $this->entityManager->getConnection()->commit();
             }

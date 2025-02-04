@@ -1,0 +1,393 @@
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<?php
+//============================================================+
+// File name   : example_048.php
+// Begin       : 2009-03-20
+// Last Update : 2013-05-14
+//
+// Description : Example 048 for TCPDF class
+//               HTML tables and table headers
+//
+// Author: Nicola Asuni
+//
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com LTD
+//               www.tecnick.com
+//               info@tecnick.com
+//============================================================+
+
+/**
+ * Creates an example PDF TEST document using TCPDF
+ * @package com.tecnick.tcpdf
+ * @abstract TCPDF - Example: HTML tables and table headers
+ * @author Nicola Asuni
+ * @since 2009-03-20
+ */
+
+class PDF extends TCPDF {
+    //
+    // This class extends FPDF so we may customize the header and footer
+    // of the PDFs that are created
+    //
+
+    function Footer() {
+        $footertext="Report generated with UdMAcademy By ppwangun (" . date("d-m-Y H:i") . ")";
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        $this->SetFont('helvetica', '', 6);
+        // Page number
+         
+        $this->Cell(0, 5, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $html ='<hr>';
+        $this->writeHTML($html, true, false, true, false, '');
+        $this->writeHTML($footertext, false, true, false, true);
+    }  // end of the Footer function
+}
+
+// create new PDF document
+$pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Nicola Asuni');
+$pdf->SetTitle('Universté des Montagnes');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+
+// set default header data
+$pdf->SetHeaderData('', 0, 'Universté des Montagnes', $this->faculty."\n".$this->filiere."\n".$this->acadYr."/".$this->semestre);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('helvetica', 'B', 12);
+
+// add a page
+$pdf->AddPage('L','A4');
+$pdf->Write(0, $this->classe, '', 0, 'L', true, 0, false, false, 0);
+//$pdf->Write(0, $nomUe.':    '.$codeUe, '', 0, 'L', true, 0, false, false, 0);
+$pdf->SetFont('helvetica', '', 2);
+$pdf->Write(0, '', '', 0, 'L', true, 0, false, false, 0);
+$pdf->SetFont('helvetica', '', 8);
+
+function createHeader($students,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$font_size,$width_grd,$width_moy,$width_col_suject,$font_mark_size)
+{
+    $tblHeader = '<tr style="background-color:#428bca; font-size: 8px;">';
+    $counter = 0;
+
+    foreach($students[0] as $key=>$values)
+    {
+        if(strtolower($key)==strtolower("note".$counter))
+        {   
+             $val = array_keys($values); 
+             $tblHeader.= '<th style = " font-size: 7px; height: 20px; padding:8px; width: '.$width_moy.'; text-align: center;"><strong>'.ucwords(strtoupper($val[1])).'</strong></th>';
+             $tblHeader.= '<th style = " font-size: 7px; height: 20px; padding:8px; width: '.$width_grd.'; text-align: center;"><strong>'.ucwords(strtoupper($val[0])).'</strong></th>';
+             $counter++;
+            
+        }
+       
+     // else $width = "";
+        //Table header
+       
+    }
+    $tblHeader =$tblHeader.'</tr>';
+    $tblHeader_2 ='<tr style="background-color:#428bca; font-size: '.$font_header_size.' ">';
+    $counter=0;
+    
+    foreach($students[0] as $key=>$values)
+    {
+       
+        $colspan = "1";
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tblHeader_2.= '<th rowspan="2" style = "height: 20px; text-align: center; width: '.$width_col_1.' text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            $width = "22%;";
+             $tblHeader_2.= '<th rowspan="2" style = "height: 20px; text-align: center; width: '.$width_col_2.' text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+        }
+        elseif(strtolower($key)=="tcri" || strtolower($key)=="tcrv" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+             $tblHeader_2.= '<th rowspan="2" style = "height: 20px; padding:8px; width: '.$width_mps.'; text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+        }
+        elseif(strtolower($key)==strtolower("note".$counter))
+        {   
+            $counter++;
+            //Doing nothing
+        }
+        elseif(strtolower($key)==strtolower("MPCPREV")||strtolower($key)==strtolower("CrV"))
+        {   
+            
+            //Doing nothing
+        }        
+      
+        else{ 
+
+             $tblHeader_2.= '<th colspan="2" style = " font-size: 7px; height: 20px; padding:8px; width: '.$width_col_suject.'; text-align: center;"><strong>'.ucwords(strtoupper($key)).'</strong></th>';
+        }       // else $width = "";
+        //Table header
+       
+    }
+    $tblHeader_2.='</tr>';
+$tblHeader =$tblHeader_2.$tblHeader;
+return $tblHeader;
+}
+
+$students = $this->students;
+
+//report template configuration
+//we are going to construc the template by considering the number of the column to display
+
+//Number of columns
+
+$numColumns = sizeof($students[0]);
+
+                $width_col_1 = "7%";
+                $width_col_2 = "20%";
+                $width_mps = "4%";
+                $font_header_size = "10px";
+                $font_size = "10px;";
+                //echo $numColumns; exit;
+            if($numColumns<=22)
+            {
+                $width_grd = "3%";
+                $width_moy= "4%";
+                $width_col_suject = "7%";
+                $font_mark_size = "8px;";
+             }
+            else
+            {
+                $width_grd = "2%";
+                $width_moy= "3%";
+                $width_col_suject = "5%";
+                $font_mark_size = "6px;";
+            }
+
+$tblHeader = createHeader($students,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$font_size,$width_grd,$width_moy,$width_col_suject,$font_mark_size);
+
+
+
+$tblBody = '';
+$i=0;
+
+foreach($students as $stud)
+{
+    $tblBody.='<tr nobr="true">';
+    $counter = 0;
+    foreach($stud as $key=>$value)
+    {
+        //Table header
+        $align = "center";
+        $color = "#ffffff;";
+        
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tblBody.= '<td style = "font-size: '.$font_size.' width: '.$width_col_1.'; text-align: '.$align.'; "> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            
+            $align = "left;";
+            $tblBody.= '<td style = "font-size: '.$font_size.' width: '.$width_col_2.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="tcri" || strtolower($key)=="tcrv" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+            
+            if(strtolower($key)=="tcri")  $color_1= "#dcdde1;"; 
+            if(strtolower($key)=="tcrv")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="mps")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            $tblBody.= '<td style = "font-weight: bold; font-size: '.$font_size.' background-color:'.$color_1.' width: '.$width_mps.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }
+        elseif(strtolower($key)==strtolower("note".$counter) )
+        {
+            $color_font = "#000000;";
+           
+          if(in_array($value["grd"], ["F","E","D","D+","C-"])) {$color = "#bb1924;"; $color_font ="#ffffff;";}
+          $tblBody.= '<td style = "color:'.$color_font.'  font-size: '.$font_mark_size.' background-color:'.$color.' width: '.$width_moy.'; text-align: '.$align.'"> &nbsp; '.$value["moy"].'</td>'; 
+          $tblBody.= '<td style = "color: '.$color_font.' font-size: '.$font_mark_size.' background-color:'.$color.'  width: '.$width_grd.'; text-align: '.$align.'"> &nbsp;'.$value["grd"].'</td>'; 
+          $counter++;
+        }
+      
+        
+    }
+    $tblBody.='</tr>';
+}
+$tbl2Body = '';
+foreach($studentsWithBaclogs as $stud)
+{
+    $tbl2Body.='<tr nobr="true">';
+    $counter = 0;
+    foreach($stud as $key=>$value)
+    {
+        //Table header
+        $align = "center";
+        $color = "#ffffff;";
+        
+        if(strtolower($key)=="matricule" )
+        {
+
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' width: '.$width_col_1.'; text-align: '.$align.'; "> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="nom" )
+        {
+            
+            $align = "left;";
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' width: '.$width_col_2.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        }
+        elseif(strtolower($key)=="tcri" || strtolower($key)=="tcrv" || strtolower($key)=="mps" || strtolower($key)=="mpc" )
+        {
+            
+            if(strtolower($key)=="tcri")  $color_1= "#dcdde1;"; 
+            if(strtolower($key)=="tcrv")  $color_1= "#c8d6e5;";  
+            if(strtolower($key)=="mps")   $color_1= "#7f8fa6;";
+            if(strtolower($key)=="mpc")   $color_1= "#718093;";
+            $tbl2Body.= '<td style = "font-size: '.$font_size.' background-color:'.$color_1.' width: '.$width_mps.'; text-align: '.$align.'"> &nbsp;'.$value.'</td>'; 
+        
+        }
+        elseif(strtolower($key)==strtolower("note".$counter) )
+        {
+            $color_font = "#000000;";
+           
+          if(in_array($value["grd"], ["F","E","D","D+","C-"])) {$color = "#bb1924;"; $color_font ="#ffffff;";}
+          if($value["grd"]==""||$value["grd"]=="") {$color = "#E8E8E8;"; $color_font ="#ffffff;";}
+          $tbl2Body.= '<td style = "color:'.$color_font.'  font-size: '.$font_mark_size.' background-color:'.$color.' width: '.$width_moy.'; text-align: '.$align.'"> &nbsp; '.$value["moy"].'</td>'; 
+          $tbl2Body.= '<td style = "color: '.$color_font.' font-size: '.$font_mark_size.' background-color:'.$color.'  width: '.$width_grd.'; text-align: '.$align.'"> &nbsp;'.$value["grd"].'</td>'; 
+          $counter++;
+        }
+      
+        
+    }
+    $tbl2Body.='</tr>';
+}
+
+
+
+$numColumns = sizeof($studentsWithBaclogs[0]);
+$tblHeader2 = createHeader($studentsWithBaclogs,$numColumns,$width_col_1,$width_col_2,$width_mps,$font_header_size,$font_size,$width_grd,$width_moy,$width_col_suject,$font_mark_size);
+$tbl = '<thead>'.$tblHeader.'</thead>'.$tblBody;
+$tbl2 = '<thead>'.$tblHeader2.'</thead>'.$tbl2Body;
+$pdf->SetFont('helvetica', 'B', 16);
+$pdf->Cell(0, 0, 'PROCES VERBAL RECAPITULATIF', 0, 0, 'C');
+$pdf->SetY(50);
+
+$pdf->SetFont('helvetica', '', 8);
+//echo $numColumns; exit;
+$tbl = <<<EOD
+       
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
+    $tbl
+        </table>
+EOD;
+$pdf->writeHTML($tbl, true, false,true, false, 'c');
+if(!empty($this->studentsWithBaclogs))
+{
+$pdf->addPage();
+$pdf->SetFont('helvetica', 'B', 16);
+$pdf->Cell(0, 0, 'DETTES', 0, 0, '');
+$pdf->SetY(50);
+
+
+$pdf->SetFont('helvetica', '', 8);
+$tbl = <<<EOD
+        <table cellspacing="0" cellpadding="1" border="1" margin="15px">
+    $tbl2
+        </table>   
+EOD;
+
+$pdf->writeHTML($tbl, true, false,true, false, 'c');
+}
+
+$tbl = <<<EOD
+
+        <table cellspacing="0" cellpadding="1" border="0" margin="15px" >
+    <td style = "text-align: center; font-weight: bold; font-style: italic;">  Le président du jury </td><td style="text-align: center; font-weight: bold; font-style: italic;"> Les membres du jury</td><td style="text-align: center; font-weight: bold; font-style: italic;">Le rapporteur</td>
+        </table>
+EOD;
+
+$pdf->SetFont('helvetica', '', 12);
+$pdf->writeHTML($tbl, true, false, false, false, '');
+ob_end_clean();
+//Close and output PDF document
+
+$pdf->Output($_SERVER["DOCUMENT_ROOT"].'impressions/'.preg_replace('/\s+/', '',$this->classe.$this->semestre).'-'.date("d-m-Y-H-i").'.pdf', 'F');
+?>
+
+        <style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+   <md-dialog style="max-width: 100%;
+            max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;" aria-label="Mango (Fruit)">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Impression PV Individuel</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div  class="md-dialog-content">
+
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '',$this->classe.$this->semestre.'-').date("d-m-Y-H-i").'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
+                     
+
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Fermer
+      </md-button>
+
+    </md-dialog-actions>
+  </form>
+</md-dialog>

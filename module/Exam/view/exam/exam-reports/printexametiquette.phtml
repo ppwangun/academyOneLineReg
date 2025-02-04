@@ -118,6 +118,35 @@ $tblTop = <<<EOD
 EOD;
 $pdf->writeHTML($tblTop, true, false, false, false, '');
 
+$defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
+$fontDirs = $defaultConfig['fontDir'];
+
+$defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
+$fontData = $defaultFontConfig['fontdata'];
+
+$mpdf = new \Mpdf\Mpdf([
+    'fontDir' => array_merge($fontDirs, [
+        $_SERVER["DOCUMENT_ROOT"]. '/font/Roboto',
+    ]),
+    'fontdata' => $fontData + [ // lowercase letters only in font key
+        'roboto' => [
+            'R' => 'Roboto-Regular.ttf',
+            'I' => 'Roboto-Italic.ttf',
+        ]
+    ],
+    'default_font' => 'roboto',
+    'margin_left' => 18,
+    'margin_right' => 18,
+    'margin_top' => 45,
+    'margin_bottom' => 45,
+    'margin_header' => 9,
+    'margin_footer' => 9    
+]);
+
+
+$mpdf->SetDocTemplate(__DIR__.'/template_header.pdf',1);
+$mpdf->WriteHTML($tblTop);
+
 
 ob_end_clean();
 //Close and output PDF document

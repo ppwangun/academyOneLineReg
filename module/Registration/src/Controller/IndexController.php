@@ -1184,11 +1184,11 @@ class IndexController extends AbstractActionController
                     $row["father_num_tel"] = $sheetData[$i][8];
                     $row["mother_num_tel"] = $sheetData[$i][9];
                     $row["sponsor_num_tel"] = $sheetData[$i][10];
-
+                    $row["mpc"] = 0;
                    
                     $std = $this->studentManager->addStudent($row);
-                   
-                    $this->studentManager->stdAdminRegistration($row,0,0);
+                    $status = 1;
+                    $this->studentManager->stdAdminRegistration($row,$status,0);
                     $this->studentManager->stdPedagogicRegistration($row["classe"],$std);
                     $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
                     

@@ -149,6 +149,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
         $scope.showButtonGroup = true;
         
 
+
             var data = {id: exam_id};
             var config = {
             params: data,
@@ -206,6 +207,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
 
                             }).then(function(){
                                 $ctrl.asignedSemToClasse($ctrl.selectedClasse.code);
+                                
       
                         }).then(function(){
 
@@ -216,6 +218,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                         };                        
                         $http.get('semester',config).then(function(response){
                              $ctrl.selectedSem = response.data[0]; 
+                             
                               
                         })}).then(function(){
 
@@ -228,21 +231,54 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                         function(response){
                              $ctrl.selectedExam = response.data[0];
                                 
-                        });}).then(function(){ 
+                        });}).then(function(){
+                                $ctrl.ues = [];
+                                $ctrl.subjects= [];
+                                $ctrl.selectedSubject = null;
+                                var data = {id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.exam.sem_id}};
+                                var config = {
+                                params: data,
+                                headers : {'Accept' : 'application/json'}
+                                };
+                                //Loading selected class information for update
+                                $timeout(
+
+                                $http.get('teachingunit',config).then(
+
+                                function(response){
+                                    $ctrl.ues=response.data[0];
+
+                                }),1000);
+
+                        }).then(function(){ 
                         
                         var data = {id: response.data[0].ue_id};
                         var config = {
                         params: data,
                         headers : {'Accept' : 'application/json'}
-                        };                        
-                        $http.get('teachingunit',config).then(
-                        function(response){
-                             $ctrl.selectedUe = response.data[0];
-                             $ctrl.isActivatedUeSelect = true; 
-                             $ctrl.loadUE($ctrl.selectedClasse,$ctrl.exam.sem_id);
-                             
-                                
-                        });}).then(function(){ 
+                        }; 
+                            $timeout(
+                            $http.get('teachingunit',config).then(
+                                function(response){
+                                    $ctrl.selectedUe = response.data[0];
+                                    $ctrl.isActivatedUeSelect = true; 
+                                    $ctrl.markCalculationStatus = $ctrl.selectedUe.mark_calculation_status;
+      
+                        }),1000);}).then(function(){
+                                    var config = {
+                                    params: {id:response.data[0].ue_id},
+                                    headers : {'Accept' : 'application/json'}
+                                    };   
+
+                                    $http.get('subjectbyue',config).then(function(response){
+                                        $ctrl.subjects = response.data[0];
+                                        if($ctrl.subjects.length>0)
+                                        {
+                                            $ctrl.isActivatedMatiereSelect = true;
+                                            $ctrl.isMatiereRequired = true;
+                                        }
+                                    });
+                            }).then(function(){ 
                         
                         var data = {id: response.data[0].subject_id};
                         var config = {
@@ -257,20 +293,6 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                                 
                         });
                         }).then(function(){
-                                    var config = {
-                                    params: {id:response.data[0].ue_id},
-                                    headers : {'Accept' : 'application/json'}
-                                    };   
-
-                                    $http.get('subjectbyue',config).then(function(response){
-                                        $ctrl.subjects = response.data[0];
-                                        if($ctrl.subjects.length>0)
-                                        {
-                                            $ctrl.isActivatedMatiereSelect = true;
-                                            $ctrl.isMatiereRequired = true;
-                                        }
-                                    });
-                            }).then(function(){
                             
                         var data = {id: response.data[0].exam_code};
                         var config = {
@@ -392,17 +414,17 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
  };
  
  
-$ctrl.activateUeSelect = function(){
+$ctrl.activateUeSelect = $timeout(function(){
    $ctrl.isActivatedUeSelect = true;
    $ctrl.selectedUe = null;
    $ctrl.selectedSubject = null;
-};
+},100);
 
-$ctrl.selectedItemChange = function(classe){
+$ctrl.selectedItemChange = $timeout(function(classe){
     $ctrl.sem = null;
    $ctrl.selectedUe = null;
    $ctrl.selectedSubject = null;
-}
+},100);
     
 $ctrl.asignedSemToClasse = function(class_code){
     $ctrl.semesters = [];

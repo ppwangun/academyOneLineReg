@@ -2,28 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/tabDialog.tmpl.html</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/teachingunit.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/progressions-timeline.html</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/CourseScheduled.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/User/src/Controller/AuthController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/ProgressionController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/print-bill.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/teacher-follow-up.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/TeacherController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/course.programming.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/subject-billing-tpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/programmingtpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/view/registration/index/pedagogicalregtpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/progressions-timeline.controller.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/UdMEntities/CourseScheduled.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/student/stdPedagogicalReg.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/view/registration/index/ins-pedagogique.phtml</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

@@ -11,7 +11,6 @@ $totalAdmis = $this->totalStudent - $this->totalFailure;
 //($this->typeExam=="CC")||($this->typeExam=="CCTP")?$width="16.6%":$width="12.5%";
 $width="9%";
 
-
 $tblBody = '
 <html>
 <head>
@@ -101,7 +100,7 @@ table thead td { background-color: #EEEEEE;
 </style>
 </head>
 <body>
-<!--mpdf
+<!--
 <htmlpageheader name="myheader">
 <table width="100%"><tr>
 <td></td><td width="50%" style="color:#0000BB;  vertical-align: middle;"><span style="font-weight: bold; font-size: 14pt;">'.$this->school.'</span><br />'.$this->faculty.'<br />'.$this->filiere.'<br /></td>
@@ -119,7 +118,7 @@ table thead td { background-color: #EEEEEE;
 
 <sethtmlpageheader  name="myheader" value="on" show-this-page="1" />
 <sethtmlpagefooter  name="myfooter" value="on"  />
-mpdf-->
+-->
 
 <table width="100%" style="font-family: serif; "  cellpadding="2">
 <tr><td colspan="3" style="text-align: center;"></td></tr>
@@ -238,6 +237,35 @@ $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;
 $mpdf->SetDisplayMode('fullpage');
 
+$mpdf->WriteHTML($tblBody);
+
+$defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
+$fontDirs = $defaultConfig['fontDir'];
+
+$defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
+$fontData = $defaultFontConfig['fontdata'];
+
+$mpdf = new \Mpdf\Mpdf([
+    'fontDir' => array_merge($fontDirs, [
+        $_SERVER["DOCUMENT_ROOT"]. '/font/Roboto',
+    ]),
+    'fontdata' => $fontData + [ // lowercase letters only in font key
+        'roboto' => [
+            'R' => 'Roboto-Regular.ttf',
+            'I' => 'Roboto-Italic.ttf',
+        ]
+    ],
+    'default_font' => 'roboto',
+    'margin_left' => 18,
+    'margin_right' => 18,
+    'margin_top' => 45,
+    'margin_bottom' => 45,
+    'margin_header' => 9,
+    'margin_footer' => 9    
+]);
+
+
+$mpdf->SetDocTemplate(__DIR__.'/template_header.pdf',1);
 $mpdf->WriteHTML($tblBody);
 
 

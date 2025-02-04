@@ -158,21 +158,23 @@ class SubjectController extends AbstractRestfulController
     }
   
     public function delete($id)
-    {
+    {    $data = json_decode($id, true);   
 
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
-           $subject = $this->entityManager->getRepository(Subject::class)->findOneById($id);
-           $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBySubject($subject);
+           $subject = $this->entityManager->getRepository(Subject::class)->find($data["subject_id"]);
+           $semester = $this->entityManager->getRepository(Semester::class)->find($data["smester_id"]);
+           $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester]);
 
             if($ueClasse )
             {
               
                 $this->entityManager->remove($ueClasse );
-                $this->entityManager->remove($subject );
+                
                 $this->entityManager->flush();
                 $this->entityManager->getConnection()->commit();
+                
             }
 
 

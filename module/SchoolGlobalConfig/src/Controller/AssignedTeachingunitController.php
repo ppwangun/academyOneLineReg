@@ -15,6 +15,7 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\AcademicYear;
+use Application\Entity\AdminRegistration;
 use Application\Entity\Semester;
 use Application\Entity\TeachingUnit;
 use Application\Entity\Subject;
@@ -161,10 +162,13 @@ class AssignedTeachingunitController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
+           $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault($id);
            $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneById($id);
            $ue = $ueClasse->getTeachingUnit();
            $ueId = $ue->getId(); 
            $ue = $this->entityManager->getRepository(TeachingUnit::class)->findOneById($ueId);
+           
+           
            
            //Considering that the course to be deletete can be foreign key to an other table
            //The deleting process consists to unactivate the course by setting the status to null 
@@ -173,7 +177,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
 
 
                 
-                $msgeSubject = $this->deleteSubjects($ueClasse); 
+                $msgeSubject = $this->deleteSubjects($ueClasse,$acadYr); 
                 if($msgeSubject != "DONE" )   return new JsonModel([ $msgeSubject]);
                 
                 $msge = $this->deleteTeachingUnit($ueClasse); 
@@ -220,7 +224,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
             $this->entityManager->persist($ue);
             
 
-            
+       
             $ueClasse= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($data["ue_class_id"]);
             $ueClasse->setTeachingUnit($ue);
             
@@ -231,7 +235,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
                 $u->setSemester($sem);
             }
             
-            
+                
             $contracts = $this->entityManager->getRepository(Contract::class)->findBy(["teachingUnit"=>$ueOld,"subject"=>null,"semester"=>$ueClasse->getSemester()]);
             foreach($contracts as $con)
             {
@@ -266,7 +270,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
                         $con->setSubject($newSub);
                         $con->setSemester($sem);
                     }                    
-
+                    $this->entityManager->flush();
             }
 
             $ueClasse->setCredits($data['credits']);
@@ -372,21 +376,24 @@ class AssignedTeachingunitController extends AbstractRestfulController
         return "DONE";                   
     }
     
-    private function deleteSubjects(&$coshs)
+    private function deleteSubjects($coshs,$acadYr)
     {
         $subjects = $this->entityManager->getRepository(Subject::class)->findBy(["teachingUnit"=>$coshs->getTeachingUnit()]);
+        
+        //search student register to the sbject
+        $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findBy(["classOfStudy"=>$coshs->getClassOfStudy(),"academicYear"=>$acadYr]);
 
         
-        foreach($subjects as $sub)
-        { 
-            $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(["subject"=>$sub,"semester"=>$coshs->getSemester()]); 
-            if (sizeof($unitRegistration)>0) return "SUBJECT_REGISTERED_STUDENT_ERROR";
-            
-            foreach($unitRegistration as $unit)
-                $this->entityManager->remove($unit);
+        foreach($adminRegistration as $std)
+            foreach($subjects as $sub)
+            {
+                $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(["student"=>$std,"semester"=>$coshs->getSemester(),"subject"=>$sub]); 
+                if($unitRegistration) return "SUBJECT_REGISTERED_STUDENT_ERROR";
+           
+            }
 
             //Delete all exam done
-             
+           /*  
             $cshs  = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$sub,"semester"=>$coshs->getSemester(),"classOfStudy"=>$coshs->getClassOfStudy()]);
             $exams = $this->entityManager->getRepository(Exam::class)->findBy(["classOfStudyHasSemester"=>$cshs,"status"=>0]);
             if (sizeof($exams)>0) return "SUBJECT_EXAMS_EXISTS_ERROR";
@@ -421,8 +428,8 @@ class AssignedTeachingunitController extends AbstractRestfulController
                 $this->entityManager->remove($con);
             }                        
             $this->entityManager->remove($cshs); 
-
-        } 
+*/
+         
         return "DONE";
     }
 }
