@@ -1185,10 +1185,12 @@ class IndexController extends AbstractActionController
                     $row["mother_num_tel"] = $sheetData[$i][9];
                     $row["sponsor_num_tel"] = $sheetData[$i][10];
                     $row["mpc"] = 0;
-                   
+            $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($row["classe"]); 
+            if(!$class) {"je suis dedans "; exit; throw new Exception("Classz".$data["classe"]." not found");} 
+            
                     $std = $this->studentManager->addStudent($row);
                     $status = 1;
-                    $this->studentManager->stdAdminRegistration($row,$status,0);
+                    $this->studentManager->stdAdminRegistration($row,1,0);
                     $this->studentManager->stdPedagogicRegistration($row["classe"],$std);
                     $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
                     
