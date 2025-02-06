@@ -219,7 +219,7 @@ $tblBody.='
 
 
 
-$mpdf = new \Mpdf\Mpdf([
+/*$mpdf = new \Mpdf\Mpdf([
 	'margin_left' => 20,
 	'margin_right' => 15,
 	'margin_top' => 35,
@@ -237,7 +237,7 @@ $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;
 $mpdf->SetDisplayMode('fullpage');
 
-$mpdf->WriteHTML($tblBody);
+$mpdf->WriteHTML($tblBody);*/
 
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
@@ -272,7 +272,7 @@ $mpdf->WriteHTML($tblBody);
 
 ob_end_clean();
 //Close and output PDF document
-$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',"test").'-'.date("d-m-Y-H-i").'.pdf', 'F');
+$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/printstudentlist'.date('dmyhi').'.pdf', 'F');
 ?>
 
         <style> 
@@ -301,7 +301,7 @@ z-index: 120000}
     <md-dialog-content>
       <div  class="md-dialog-content">
 
-          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '',"test").'-'.date("d-m-Y-H-i").'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
+          <embed src=<?=$this->serverUrl().'/impressions/printstudentlist'.date('dmyhi').'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
                      
 
 
