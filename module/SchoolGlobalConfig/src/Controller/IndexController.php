@@ -162,8 +162,9 @@ class IndexController extends AbstractActionController
                     $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
                     $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue());
                     
-                    $this->entityManager->flush();
+                    
                     $this->entityManager->persist($teachingunit);
+                    $this->entityManager->flush();
                     
 
                     $class_study_semester = new ClassOfStudyHasSemester();
@@ -176,12 +177,13 @@ class IndexController extends AbstractActionController
                     $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
                     $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
                     
-                    $this->entityManager->flush();
+                    
                     $this->entityManager->persist($class_study_semester);
+                    $this->entityManager->flush();
                     
                     
                 }
-                
+              
             }    
             else
             {
@@ -208,6 +210,7 @@ class IndexController extends AbstractActionController
                             $class_study_subject_semester->setSubjectTdHours($worksheet->getCell('H' . $row)->getValue());
                             $class_study_subject_semester->setSubjectTpHours($worksheet->getCell('I' . $row)->getValue());
                             $class_study_subject_semester->setSubject($subject);
+                            $class_study_subject_semester->setTeachingUnit(null);
 
                             $teachingunits  = $this->entityManager->getRepository(TeachingUnit::class)->findByCode($worksheet->getCell('C' . $row)->getValue());
                             foreach($teachingunits as $teachingUnit)
