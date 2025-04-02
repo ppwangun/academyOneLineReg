@@ -141,11 +141,11 @@ z-index: 120000}
             </div>            
         <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
         <md-input-container flex="100">
-            <label>Heure de début</label>
+            <label>Tranche horaire</label>
             <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="startingTime" ng-model="$ctrl.startingTime" 
                        ng-required="true"
                        md-no-asterisk>
-              <md-option ng-disabled="true"><em>---Heure de debut---</em></md-option>
+              <md-option ng-disabled="true"><em>---Tranches horaires---</em></md-option>
 
               <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
 
@@ -157,13 +157,13 @@ z-index: 120000}
         </div>
         <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
         <md-input-container flex="100">
-            <label>Heure de fin</label>
+            <label>Salles de cours</label>
             <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="endingTime"  ng-model="$ctrl.endingTime" 
-                         ng-required="true"
+                         ng-required="false"
                        md-no-asterisk>
-              <md-option ng-disabled="true"><em>---Heure de fin---</em></md-option>
+              <md-option ng-disabled="true"><em>---Salle de cours---</em></md-option>
 
-                    <md-option  ng-value="time" ng-repeat="time in $ctrl.times" > {{time.name}} </md-option>
+                    <md-option  ng-value="time" ng-repeat="time in $ctrl.salles" > {{time.name}} </md-option>
             </md-select>
             <div class="errors" ng-messages="examForm.endingTime.$error">
               <div ng-message="required">Champ obligatoire</div>

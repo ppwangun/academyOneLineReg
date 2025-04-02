@@ -77,6 +77,7 @@ class TeacherController extends AbstractRestfulController
                 $country = $this->entityManager->getRepository(Countries::class)->findOneByName($data["livingCountry"]);
                 $nationality = $this->entityManager->getRepository(Countries::class)->findOneByName($data["nationality"]);
                 $city = $this->entityManager->getRepository(Cities::class)->findOneByName($data["livingCity"]);
+                
                 if($country)
                     $teacher["living_country"]=$hydrator->extract($country);
                 if($city)
@@ -96,15 +97,17 @@ class TeacherController extends AbstractRestfulController
                 $teacher["documents"] = $documents;
                 
                 $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-                $acadYearId = $acadYear->getId(); 
+                $acadYearId = $acadYear->getId();
+                $contracts = [];
               
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
-                        .'WHERE c.teacher = :teacher AND c.academicYear = :acadYearId' );
+                        .'WHERE c.teacher = :teacher ' );
                 $query->setParameter('teacher',$id);
-                $query->setParameter('acadYearId',$acadYearId);
-               
-                $contracts = $query->getResult();
+               // $query->setParameter('acadYearId',$acadYearId);
 
+                if($query->getResult())
+                    $contracts = $query->getResult();
+                
                 foreach ($contracts as $key=>$con) 
                 {
                    

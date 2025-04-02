@@ -141,9 +141,9 @@ class IndexController extends AbstractActionController
             {
                 //collect all courses affected to any semester
                     $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                            . 'WHERE c.academicYear = :acadYearId'
+                        //    . 'WHERE c.academicYear = :acadYearId'
                         );
-                    $query->setParameter('acadYearId',$acadYearId);
+                   // $query->setParameter('acadYearId',$acadYearId);
                 $ue= $query->getResult(); 
               
                 //collect all courses affected to any semester
@@ -790,16 +790,18 @@ class IndexController extends AbstractActionController
                     for ($i=1; $i<count($sheetData); $i++) { //skipping first row
                        
                         $row["nom"] = $sheetData[$i][0];
-                        $row["specialite"] = $sheetData[$i][1];
+                        $row["surname"] = $sheetData[$i][1];
                         $row["telephone"] = $sheetData[$i][2];
                         $row["email"] = $sheetData[$i][3];
                        
                         $teacher = new Teacher();
                         
                         $teacher->setName($row["nom"]);
-                        $teacher->setSpeciality($row["specialite"]);
+                        $teacher->setSurname($row["surname"]);
                         $teacher->setPhoneNumber($row["telephone"]);
                         $teacher->setEmail($row["email"]);
+                        
+                        
                         $teacher->setStatus(1);
                         
                         $this->entityManager->persist($teacher);
@@ -1673,27 +1675,31 @@ public function deleteScheduledCourseAction()
             
             //retrive all current year contract
             $teacher = $this->entityManager->getRepository(Teacher::class)->findAll([],["name"=>"ASC"]);
-            $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll();
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll(); 
             foreach($teacher as $key=>$teach)
             {
-                $contracts = $this->entityManager->getRepository(Contract::class)->findByTeacher($teach); 
+                $contracts = $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teach,"academicYear"=>$acadYr)); 
                 $totalVolumeAllocated = 0;
                 $totalVolumeDone = 0;
-                
-                foreach($contracts as $con)
+                if(sizeof($contracts)> 0)
                 {
-                    $totalVolumeAllocated += $con->getVolumeHrs();
-                    $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
-                    foreach($contractsFwu as $conFwu)
-                        $totalVolumeDone += $conFwu->getTotalTime();
-                    
-                    
-                }
                 
-                $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
-                $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
-                $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
-                $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
+                    foreach($contracts as $con)
+                    {
+                        $totalVolumeAllocated += $con->getVolumeHrs();
+                        $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
+                        foreach($contractsFwu as $conFwu)
+                            $totalVolumeDone += $conFwu->getTotalTime();
+
+
+                    }
+
+                    $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
+                    $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
+                    $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
+                    $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
+                }
             }
 
             //Sorting the $std array according to the key "nom"
