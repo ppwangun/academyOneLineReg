@@ -118,18 +118,7 @@ class ProgressionController extends AbstractRestfulController
         try
         {
             
-            $contract =$this->entityManager->getRepository(ContractFollowUp::class)->findAll();
-            foreach($contract as $con)
-            {
-                $startTime = $con->getStartTime();                               
-                $endTime = $con->getEndTime(); 
-                $timeDiff = $startTime->diff($endTime);               
-                $hours = $timeDiff->h;
-                $minutes = $timeDiff->i;
-                $timeDiff= abs(($hours*60+$minutes)/60);  
-                $con->setTotalTime($timeDiff);
-            }
-            
+           
             
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
             $courseScheduled = null;
