@@ -129,11 +129,15 @@ class ProgressionController extends AbstractRestfulController
             $startTime = new \DateTime ($data["start_time"]);
             $progression->setLectureType($data["target"]);
             $endTime = new \DateTime ($data["end_time"]);
-            $timeDiff = $startTime->diff($endTime);  
-            $progression->setTotalTime($timeDiff->h);
+            $timeDiff = $startTime->diff($endTime); 
+            $hours = $timeDiff->h;
+            $minutes = $timeDiff->i;
+            $timeDiff= abs(($hours*60+$minutes)/60);
+
+            $progression->setTotalTime($timeDiff);
             $progression->setContract($contract); 
 
-                    
+                 
            $this->entityManager->persist($progression); 
            $this->entityManager->flush();
                     
