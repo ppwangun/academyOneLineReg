@@ -121,9 +121,32 @@ class ProgressionController extends AbstractRestfulController
             $classes=$this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findAll();
             foreach($classes as $classe)
             {
-                $classe->setHoursVolume($classe->getCmHours()+$classe->getTpHours()+$classe->getTdHours());
-                $classe->setSubjectHours($classe->getSubjectCmHours()+$classe->getSubjectTpHours()+$classe->getSubjectTdHours());
+                if($classe->getSubject())
+                {
+                    $contract=$this->entityManager->getRepository(Contract::class)->findOneBySubject($classe->getSubject());
+                    if($contract) 
+                    {
+                        $contract->setVolumeHrs($classe->getSubjectHours());
+                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                        foreach($contractFup as $contFup)
+                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));
+                        
+                    }
+                }
+                
+                if($classe->getTeachingUnit())
+                {
+                    $contract=$this->entityManager->getRepository(Contract::class)->findOneByTeachingUnit($classe->getTeachingUnit());
+                    if($contract) 
+                    {
+                        $contract->setVolumeHrs($classe->getHoursVolume());
+                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                        foreach($contractFup as $contFup)
+                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));                        
+                    }
+                }                
             }
+            
             
             
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
@@ -141,7 +164,7 @@ class ProgressionController extends AbstractRestfulController
             $timeDiff = $startTime->diff($endTime); 
             $hours = $timeDiff->h;
             $minutes = $timeDiff->i;
-            $timeDiff= abs(($hours*60+$minutes)/60);
+            $timeDiff= round(abs(($hours*60+$minutes)/60),2);
 
             $progression->setTotalTime($timeDiff);
             $progression->setContract($contract); 
