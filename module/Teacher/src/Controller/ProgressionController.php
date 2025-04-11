@@ -118,35 +118,7 @@ class ProgressionController extends AbstractRestfulController
         try
         {
             
-            $classes=$this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findAll();
-            foreach($classes as $classe)
-            {
-                if($classe->getSubject())
-                {
-                    $contract=$this->entityManager->getRepository(Contract::class)->findOneBySubject($classe->getSubject());
-                    if($contract) 
-                    {
-                        $contract->setVolumeHrs($classe->getSubjectHours());
-                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
-                        foreach($contractFup as $contFup)
-                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));
-                        
-                    }
-                }
-                
-                if($classe->getTeachingUnit())
-                {
-                    $contract=$this->entityManager->getRepository(Contract::class)->findOneByTeachingUnit($classe->getTeachingUnit());
-                    if($contract) 
-                    {
-                        $contract->setVolumeHrs($classe->getHoursVolume());
-                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
-                        foreach($contractFup as $contFup)
-                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));                        
-                    }
-                }                
-            }
-            
+         
             
             
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
