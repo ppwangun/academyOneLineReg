@@ -118,7 +118,13 @@ class ProgressionController extends AbstractRestfulController
         try
         {
             
-           
+            $classes=$this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findAll();
+            foreach($classes as $classe)
+            {
+                $classe->setHoursVolume($classe->getCmHours()+$classe->getTpHours()+$classe->getTdHours());
+                $classe->setSubjectHours($classe->getSubjectCmHours()+$classe->getSubjectTpHours()+$classe->getSubjectTdHours());
+            }
+            
             
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
             $courseScheduled = null;
