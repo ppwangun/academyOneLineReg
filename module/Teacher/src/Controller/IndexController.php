@@ -1758,7 +1758,10 @@ public function deleteScheduledCourseAction()
 
 
                     }
-                   
+                    //Collecte the payment rate
+                    if($teach->getAcademicRanck())
+                        $pymtRate = $teach->getAcademicRanck()->getPaymentRate();
+                    else $pymtRate = 0;                    
 
                     $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
                     $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
