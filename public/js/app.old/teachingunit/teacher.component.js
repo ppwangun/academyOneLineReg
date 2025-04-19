@@ -59,7 +59,6 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
     $scope.hasLoadedAssets = null;
 
     $scope.teacher = {
-        civility: null,
         names: null,
         birthdate: null,
         birthplace: null,
@@ -120,7 +119,7 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
     console.log($scope.isUpdate)
 
     };    
- 
+    
     $scope.init = function(){
         
         $http.get(`teachers`).then(function (response) {
@@ -131,17 +130,19 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
 
             var id = $routeParams.id; 
             var teachId = $routeParams.teachId;
-
             if(id)
-            {  
+            {
                 $scope.isUpdate = true;
                 var data = {id: id};
                 var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}
                 };
+                //Loading selected degree information for update
+
+              
                     $http.get('teacherGrade',config).then(function(response){
-                     $scope.grade = response.data[0]; 
+                     $scope.grade = response.data[0];
                     })
            }
            if(teachId && teachId >0)
@@ -158,14 +159,14 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
                     })               
            }
 //
-    };   
+    };    
 
     $scope.loadAssets = function () {
         $scope.hasLoadedAssets = null;
         
-        $http.get('new-teacher-form-assets')
+        $http.get(`new-teacher-form-assets`)
             .then(function (response) {
-                //console.log(response.data);
+                console.log(response.data);
                 $scope.grades = response.data.grades;
                 $scope.countries = response.data.countries;
                 $scope.establishments = response.data.establishments;
@@ -561,11 +562,9 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
  //Dialog Controller
   function DialogController1($scope, $mdDialog) {
       
-$scope.uploadStart = false;
+
  
 $scope.upload = function(){
-    
-    $scope.uploadStart = true;
  
     var fd = new FormData();
     var files = document.getElementById('file').files[0];
@@ -584,7 +583,6 @@ $scope.upload = function(){
       response.data[0]?$mdDialog.cancel():toastr.error('Erreur pendant le processus d\'importation', 'Erreur');
       
     } ,function errorCallback(){
-        $scope.uploadStart = false;
         toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
     });
  };

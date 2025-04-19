@@ -262,7 +262,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                                 function(response){
                                     $ctrl.selectedUe = response.data[0];
                                     $ctrl.isActivatedUeSelect = true; 
-                                    $ctrl.markCalculationStatus = $ctrl.selectedUe.mark_calculation_status; 
+                                    $ctrl.markCalculationStatus = $ctrl.selectedUe.mark_calculation_status;
       
                         }),1000);}).then(function(){
                                     var config = {
@@ -604,7 +604,6 @@ $ctrl.updateExamRegistration = function(){
               exam_id = response.data[0].examId;
               $ctrl.isUpdate = true;
               $scope.showButtonGroup = true;
-              $ctrl.markCalculationStatus = false;
               toastr.success("opération effectuée avec succès");
           }),500);
       

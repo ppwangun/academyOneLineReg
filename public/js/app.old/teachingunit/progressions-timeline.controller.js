@@ -107,25 +107,9 @@ function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,cont
     });         
     }
     
-    $scope.searchPlanning = function(subjectId,fromDate,toDate)
+    $scope.searchProgression = function(teachingUnit)
     {
-        var data = {subjectId:subjectId,fromDate:fromDate,toDate:toDate}
-        var config = {
-            params: data,
-            headers : {'Accept' : 'application/json'}
-        };
         
-        $http.delete('searchPlanning',config)
-            .then(function (response) {
-                toastr.success("Operation effectuée avec succès")
-               // alert('L\'enseignant a ete mis a jour avec succes !');
-                //$scope.loadCurrentTeacher();
-                $scope.isProcessing = false;
-            }, function (error) {
-                console.error(error);
-                $scope.isProcessing = false;
-                alert('Une erreur s\'est produite lors du traitement ! Veuillez reessayer !')
-            });        
     }
 
     $scope.cancel = function () {

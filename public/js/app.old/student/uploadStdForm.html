@@ -33,21 +33,16 @@ z-index: 120000}
                 </div>
             </md-input-container>
             </div>
-            
-        <div class="loader-block" ng-if="uploadStart">
-            <md-progress-circular md-mode="indeterminate"  md-diameter="60"></md-progress-circular>
-        </div>
-        <div ng-if="!uploadStart">
-            <p class='text-primary'>Le fichier d'import au format csv doit etre defini en spécifiant l'entete  des colonnes suivantes:</p>
-
-            <p class='text-danger'><strong>nom et prenom, telephone,email,type</strong></p>
-        </div>
+        <p class='text-primary'>Le fichier d'import au format csv doit etre defini en spécifiant l'entete dans l'ordre rigoureux des colonnes suivantes:</p>
+        
+        <p class='text-danger'><strong>matricule,classe,nom,prenom,sexe,date_naissance,Lieu de naissance,Numéro tel étudiant,Numéro tel Père,Numéro tel mère,Numéro tel sponsor,fees,debt,mpc
+</strong></p>
     <md-dialog-actions layout="row">
 
 
       <span flex></span>
       <md-button ng-click="cancel()"> Annuler</md-button>
-      <md-button class="md-warn" ng-click="upload()" >
+      <md-button class="md-warn" ng-click="uploadStd()" >
        Importer
       </md-button>
 

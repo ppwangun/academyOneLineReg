@@ -14,7 +14,7 @@ z-index: 120000}
 
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Importer un fichier {{ue.name}}</h2>
+        <h2>Importer un fichier MPC {{ue.name}}</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
@@ -33,21 +33,15 @@ z-index: 120000}
                 </div>
             </md-input-container>
             </div>
-            
-        <div class="loader-block" ng-if="uploadStart">
-            <md-progress-circular md-mode="indeterminate"  md-diameter="60"></md-progress-circular>
-        </div>
-        <div ng-if="!uploadStart">
-            <p class='text-primary'>Le fichier d'import au format csv doit etre defini en spécifiant l'entete  des colonnes suivantes:</p>
-
-            <p class='text-danger'><strong>nom et prenom, telephone,email,type</strong></p>
-        </div>
+        <p class='text-primary'>Le fichier d'import au format csv doit être defini en spécifiant l'entête des colonnes suivantes:</p>
+        
+        <p class='text-danger'><strong>matricule,classe,mpc,credits_campitalized</strong></p>
     <md-dialog-actions layout="row">
 
 
       <span flex></span>
       <md-button ng-click="cancel()"> Annuler</md-button>
-      <md-button class="md-warn" ng-click="upload()" >
+      <md-button class="md-warn" ng-click="uploadStdMpc()" >
        Importer
       </md-button>
 

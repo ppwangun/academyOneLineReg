@@ -9,17 +9,11 @@ angular.module('teachingunit')
 function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr){
     var $ctrl = this;
     
-   /* $ctrl.times = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
+    $ctrl.times = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
     {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
     {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
     {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
-    {id:20,time:"17:30:00",name:"17h30"}]*/
-    
-    $ctrl.times = [{id:0,time:"07:30:00-09:30:00",name:"7h30-9h30"},{id:1,time:"10:00:00-12:00:00",name:"10h00-12h00"},
-    {id:2,time:"13:00:00-15:00:00",name:"13h00-15h00"},
-    {id:3,time:"15:30:00-17:30:00",name:"15h30-17h30"},
-    {id:4,time:"18:00:00-20:00:00",name:"18h00-20h00"},
-    {id:5,time:"20:00:00-09:30:00",name:"20h00-22h00"}]
+    {id:20,time:"17:30:00",name:"17h30"}]
 
     $ctrl.startingTime = null;
     $ctrl.endingTime = null;

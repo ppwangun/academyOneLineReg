@@ -180,7 +180,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     });
 };
 
- $ctrl.teacherAssignedSubjects = function(teacher){
+ $ctrl.selectedItemChange = function(teacher){
      if(teacher)     teacherID = teacher.id; else teacherId =-1;
      $ctrl.assignedSubjects = [];
      $ctrl.isActivatedUeSelect = false;
@@ -191,8 +191,6 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
           $ctrl.assignedSubjects = response.data[0].teaching_units;
           $ctrl.isActivatedUeSelect = true;
      }),1000);
-     
-     
   };
   
   $ctrl.showbillDetails = false;
@@ -222,9 +220,9 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         });        
     }
 
-  $ctrl.loadBills = function(selectectedTeacher)
+  $ctrl.loadBills = function(selectectedTeacher,selectedUe)
   {
-    var data = {teacherID: selectectedTeacher.id};
+    var data = {teacherID: selectectedTeacher.id,contractID : selectedUe.id};
     var config = {
     params: data,
     headers : {'Accept' : 'application/json'}
@@ -236,9 +234,9 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     });    
   }
   
-  $ctrl.generateBill = function(selectectedTeacher)
+  $ctrl.generateBill = function(selectectedTeacher,selectedUe)
   {
-    var data = {teacherID: selectectedTeacher.id};
+    var data = {teacherID: selectectedTeacher.id,contractID : selectedUe.id};
     var config = {
     params: data,
     headers : {'Accept' : 'application/json'}
@@ -535,52 +533,5 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             fullscreen: false, // Only for -xs, -sm breakpoints.
             locals: { teacherId: $scope.currentTeacher.id,contractId:$scope.selectedContractId, teachingUnitCode: $scope.currentTeachingUnit?.codeUe}
         });
-    }; 
-    
-    
-     /*--------------------------------------------------------------------------
-     *--------------------------- Printing Teacher's bill ---------------------------
-     *----------------------------------------------------------------------- */
-    $ctrl.showPrintTeacherBill= function(bill,ev){
-        bill = [1,2,3]
-
-
-        $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'printTeacherBill/'+bill,
-          parent: angular.element(document.body),
-         // parent: angular.element(document.querySelector('#component-tpl')),
-          scope: $scope,
-          preserveScope: true,
-          autoWrap: false,
-          targetEvent: ev,
-          clickOutsideToClose:false,
-          fullscreen: true // Only for -xs, -sm breakpoints.
-        })
-        .then(function(answer) {
-          
-          $ctrl.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          $ctrl.status = 'You cancelled the dialog.';
-        });        
-    };
-    
-    
-  function DialogController($scope, $mdDialog,readFileData,toastr) {
-      
-      
-      
-      
-      $scope.cancel = function() {
-
-        
-      $mdDialog.cancel();
-      
-    };
-
-    $scope.answer = function(answer) {
-      $mdDialog.hide(answer);
     };   
-  }    
-    
 };
