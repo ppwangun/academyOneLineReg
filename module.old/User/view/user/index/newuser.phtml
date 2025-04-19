@@ -1,0 +1,243 @@
+
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+
+</style>
+    
+    <form  ng-submit=""  name="userForm" validate>
+        <div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+
+            <div class="row">
+                <div class='col-lg-2'>
+                    <button  type="button" class="btn btn-danger" ng-click="$ctrl.updateUser()" ng-show="$ctrl.isUpdate" ng-disabled="classForm.$invalid">Modifier</button>
+                    <button  type="button" ng-click="$ctrl.addUser()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="userForm.$invalid">Enrégistrer</button>
+                    <span> <a href="#!/usermanagement">Retour</a></span>
+                </div>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-2">
+                    
+                    <button  type="button" ng-show="$ctrl.isUpdate" ng-click="$ctrl.deleteDegree()" ng-disabled="classForm.$invalid" class="btn btn-default">Supprimer</button>
+                    
+                    
+                </div>
+            </div>
+        </div>
+        <div class="form-view-main">
+            <div class="form-view">
+
+
+
+  
+<div  layout="column" ng-cloak class="md-inline-form">
+
+    <div ng-show="$ctrl.errorMsg.showAlert" ng-class="$ctrl.errorMsg.error?'alert alert-danger':'alert alert-success'" role="alert"><span>{{$ctrl.errorMsg.msg}}</span></div>
+    <md-content layout-padding >
+
+         
+    <div layout='row'>
+        <input name="id" ng-model="$ctrl.user.id" hidden />
+    <md-input-container class="md-block" flex='100' >
+    <label>Noms:</label>          
+        <input  name="nom"  ng-model="$ctrl.user.nom"  md-no-asterisk  ng-required>
+              <div ng-messages="userForm.nom.$error">
+                  <div ng-message="required">Ce champ est obligatoire</div>
+              </div> 
+    </md-input-container>
+   
+        
+    <md-input-container class="md-block" flex='100' >
+        <label>Prénoms:</label>          
+        <input name="level"  ng-model="$ctrl.user.prenom" md-no-asterisk  required >
+                <div ng-messages="userForm.prenom.$error">
+                  <div ng-message="required">ce champ est obligatoire</div>
+                  <div ng-message-exp="['required', 'pattern']">
+                      Rassurez vous d'avoir saisi un email valide
+                  </div>
+              </div>
+    </md-input-container>
+    </div>      
+          
+    <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Email:</label>
+          <input name="email" ng-model="$ctrl.user.email" type ="email" md-no-asterisk required ng-pattern="/^.+@.+\..+$/" />
+              <div ng-messages="userForm.email.$error">
+                  <div ng-message="required">le champ email est obligatoire</div>
+                  <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                      Rassurez vous d'avoir saisi un email valide
+                  </div>
+
+              </div>   
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+
+        </md-input-container>
+        
+        </div>
+    <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Mot de passe:</label>
+          <input name="password" ng-model="$ctrl.user.password" type='password' md-no-asterisk required />
+              <div ng-messages="userForm.passeword.$error">
+                  <div ng-message="required">le champ mot de passe est obligatoire</div>
+
+              </div>   
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Confirmer mot de passe:</label>
+          <input name="confirm_password" ng-model="$ctrl.user.confirm_password" type='password' required md-no-asterisk/>
+              <div ng-messages="userForm.confirm_password.$error">
+                  <div ng-message="required">vous devez confirmer le mot de passe</div>
+              </div> 
+        </md-input-container>
+        
+        </div>
+        <div layout-gt-sm="row">
+                <label>Statut:</label>
+                        <md-checkbox ng-model="$ctrl.user.status"               
+                            aria-label="Actif?"
+                            ng-true-value="1"
+                            ng-false-value="0"> 
+                           
+                        </md-checkbox>
+
+        </div>
+        
+        <div layout-gt-sm='row' >
+        <div class = "col-lg-12" style="background-color: #dfe4ea;">
+            <md-input-container class="column md-block" flex-gt-sm>
+            <label>Choisir de rôles:</label>
+            <br />
+            <table class="border table   table-condensed " style=" background-color: #dfe4ea; color: #0c2461;">
+                <thead>
+                    <tr class="bg-primary">
+                        <th style="width:5%">#</th>
+                        <th >Role</th>
+                        <th>Description</th>
+
+                   </tr>
+                </thead>
+                <tr ng-repeat="item in $ctrl.groups">
+                    <td>
+                        <md-checkbox ng-checked="$ctrl.exists(item,$ctrl.selected)" ng-click="$ctrl.toggle(item,$ctrl.selected)"
+                          ng-model="item.status"
+                        ng-true-value="1"
+                        ng-false-value="0">
+                      </md-checkbox>
+                    </td>
+                    <td ng-bind="item.name "></td>
+                    <td ng-bind="item.description "></td>
+                </tr>
+            </table>
+            </md-input-container>
+           
+        </div>
+
+         
+        <div class = "col-lg-12"  style="background-color: #dfe4ea;" >
+            <div class="row">  
+            <div class="col-md-10"  style="margin-top:25px;">
+
+                <md-input-container class="column md-block" flex-gt-sm>
+                    <label>Associer des classe gérées par l'utilisateur:</label>
+                    <md-autocomplete  md-search-text="$ctrl.searchClasse" 
+                                     md-selected-item="$ctrl.selectedClasse"  
+                                     md-items="item in $ctrl.query($ctrl.searchClasse)" 
+                                     md-item-text="item.code" 
+                                     md-min-length="0"
+                                     placeholder="Faites le choix de la classe" 
+                                     md-selected-item-change="$ctrl.selectedItemChange(item)"
+                                     md-input-name="classe"
+                                     md-menu-container-class="custom-container"
+                                     md-no-asterisk
+                                     ng-required>
+                        <md-item-template>
+                          <span md-highlight-text="$ctrl.searchSemester" md-highlight-flags="^i">{{item.code}}</span>
+
+                        </md-item-template>
+                        <md-not-found>
+                          Aucun élément correspondant à "{{$ctrl.searchClasse}}" n'a été trouvé.
+
+                        </md-not-found>
+                    </md-autocomplete>
+                        <div ng-messages="gradeForm.classe.$error">
+                            <div ng-message="required">Ce champ est obligatoire</div>
+                        </div> 
+                </md-input-container >
+
+            </div>
+            <div class="col-md-2" style="margin-top:40px;" >
+                <button class="btn btn-danger" ng-click="$ctrl.associateClasseToUser()"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
+           
+            <div class="col-md-9">
+            <table>
+               
+                <tbody>
+                    <tr ng-repeat="classe in $ctrl.classes">
+                        <td class="text-primary" ng-bind="classe.code"></td>&nbsp;<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                        <td ><button class="btn btn-default" ng-click="$ctrl.removeClasseTouser(classe.id,$ctrl.user.id)"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            </div>
+
+           
+        </div>            
+        
+        </div>
+
+        </form>
+  </md-content>
+
+</div>
+<p>&nbsp;</p>
+              <!--tabs widget-->
+              <!--  <div class="row" >
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#">Cyles de formation</a></li>
+
+                    </ul>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-warning">
+                                                    <th style='width:30%;'>Code</th>
+                                                    <th>Nom</th>
+                                                    <th>Durée</th>
+
+                                                    <th style='width:12%;'></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="cycle in cycles" >
+                                                  <td ng-bind="cycle.code"></td>
+                                                  <td ng-bind="cycle.name"></td>
+                                                  <td ng-bind="cycle.duration"></td>
+                                                  <td>
+                                                      
+                                                      <button type="button" ng-click="showCurriculum(cycle)" class="btn btn-default btn"><i class="fa fa-edit"></i></button>
+                                                      <button  type="button" ng-click="deleteCycle(cycle)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                                    
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                        <a class="btn btn-primary" ng-click="$ctrl.addCurriculum()">Ajouter un cycle</a>
+
+                 </div>
+              -->
+                <!--End tab-->
+                
+            </div>  
+        </div>
+

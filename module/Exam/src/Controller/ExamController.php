@@ -161,8 +161,6 @@ class ExamController extends AbstractRestfulController
                 $class= $this->entityManager->getRepository(ClassOfStudy::class)->find($data["classe"]);
                 $teachingUnit = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ue_id"]);
                 
-               
-                
                 if (isset($data["subject"]))
                 {
                     if($data["subject"])

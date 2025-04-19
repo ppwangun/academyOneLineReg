@@ -101,42 +101,40 @@ class IndexController extends AbstractActionController
             $highestRow = $worksheet->getHighestDataRow(); // e.g. 10
             $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'
             //
-      
+     
             // Increment the highest column letter
             ++$highestColumn;            
             //$spreadsheet = $reader->load($location.$filename);
             //$sheetData = $spreadsheet->getActiveSheet()->toArray();
 
             $teachingUnit = null; 
-            for ($row = 1; $row <= $highestRow; ++$row) {
+            for ($row = 1; $row <= $highestRow; $row++) {
+                $flag = false;
+                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+                $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
+                $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
 
             if(empty($worksheet->getCell('D' . $row)->getValue()))
             {
         
                 //check if UE already exists
                 if(empty($worksheet->getCell('C' . $row)->getValue())) {echo"ligne:".$row ." UE Introuvable"; throw($teachingUnit);}
-                
-                
-                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
-                $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($worksheet->getCell('A' . $row)->getValue());
-                $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(["code"=>$worksheet->getCell('B' . $row)->getValue(),"academicYear"=>$acadYr]);
-
-
                 if(!$class) {echo"ligne:".$row ." classe ".$worksheet->getCell('A' . $row)->getValue(). " Introuvable"; throw($class);}
                 if(!$semester) {echo "ligne:".$row ."Semestre".$worksheet->getCell('B' . $row)->getValue()." pour la classe ".$worksheet->getCell('A' . $row)->getValue(). "introuvable"; throw($semester);}
                 $totalVolume = $worksheet->getCell('G' . $row)->getValue()+$worksheet->getCell('H' . $row)->getValue()+$worksheet->getCell('I' . $row)->getValue();
-                if ($worksheet->getCell('J' . $row)->getValue()<$totalVolume) $worksheet->getCell('J' . $row)->setValue($totalVolume);
+                if (intval($worksheet->getCell('J' . $row)->getValue())<$totalVolume) $worksheet->getCell('J' . $row)->setValue($totalVolume);
 
                 $teachingunits  = $this->entityManager->getRepository(TeachingUnit::class)->findByCode($worksheet->getCell('C' . $row)->getValue());
                 $flag = false;
+            
                 foreach ($teachingunits as $teachingunit)
                 {
 
                     $class_study_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["semester"=>$semester,"classOfStudy"=>$class,"teachingUnit"=>$teachingunit,'status'=>1]);
-
+                    
                     //check if the subject already exits for all the current class
                     if($class_study_semester)
-                    {
+                    { 
                         $teachingunit->setName($worksheet->getCell('E' . $row)->getValue());
                         $teachingunit->setCode($worksheet->getCell('C' . $row)->getValue()); 
                        // $this->entityManager->flush();
@@ -145,17 +143,18 @@ class IndexController extends AbstractActionController
                         $class_study_semester->setClassOfStudy($class);
                         $class_study_semester->setSemester($semester);
                         $class_study_semester->setCredits($worksheet->getCell('F' . $row)->getValue());
-                        $class_study_semester->setHoursVolume($worksheet->getCell('J' . $row)->getValue());
+                        $class_study_semester->setHoursVolume(intval($worksheet->getCell('J' . $row)->getValue()));
                         $class_study_semester->setCmHours($worksheet->getCell('G' . $row)->getValue());
                         $class_study_semester->setTdHours($worksheet->getCell('H' . $row)->getValue());
                         $class_study_semester->setTpHours($worksheet->getCell('I' . $row)->getValue());
 
-                        $this->entityManager->flush(); 
+                  
+                        //$this->entityManager->flush(); 
                         $flag =true;
                         break;
 
                     }
-                }
+                } 
                 if(!$flag)
                 {   
                     $teachingunit= new TeachingUnit();
@@ -187,15 +186,14 @@ class IndexController extends AbstractActionController
             }    
             else
             {
-                
-
-                
                 $subjects = $this->entityManager->getRepository(Subject::class)->findBySubjectCode($worksheet->getCell('D' . $row)->getValue());
-               
+         
                 foreach($subjects as $subject)
                 {
                     $flag =false;
                     $class_study_subject_semester = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester,"classOfStudy"=>$class]);
+                    $totalVolume = $worksheet->getCell('G' . $row)->getValue()+$worksheet->getCell('H' . $row)->getValue()+$worksheet->getCell('I' . $row)->getValue();
+                    if (intval($worksheet->getCell('J' . $row)->getValue())<$totalVolume) $worksheet->getCell('J' . $row)->setValue($totalVolume);
                 //we are searching that is register for the class for the current year 
          
                     if($class_study_subject_semester)
@@ -223,7 +221,7 @@ class IndexController extends AbstractActionController
                                 }
                             }
 
-                            $this->entityManager->flush();
+                           // $this->entityManager->flush();
                         
                             break;
 

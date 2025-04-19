@@ -160,7 +160,7 @@ z-index: 120000}
         </form>
   </md-content>
 </div>
-        
+
 <div layout='row' style="padding-top: 25px" ng-show="showButtonGroup===true&&$ctrl.markCalculationStatus===false">
     <div style='justifyContent: space-between;'><a class="btn btn-success"  ng-click="$ctrl.showPrintList()"><span class="fa fa-print"></span>&nbsp;Imprimer la liste d'étudiants</a></div>&nbsp;&nbsp;
     <div style='justifyContent: space-between;'><a ng-show="<?=($this->access('global.system.admin', null))||($this->access('exam.attendance.validation', null))?true:false?>" class="btn btn-primary" ng-click="!isAttendanceButtonActive || $ctrl.showUpdateAttendance()" ng-disabled="!isAttendanceButtonActive"><span class="fa fa-save"></span>&nbsp;Valider Présence effective à l'examen</a></div>&nbsp;&nbsp;

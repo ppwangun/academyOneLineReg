@@ -131,12 +131,7 @@ class AllContractsView
     */
     private $teacher;   
     
-    /**
-    * @var integer
-    *
-    * @ORM\Column(name="academic_year_id", type="integer", nullable=true)
-    */
-    private $academicYear;     
+    
     
     
 }

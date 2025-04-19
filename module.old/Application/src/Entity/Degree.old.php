@@ -1,0 +1,172 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Application\Entity\FieldOfStudy;
+use Application\Entity\ClassOfStudy;
+
+/**
+ * Degree
+ *
+ * @ORM\Table(name="degree", uniqueConstraints={@ORM\UniqueConstraint(name="course_code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_degree_field_of_study1_idx", columns={"field_study_id"})})
+ * @ORM\Entity
+ */
+class Degree
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * 
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     * 
+     */
+    private $code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var FieldOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
+     * })
+     */
+    private $fieldStudy;
+
+     /**
+     * @ORM\OneToMany(targetEntity="ClassOfStudy", mappedBy="degree")
+     * @var Stock[]
+     */
+    private $classOfStudy;
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return Degree
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Degree
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     *
+     * @return Degree
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set fieldStudy
+     *
+     * @param FieldOfStudy $fieldStudy
+     *
+     * @return Degree
+     */
+    public function setFieldStudy(FieldOfStudy $fieldStudy = null)
+    {
+        $this->fieldStudy = $fieldStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get fieldStudy
+     *
+     * @return FieldOfStudy
+     */
+    public function getFieldStudy()
+    {
+        return $this->fieldStudy;
+    }
+    
+  
+}

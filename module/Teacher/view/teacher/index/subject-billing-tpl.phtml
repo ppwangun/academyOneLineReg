@@ -30,7 +30,7 @@ z-index: 120000}
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="" ng-click="$ctrl.printBill(ev)"><span>Imprimer la facture</span></a>
+                                        <li><a href="" ng-click="$ctrl.showPrintTeacherBill($ctrl.bills)"><span>Imprimer la facture</span></a>
                                         </li>
                                         <li><a href="" ng-click=""><span></span></a>
                                         </li>
@@ -63,7 +63,7 @@ z-index: 120000}
                                          md-item-text="item.name" 
                                          md-min-length="0"
                                          placeholder="" 
-                                         md-selected-item-change="$ctrl.selectedItemChange($ctrl.selectedTeacher)"
+                                         md-selected-item-change="$ctrl.loadBills($ctrl.selectedTeacher)"
                                          md-input-name="Teacher"
                                          md-no-asterisk
                                          ng-disabled="$ctrl.showbillDetails"
@@ -86,7 +86,7 @@ z-index: 120000}
           
 
 
-                <div  ng-hide = "$ctrl.showbillDetails"  layout-gt-sm='column' style="padding-top: 15px">
+               <!-- <div  ng-hide = "$ctrl.showbillDetails"  layout-gt-sm='column' style="padding-top: 15px">
                     <md-input-container>
                     <label>Unité d'enseignement affectés</label>
                     
@@ -111,9 +111,9 @@ z-index: 120000}
                       </div>
                     </md-input-container> 
 
-                </div>
+                </div> -->
                 
-                <div layout-gt-sm='column' style="padding-top: 15px" ng-show="$ctrl.showbillDetails">
+                <!--<div layout-gt-sm='column' style="padding-top: 15px" ng-show="$ctrl.showbillDetails">
                     <md-input-container>
                     <label>Unité d'enseignement affectés</label>
                     
@@ -135,7 +135,7 @@ z-index: 120000}
                       </div>
                     </md-input-container> 
 
-                </div>      
+                </div>  -->    
                 <div layout-gt-sm='column' style="padding-top: 15px" >
                     <md-input-container>
                     <label>Taux horaire</label>
@@ -162,13 +162,13 @@ z-index: 120000}
 
             <div class = "col-xs-6"  >
                 <!-- Display examlis on a table -->
-                <div class="row">
+              <div class="row">
 
-                    <table class="table" style="font-size:0.8em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
+                  <!--    <table class="table" style="font-size:0.8em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
                     <thead>
 
                         <tr class="bg-primary">
-                            <th class="col-xs-1 align-middle" >N°</th>
+                            <th class="col-xs-1 align-middle" ></th>
                             <th class=" align-middle" >N° Facture</th>
                             <th class=" align-middle">Volume Horaire</th>
                             <th class=" align-middle">Montant</th>
@@ -180,9 +180,17 @@ z-index: 120000}
                     <tbody>
 
                         <tr ng-repeat="bill in $ctrl.bills" style="font-size:0.8em;">
-                          <td  class="col-xs-1"> {{$index+1}}</td>
+                          <td  class="col-xs-1"> 
+                                <md-checkbox  ng-model="bill.selected" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
+                                              ng-true-value="'P'"
+                                              ng-false-value="'A'"             
+                                              class="md-primary">
+            
+                                </md-checkbox>                              
+                          
+                          </td>
                           <td nclass="col-xs-1"><a ng-href="home#!/subjectBilling/{{bill.refNumber}}" ng-bind="bill.refNumber"></a></td>
-                          <td ng-bind="bill.totalTime+'H'" class="col-xs-3"></td>
+                          <td ng-bind="bill.totalTime +'H'" class="col-xs-3"></td>
                           <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
                           <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
                           <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
@@ -191,35 +199,10 @@ z-index: 120000}
                     </tbody>
 
                     </table>
-               
+              -->
                 </div>
                 
-                <div class="row" ng-show = "$ctrl.showbillDetails">
-
-                    <table class="table" style="font-size:0.8em; background-color: #dfe4ea; color: #0c2461;" >
-                    <thead>
-
-                        <tr class="bg-primary">
-                            <th class=" align-middle" >N° Facture</th>
-                            <th class=" align-middle">Date</th>
-                            <th class=" align-middle">statut</th>
-                            
-                        </tr>
-                   </thead>
-                    <tbody>
-
-                        <tr  style="font-size:0.8em;">
-                          
-                          <td nclass="col-xs-1" ng-bind="$ctrl.bill.refNumber"></td>
-                          <td ng-bind="$ctrl.formatDate($ctrl.bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
-                          <td ng-bind="$ctrl.bill.status===1?'Payé':'En cours...'"></td>
-                        </tr>
-
-                    </tbody>
-
-                    </table>
                
-                </div>                
             </div>           
         </div>
 
@@ -229,7 +212,7 @@ z-index: 120000}
 
             </div>
             <div class="col-md-6 text-right">
-                <button class="btn btn-danger" ng-click="$ctrl.generateBill($ctrl.selectedTeacher,$ctrl.selectedUe)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-click="$ctrl.generateBill($ctrl.selectedTeacher)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" ng-click="$ctrl.deliberation()" ><i class="fa fa-save" ></i>&nbsp;Valider le paiement</button>
             </div>
         </div>
@@ -249,40 +232,41 @@ z-index: 120000}
                         </li>
                     </ul>
                     <div id =" tab1">
-                            <table class="table table-striped table-condensed">
-                                <thead>
-                                    <tr class="bg-primary">
-                                        <th>Num</th>
-                                        <th>Description</th>
-                                        <th>Date</th>
-                                        <th>Heures</th>
-                                        
-                                        <th>PT</th>
+                        <table class="table" style="font-size:1em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
+                        <thead>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="bill in $ctrl.billDetails" >
-                                      <td>{{$index+1}}</td>
-                                      <td ng-bind="bill.description"></td>
-                                      <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'"></td>
-                                      <td ng-bind='bill.totalTime+"H"'></td>
-                                      
-                                      <td ng-bind='bill.paymentAmount' ></td>
-                                    </tr>
-                                    <tr><td colspan="3" style="text-align: right">Total</td><td>{{$ctrl.totalHrsBilled}}H</td><td>{{$ctrl.totalHrsBilled*$ctrl.paymentRate}}</td></tr> 
-                                    <tr><td colspan="3" style="text-align: right">Volume horaire prévu</td><td>{{$ctrl.totalHrsAffected}}H</td><td>{{$ctrl.totalHrsAffected*$ctrl.paymentRate}}</td></tr> 
-                                    <tr><td colspan="3" style="text-align: right">Cumul volume horaire entérieur réalisé</td><td>{{$ctrl.totalHrsPreviouslyBilled}}H</td><td>{{$ctrl.totalHrsPreviouslyBilled*$ctrl.paymentRate}}</td></tr>
-                                        
-                                    <tr><td colspan="3" style="text-align: right">heures bonus</td><td>{{$ctrl.overtime}}H</td><td>0</td></tr>    
-                                    <tr><td colspan="3" style="text-align: right">Volume horaire facturé</td><td>{{$ctrl.totalActuaBilledTime}}H </td><td>{{$ctrl.totalActuaBilledTime*$ctrl.paymentRate}}</td></tr>    
-                                    
-                                    <tr><td colspan="4" style="text-align: right">Retenue sur vacation 25%</td><td>{{$ctrl.vacationDeduction}}</td></tr> 
-                                    <tr><td colspan="4" style="text-align: right">IR 5.5%</td><td>{{$ctrl.totalActuaBilledTime*$ctrl.paymentRate*0.055}}</td></tr>  
-                                    <tr><td colspan="4" style="text-align: right">NAP</td><td>{{($ctrl.totalActuaBilledTime*$ctrl.paymentRate)-($ctrl.totalActuaBilledTime*$ctrl.paymentRate*0.055)-$ctrl.vacationDeduction}}</td></tr> 
+                            <tr class="bg-primary">
+                                <th class="col-xs-1 align-middle" ></th>
+                                <th class=" align-middle" >N° Facture</th>
+                                <th class=" align-middle">Volume Horaire</th>
+                                <th class=" align-middle">Montant</th>
+                                <th class=" align-middle">Date</th>
+                                <th class=" align-middle">statut</th>
 
-                                </tbody>
-                            </table>
+                            </tr>
+                       </thead>
+                        <tbody>
+
+                            <tr ng-repeat="bill in $ctrl.bills" style="font-size:0.8em;">
+                              <td  class="col-xs-1"> 
+                                    <md-checkbox  ng-model="bills.selected" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
+                                                  ng-true-value="'P'"
+                                                  ng-false-value="'A'"             
+                                                  class="md-primary">
+
+                                    </md-checkbox>                              
+
+                              </td>
+                              <td nclass="col-xs-1"><a ng-href="home#!/subjectBilling/{{bill.refNumber}}" ng-bind="bill.refNumber"></a></td>
+                              <td ng-bind="bill.totalTime +'H'" class="col-xs-3"></td>
+                              <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
+                              <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
+                              <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
+                            </tr>
+
+                        </tbody>
+
+                        </table>
                     </div>
                     <div id="tab2"></div>
                  </div>

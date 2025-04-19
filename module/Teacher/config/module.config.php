@@ -323,7 +323,17 @@ return [
                         'action'=>'updateScheduledCourse'
                     ],
                 ],
-            ],            
+            ], 
+            'printTeacherBill' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printTeacherBill[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'printTeacherBill'
+                    ],
+                ],
+            ],             
              /*  'home' => [
                 'type' => Literal::class,
                 'options' => [

@@ -1,0 +1,143 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Exam
+ *
+ * @ORM\Table(name="exam", indexes={@ORM\Index(name="fk_exam_exam_session1_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_exam_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_exam_exam_type1_idx", columns={"exam_type_code"})})
+ * @ORM\Entity
+ */
+class Exam
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="type", type="string", length=45, nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date", type="datetime", nullable=true)
+     */
+    private $date;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="exam_type_code", type="string", length=45, nullable=true)
+     */
+    private $examTypeCode;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="is_mark_registered", type="integer", nullable=false, options={"unsigned"=true})
+     */
+    private $isMarkRegistered = '0';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="is_mark_validated", type="integer", nullable=false, options={"unsigned"=true})
+     */
+    private $isMarkValidated = '0';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="is_mark_confirmed", type="integer", nullable=false, options={"unsigned"=true})
+     */
+    private $isMarkConfirmed = '0';
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_validated", type="datetime", nullable=true)
+     */
+    private $dateValidated;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_registered", type="datetime", nullable=true)
+     */
+    private $dateRegistered;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_confirmed", type="datetime", nullable=true)
+     */
+    private $dateConfirmed;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="is_attendance_saved", type="integer", nullable=false)
+     */
+    private $isAttendanceSaved = '0';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="is_anonymat_saved", type="integer", nullable=false)
+     */
+    private $isAnonymatSaved = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true, options={"default"="1"})
+     */
+    private $status = 1;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="is_catch_up_exam_performed", type="integer", nullable=true)
+     */
+    private $isCatchUpExamPerformed = '0';
+
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
+
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;
+
+
+}

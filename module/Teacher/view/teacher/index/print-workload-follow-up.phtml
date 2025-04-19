@@ -26,8 +26,9 @@ $tblBody = '
           <tr>
             <th class="service">N°</th>
             <th class="desc">Nom</th>
-            <th>Volume horaire prévu</th>
-            <th>Volume horaire réalisé</th>
+            <th class="desc">Coût Horaire</th>
+            <th>Volume  prévu</th>
+            <th>Volume  réalisé</th>
             <th>Ecart</th>
           </tr>
         </thead>
@@ -38,9 +39,10 @@ $index=1;
  $tblBody .=' <tr>
             <td class="service" >'.$index++.'</td>
             <td class="service" style="text-align:left;">'.$teach["teacherName"].'</td>
-            <td class="service">'.$teach["totalVolumeAllocated"].'</td>
-            <td class="service">'.$teach["totalVolumeDone"].'</td>
-            <td class="service">'.$teach["volumeGap"].'</td>
+            <td class="service" style="text-align:left;">'.$teach["paymentRate"].'FCFA</td>
+            <td class="service">'.$teach["totalVolumeAllocated"].'H</td>
+            <td class="service">'.$teach["totalVolumeDone"].'H</td>
+            <td class="service">'.$teach["volumeGap"].'H</td>
           </tr>';
  endforeach;
 

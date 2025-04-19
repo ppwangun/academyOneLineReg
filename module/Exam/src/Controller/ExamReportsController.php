@@ -1166,7 +1166,7 @@ public function printTranscriptsAction()
                     $std['bornAt'] = $data['bornPlace'];
                     $std['dateOfBirth']= $data['dateNaissance']->format('d/m/Y'); 
                     
-                
+               
                 $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe_1,"academicYear"=>$acadYr)); 
                 $recapN0 = [];
                 foreach($semesters as $sem_1)

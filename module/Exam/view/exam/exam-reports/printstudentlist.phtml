@@ -11,6 +11,7 @@ $totalAdmis = $this->totalStudent - $this->totalFailure;
 //($this->typeExam=="CC")||($this->typeExam=="CCTP")?$width="16.6%":$width="12.5%";
 $width="9%";
 
+
 $tblBody = '
 <html>
 <head>
@@ -100,7 +101,7 @@ table thead td { background-color: #EEEEEE;
 </style>
 </head>
 <body>
-<!--
+<!--mpdf
 <htmlpageheader name="myheader">
 <table width="100%"><tr>
 <td></td><td width="50%" style="color:#0000BB;  vertical-align: middle;"><span style="font-weight: bold; font-size: 14pt;">'.$this->school.'</span><br />'.$this->faculty.'<br />'.$this->filiere.'<br /></td>
@@ -118,7 +119,7 @@ table thead td { background-color: #EEEEEE;
 
 <sethtmlpageheader  name="myheader" value="on" show-this-page="1" />
 <sethtmlpagefooter  name="myfooter" value="on"  />
--->
+mpdf-->
 
 <table width="100%" style="font-family: serif; "  cellpadding="2">
 <tr><td colspan="3" style="text-align: center;"></td></tr>
@@ -219,7 +220,7 @@ $tblBody.='
 
 
 
-/*$mpdf = new \Mpdf\Mpdf([
+$mpdf = new \Mpdf\Mpdf([
 	'margin_left' => 20,
 	'margin_right' => 15,
 	'margin_top' => 35,
@@ -237,42 +238,13 @@ $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;
 $mpdf->SetDisplayMode('fullpage');
 
-$mpdf->WriteHTML($tblBody);*/
-
-$defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
-$fontDirs = $defaultConfig['fontDir'];
-
-$defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
-$fontData = $defaultFontConfig['fontdata'];
-
-$mpdf = new \Mpdf\Mpdf([
-    'fontDir' => array_merge($fontDirs, [
-        $_SERVER["DOCUMENT_ROOT"]. '/font/Roboto',
-    ]),
-    'fontdata' => $fontData + [ // lowercase letters only in font key
-        'roboto' => [
-            'R' => 'Roboto-Regular.ttf',
-            'I' => 'Roboto-Italic.ttf',
-        ]
-    ],
-    'default_font' => 'roboto',
-    'margin_left' => 18,
-    'margin_right' => 18,
-    'margin_top' => 45,
-    'margin_bottom' => 45,
-    'margin_header' => 9,
-    'margin_footer' => 9    
-]);
-
-
-$mpdf->SetDocTemplate(__DIR__.'/template_header.pdf',1);
 $mpdf->WriteHTML($tblBody);
 
 
 
 ob_end_clean();
 //Close and output PDF document
-$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/printstudentlist'.date('dmyhi').'.pdf', 'F');
+$mpdf->Output($_SERVER["DOCUMENT_ROOT"].'/impressions/'.preg_replace('/\s+/', '',"test").'-'.date("d-m-Y-H-i").'.pdf', 'F');
 ?>
 
         <style> 
@@ -301,7 +273,7 @@ z-index: 120000}
     <md-dialog-content>
       <div  class="md-dialog-content">
 
-          <embed src=<?=$this->serverUrl().'/impressions/printstudentlist'.date('dmyhi').'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
+          <embed src=<?=$this->serverUrl().'/impressions/'.preg_replace('/\s+/', '',"test").'-'.date("d-m-Y-H-i").'.pdf';?> type="application/pdf" style="width:100%;height:600px;"  />
                      
 
 

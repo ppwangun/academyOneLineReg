@@ -1,18 +1,17 @@
 <?php
 
-
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Application\Entity\Teacher;
 use Application\Entity\Contract;
-
+use Application\Entity\TeacherPaymentBill;
+use Application\Entity\Teacher;
 
 /**
  * TeacherPaymentBill
  *
- * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"})})
+ * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"})})
  * @ORM\Entity
  */
 class TeacherPaymentBill
@@ -74,7 +73,7 @@ class TeacherPaymentBill
      * @ORM\Column(name="vacation_deduction", type="float", precision=10, scale=0, nullable=true)
      */
     private $vacationDeduction;
-    
+
     /**
      * @var float|null
      *
@@ -87,10 +86,17 @@ class TeacherPaymentBill
      *
      * @ORM\Column(name="total_time_currently_billed", type="float", precision=10, scale=0, nullable=true)
      */
-    private $totalTimeCurrentlyBilled;    
+    private $totalTimeCurrentlyBilled;
 
     /**
-     * @var \Contract
+     * @var string|null
+     *
+     * @ORM\Column(name="payment_details", type="string", length=255, nullable=true)
+     */
+    private $paymentDetails;
+
+    /**
+     * @var Contract
      *
      * @ORM\ManyToOne(targetEntity="Contract")
      * @ORM\JoinColumns({
@@ -100,7 +106,17 @@ class TeacherPaymentBill
     private $contract;
 
     /**
-     * @var \Teacher
+     * @var TeacherPaymentBillSumary
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBillSumary")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_sumary_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBillSumary;
+
+    /**
+     * @var Teacher
      *
      * @ORM\ManyToOne(targetEntity="Teacher")
      * @ORM\JoinColumns({
@@ -131,7 +147,7 @@ class TeacherPaymentBill
     public function setRefNumber($refNumber = null)
     {
         $this->refNumber = $refNumber;
-    
+
         return $this;
     }
 
@@ -155,7 +171,7 @@ class TeacherPaymentBill
     public function setDate($date = null)
     {
         $this->date = $date;
-    
+
         return $this;
     }
 
@@ -179,7 +195,7 @@ class TeacherPaymentBill
     public function setPaymentAmount($paymentAmount = null)
     {
         $this->paymentAmount = $paymentAmount;
-    
+
         return $this;
     }
 
@@ -203,7 +219,7 @@ class TeacherPaymentBill
     public function setPaymentStatus($paymentStatus = null)
     {
         $this->paymentStatus = $paymentStatus;
-    
+
         return $this;
     }
 
@@ -227,7 +243,7 @@ class TeacherPaymentBill
     public function setTotalTime($totalTime = null)
     {
         $this->totalTime = $totalTime;
-    
+
         return $this;
     }
 
@@ -251,7 +267,7 @@ class TeacherPaymentBill
     public function setOvertime($overtime = null)
     {
         $this->overtime = $overtime;
-    
+
         return $this;
     }
 
@@ -275,7 +291,7 @@ class TeacherPaymentBill
     public function setVacationDeduction($vacationDeduction = null)
     {
         $this->vacationDeduction = $vacationDeduction;
-    
+
         return $this;
     }
 
@@ -288,11 +304,18 @@ class TeacherPaymentBill
     {
         return $this->vacationDeduction;
     }
-    
-public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
+
+    /**
+     * Set totalTimePreviouslyBilled.
+     *
+     * @param float|null $totalTimePreviouslyBilled
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     {
         $this->totalTimePreviouslyBilled = $totalTimePreviouslyBilled;
-    
+
         return $this;
     }
 
@@ -316,7 +339,7 @@ public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     public function setTotalTimeCurrentlyBilled($totalTimeCurrentlyBilled = null)
     {
         $this->totalTimeCurrentlyBilled = $totalTimeCurrentlyBilled;
-    
+
         return $this;
     }
 
@@ -328,7 +351,31 @@ public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     public function getTotalTimeCurrentlyBilled()
     {
         return $this->totalTimeCurrentlyBilled;
-    }    
+    }
+
+    /**
+     * Set paymentDetails.
+     *
+     * @param string|null $paymentDetails
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setPaymentDetails($paymentDetails = null)
+    {
+        $this->paymentDetails = $paymentDetails;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentDetails.
+     *
+     * @return string|null
+     */
+    public function getPaymentDetails()
+    {
+        return $this->paymentDetails;
+    }
 
     /**
      * Set contract.
@@ -340,7 +387,7 @@ public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     public function setContract(Contract $contract = null)
     {
         $this->contract = $contract;
-    
+
         return $this;
     }
 
@@ -355,6 +402,30 @@ public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     }
 
     /**
+     * Set teacherPaymentBillSumary.
+     *
+     * @param TeacherPaymentBillSumary|null $teacherPaymentBillSumary
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setTeacherPaymentBillSumary(TeacherPaymentBillSumary $teacherPaymentBillSumary = null)
+    {
+        $this->teacherPaymentBillSumary = $teacherPaymentBillSumary;
+
+        return $this;
+    }
+
+    /**
+     * Get teacherPaymentBillSumary.
+     *
+     * @return TeacherPaymentBillSumary|null
+     */
+    public function getTeacherPaymentBillSumary()
+    {
+        return $this->teacherPaymentBillSumary;
+    }
+
+    /**
      * Set teacher.
      *
      * @param Teacher|null $teacher
@@ -364,18 +435,17 @@ public function setTotalTimePreviouslyBilled($totalTimePreviouslyBilled = null)
     public function setTeacher(Teacher $teacher = null)
     {
         $this->teacher = $teacher;
-    
+
         return $this;
     }
 
     /**
      * Get teacher.
      *
-     * @return Teacher|null
+     * @return \Teacher|null
      */
     public function getTeacher()
     {
         return $this->teacher;
     }
 }
-

@@ -1,0 +1,506 @@
+
+<style>
+    .md-block{margin-top: 20px;}
+</style>
+<div layout="column" ng-cloak>
+
+    <md-toolbar ng-if="true"  class="md-shadow-bottom-z-2" layout-padding>
+        <div>
+            <h3 class="md-title">
+                Nouvel enseignant
+            </h3>
+        </div>
+    </md-toolbar>
+
+   
+<style> 
+
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+
+</style>
+    
+    <form  ng-submit=""  name="classForm" novalidate>
+        <div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+
+            <div class="row">
+                <div class='col-lg-2'>
+                    <button  type="button" class="btn btn-danger" ng-click="$ctrl.updateClasse()" ng-show="$ctrl.isUpdate" ng-disabled="classForm.$invalid">Modifier</button>
+                    <button  type="button" ng-click="$ctrl.addClasse()" class="btn btn-danger" ng-show="!$ctrl.isUpdate" ng-disabled="classForm.$invalid">Enrégistrer</button>
+                    <span> <a href="#!/classes">Retour</a></span>
+                </div>
+                <div class="col-lg-4">
+                    
+                </div>
+                <div class="col-lg-2">
+                    
+                    <button  type="button" ng-show="$ctrl.isUpdate" ng-click="$ctrl.deleteDegree()" ng-disabled="classForm.$invalid" class="btn btn-default">Supprimer</button>
+                    
+                    
+                </div>
+            </div>
+        </div>
+        <div class="form-view-main">
+            <div class="form-view">
+
+
+
+  
+<div  layout="column" ng-cloak class="md-inline-form">
+
+
+     <md-content class="layout-align-center" layout="row">
+        <div layout-padding >
+            <div class="loading-container" ng-if="!canDisplayForm()">
+                <div class="error-block" ng-if="hasFailedLoading()">
+                    <img class="error-icon" src="assets/images/warning_752755.png" alt=""/>
+                    <span class="error-message md-warn">Une erreur s'est produite lors du chargement des donnees</span>
+                    <md-button class="md-raised md-warn" ng-click="loadAssets()">Reessayer</md-button>
+                </div>
+                <div class="loader-block" ng-if="isLoading()">
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </div>
+            <form novalidate id="new-teacher-form" class="md-shadow-bottom-z-1" ng-if="canDisplayForm()"
+                  ng-submit="onSubmit(teacherForm)" name="teacherForm">
+                <md-input-container class="md-block">
+                    <label for="names">Noms & Prenoms</label>
+                    <input id="names" name="names" ng-model="teacher.names" required maxlength="60">
+                    <div ng-messages="teacherForm.names.$error" multiple md-auto-hide="true">
+                        <div ng-message="required">Le nom est requis !</div>
+                        <div ng-message="md-maxlength">Le nom doit avoir au plus 60 caracteres</div>
+                    </div>
+                </md-input-container>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="birthdate">Date de naissance</label>
+                        <input id="birthdate" ng-model="teacher.birthdate" name="birthdate" type="date" required>
+<!--                        <md-datepicker style="width: 100%" ng-model="teacher.birthdate" required aria-label="Enter date"></md-datepicker>-->
+                        <div ng-messages="teacherForm.birthdate.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">La date de naissance est requise !</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="birthplace">Lieu de naissance</label>
+                        <input ng-model="teacher.birthplace" id="birthplace" name="birthplace" required maxlength="60">
+                        <div ng-messages="teacherForm.birthplace.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Le lieu de naissance est requis !</div>
+                            <div ng-message="md-maxlength">Le lieu de naissance doit avoir au plus 60 caracteres</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="country_id">Pays de résidence</label>
+                        <md-select ng-model="teacher.living_country_id" id="living_country_id" name="living_country_id" required>
+                            <md-option ng-repeat="country in countries" value="{{country.name}}">
+                                {{country.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.country_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">La nationalite est requise !</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="country_id">Ville  de résidence</label>
+                        <md-select ng-model="teacher.living_city_id" id="living_city_id" name="living_city_id" md-on-open="getCities(teacher.living_country_id)" required>
+                            <md-option ng-repeat="city in cities" value="{{city.name}}">
+                                {{city.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.country_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">La nationalite est requise !</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="country_id">Nationalite</label>
+                        <md-select ng-model="teacher.country_id" id="country_id" name="country_id" required>
+                            <md-option ng-repeat="country in countries" value="{{country.name}}">
+                                {{country.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.country_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">La nationalite est requise !</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="marital_status">Etat civil</label>
+                        <md-select ng-model="teacher.marital_status" id="marital_status" name="marital_status" required>
+                            <md-option value="single">
+                                Célibataire
+                            </md-option>
+                            <md-option value="married">
+                                Marié(e)
+                            </md-option>
+                            <md-option value="divorced">
+                                Divorcé(e)
+                            </md-option>                            
+                        </md-select>
+                        <div ng-messages="teacherForm.marital_status.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">L'etat civil est requis !</div>
+                        </div>
+                    </md-input-container>
+                </div>                
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="phone">Telephone</label>
+                        <input ng-model="teacher.phone" id="phone" name="phone" type="tel" minlength="9" maxlength="25" required/>
+                        <div ng-messages="teacherForm.phone.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Le numero de telephone est requis !</div>
+                            <div ng-message="md-minlength">Le numero de telephone doit avoir au moins 9 caracteres</div>
+                            <div ng-message="md-maxlength">Le numero de telephone doit avoir au plus 25 caracteres</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="email">Email</label>
+                        <input ng-model="teacher.email" id="email" name="email" type="email" maxlength="100" required/>
+                        <div ng-messages="teacherForm.email.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">L'email est requis !</div>
+                            <div ng-message="md-email">Cet email est invalide !</div>
+                            <div ng-message="md-maxlength">L'email doit avoir au plus 100 caracteres</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="highest_degree_id">Diplome le plus élevé</label>
+                        <md-select ng-model="teacher.highest_degree" id="highest_degree_id" name="highest_degree_id" required>
+                            <md-option ng-repeat="diploma in diplomas" value="{{diploma.name}}">
+                                {{diploma.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.highest_degree_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Ce champ est requis !</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="speciality_id">Specialite</label>
+                        <input ng-model="teacher.speciality" id="speciality_id" name="speciality_id" maxlength="60" required/>
+                        <div ng-messages="teacherForm.actual_employer.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Ce champ est requis !</div>
+                            <div ng-message="md-maxlength">Le champ doit avoir au plus 60 caracteres !</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="grade_id">Grade d'enseignant</label>
+                        <md-select ng-model="teacher.grade_id" id="grade_id" name="grade_id" required>
+                            <md-option ng-repeat="grade in grades" value="{{grade.id}}">
+                                {{grade.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.grade_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Le grade d'enseignant est requis !</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="actual_employer">Employeur actuel</label>
+                        <input ng-model="teacher.actual_employer" id="actual_employer" name="actual_employer" maxlength="60" required/>
+                        <div ng-messages="teacherForm.actual_employer.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">Ce champ est requis !</div>
+                            <div ng-message="md-maxlength">Le champ doit avoir au plus 60 caracteres !</div>
+                        </div>
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label for="requested_establishment_id">Etablissement sollicite</label>
+                        <md-select ng-model="teacher.requested_establishment_id" id="requested_establishment_id" name="requested_establishment_id" required>
+                            <md-option ng-repeat="establishment in establishments" value="{{establishment.id}}">
+                                {{establishment.name}}
+                            </md-option>
+                        </md-select>
+                        <div ng-messages="teacherForm.requested_establishment_id.$error" multiple md-auto-hide="true">
+                            <div ng-message="required">L'etablissement sollicite est requis !</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <div class="identity-documents-container" flex-gt-sm>
+                        <label for="identity_document_type" class="demo-radio-button-label">Document d'identite :</label>
+                        <md-radio-group id="identity_document_type" layout="row" ng-model="teacher.identity_document_type">
+                            <md-radio-button value="nic">CNI</md-radio-button>
+                            <md-radio-button value="passport">Passeport</md-radio-button>
+                        </md-radio-group>
+                        <div class="identity-document">
+                            <div class="result-preview" ng-if="!!identityDocumentFile">
+                                <div class="file-preview">
+                                    <img src="assets/images/pdf.png" alt=""/>
+                                </div>
+                                <div class="result-file-name single-line-ellipsis">
+                                    <span>{{identityDocumentFile.name}}</span>
+                                </div>
+                                <div class="remove-file-button clickable" ng-click="removeIdentityDocumentFile()">
+                                    <img src="assets/images/cancel_753345.png" alt=""/>
+                                </div>
+                            </div>
+                            <div class="document-file-input clickable" ng-if="!identityDocumentFile">
+                                <label for="identity_document_input">
+                                    <img src="assets/images/id_783886.png" alt=""/>
+                                </label>
+                                <input onchange="angular.element(this).scope().onUploadFile(
+                                    this, angular.element(this).scope().handleIdentityDocumentUploadedFile)"
+                                       id="identity_document_input" type="file"
+                                       ng-attr-accept="{{pdfMimeType}}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resume-and-cover-letter" flex-gt-sm>
+                        <div class="cover-letter-container" flex-gt-sm>
+                            <label>Lettre de motivation</label>
+                            <div class="cover-letter-document">
+                                <div class="result-preview" ng-if="!!coverLetterFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{coverLetterFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeCoverLetterFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!coverLetterFile">
+                                    <label for="cover_letter_input">
+                                        <img src="assets/images/letter_208027.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleCoverLetterUploadedFile)"
+                                           id="cover_letter_input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+
+<!--                                <span class="ng-dirty">Ce fichier est requis !</span>-->
+                            </div>
+                        </div>
+                        <div class="resume-container" flex-gt-sm>
+                            <label>CV actualise</label>
+                            <div class="resume-document">
+                                <div class="result-preview" ng-if="!!resumeFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{resumeFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeResumeFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!resumeFile">
+                                    <label for="resume-document-input">
+                                        <img src="assets/images/resume_942799.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleResumeUploadedFile)"
+                                           id="resume-document-input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div layout-gt-sm="row" style="margin-top: 1rem">
+                    <div class="diploma-and-rang" flex-gt-sm>
+                        <div class="highest-degree-container" flex-gt-sm>
+                            <label>Diplome le plus eleve</label>
+                            <div class="highest-degree-document">
+                                <div class="result-preview" ng-if="!!highestDegreeFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{highestDegreeFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeHighestDegreeFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!highestDegreeFile">
+                                    <label for="highest-degree-input">
+                                        <img src="assets/images/certificate_2912761.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleHighestDegreeUploadedFile)"
+                                            id="highest-degree-input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="teacher-rank-container" flex-gt-sm>
+                            <label>Justificatif grade ens.</label>
+                            <div class="teacher-rank-document">
+                                <div class="result-preview" ng-if="!!teacherRankFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{teacherRankFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeTeachingRangFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!teacherRankFile">
+                                    <label for="teacher_rank_input">
+                                        <img src="assets/images/top_7061138.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleTeachingRangUploadedFile)"
+                                           id="teacher_rank_input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="experience-review-and-appointment-act" flex-gt-sm>
+                        <div class="experience-review-container" flex-gt-sm>
+                            <label>Bilan de l'experience</label>
+                            <div class="experience-review-document">
+                                <div class="result-preview" ng-if="!!experienceReviewFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{experienceReviewFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeExperienceReviewFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!experienceReviewFile">
+                                    <label for="experience_review_input">
+                                        <img src="assets/images/review_3080641.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleExperienceReviewUploadedFile)"
+                                           id="experience_review_input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="nomination-act-container" flex-gt-sm>
+                            <label>Acte de nomination</label>
+                            <div class="nomination-act-document">
+                                <div class="result-preview" ng-if="!!nominationActFile">
+                                    <div class="file-preview">
+                                        <img src="assets/images/pdf.png" alt=""/>
+                                    </div>
+                                    <div class="result-file-name single-line-ellipsis">
+                                        <span>{{nominationActFile.name}}</span>
+                                    </div>
+                                    <div class="remove-file-button clickable" ng-click="removeNominationActFile()">
+                                        <img src="assets/images/cancel_753345.png" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="document-file-input clickable" ng-if="!nominationActFile">
+                                    <label for="nomination_act_input">
+                                        <img src="assets/images/development_2191261.png" alt=""/>
+                                    </label>
+                                    <input onchange="angular.element(this).scope().onUploadFile(
+                                            this, angular.element(this).scope().handleNominationActUploadedFile)"
+                                           id="nomination_act_input" type="file"
+                                           ng-attr-accept="{{pdfMimeType}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<!--                <div layout-gt-sm="row" style="margin-top: 1rem">-->
+<!--                    <div class="syllabus-container" flex-gt-sm>-->
+<!--                        <label>Syllabus des cours dispensess</label>-->
+<!--                        <div class="syllabus-documents">-->
+<!--                            <div class="result-preview" ng-if="!!syllabusFile">-->
+<!--                                <div class="file-preview">-->
+<!--                                    <img src="/assets/images/pdf.png" alt=""/>-->
+<!--                                </div>-->
+<!--                                <div class="result-file-name single-line-ellipsis">-->
+<!--                                    <span>{{syllabusFile.name}}</span>-->
+<!--                                </div>-->
+<!--                                <div class="remove-file-button clickable" ng-click="removeSyllabusFile()">-->
+<!--                                    <img src="/assets/images/cancel_753345.png" alt=""/>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="document-file-input clickable" ng-if="!syllabusFile">-->
+<!--                                <label for="syllabus_input">-->
+<!--                                    <img src="/assets/images/notes_3271853.png" alt=""/>-->
+<!--                                </label>-->
+<!--                                <input onchange="angular.element(this).scope().onUploadFile(-->
+<!--                                            this, angular.element(this).scope().handleSyllabusUploadedFile)"-->
+<!--                                       id="syllabus_input" type="file"-->
+<!--                                       ng-attr-accept="{{pdfMimeType}}"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div layout-gt-sm="row" style="margin-top: 2rem">
+                    <md-button ng-if="!isProcessing" style="width: 100%" type="submit" class="md-raised md-primary">Creer l'enseignant</md-button>
+                    <md-button ng-if="isProcessing" layout="row" layout-align="center" style="width: 100%; align-items: center" type="button" class="md-raised md-primary" disabled="">
+                        <md-progress-circular class="md-accent md-hue-1" md-diameter="20"></md-progress-circular>
+                    </md-button>
+                </div>
+
+            </form>
+        </div>
+    </md-content>
+
+</div>
+<p>&nbsp;</p>
+              <!--tabs widget-->
+              <!--  <div class="row" >
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#">Cyles de formation</a></li>
+
+                    </ul>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-warning">
+                                                    <th style='width:30%;'>Code</th>
+                                                    <th>Nom</th>
+                                                    <th>Durée</th>
+
+                                                    <th style='width:12%;'></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="cycle in cycles" >
+                                                  <td ng-bind="cycle.code"></td>
+                                                  <td ng-bind="cycle.name"></td>
+                                                  <td ng-bind="cycle.duration"></td>
+                                                  <td>
+                                                      
+                                                      <button type="button" ng-click="showCurriculum(cycle)" class="btn btn-default btn"><i class="fa fa-edit"></i></button>
+                                                      <button  type="button" ng-click="deleteCycle(cycle)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                                    
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                        <a class="btn btn-primary" ng-click="$ctrl.addCurriculum()">Ajouter un cycle</a>
+
+                 </div>
+              -->
+                <!--End tab-->
+                
+            </div>  
+        </div>
+
+
+
+</div>
