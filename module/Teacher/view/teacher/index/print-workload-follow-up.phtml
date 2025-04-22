@@ -30,6 +30,9 @@ $tblBody = '
             <th>Volume  prévu</th>
             <th>Volume  réalisé</th>
             <th>Ecart</th>
+            <th>Volume  payé</th>
+            <th>Montant</th>
+            
           </tr>
         </thead>
         <tbody>';
@@ -43,6 +46,8 @@ $index=1;
             <td class="service">'.$teach["totalVolumeAllocated"].'H</td>
             <td class="service">'.$teach["totalVolumeDone"].'H</td>
             <td class="service">'.$teach["volumeGap"].'H</td>
+            <td class="service">'.$teach["totalVolumePaid"].'</td>
+            <td class="service">'.$teach["amountPaid"].'</td>
           </tr>';
  endforeach;
 
@@ -71,7 +76,7 @@ $mpdf = new \Mpdf\Mpdf([
 
 
 
-$mpdf->SetProtection(array('print')); 
+//$mpdf->SetProtection(array('print')); 
 $mpdf->SetTitle("Vacation billing");
 $mpdf->SetAuthor("W-TECH"); 
 //$mpdf->SetWatermarkText("test");

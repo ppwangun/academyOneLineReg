@@ -18,7 +18,7 @@ $mpdf = new \Mpdf\Mpdf([
 $mpdf->SetProtection(array('print')); 
 $mpdf->SetTitle("Vacation billing");
 $mpdf->SetAuthor("W-TECH"); 
-$mpdf->SetWatermarkText("test");
+//$mpdf->SetWatermarkText("test");
 $mpdf->showWatermarkText = true;
 $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;
@@ -84,7 +84,7 @@ $tblBody = '
                     Ecart: '.$item["totalTime"]-($item["totalTimePreviouslyBilled"]+$item["totalTimeCurrentlyBilled"]).'</td>
                 
                 <td class="service">'.$item["totalTimeCurrentlyBilled"].'</td>
-                <td class="service">'.$paymentRate.'</td>
+                <td class="service">'.$value['info']['paymentRate'].'</td>
                 <td class="service">'.$item["paymentAmount"].'</td>
               </tr>';
      endforeach;
@@ -102,7 +102,7 @@ $tblBody = '
                 <td class="service" style="text-align:left;"></td>
                 
                 <td class="service"></td>
-                <td class="service" style="text-align:right;">IR (5.5%)</td>
+                <td class="service" style="text-align:right;">IR (11%)</td>
                 <td class="service" style="text-align:right;">'.$value['bill_sumary']['paymentAmount']*0.11.'FCFA</td>
               </tr>
               <tr>
@@ -110,7 +110,7 @@ $tblBody = '
                 <td class="service" style="text-align:left;"></td>
                 
                 <td class="service"></td>
-                <td class="service" style="text-align:right;">NAP </td>
+                <td class="service" style="text-align:right;">NET A PAYER </td>
                 <td class="service" style="text-align:right;">'.$value['bill_sumary']['paymentAmount']-$value['bill_sumary']['paymentAmount']*0.11.'FCFA</td>
               </tr>              
 

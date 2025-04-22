@@ -1733,7 +1733,7 @@ public function deleteScheduledCourseAction()
             $billItems = [];
             $teacher =[];
             $subject = [];
-            $pymtRate = 0;
+           
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             
@@ -1744,6 +1744,7 @@ public function deleteScheduledCourseAction()
             foreach($teacher as $key=>$teach)
             {
                 $contracts = $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teach,"academicYear"=>$acadYr)); 
+                
                 $totalVolumeAllocated = 0;
                 $totalVolumeDone = 0;
                 if(sizeof($contracts)> 0)
@@ -1753,6 +1754,8 @@ public function deleteScheduledCourseAction()
                     {
                         $totalVolumeAllocated += $con->getVolumeHrs();
                         $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
+                        
+                         
                         foreach($contractsFwu as $conFwu)
                             $totalVolumeDone += $conFwu->getTotalTime();
 
@@ -1768,6 +1771,25 @@ public function deleteScheduledCourseAction()
                     $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
                     $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
                     $teachers[$key]["paymentRate"] = $pymtRate;
+                    
+                    
+                    $totalVolumePaid = 0;
+                    $totalAmountPaid = 0;  
+                    
+                    foreach($contracts as $con)
+                    { 
+                        $paymentBill = $this->entityManager->getRepository(TeacherPaymentBill::class)->findOneBy(array("teacher"=>$teach,"contract"=>$con)); 
+ 
+                        if($paymentBill)
+                        {
+                            $totalVolumePaid += $paymentBill->getTotalTimePreviouslyBilled()+$paymentBill->getTotalTimeCurrentlyBilled(); 
+                            $totalAmountPaid += $paymentBill->getPaymentAmount();
+                            
+
+                        }
+                    }
+                    $teachers[$key]["totalVolumePaid"] = $totalVolumePaid;
+                    $teachers[$key]["amountPaid"] = $totalAmountPaid;                    
                 }
             }
 
@@ -1804,7 +1826,7 @@ public function deleteScheduledCourseAction()
             $subjects=[];
             $bills = [];
        
-            $teachers = $this->entityManager->getRepository(Teacher::class)->findAll();
+            $teachers = $this->entityManager->getRepository(Teacher::class)->findAll([],array("name"=>"ASC"));
             $teacherInfo = [];
             $i = 0;
             
@@ -1992,7 +2014,7 @@ public function deleteScheduledCourseAction()
             
             $hydrator = new ReflectionHydrator();
             $teacher = $hydrator->extract($teacher);
-            
+            $teacher["paymentRate"] = $pymtRate;
             $i++;
             
             $teacherInfo[$i]['info']=$teacher;
@@ -2005,7 +2027,7 @@ public function deleteScheduledCourseAction()
         
             $output = new ViewModel([
                "teachers"=>$teacherInfo,
-                "paymentRate"=>$pymtRate
+               
 
             ]);
              $output->setTerminal(true);
