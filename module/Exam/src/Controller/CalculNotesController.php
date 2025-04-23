@@ -37,6 +37,7 @@ class CalculNotesController extends AbstractRestfulController
     public function __construct($entityManager,$examManager) {
         
         $this->entityManager = $entityManager;  
+        
         $this->examManager = $examManager; 
     }
 
