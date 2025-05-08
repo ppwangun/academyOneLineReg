@@ -31,7 +31,7 @@ and open the template in the editor.
  */
 
 
-
+echo "je suis dedans 1"; exit;
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
 
@@ -57,7 +57,7 @@ $pdf = new \Mpdf\Mpdf([
     'margin_footer' => 9    
 ]);
 
-echo "je suis dedans 1"; exit;
+
 $pdf->SetDocTemplate(__DIR__.'/template_header.pdf',1);
 
 // ---------------------------------------------------------
