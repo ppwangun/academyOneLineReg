@@ -7,7 +7,11 @@ z-index: 120000}
 
 .md-select-menu-container {z-index: 120000;}
 
-
+li.active a.ng-binding {
+  color: #000 !important;
+	background-color: #eeeeee !important;
+	text-decoration: none;
+}
 
 </style>
     
@@ -51,7 +55,7 @@ z-index: 120000}
 <md-content layout-padding >
 
     <form   name="examForm" >
-        <div layout-gt-sm='row' >
+        <div layout-gt-sm='row'ng-hide="$ctrl.isBulkBilling" >
 
             <div class = "col-xs-6" >
                 <div layout-gt-sm='row' >
@@ -63,11 +67,11 @@ z-index: 120000}
                                          md-item-text="item.name" 
                                          md-min-length="0"
                                          placeholder="" 
-                                         md-selected-item-change="$ctrl.loadBills($ctrl.selectedTeacher)"
+                                         md-selected-item-change="$ctrl.loadBills($ctrl.selectedTeacher,$ctrl.isBulkBilling)"
                                          md-input-name="Teacher"
                                          md-no-asterisk
                                          ng-disabled="$ctrl.showbillDetails"
-                                         required>
+                                         ng-required="!$ctrl.isBulkBilling">
                             <md-item-template>
                               <span md-highlight-text="$ctrl.searchTeacher" md-highlight-flags="^i">{{item.name}}</span>
 
@@ -207,12 +211,21 @@ z-index: 120000}
         </div>
 
         <div layout-gt-sm='row'>
-            <div class="col-md-6 pull-left">
-               <!-- <button class="btn btn-inverse" ng-click="$ctrl.clotureCalculNotes($ctrl.selectedUe.ue_class_id)" ng-disabled="examForm.$invalid||$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-lock" ></i>&nbsp;Clôture</button>&nbsp;&nbsp; -->
+            <div class="col-md-2 pull-left">
+                
 
             </div>
-            <div class="col-md-6 text-right">
-                <button class="btn btn-danger" ng-click="$ctrl.generateBill($ctrl.selectedTeacher)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
+            <div class="col-md-10 text-right">
+                <i>Générer toutes les factures en attente</i>
+                <md-checkbox  ng-model="$ctrl.isBulkBilling" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
+                              ng-change="$ctrl.loadBills($ctrl.selectedTeacher,$ctrl.isBulkBilling)" 
+                    ng-true-value="1"
+                    ng-false-value="0"             
+                    class="md-primary">
+
+                </md-checkbox> 
+                
+                <button class="btn btn-danger" ng-click="$ctrl.loadTeacherBill($ctrl.selectedTeacher,$ctrl.isBulkBilling)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" ng-click="$ctrl.deliberation()" ><i class="fa fa-save" ></i>&nbsp;Valider le paiement</button>
             </div>
         </div>
@@ -224,21 +237,21 @@ z-index: 120000}
 
 
 <p></p>
-             <!--tabs widget-->
-              <div class="row" > 
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="">Liste des cours réalisés</a>
-                        </li>
-                    </ul>
+    <uib-tabset>
+      <uib-tab > 
+                    <uib-tab-heading>
+                        <span>Liste factures</span>
+                                               
+                    </uib-tab-heading>
                     <div id =" tab1">
                         <table class="table" style="font-size:1em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
                         <thead>
 
                             <tr class="bg-primary">
                                 <th class="col-xs-1 align-middle" ></th>
-                                <th class=" align-middle" >N° Facture</th>
-                                <th class=" align-middle">Volume Horaire</th>
+                                <th class=" align-middle" >N° </th>
+                                <th class=" align-middle">Volume Alloué</th>
+                                <th class=" align-middle">Volume Réalisé</th>
                                 <th class=" align-middle">Montant</th>
                                 <th class=" align-middle">Date</th>
                                 <th class=" align-middle">statut</th>
@@ -258,7 +271,8 @@ z-index: 120000}
 
                               </td>
                               <td nclass="col-xs-1"><a ng-href="home#!/subjectBilling/{{bill.refNumber}}" ng-bind="bill.refNumber"></a></td>
-                              <td ng-bind="bill.totalTime +'H'" class="col-xs-3"></td>
+                              <td ng-bind="bill.totalTimeScheduled +'H'" class="col-xs-3"></td>
+                              <td ng-bind="bill.totalTimePaid +'H'" class="col-xs-3"></td>
                               <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
                               <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
                               <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
@@ -268,6 +282,39 @@ z-index: 120000}
 
                         </table>
                     </div>
+      </uib-tab>
+           
+              <uib-tab>
+                <uib-tab-heading>
+                    <span>Imprimer les factures</span>
+                </uib-tab-heading>
+                <div class="tab-container"> 
+                    
+    <div layout-gt-sm='column' >
+        <fieldset class="standard">
+            <legend>Choisir une période</legend>
+            <div layout-gt-sm="row">   
+                <h4 id="datepicker-header">Date de début</h4>
+                  <md-datepicker ng-model="$ctrl.billingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de début">
+
+                  </md-datepicker>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <h4 id="datepicker-header">Date de fin</h4>
+                  <md-datepicker ng-model="$ctrl.billingEndingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de fin">
+
+                  </md-datepicker>
+                
+               
+               
+            </div>
+            <div layout-gt-sm="row" class=""">
+                 <button class="btn btn-inverse" ng-click="$ctrl.deliberation()" ><i class="fa fa-save" ></i>&nbsp;Imprimer</button>
+            </div>
+        </fieldset>
+    </div>                    
+                </div>
+            </uib-tab>        
+    </uib-tabset>
                     <div id="tab2"></div>
                  </div>
                 <!--End tab-->

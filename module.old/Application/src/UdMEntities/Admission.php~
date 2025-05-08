@@ -1,0 +1,125 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Admission
+ *
+ * @ORM\Table(name="admission", indexes={@ORM\Index(name="fk_admission_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admission_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_admission_prospective_student1_idx", columns={"prospective_student_id"}), @ORM\Index(name="fk_admission_degree1_idx", columns={"degree_id"})})
+ * @ORM\Entity
+ */
+class Admission
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status = '0';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="file_number", type="string", length=45, nullable=true)
+     */
+    private $fileNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="nom", type="string", length=255, nullable=true)
+     */
+    private $nom;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="prenom", type="string", length=255, nullable=true)
+     */
+    private $prenom;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_admission", type="datetime", nullable=true)
+     */
+    private $dateAdmission;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone_number", type="string", length=45, nullable=true)
+     */
+    private $phoneNumber;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="fees_paid", type="decimal", precision=10, scale=0, nullable=true)
+     */
+    private $feesPaid;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="entrance_type", type="string", length=45, nullable=true)
+     */
+    private $entranceType;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="payment_date", type="datetime", nullable=true)
+     */
+    private $paymentDate;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="prospective_student_id", type="integer", nullable=true)
+     */
+    private $prospectiveStudentId;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+
+}

@@ -1,0 +1,77 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Semester
+ *
+ * @ORM\Table(name="semester", indexes={@ORM\Index(name="fk_semester_academic_year1_idx", columns={"academic_year_id"})})
+ * @ORM\Entity
+ */
+class Semester
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=45, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="starting_date", type="datetime", nullable=true)
+     */
+    private $startingDate;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="ending_date", type="datetime", nullable=true)
+     */
+    private $endingDate;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="ranking", type="integer", nullable=true)
+     */
+    private $ranking;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+
+}

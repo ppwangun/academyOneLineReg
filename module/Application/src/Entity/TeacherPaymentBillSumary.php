@@ -42,9 +42,16 @@ class TeacherPaymentBillSumary
     /**
      * @var float|null
      *
-     * @ORM\Column(name="total_time", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="total_time_scheduled", type="float", precision=10, scale=0, nullable=true)
      */
-    private $totalTime;
+    private $totalTimeScheduled;
+    
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="total_time_paid", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $totalTimePaid;    
     
     /**
      * @var float|null
@@ -141,28 +148,52 @@ class TeacherPaymentBillSumary
     }
 
     /**
-     * Set totalTime.
+     * Set totalTimeScheduled.
      *
-     * @param float|null $totalTime
+     * @param float|null $totalTimeScheduled
      *
      * @return TeacherPaymentBillSumary
      */
-    public function setTotalTime($totalTime = null)
+    public function setTotalTimeScheduled($totalTimeScheduled = null)
     {
-        $this->totalTime = $totalTime;
+        $this->totalTimeScheduled = $totalTimeScheduled;
 
         return $this;
     }
 
     /**
-     * Get totalTime.
+     * Get totalTimeScheduled.
      *
      * @return float|null
      */
-    public function getTotalTime()
+    public function getTotalTimeScheduled()
     {
-        return $this->totalTime;
+        return $this->totalTimeScheduled;
     }
+    
+    /**
+     * Set totalTimePaid.
+     *
+     * @param float|null $totalTimePaid
+     *
+     * @return TeacherPaymentBillSumary
+     */
+    public function setTotalTimePaid($totalTimePaid = null)
+    {
+        $this->totalTimePaid = $totalTimePaid;
+
+        return $this;
+    }
+
+    /**
+     * Get totalTimePaid.
+     *
+     * @return float|null
+     */
+    public function getTotalTimePaid()
+    {
+        return $this->totalTimePaid;
+    }    
     
     /**
      * Set paymentAmount.

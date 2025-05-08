@@ -1,0 +1,140 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * AdminRegistration
+ *
+ * @ORM\Table(name="admin_registration", uniqueConstraints={@ORM\UniqueConstraint(name="contrat_ID_UNIQUE", columns={"contrat_id"})}, indexes={@ORM\Index(name="fk_admin_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_admin_registration_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_admin_registration_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Entity
+ */
+class AdminRegistration
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="registering_date", type="datetime", nullable=true)
+     */
+    private $registeringDate;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="registration_status", type="string", length=10, nullable=true, options={"default"="DRAFT"})
+     */
+    private $registrationStatus = 'DRAFT';
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="pv_registration_date", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $pvRegistrationDate = 'CURRENT_TIMESTAMP';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="academic_year_id", type="integer", nullable=false)
+     */
+    private $academicYearId;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="fees_dotation", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $feesDotation;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="fees_paid", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $feesPaid = '0';
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="student_id", type="integer", nullable=false)
+     */
+    private $studentId;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="fees_balance_from_previous_year", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $feesBalanceFromPreviousYear = '0';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="contrat_id", type="string", length=45, nullable=true)
+     */
+    private $contratId;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="moratorium_autorization", type="string", length=45, nullable=true)
+     */
+    private $moratoriumAutorization;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status = '0';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="decision", type="string", length=45, nullable=true)
+     */
+    private $decision;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="isStudentRepeating", type="integer", nullable=true)
+     */
+    private $isstudentrepeating = '0';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="school_certificate_reference_id", type="string", length=45, nullable=true)
+     */
+    private $schoolCertificateReferenceId;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="school_certificate_availability_status", type="boolean", nullable=true)
+     */
+    private $schoolCertificateAvailabilityStatus = '0';
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+
+}

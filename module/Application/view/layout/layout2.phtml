@@ -489,10 +489,10 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturers.managment', null)))?true:false?>">
                                     <a href="#!/teacherAssignedSubjectsTpl">Grilles d'attribution des Ues</a>
                                 </li>                                
-                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecture.follow.up', null)))?true:false?>">
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.follow.up', null)))?true:false?>">
                                     <a href="#!/teacher-follow-up">Suivi des cours</a>
                                 </li>
-                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecture.billing', null)))?true:false?>">
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.billing', null)))?true:false?>">
                                     <a href="#!/subjectBilling">Factuation des frais de vacation</a>
                                 </li>
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
@@ -546,8 +546,8 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.planing', null)))?true:false?>">
                                     <a href="#!/courseProgramming"><i >&nbsp;</i>Programmation</a>
                                 </li>    
-                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.planing', null)))?true:false?>">
-                                    <a href="#!/courseProgramming"><i >&nbsp;</i>Gestion des salles de cours</a>
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.resoourse.edit', null)))?true:false?>">
+                                    <a href="#!/classroom"><i >&nbsp;</i>Gestion des salles de cours</a>
                                 </li>                                 
                             </ul>
                         </li>

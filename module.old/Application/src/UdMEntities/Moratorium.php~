@@ -1,0 +1,49 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Moratorium
+ *
+ * @ORM\Table(name="moratorium", indexes={@ORM\Index(name="fk_moratoire_admin_registration1_idx", columns={"admin_registration_id"})})
+ * @ORM\Entity
+ */
+class Moratorium
+{
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="date_of_validity", type="string", length=45, nullable=true)
+     */
+    private $dateOfValidity;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true, options={"unsigned"=true})
+     */
+    private $status;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="admin_registration_id", type="integer", nullable=true)
+     */
+    private $adminRegistrationId;
+
+    /**
+     * @var \AdminRegistration
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id", referencedColumnName="id")
+     * })
+     */
+    private $id;
+
+
+}
