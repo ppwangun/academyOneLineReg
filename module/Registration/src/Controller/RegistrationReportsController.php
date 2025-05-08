@@ -147,7 +147,7 @@ class RegistrationReportsController extends AbstractActionController
 
 
             $this->entityManager->getConnection()->commit();
-            
+            echo " je suis dedans"; exit;
 
             $view = new ViewModel([
                 'students'=>$students,
