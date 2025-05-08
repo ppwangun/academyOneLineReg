@@ -29,7 +29,7 @@ and open the template in the editor.
  * @author Nicola Asuni
  * @since 2009-03-20
  */
-
+echo _DIR_; exit;
 
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
@@ -39,7 +39,7 @@ $fontData = $defaultFontConfig['fontdata'];
 
 $pdf = new \Mpdf\Mpdf([
     'fontDir' => array_merge($fontDirs, [
-        $_SERVER["DOCUMENT_ROOT"]. '/font/Roboto',
+        $_SERVER["DOCUMENT_ROOT"].'/font/Roboto',
     ]),
     'fontdata' => $fontData + [ // lowercase letters only in font key
         'roboto' => [
