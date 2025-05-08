@@ -50,7 +50,7 @@ class UserManager
         $user->setStatus($data['status']);
         
         $currentDate = date('Y-m-d H:i:s');
-        $user->setDateCreated($currentDate);        
+        $user->setDateCreated(new \DateTime(date('Y-m-d H:i:s')));        
                 
         // Add the entity to the entity manager.
         $this->entityManager->persist($user);

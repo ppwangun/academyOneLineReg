@@ -865,7 +865,7 @@ class IndexController extends AbstractActionController
             $billSumary->setTeacher($teacher);
             $billSumary->setTeacher($teacher); 
             $this->entityManager->persist($billSumary); 
-            $this->entityManager->flush();
+            //**$this->entityManager->flush();
    
             //Asuming we did not find any item to bill
              $flag = 0;
@@ -924,7 +924,7 @@ class IndexController extends AbstractActionController
 
 
                         $con->setTeacherPaymentBill($pymtBill);
-                        $this->entityManager->flush();
+                        //**$this->entityManager->flush();
                        
 
                         $amount += $actualTimeToBill*$pymtRate;
@@ -981,7 +981,7 @@ class IndexController extends AbstractActionController
                
                 
                 
-                $this->entityManager->flush();
+                //**$this->entityManager->flush();
                
 
             }
@@ -1001,7 +1001,7 @@ class IndexController extends AbstractActionController
 
             $billSumary->setPaymentAmount($totalAmount); 
             $billSumary->setTotalTime($totalTimeBilled);
-            $this->entityManager->flush();               
+           // $this->entityManager->flush();               
                 
     
            
@@ -1018,7 +1018,7 @@ class IndexController extends AbstractActionController
                 $billSumaryItems[$key] = $hydrator->extract($value);                
             }
             
-
+        $this->entityManager->flush();
         $this->entityManager->getConnection()->commit(); 
 
             
