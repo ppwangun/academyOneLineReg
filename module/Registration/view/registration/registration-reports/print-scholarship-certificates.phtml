@@ -29,7 +29,7 @@ and open the template in the editor.
  * @author Nicola Asuni
  * @since 2009-03-20
  */
-echo _DIR_; exit;
+echo __DIR__; exit;
 
 $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
 $fontDirs = $defaultConfig['fontDir'];
