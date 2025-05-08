@@ -74,7 +74,7 @@ class RegistrationReportsController extends AbstractActionController
             else $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("studentId"=>$stdId,"status"=>1));
             
 
-        
+       echo "je suis deda"; exit; 
             $students = [];
 
             $classe_1 = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($classe_code);
