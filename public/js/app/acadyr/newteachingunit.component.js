@@ -276,7 +276,7 @@ $ctrl.asignedSemToClasse = function(class_code){
    $scope.deleteSubject = function(subject,ev)
       {
       
-      var data = {id: subject.id}; 
+      var data = {id: {subject_id:subject.id,smester_id:$ctrl.ue.sem_id}}; 
       var config = {
       params: data,
       headers : {'Accept' : 'application/json'}

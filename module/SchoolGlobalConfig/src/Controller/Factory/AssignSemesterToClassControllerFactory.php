@@ -25,8 +25,10 @@ class AssignSemesterToClassControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         
+        $sessionContainer = $container->get('LoggedInUser');
+        
         // Instantiate the controller and inject dependencies
-        return new AssignSemesterToClassController($entityManager);
+        return new AssignSemesterToClassController($entityManager,$sessionContainer);
     }
 
 }

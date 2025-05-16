@@ -35,6 +35,16 @@ return [
                     ],
                 ],
             ],  
+            'importTeacher' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/importTeacher',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importTeacher',
+                    ],
+                ],
+            ],            
             'searchTeacher' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -253,7 +263,17 @@ return [
                         'controller' => Controller\ProgressionController::class,
                     ],
                 ],
-            ],  
+            ], 
+            'classroom' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/classroom[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\ResourceController::class,
+                        'action'=>'classroom'
+                    ],
+                ],
+            ],             
             'programmingtpl' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -313,6 +333,26 @@ return [
                         'action'=>'updateScheduledCourse'
                     ],
                 ],
+            ], 
+            'printTeacherBill' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printTeacherBill[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'printTeacherBill'
+                    ],
+                ],
+            ], 
+            'loadTeacherBill' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/loadTeacherBill[/:teacherID][/:isBulkBilling]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'loadTeacherBill'
+                    ],
+                ],
             ],            
              /*  'home' => [
                 'type' => Literal::class,
@@ -332,6 +372,7 @@ return [
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
             Controller\GradeController::class => Controller\Factory\GradeControllerFactory::class,
             Controller\TeacherController::class => Controller\Factory\TeacherControllerFactory::class,
+            Controller\ResourceController::class => Controller\Factory\ResourceControllerFactory::class,
             Controller\ProgressionController::class => Controller\Factory\ProgressionControllerFactory::class,
         ],
     ],
@@ -365,6 +406,14 @@ return [
                 ['actions' => '*', 
                         'allow' => '@'],
                    ],
+            Controller\ResourceController::class => [
+
+                // Give access to "index", "add", "edit", "view", "changePassword" actions 
+                // to users having the "user.manage" permission.
+
+                ['actions' => '*', 
+                        'allow' => '@'],
+                   ],            
             Controller\AuthController::class => [
                 // Give access to "resetPassword", "message" and "setPassword" actions
                 // to anyone.

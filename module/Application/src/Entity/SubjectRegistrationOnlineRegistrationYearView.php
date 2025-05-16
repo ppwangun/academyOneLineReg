@@ -50,6 +50,15 @@ class SubjectRegistrationOnlineRegistrationYearView
     *
     * @ORM\Column(name="nom_ue", type="string", length=255, nullable=true)
     */
+    
+     /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrCode", type="integer", nullable=false)
+    */
+    private $acadYrCode;
+
+    
     private $nomUe;
  
     /**

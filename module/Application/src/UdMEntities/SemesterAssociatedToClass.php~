@@ -1,0 +1,76 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * SemesterAssociatedToClass
+ *
+ * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Entity
+ */
+class SemesterAssociatedToClass
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="mark_calculation_status", type="boolean", nullable=true)
+     */
+    private $markCalculationStatus;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="sendSmsStatus", type="boolean", nullable=true)
+     */
+    private $sendsmsstatus = '0';
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="transcriptReferenceGenerationStatus", type="integer", nullable=true)
+     */
+    private $transcriptreferencegenerationstatus = '0';
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+
+}

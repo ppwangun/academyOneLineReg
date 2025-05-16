@@ -21,9 +21,12 @@ use Application\Entity\ClassOfStudyHasSemester;
 class AssignSemesterToClassController extends AbstractRestfulController
 {
     private $entityManager;
-    public function __construct($entityManager)
+    public function __construct($entityManager,$sessionContainer)
     {
         $this->entityManager = $entityManager;
+        $this->sessionContainer = $sessionContainer;
+        
+        
     }
     
     public function get($id)
@@ -31,16 +34,17 @@ class AssignSemesterToClassController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            $data = json_decode($id,true); 
+            $data = json_decode($id,true);            
             if(json_last_error() === JSON_ERROR_NONE) { 
-                if(isset($data['acadYrId'])) $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
-                else $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+               // if(isset($data['acadYrId'])) $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
+                //else 
+                $acadYr = $this->sessionContainer->currentAcadYr;
                 $id = $data['classeCode'];
             // JSON is valid
             }
             else{
 
-                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+                $acadYr = $this->sessionContainer->currentAcadYr;
             }
 
             

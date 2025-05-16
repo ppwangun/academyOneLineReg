@@ -24,8 +24,9 @@ class CalculNotesControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $examManager = $container->get(ExamManager::class);
+        $sessionContainer = $container->get('LoggedInUser');
         
         // Instantiate the controller and inject dependencies
-        return new CalculNotesController($entityManager,$examManager);
+        return new CalculNotesController($entityManager,$examManager,$sessionContainer);
     }
 }

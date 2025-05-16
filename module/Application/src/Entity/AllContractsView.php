@@ -5,7 +5,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CurrentYearTeachingUnitView
+ * AllContractsView
  *
  * @ORM\Table(name="all_contracts_view")
  * @ORM\Entity
@@ -20,6 +20,13 @@ class AllContractsView
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $id;
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="AcadYrId", type="integer", nullable=false)
+    */
+    private $acadYrId;    
    
     /**
     * @var integer
@@ -129,7 +136,9 @@ class AllContractsView
     *
     * @ORM\Column(name="teacher", type="integer", nullable=true)
     */
-    private $teacher;    
+    private $teacher;   
+    
+    
     
     
 }

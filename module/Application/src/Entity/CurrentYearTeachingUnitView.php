@@ -24,6 +24,13 @@ class CurrentYearTeachingUnitView
     /**
     * @var string
     *
+    * @ORM\Column(name="acadYrId", type="integer", nullable=true)
+    */
+    private $acadYrId;     
+    
+    /**
+    * @var string
+    *
     * @ORM\Column(name="code_ue", type="string", length=45, nullable=true)
     */
     private $codeUe;

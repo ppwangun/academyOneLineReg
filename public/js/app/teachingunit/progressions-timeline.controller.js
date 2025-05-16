@@ -1,6 +1,6 @@
-function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,contractId,toastr) {
+function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,contractId,teachingUnitCode,toastr) {
    // $scope.teachingUnitId = teachingUnitId;
-   // $scope.teachingUnitCode = teachingUnitCode;
+    $scope.teachingUnitCode = teachingUnitCode;
 
     $scope.progressions = [];
     $scope.hasLoadedProgressions = null;
@@ -105,6 +105,27 @@ function ProgressionsTimelineController($scope, $mdDialog, $http, teacherId,cont
     }, function() {
      // $scope.status = 'You decided to keep your debt.';
     });         
+    }
+    
+    $scope.searchPlanning = function(subjectId,fromDate,toDate)
+    {
+        var data = {subjectId:subjectId,fromDate:fromDate,toDate:toDate}
+        var config = {
+            params: data,
+            headers : {'Accept' : 'application/json'}
+        };
+        
+        $http.delete('searchPlanning',config)
+            .then(function (response) {
+                toastr.success("Operation effectuée avec succès")
+               // alert('L\'enseignant a ete mis a jour avec succes !');
+                //$scope.loadCurrentTeacher();
+                $scope.isProcessing = false;
+            }, function (error) {
+                console.error(error);
+                $scope.isProcessing = false;
+                alert('Une erreur s\'est produite lors du traitement ! Veuillez reessayer !')
+            });        
     }
 
     $scope.cancel = function () {

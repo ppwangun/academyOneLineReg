@@ -309,7 +309,7 @@ class ExamManager {
     }
     
    //returns all subjects related to a given course 
-   public function getSubjectFromUe($ueID,$semID,$classeID)
+   public function getSubjectFromUe($ueID,$semID,$classeID,$acadYrId)
    {
         $query = $this->entityManager->createQuery('SELECT  s.id,c.id coshs ,s.subjectName,s.subjectCode,c1.code as classCode,c.subjectWeight,'
         . 'c.subjectHours,c.subjectCmHours,c.subjectTdHours,c.subjectTpHours ,c.moduleConsolidationStatus FROM Application\Entity\ClassOfStudyHasSemester c '
@@ -317,13 +317,15 @@ class ExamManager {
         . 'JOIN c.semester sem '
         . 'JOIN sem.academicYear acad '
         . 'JOIN c.subject s '
-        . 'WHERE s.teachingUnit = ?1 AND acad.isDefault=1 '
+        . 'WHERE s.teachingUnit = ?1'
         . 'AND  sem.id = ?2 '
-        . 'AND  c1.id = ?3'        
+        . 'AND  c1.id = ?3' 
+        . 'AND  acad.id = ?4'       
         );
         $query->setParameter(1, $ueID)
                 ->setParameter(2,$semID)
-                ->setParameter(3,$classeID);
+                ->setParameter(3,$classeID)
+        ->setParameter(4,$acadYrId);
         $ue = $query->getResult();
       // var_dump($subjects); exit;
        //if(!$subjects) return $array;
@@ -341,19 +343,19 @@ class ExamManager {
    }
    
    //return  an array of exam perform for a given cours
-   public function getExamList($ueID,$subjectID,$semID,$classeID)
+   public function getExamList($ueID,$subjectID,$semID,$classeID,$acadYrId)
    {
                    
         $classe= $this->entityManager->getRepository(ClassOfStudy::class)->findOneById($classeID);
         
         if($subjectID == -1)
-            $subject = $this->getSubjectFromUe($ueID,$semID,$classeID);
+            $subject = $this->getSubjectFromUe($ueID,$semID,$classeID,$acadYrId);
         else 
         {
             $ueID = null;
             $subject = array(["id"=>$subjectID]);
         }
-$ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"status"=>1),array('type'=>'ASC'));
+            $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"acadYrId"=>$acadYrId,"status"=>1),array('type'=>'ASC'));
             foreach($ueExams as $key=>$value)
             {
                 
@@ -362,14 +364,14 @@ $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->f
 
                 $ueExams[$key] = $data;
             }
-            
+
             $exams = $ueExams;
             $myArr = [];
             $i=0;
            foreach ($subject as $sub)
             {
                
-                $subjectExam = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"status"=>1),array("type"=>"ASC"));
+                $subjectExam = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$sub["id"],"acadYrId"=>$acadYrId,"status"=>1),array("type"=>"ASC"));
                 
                 foreach($subjectExam as $sub1)
                 {
@@ -385,21 +387,21 @@ $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->f
             
             return $exams;       
    }
-   public function getModuleExamStatus($ueID,$semID,$classeID)
+   public function getModuleExamStatus($ueID,$semID,$classeID,$acadYrId)
    {
                   
          
 
-            return $this->getSubjectFromUe($ueID, $semID, $classeID);       
+            return $this->getSubjectFromUe($ueID, $semID, $classeID,$acadYrId);       
    }   
    
 //return  an array of exam performed having mark registered
-   public function getExamWithMarkRegistered($ueID,$semID,$classeID)
+   public function getExamWithMarkRegistered($ueID,$semID,$classeID,$acadYrId)
    {
                   
         $classe= $this->entityManager->getRepository(ClassOfStudy::class)->findOneById($classeID);
-        $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"isMarkRegistered"=>1,"status"=>1),array('type'=>'ASC'));
-        $subject = $this->getSubjectFromUe($ueID,$semID,$classeID);
+        $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"isMarkRegistered"=>1,"acadYrId"=>$acadYrId,"status"=>1),array('type'=>'ASC'));
+        $subject = $this->getSubjectFromUe($ueID,$semID,$classeID,$acadYrId);
 
             foreach($ueExams as $key=>$value)
             {

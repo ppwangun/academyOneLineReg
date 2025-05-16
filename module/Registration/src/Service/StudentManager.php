@@ -111,8 +111,14 @@ class StudentManager {
                  $std->setMatricule($data["matricule"]);
                  $std->setNom($data["nom"]);
                  $std->setPrenom($data["prenom"]);
+                 $std->setGender($data["sexe"]); 
                  $std->setDateOfBirth(new \DateTime($date_naissance));
                  $std->setBornAt($data["lieu_naissance"]);
+                 $std->setPhoneNumber($data["std_num_tel"]);
+                 $std->setFatherPhoneNumber($data["father_num_tel"]);
+                 $std->setMotherPhoneNumber($data["mother_num_tel"]);
+                 $std->setSponsorPhoneNumber($data["sponsor_num_tel"]);
+                                
                 //Update student
                // $this->entityManager->persist();   
                  $this->entityManager->flush();
@@ -123,15 +129,20 @@ class StudentManager {
             else
             {
                 //create new student
-                $student = new Student();
-                $student->setMatricule($data["matricule"]);
-                $student->setNom($data["nom"]);
-                $student->setPrenom($data["prenom"]);
-                $student->setDateOfBirth(new \DateTime($date_naissance));
-                $student->setBornAt($data["lieu_naissance"]);
-                $this->entityManager->persist($student);
+                 $std = new Student();
+                 $std->setMatricule($data["matricule"]);
+                 $std->setNom($data["nom"]);
+                 $std->setPrenom($data["prenom"]);
+                 $std->setGender($data["sexe"]); 
+                 $std->setDateOfBirth(new \DateTime($date_naissance));
+                 $std->setBornAt($data["lieu_naissance"]);
+                 $std->setPhoneNumber($data["std_num_tel"]);
+                 $std->setFatherPhoneNumber($data["father_num_tel"]);
+                 $std->setMotherPhoneNumber($data["mother_num_tel"]);
+                 $std->setSponsorPhoneNumber($data["sponsor_num_tel"]);
+                $this->entityManager->persist($std);
                 $this->entityManager->flush();
-                $std = $student;
+                
                 //$this->stdPedagogicRegistration($data['classe'],$student);
 
             }
@@ -223,6 +234,7 @@ class StudentManager {
 
             //Checking if classe provided is available
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classe"]); 
+            if(!$class)  throw ("Class ".$data["classe"]." not found"); 
            // $admission = $this->entityManager->getRepository(Admission::class)->findOneByCode($class_code);
 
              //generate random number of 8 digits and check if the number already exist in the database befor assigning
@@ -248,7 +260,7 @@ class StudentManager {
                 $adminRegistration->setRegisteringDate($currentDate);
                 $adminRegistration->setIsStudentRepeating($isRepeating);
                 $adminRegistration->setDecision(NULL);
-                $adminRegistration->setRegistrationStatus(1);
+                $adminRegistration->setRegistrationStatus(0);
                 //$adminRegistration->setFeesDotation($data["dotation"]);
                 //$adminRegistration->setFeesBalanceFromPreviousYear($data["dette"]);
                 $adminRegistration->setStatus($status);

@@ -1,0 +1,70 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Faculty
+ *
+ * @ORM\Table(name="faculty", uniqueConstraints={@ORM\UniqueConstraint(name="faculty_code_UNIQUE", columns={"code"})}, indexes={@ORM\Index(name="fk_faculty_school1_idx", columns={"school_id"})})
+ * @ORM\Entity
+ */
+class Faculty
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="created_date", type="datetime", nullable=true)
+     */
+    private $createdDate;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="responsable", type="string", length=255, nullable=true)
+     */
+    private $responsable;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @var \School
+     *
+     * @ORM\ManyToOne(targetEntity="School")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="school_id", referencedColumnName="id")
+     * })
+     */
+    private $school;
+
+
+}

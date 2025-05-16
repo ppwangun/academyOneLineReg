@@ -1,0 +1,75 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Payment
+ *
+ * @ORM\Table(name="payment", indexes={@ORM\Index(name="fk_payment_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_payment_admin_registration1_idx", columns={"admin_registration_id"})})
+ * @ORM\Entity
+ */
+class Payment
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="amount", type="string", length=45, nullable=true)
+     */
+    private $amount;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_transaction", type="datetime", nullable=true)
+     */
+    private $dateTransaction;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="from_balance", type="integer", nullable=true)
+     */
+    private $fromBalance = '0';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="mobile_payment_id", type="string", length=45, nullable=true)
+     */
+    private $mobilePaymentId;
+
+    /**
+     * @var \AdminRegistration
+     *
+     * @ORM\ManyToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
+     * })
+     */
+    private $adminRegistration;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+
+}

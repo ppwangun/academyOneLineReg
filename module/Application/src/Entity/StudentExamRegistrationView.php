@@ -21,6 +21,16 @@ class StudentExamRegistrationView
      * 
      */
     private $id;
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrId", type="integer", nullable=false)
+    * @ORM\Id
+    * 
+    */
+    private $acadYrId;       
+    
 
     /**
     * @var string

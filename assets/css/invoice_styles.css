@@ -110,6 +110,10 @@ table td.desc {
   text-align: center;
 }
 
+table td span {
+  color: #001028;
+}
+
 table td.unit,
 table td.qty,
 table td.total {

@@ -15,6 +15,8 @@ use Payment\Service\PaymentManager;
 
 use Application\Entity\RegisteredStudentView;
 use Application\Entity\RegisteredPaymentView;
+use Application\Entity\AllYearsRegisteredPaymentsView;
+use Application\Entity\AllYearsRegisteredStudentView;       
 use Application\Entity\Payment;
 use Application\Entity\AdminRegistration;
 use Application\Entity\Student;
@@ -23,11 +25,15 @@ class PaymentJournalController extends AbstractRestfulController
 {
     private $entityManager;
     private $paymentManager;
+    private $crtAcadYr;
     
-    public function __construct($entityManager,$paymentManager) {
+    public function __construct($entityManager,$paymentManager,$sessionContainer) {
         
         $this->entityManager = $entityManager; 
         $this->paymentManager = $paymentManager;
+        
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
+        
     }
     
     public function get($id) {
@@ -38,9 +44,9 @@ class PaymentJournalController extends AbstractRestfulController
            
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule(array("matricue"=>$id));
             
-            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$this->paymentManager->getCurrentYear()));
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$this->crtAcadYr));
             
-            $payments = $this->entityManager->getRepository(Payment::class)->findBy(array("adminRegistration"=>$adminRegistration,"academicYear"=>$this->paymentManager->getCurrentYear()));
+            $payments = $this->entityManager->getRepository(Payment::class)->findBy(array("adminRegistration"=>$adminRegistration,"academicYear"=>$this->crtAcadYr));
 
             //Converting objet to array
             foreach ($payments as $key=>$value)

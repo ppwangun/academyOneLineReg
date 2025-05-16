@@ -377,6 +377,16 @@ return [
                     ],
                 ],
             ],
+            'createOnlineRegistrationUserSession' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/createOnlineRegistrationUserSession[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'createOnlineRegistrationUserSession',
+                    ],
+                ],
+            ],            
             
             'cities' => [
                 'type'    => Segment::class,

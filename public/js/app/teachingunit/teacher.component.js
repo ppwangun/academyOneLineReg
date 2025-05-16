@@ -59,6 +59,7 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
     $scope.hasLoadedAssets = null;
 
     $scope.teacher = {
+        civility: null,
         names: null,
         birthdate: null,
         birthplace: null,
@@ -119,7 +120,7 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
     console.log($scope.isUpdate)
 
     };    
-    
+ 
     $scope.init = function(){
         
         $http.get(`teachers`).then(function (response) {
@@ -130,19 +131,17 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
 
             var id = $routeParams.id; 
             var teachId = $routeParams.teachId;
+
             if(id)
-            {
+            {  
                 $scope.isUpdate = true;
                 var data = {id: id};
                 var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}
                 };
-                //Loading selected degree information for update
-
-              
                     $http.get('teacherGrade',config).then(function(response){
-                     $scope.grade = response.data[0];
+                     $scope.grade = response.data[0]; 
                     })
            }
            if(teachId && teachId >0)
@@ -159,14 +158,14 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
                     })               
            }
 //
-    };    
+    };   
 
     $scope.loadAssets = function () {
         $scope.hasLoadedAssets = null;
         
-        $http.get(`new-teacher-form-assets`)
+        $http.get('new-teacher-form-assets')
             .then(function (response) {
-                console.log(response.data);
+                //console.log(response.data);
                 $scope.grades = response.data.grades;
                 $scope.countries = response.data.countries;
                 $scope.establishments = response.data.establishments;
@@ -393,8 +392,9 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined }
         }).then(function (response) {
-                alert('L\'enseignant a ete enregistre avec succes !');
+                toastr.success("Opération effectuée avec succès")
                 $scope.isProcessing = false;
+                $location.path('/teacher-list');
                /* $scope.teacher = {
                     identity_document_type: 'nic',
                 }*/
@@ -534,7 +534,71 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
      // $scope.status = 'You decided to keep your debt.';
     });
      
-  };    
+  }; 
+  
+    /*--------------------------------------------------------------------------
+    *---------------------------import teacher from file ---------------------------------
+    *----------------------------------------------------------------------- */
+    $scope.loadTeachersData = function(ev){
+        $scope.isUpdate= true;
+       
+       
+        $mdDialog.show({
+          controller: DialogController1,
+          templateUrl: 'js/app/teachingunit/uploadTeacherForm.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true // Only for -xs, -sm breakpoints.
+        })
+       
+    };
+    
+ //Dialog Controller
+  function DialogController1($scope, $mdDialog) {
+      
+$scope.uploadStart = false;
+ 
+$scope.upload = function(){
+    
+    $scope.uploadStart = true;
+ 
+    var fd = new FormData();
+    var files = document.getElementById('file').files[0];
+    fd.append('file',files);
+
+    // AJAX request
+    $http({
+     method: 'post',
+     url: 'importTeacher',
+     data: fd,
+     headers: {'Content-Type': undefined},
+    }).then(function successCallback(response) { 
+      // Store response data
+      $scope.response = response.data[0];
+      response.data[0]?toastr.success('Import effectué avec succès'):toastr.error('Type de fichier incorrect', 'Erreur');
+      response.data[0]?$mdDialog.cancel():toastr.error('Erreur pendant le processus d\'importation', 'Erreur');
+      
+    } ,function errorCallback(){
+        $scope.uploadStart = false;
+        toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
+    });
+ };
+ 
+
+      $scope.cancel = function() {
+      //$scope.faculties=[];
+
+      $mdDialog.cancel();
+    };      
+
+  }    
+    
+    
 };
 
 

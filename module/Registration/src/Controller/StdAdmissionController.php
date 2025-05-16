@@ -21,18 +21,21 @@ use Application\Entity\AdmittedStudentView;
 use Application\Entity\Admission;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
+use Application\Entity\AllYearsAdmittedStdView;
 
 class StdAdmissionController extends AbstractRestfulController
 {
     private $entityManager;
     private $sessionContainer;
     private $studentManager;
+    private $crtAcadYr;
     
     public function __construct($entityManager,$studentManager,$sessionContainer) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer = $sessionContainer;
         $this->studentManager = $studentManager;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
     public function get($id) {
@@ -66,7 +69,7 @@ class StdAdmissionController extends AbstractRestfulController
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
 
-                   $registeredStd = $this->entityManager->getRepository(AdmittedStudentForActiveRegistrationYearView::class)->findBy(array(),array("nom"=>"ASC"));
+                   $registeredStd = $this->entityManager->getRepository(AllYearsAdmittedStdView::class)->findBy(array("acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));
             }
             
             else{

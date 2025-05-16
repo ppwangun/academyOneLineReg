@@ -1,8 +1,12 @@
-function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teachingUnitId, teachingUnitCode, teacherId,contractId) {
+function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teachingUnitId, teachingUnitCode, teacherId,contractId,times) {
     $scope.teachingUnitId = teachingUnitId;
     $scope.teachingUnitCode = teachingUnitCode;
     $scope.contractId= contractId;
     $scope.isProcessing = false;
+
+    
+    $scope.progtimes = times
+
 
     $scope.progression = {
         // date: null,
@@ -19,7 +23,7 @@ function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teaching
         contract_id: contractId
     }
 
-    $scope.saveProgression = function(progressionForm) {
+    $scope.saveProgression = function(progressionForm) { 
         if (!progressionForm.$valid) {
             alert('Formulaire invalide !');
             return;
@@ -27,16 +31,17 @@ function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teaching
 
         if ($scope.isProcessing) return;
 
-        const dateInISO = $scope.progression.date.toISOString()?.split('T')[0];
+        const dateInISO = $scope.progression.date.toISOString()?.split('T')[0]; 
         // const startDate = $scope.progression.date;
         // const endDate = $scope.progression.date;
-        const startTime = $scope.progression.start_time;
-        const endTime = $scope.progression.end_time;
+       
+        const startTime = new Date (dateInISO+" "+$scope.progression.start_time.time);
+        const endTime = new Date(dateInISO+" "+$scope.progression.end_time.time);
         // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
         // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
         if (startTime.getTime() > endTime.getTime()) {
-            alert('L\'heure de fin doit etre inferieure a celle de fin !');
+            alert('L\'heure de debut doit etre inferieure a celle de fin !');
             return;
         }
 
@@ -64,6 +69,9 @@ function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teaching
                 alert('Une erreur s\'est produite lors l\'ajout de la progression ! Veuillez reessayer !')
             });
     }
+    
+
+
 
     $scope.hide = function () {
         if ($scope.isProcessing) {

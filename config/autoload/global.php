@@ -10,7 +10,8 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-use Doctrine\DBAL\Driver\PDO\MySql\Driver as PDOMySqlDriver;
+//use Doctrine\DBAL\Driver\PDO\MySql\Driver as PDOMySqlDriver;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver as PDOMySqlDriver;
 use Laminas\Session\Storage\SessionArrayStorage;
 use Laminas\Session\Validator\RemoteAddr;
 use Laminas\Session\Validator\HttpUserAgent;
@@ -26,6 +27,7 @@ return [
                     //'host'     => '172.16.5.12',
                     'user'     => 'udm_root',
                     'password' => 'wpp',
+                    //'dbname'   => 'agenla_academy',
                     'dbname'   => 'udm_academy',
                     'charset'  => 'utf8',
                     'driverOptions' => [1002 => 'SET NAMES utf8'],

@@ -114,6 +114,9 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
           })
           .when('/courseProgramming',{
               template: '<course-programming></course-programming>'
+          }) 
+          .when('/classroom',{
+              template: '<classroom></classroom>'
           })          
           .when('/newteachingunit',{
               template: '<new-teachingunit></new-teachingunit>'
@@ -286,6 +289,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
     return obj;
 }).controller('testCtrl',function($scope,accessFac,$interval,$timeout,$http){
     var controller = this;
+    var $ctrl = this;
+    $ctrl.selectedAcadYr = null;
 
       controller.date = new Date();
 
@@ -309,6 +314,42 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
     $scope.getAccess = function(){
         accessFac.getPermission();       //call the method in acccessFac to allow the user permission.
     }
+    
+    
+    $ctrl.init1 = function(){
+
+        $ctrl.queryAcademicYear = function(academicYear)
+        { 
+           var  dataString = {id: academicYear},
+              config = {
+                params: dataString,
+                headers : {'Accept' : 'application/json; charset=utf-8'}
+                };
+
+                return  $http.get('searchAcademicYear',config).then(function(response){
+                       return response.data[0];
+                    });
+         }; 
+     }
+     
+    $ctrl.selectedYearChange = function(acadYr){ 
+        $scope.acadyr = acadYr;
+
+        var  dataString = {id: acadYr.id},
+           config = {
+             params: dataString,
+             headers : {'Accept' : 'application/json; charset=utf-8'}
+             };
+
+             return  $http.get('switchAcadYr',config).then(function(response){
+                    return response.data[0];
+                 });
+
+        $ctrl.selectedClasse = null;
+        $ctrl.selectedSem = null;
+        $ctrl.disabledSelect = true;
+    }     
+     
 }).filter('sumByKey', function() {
         return function(data, key) {
             if (typeof(data) === 'undefined' || typeof(key) === 'undefined') {

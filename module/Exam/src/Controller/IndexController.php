@@ -49,10 +49,12 @@ class IndexController extends AbstractActionController
     private $entityManager;
     private $examManager;
     private $sessionContainer;
+    private $crtAdadYr;
     public function __construct($entityManager,$examManager,$sessionContainer) {
         $this->entityManager = $entityManager;
         $this->examManager = $examManager;
         $this->sessionContainer = $sessionContainer;
+        $this->crtAdadYr = $sessionContainer->currentAcadYr;
     }
 
     public function indexAction()

@@ -33,11 +33,14 @@ class CalculNotesController extends AbstractRestfulController
 {
     private $entityManager;
     private $examManager;
+    private $sessionContainer;
+    private $crtAcadYr;
     
-    public function __construct($entityManager,$examManager) {
+    public function __construct($entityManager,$examManager,$sessionContainer) {
         
         $this->entityManager = $entityManager;  
         $this->examManager = $examManager; 
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
 
     public function get($id)
@@ -48,8 +51,8 @@ class CalculNotesController extends AbstractRestfulController
             $data = json_decode($id,true);
             
             if(isset($data["isModular"]))
-                $exams = $this->examManager->getModuleExamStatus($data["ue_id"],$data["sem_id"],$data["classe_id"]);
-            else    $exams = $this->examManager->getExamList($data["ue_id"],$data["subject_id"],$data["sem_id"],$data["classe_id"]);
+                $exams = $this->examManager->getModuleExamStatus($data["ue_id"],$data["sem_id"],$data["classe_id"],$this->crtAcadYr->getId());
+            else    $exams = $this->examManager->getExamList($data["ue_id"],$data["subject_id"],$data["sem_id"],$data["classe_id"],$this->crtAcadYr->getId());
             
                 
 

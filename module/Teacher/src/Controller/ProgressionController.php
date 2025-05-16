@@ -49,6 +49,7 @@ class ProgressionController extends AbstractRestfulController
             
             $progressions = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
             $dataOutPut = []; 
+            $progr = [];
         
                 foreach($progressions as $key=>$value)
                 {
@@ -116,6 +117,38 @@ class ProgressionController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
+            
+           /* $classes=$this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findAll();
+            foreach($classes as $classe)
+            {
+                if($classe->getSubject())
+                {
+                    $contract=$this->entityManager->getRepository(Contract::class)->findOneBySubject($classe->getSubject());
+                    if($contract) 
+                    {
+                        $contract->setVolumeHrs($classe->getSubjectHours());
+                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                        foreach($contractFup as $contFup)
+                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));
+                        
+                    }
+                }
+                
+                if($classe->getTeachingUnit())
+                {
+                    $contract=$this->entityManager->getRepository(Contract::class)->findOneByTeachingUnit($classe->getTeachingUnit());
+                    if($contract) 
+                    {
+                        $contract->setVolumeHrs($classe->getHoursVolume());
+                        $contractFup=$this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                        foreach($contractFup as $contFup)
+                            $contFup->setTotalTime(round($contFup->getTotalTime(),2));                        
+                    }
+                }                
+            }*/
+            
+            
+            
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
             $courseScheduled = null;
 
@@ -128,11 +161,17 @@ class ProgressionController extends AbstractRestfulController
             $startTime = new \DateTime ($data["start_time"]);
             $progression->setLectureType($data["target"]);
             $endTime = new \DateTime ($data["end_time"]);
-            $timeDiff = $startTime->diff($endTime);  
-            $progression->setTotalTime($timeDiff->h);
-            $progression->setContract($contract); 
+            $timeDiff = $startTime->diff($endTime); 
+            $hours = $timeDiff->h;
+            $minutes = $timeDiff->i;
+            $timeDiff= round(abs(($hours*60+$minutes)/60),2);
 
-                    
+            $progression->setTotalTime($timeDiff);
+            $progression->setContract($contract); 
+            
+
+
+                 
            $this->entityManager->persist($progression); 
            $this->entityManager->flush();
                     

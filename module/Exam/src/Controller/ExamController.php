@@ -28,12 +28,14 @@ class ExamController extends AbstractRestfulController
     private $entityManager;    
     private $sessionContainer;    
     private $examManager;
+    private $crtAdadYr;
     
     public function __construct($entityManager,$sessionContainer,$examManager) {
         
         $this->entityManager = $entityManager;
         $this->sessionContainer= $sessionContainer;
         $this->examManager = $examManager;
+        $this->crtAdadYr = $sessionContainer->currentAcadYr;
     }
 
     public function get($id)
@@ -96,7 +98,7 @@ class ExamController extends AbstractRestfulController
             //check first the user has global permission or specific permission to access exams informations
             if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
-                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array(),Array("date"=>'DESC'));                
+                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("acadYrId"=>$this->crtAdadYr->getId()),Array("date"=>'DESC'));                
             }
             else{
                 //Find clases mananged by the current user

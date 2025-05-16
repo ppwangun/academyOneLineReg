@@ -1,0 +1,185 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * StudentSemRegistration
+ *
+ * @ORM\Table(name="student_sem_registration", indexes={@ORM\Index(name="fk_student_sem_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_student_has_semester_semester1_idx", columns={"semester_id"})})
+ * @ORM\Entity
+ */
+class StudentSemRegistration
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="mpc_current_sem", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $mpcCurrentSem;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="mps_current_sem", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $mpsCurrentSem;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="mpc_previous", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $mpcPrevious;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="nb_credits_capitalized_current_sem", type="integer", nullable=true)
+     */
+    private $nbCreditsCapitalizedCurrentSem;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="nb_credtis_capitalized_previous", type="integer", nullable=true)
+     */
+    private $nbCredtisCapitalizedPrevious;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credit_registered", type="integer", nullable=true)
+     */
+    private $totalCreditRegistered;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credit_registered_current_sem", type="integer", nullable=true)
+     */
+    private $totalCreditRegisteredCurrentSem;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="validation_percentage", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $validationPercentage;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_registered_current_class", type="integer", nullable=true)
+     */
+    private $totalCreditsRegisteredCurrentClass;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="academic_profile", type="string", length=45, nullable=true)
+     */
+    private $academicProfile;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_previous_class", type="integer", nullable=true)
+     */
+    private $totalCreditsPreviousClass;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_current_class", type="integer", nullable=true)
+     */
+    private $totalCreditsCurrentClass;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="nb_credits_capitalized_previous_sem", type="integer", nullable=true)
+     */
+    private $nbCreditsCapitalizedPreviousSem;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credit_registered_previous_sem", type="integer", nullable=true)
+     */
+    private $totalCreditRegisteredPreviousSem;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_cycle_previous_year", type="integer", nullable=true)
+     */
+    private $totalCreditsCyclePreviousYear;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_cycle_current_year", type="integer", nullable=true)
+     */
+    private $totalCreditsCycleCurrentYear;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="counting_sem_registration", type="integer", nullable=true)
+     */
+    private $countingSemRegistration;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_registered_current_cycle", type="integer", nullable=true)
+     */
+    private $totalCreditsRegisteredCurrentCycle;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="total_credits_registered_previous_cycle", type="integer", nullable=true)
+     */
+    private $totalCreditsRegisteredPreviousCycle;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="transcriptReferenceId", type="string", length=45, nullable=true)
+     */
+    private $transcriptreferenceid;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \Student
+     *
+     * @ORM\ManyToOne(targetEntity="Student")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * })
+     */
+    private $student;
+
+
+}

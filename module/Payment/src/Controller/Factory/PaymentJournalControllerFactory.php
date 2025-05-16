@@ -24,8 +24,8 @@ class PaymentJournalControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $paymentManager = $container->get(PaymentManager::class);
-        
+        $sessionContainer = $container->get('LoggedInUser');
         // Instantiate the controller and inject dependencies
-        return new PaymentJournalController($entityManager,$paymentManager);
+        return new PaymentJournalController($entityManager,$paymentManager,$sessionContainer);
     }
 }

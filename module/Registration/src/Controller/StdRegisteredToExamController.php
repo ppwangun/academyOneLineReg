@@ -24,10 +24,12 @@ use Application\Entity\StudentExamRegistrationView;
 class StdRegisteredToExamController extends AbstractRestfulController
 {
     private $entityManager;
+    private $crtAcadyr;
     
-    public function __construct($entityManager) {
+    public function __construct($entityManager,$sessionContainer) {
         
-        $this->entityManager = $entityManager;   
+        $this->entityManager = $entityManager; 
+        $this->crtAcadyr = $sessionContainer->currentAcadYr;
     }
     
     public function get($id) {
@@ -37,7 +39,7 @@ class StdRegisteredToExamController extends AbstractRestfulController
             //$data = json_decode($id);
             // retrieve the sutdent ID based on the student ID 
             
-            $std = $this->entityManager->getRepository(StudentExamRegistrationView::class)->findBy(array("codeExam"=>$id),array("nom"=>"ASC","classe"=>"ASC")); 
+            $std = $this->entityManager->getRepository(StudentExamRegistrationView::class)->findBy(array("codeExam"=>$id,"acadYrId"=> $this->crtAcadyr->getId()),array("nom"=>"ASC","classe"=>"ASC")); 
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
             foreach($std as $key=>$value)

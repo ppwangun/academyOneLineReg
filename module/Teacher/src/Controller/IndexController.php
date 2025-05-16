@@ -27,6 +27,7 @@ use Application\Entity\Contract;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\User;
 use Application\Entity\TeacherPaymentBill;
+use Application\Entity\TeacherPaymentBillSumary;
 use Application\Entity\CurrentYearUesAndSubjectsView;
 use Application\Entity\ContractFollowUp;
 use Application\Entity\AllContractsView;
@@ -37,6 +38,11 @@ use Application\Entity\StudentAttendance;
 use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\Student;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Student\Service\StudentManager;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+
 
 
 
@@ -44,6 +50,7 @@ class IndexController extends AbstractActionController
 {
     private $sessionContainer;
     private $entityManager;
+    private $crtAcadYr;
     
     /**
      * Constructor.
@@ -53,6 +60,7 @@ class IndexController extends AbstractActionController
 
         $this->sessionContainer = $sessionContainer;
         $this->entityManager = $entityManager;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     public function indexAction()
     {
@@ -129,11 +137,17 @@ class IndexController extends AbstractActionController
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             $ue = []; $ue_1 = [];
             
+           // $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            //$acadYearId = $acadYear->getId();  
+            $acadYearId = $this->crtAcadYr->getId();
+            
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
                 //collect all courses affected to any semester
                     $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
+                            .'WHERE c.acadYrId = ?1'
                         );
+                $query->setParameter(1,$this->crtAcadYr->getId());
                 $ue= $query->getResult(); 
               
                 //collect all courses affected to any semester
@@ -155,8 +169,9 @@ class IndexController extends AbstractActionController
                     {
                         //collect all courses affected to any semester
                         $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                                . 'AND c.classe= ?1 ');
+                                . 'AND c.classe= ?1 AND c.academicYear = :acadYearId');
                         $query->setParameter(1, $classe->getClassOfStudy()->getCode());
+                        $query->setParameter('acadYearId',$acadYearId);
                         $ue_1= $query->getResult(); 
                         $ue = array_merge($ue,$ue_1);
                         
@@ -382,20 +397,21 @@ class IndexController extends AbstractActionController
         try
         {
             $cities = [];
-            $data= $this->params()->fromPost();           
-            $proceeByForce =(int) $data["proceedByForce"]; 
+            $data= $this->params()->fromPost();            
+            $proceeByForce =(int) $data["proceedByForce"];              
             $flag = 0;
             //$data = json_decode($data,true);
-      
+     
             $teacher = $this->entityManager->getRepository(Teacher::class)->find($data['teacherid']);
-            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-            
+            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->find($this->crtAcadYr->getId());
+           // $acadYear = $this->crtAcadYr;
           
                 foreach($data["subjects"] as $key=>$value)
                 { 
                     $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($value["id"]);
                     $unit = null;
                     $subject= null;
+                    $contract = null;
                 
                    if($coshs->getTeachingUnit()) 
                     {            
@@ -403,20 +419,25 @@ class IndexController extends AbstractActionController
                         $tpHrs = $coshs->getTpHours();
                         $cmHrs = $coshs->getCmHours();
                         $tdHrs = $coshs->getTdHours();                      
-
+                        
                         $contract = $this->entityManager->getRepository(Contract::class)->findBy(["academicYear"=>$acadYear,"teachingUnit"=>$unit]);
+
 
                     }
                    if($coshs->getSubject()) 
                     {  
+                        $unit = null;
                         $subject = $coshs->getSubject();
                         $tpHrs = $coshs->getSubjectTpHours();
                         $tdHrs = $coshs->getSubjectTDHours();
-                        $cmHrs = $coshs->getSubjectCmHours();         
+                        $cmHrs = $coshs->getSubjectCmHours();
+                        
                         $contract = $this->entityManager->getRepository(Contract::class)->findBy(["academicYear"=>$acadYear,"subject"=>$subject]);
 
+
                     } 
-                 
+                      
+      
                         $totalHoursAffected = 0;
                         $courseHoursVolume = 0; 
                         ($coshs->getSubject())?$courseHoursVolume = $coshs->getSubjectHours():$courseHoursVolume = $coshs->getHoursVolume();  
@@ -428,8 +449,8 @@ class IndexController extends AbstractActionController
                        
                         //non affectd time
                         $nonAffectedTime = $courseHoursVolume-$totalHoursAffected;
-
-                                $contractSize = sizeof($contract);
+                           
+                                $contractSize = sizeof($contract); 
                              /*   if($contractSize<10)
                                 $contractSize= str_pad($contractSize,4,0,STR_PAD_LEFT);
                                 else if ($contractSize<100)
@@ -437,44 +458,52 @@ class IndexController extends AbstractActionController
                                 else if ($contractSize<1000) 
                                     $contractSize = str_pad($contractSize,2,0,STR_PAD_LEFT);*/
 
-                                
-                                $faculty = $teacher->getFaculty()->getCode(); 
+                               
+                              //  $faculty = $teacher->getFaculty()->getCode(); 
                                // $refNum = $acadYear->getCode()."/".$faculty."/".$contractSize; 
-                                $refNum =str_pad($contractSize, 6, "0", STR_PAD_LEFT)."/".date('Y');
+                               
+                                $refNum =str_pad($contractSize, 6, "0", STR_PAD_LEFT)."/".date('Y');  
                                $hrToAffect = intval($value["totalHrs"]);
                                
-                       
-                        if(isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime>=$value["volumeHrs"] )
+                      
+                        if(isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime>=intval($value["volumeHrs"]) )
                         {
                             $hrToAffect = intval($value["volumeHrs"]);
+                            if($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
                             
-                            foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           // foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
+                           // if(sizeof($contract)<=0) $contract = new Contract();
                             
 
                         }
-                        elseif((isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime<intval($value["volumeHrs"]) ))
+                        elseif((isset($data["partialAttribution"])&&$data["partialAttribution"]&&$nonAffectedTime<=intval($value["volumeHrs"]) ))
                         {
                             $hrToAffect = $nonAffectedTime;
+                            if($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
                                                      
-                            foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           // foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
+                           /// if(sizeof($contract)<=0) $contract = new Contract();
 
                                                         
                         }
 
-                        elseif(sizeof($contract)<=0) $contract = new Contract(); 
                         elseif($proceeByForce && !$data["partialAttribution"])
                         {
                             foreach($contract as $key=>$con){$this->entityManager->remove($con);array_splice($contract, $key);}
                             $this->entityManager->flush();
-                            if(sizeof($contract)<=0) $contract = new Contract();
+                           
 
                         }
-                        elseif(!$proceeByForce) return  new JsonModel([false]);
-                        else{
-                            
-                        }
+                        elseif($hrToAffect<=0) return  new JsonModel(["ERROR"=>true]);
+                        elseif(sizeof($contract)>0)
+                        {
+                            if(!$proceeByForce) return  new JsonModel([false]);
+                        }                        
+                        //elseif(!$proceeByForce) return  new JsonModel([false]);
+                        
+                        
+
+                                $contract = new Contract();
                                 $contract->setAcademicYear($acadYear);
                                 $contract->setTeacher($teacher);
                                 $contract->setTeachingUnit($unit);
@@ -565,17 +594,14 @@ class IndexController extends AbstractActionController
            
             //check first the user has global permission or specific permission to access exams informations
             if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-            {            
-                // retrieve subjects based on subject code
-
-                //$rsm = new ResultSetMapping();
-                // build rsm here
-
+            {  
                 $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs FROM Application\Entity\CurrentYearUesAndSubjectsView c'
-                        .' WHERE c.codeUe LIKE :code');
+                        .' WHERE c.codeUe LIKE :code AND c.acadYrId = :acadYrId');
                 $query->setParameter('code', '%'.$id.'%');
+                $query->setParameter('acadYrId', $this->crtAcadYr->getId());
 
-                $subjects = $query->getResult();
+                $subjects = $query->getResult();   
+
             }
             else
             {
@@ -586,7 +612,7 @@ class IndexController extends AbstractActionController
 
                     foreach($userClasses as $classe)
                     {
-                        $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\Application\Entity\CurrentUesAndSubjectsView c'
+                        $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\Application\Entity\CurrentYearUesAndSubjectsView c'
                                 .' WHERE c.classe = :classe AND c.codeUe LIKE :code');
                         $query->setParameter('code', '%'.$id.'%')
                                 ->setParameter('classe',$classe->getClassOfStudy()->getCode());
@@ -604,7 +630,9 @@ class IndexController extends AbstractActionController
                     $subjects
             ]);
 
-            return $output;       }
+            return $output;       
+            
+        }
         catch(Exception $e)
         {
            $this->entityManager->getConnection()->rollBack();
@@ -717,220 +745,329 @@ class IndexController extends AbstractActionController
             
         }         
         
-    }  
+    } 
     
-    public function generateBillAction()
+    public function importTeacherAction()
     {
-        $this->entityManager->getConnection()->beginTransaction();
-        try
-        { 
-            $data= $this->params()->fromQuery();           
-           
-            $subjects=[];
-            $bills = [];
-            $actualBilledTime = 0;
-            $overtime = 0;
-      
-            $userId = $this->sessionContainer->userId;
-            $user = $this->entityManager->getRepository(User::class)->find($userId );
-            
-            $contract= $this->entityManager->getRepository(Contract::class)->find($data["contractID"] );
-            $teacher= $this->entityManager->getRepository(Teacher::class)->find($data["teacherID"] );
-            $contractFollowUp= $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($data["contractID"] );
-            $contractNotYetPaid= $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["contract"=>$data["contractID"],"teacherPaymentBill"=>NULL] );
-            $totalTime = 0; 
-            //Check if other bills exist on this contract
-            $bills = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["teacher"=>$teacher,"contract"=>$contract]);
-            $alreadyBilledTime = 0;
-            foreach($bills as $bill) $alreadyBilledTime += $bill->getTotalTime();
-            
-            $pymtRate = $teacher->getAcademicRanck()->getPaymentRate();
-            
-             $paymentDetails = [];
-             
-             
+            $this->entityManager->getConnection()->beginTransaction();
+            try
+            {     
 
-            if($contract->getVolumeHrs()<= $alreadyBilledTime)
-            {
-                $output = new JsonModel([
-                    ["error"=>0] //volume horaire en dépassement
-                ]);
-                return $output;
+                /* Getting file name */
+               $filename = $_FILES['file']['name'];
+               /* Location */
+               $location = './public/upload/';
 
-            }  
-            if(sizeof($contractNotYetPaid)<=0){ 
-                $output = new JsonModel([
-                    ["error"=>1] //Absence d'heure de cours à facturer
-                ]);
-                return $output;                        
-            }             
-            
+               $csv_mimetypes = array(
+                   'text/csv',
+                   'application/csv',
+                   'text/comma-separated-values',
+                   'application/excel',
+                   'application/vnd.ms-excel',
+                   'application/vnd.msexcel',
+                );
+            // Check if fill type is allowed  
+              if(!in_array($_FILES['file']['type'],$csv_mimetypes))
+              {
+                 $result = false;
 
-                $pymtBill = new TeacherPaymentBill();
-                $refNum = 10;
-                $pymtBill->setRefNumber($refNum);
-                $pymtBill->setContract($contract);
-                $pymtBill->setTeacher($teacher);
-                $this->entityManager->persist($pymtBill);
-                $this->entityManager->flush(); 
-            
-            
-                $amount = 0;
+                  $view = new JsonModel([
+                    $result
+                  ]);
+                  return $view; 
+              }
 
-               
-                $k = 0;
-                $billedTime = 0;
-                foreach($contractNotYetPaid as $con)
-                {
-                    if($con->getTeacherPaymentBill()==null)
-                    {
-                        //Very the already billed time does not exceed the contract time
+                /* Upload file */
+                move_uploaded_file($_FILES['file']['tmp_name'],$location.$filename);
 
 
-                        //$alreadyBilledTime += $con->getTotalTime(); 
-                        $billedTime += $con->getTotalTime();
+                $reader = new Csv(); 
+                $spreadsheet = $reader->load($location.$filename);
+                $sheetData = $spreadsheet->getActiveSheet()->toArray();
 
-                        if($contract->getVolumeHrs()> $alreadyBilledTime+$billedTime)
-                        {
-                            $con->setTeacherPaymentBill($pymtBill);
-                            $this->entityManager->flush();
-                            $hydrator = new ReflectionHydrator();
-                            $data_1 = $hydrator->extract($con);
-                            $data_1["paymentRate"] = $pymtRate;
-                            $data_1["paymentAmount"] = $billedTime * $pymtRate;
-                            $paymentDetails[$k] = $data; $k++; 
-                            
-                            $actualBilledTime = $billedTime;
-                            
- 
-                            $amount += $billedTime*$pymtRate;
-                         
-
-                        }else
-                        {
-                            $overtime  = ($alreadyBilledTime+$billedTime)-$contract->getVolumeHrs(); 
-                            $actualBilledTime = $billedTime-$overtime;
-                            $amount += $billedTime*$pymtRate;
-                                                               
-                            
-                       /*     else
-                            {
-                                $overtime += $con->getTotalTime();
-                            }*/
-                            
-                            $hydrator = new ReflectionHydrator();
-                            $data_1 = $hydrator->extract($con);
-                            $data_1["paymentRate"] = $pymtRate;
-                            $data_1["overtime"] = $overtime;
-                            $data_1["paymentAmount"] = $billedTime * $pymtRate;
-                            $paymentDetails[$k] = $data_1; $k++; 
-                            
-                            }
-  
-                        }
-
-                        $con->setTeacherPaymentBill($pymtBill);
-                        $this->entityManager->flush(); 
+                //set status to 0
+                //Student is currently in draft mode
+                $status = 0;
+                if (!empty($sheetData)) {
+                    for ($i=1; $i<count($sheetData); $i++) { //skipping first row
+                       
+                        $row["nom"] = $sheetData[$i][0];
+                        $row["surname"] = $sheetData[$i][1];
+                        $row["telephone"] = $sheetData[$i][2];
+                        $row["email"] = $sheetData[$i][3];
+                       
+                        $teacher = new Teacher();
                         
-                         
-                
-
-
-                }
-              
-                $pymtBill->setOverTime($overtime);
-                $pymtBill->setDate(new \DateTime( date('Y-m-d')));
-                $pymtBill->setPaymentAmount($amount);
-                $pymtBill->setTotalTime($billedTime);
-                $pymtBill->setTotalTimePreviouslyBilled($alreadyBilledTime);
-                $pymtBill->setTotalTimeCurrentlyBilled($actualBilledTime);
-                $pymtBill->setTotalTime($billedTime);
-                
-                $this->entityManager->flush();
-                $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
-                if(sizeof($odooSettings)>0)
-                {
-                    $odooSettings = $odooSettings[0];
-
-                    //Perform the odoo Sync only when it is activated
-                    if($odooSettings->getActivateStatus())
-                    {
-                        /***** Synchronisation des données avec Odoo - Ajout d'une facture *****/;
-                          $paramerter = ["user"=>$odooSettings->getLogin(),
-                            "pass"=>$odooSettings->getPassword(),
-                            "db"=>$odooSettings->getDatabaseName(),
-                            "host"=>$odooSettings->getUrl()];
-
-                        $odoo = new Synchronisation($paramerter);
-                        $info = $odoo->connexionOdoo();                   
-                        if($info["resultat"] == "success")
-                        {
-                            $description = $contract->getTeachingUnit()->getName()." (";
-                            $description .= $contract->getTeachingUnit()->getCode().") - ";
-                            $description .= "Volume horaire total : ".$contract->getVolumeHrs()." - ";
-                            $description .= "Heure(s) déjà facturée(s) : ".($alreadyBilledTime)." - ";
-                            $description .= "Heure(s) actuellement facturée(s) : ".$actualBilledTime." - ";
-                            $description .= "Volume horaire restant : ".($contract->getVolumeHrs() - ($alreadyBilledTime+$actualBilledTime));
-
-                            $teacherId = (string)$data["teacherID"];
-                            //$teacherId = $data["teacherID"];
-                            $refNum = 10;
-                            $info = $odoo->factureEnseignant(
-                                $teacherId,
-                                date("Y-m-d H:i:s"),
-                                $refNum,
-                                $description,
-                                $actualBilledTime,
-                                $pymtRate
-                            ); 
-
-                            if($info["resultat"] == "echec")  return new JsonModel(["info"=>$info]); 
-
-                            $this->entityManager->getConnection()->commit();
-
-
-                            $output = new JsonModel([
-                               [ 
-
-                                "paymentDetails"=>$paymentDetails,
-                                "totalBilledTime"=>$billedTime,
-                                "totalActualBilledTime"=>$actualBilledTime,
-                                "alreadyBilledTime"=>$alreadyBilledTime,
-                                "overtime"=>$overtime,
-                                "paymentRate"=>$pymtRate,
-                                "totalHoursAffected"=>$contract->getVolumeHrs(),
-                                   "info"=>$info]
-                            ]);
-
-                            return $output; 
-                           }                        
-
-
-
-
-                        /***** Fin de la synchronisation *****/;  
+                        $teacher->setName($row["nom"]);
+                        $teacher->setSurname($row["surname"]);
+                        $teacher->setPhoneNumber($row["telephone"]);
+                        $teacher->setEmail($row["email"]);
+                        
+                        
+                        $teacher->setStatus(1);
+                        
+                        $this->entityManager->persist($teacher);
+                        $this->entityManager->flush();
+        
                     }
                 }
 
-                
-            
-          
 
-      }
+
+            $this->entityManager->getConnection()->commit();
+
+
+            $arr = array("name"=>$filename);
+            $result = true;
+
+              $view = new JsonModel([
+                  $result
+             ]);
+
+    // Disable layouts; `MvcEvent` will use this View Model instead
+           // $view->setTerminal(true);
+
+            return $view;      
+        }
         catch(Exception $e)
         {
            $this->entityManager->getConnection()->rollBack();
             throw $e;
-            
-        }         
+
+        }        
+    }
+    
+    public function loadTeacherBillAction()
+    {
         
+        $this->entityManager->getConnection()->beginTransaction();
+        
+      
+            $data = $this->params()->fromRoute(); 
+            $subjects=[];
+            $bills = [];
+            
+            if($data['isBulkBilling']==0) 
+                $teachers = $this->entityManager->getRepository(Teacher::class)->findBy(["id"=>$data["teacherID"]]); 
+            else
+                $teachers = $this->entityManager->getRepository(Teacher::class)->findAll([],array("name"=>"ASC"));
+            
+         
+            $teacherInfo = [];
+            $i = 0;
+            $flagContractCount = 0;
+            
+            foreach($teachers as $teach)
+            {
+                
+                $actualBilledTime = 0;
+                $overtime = 0;
+                $totalAmount = 0;
+                $totalTimeBilled = 0; 
+
+            //$teacher= $this->entityManager->getRepository(Teacher::class)->find($data["teacherID"] );
+            
+            $teacher= $this->entityManager->getRepository(Teacher::class)->find($teach->getId());
+            
+
+             
+            //Collecte the payment rate
+            if($teacher->getAcademicRanck())
+                $pymtRate = $teacher->getAcademicRanck()->getPaymentRate();
+            else $pymtRate = 0;            
+            
+
+            //Seacrch contracts in which teacher is involved
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1); 
+            $contracts= $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teacher,"academicYear"=>$acadYr) );
+                      //counting finished or overflow contracat
+            $countFinishedContract=0;
+            foreach($contracts as $contract)
+            {
+                $contractFollowUp = $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["contract"=>$contract,"teacherPaymentBill"=>NULL]);
+                if(sizeof($contractFollowUp)> 0) {$flagContractCount++; }
+                
+                $bills = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["teacher"=>$teacher,"contract"=>$contract]);
+                $alreadyBilledTime = 0;
+                
+                //counting finished or overflow contracat
+                foreach($bills as $bill) $alreadyBilledTime += $bill->getTotalTimeCurrentlyBilled();  
+                
+                if($contract->getVolumeHrs()<= $alreadyBilledTime) $countFinishedContract++;                
+               
+            }
+           
+            // check if the number of contract is less or equal to the number of actual contract 
+            if(sizeof($contracts)<=$countFinishedContract) $flagContractCount = 0;
+            if($flagContractCount == 0) continue;
+            
+            $billSumary = new TeacherPaymentBillSumary();
+            $billSumary->setPaymentAmount($totalAmount); 
+            $billSumary->setDate(new \DateTime( date('Y-m-d'))); 
+            $billSumary->setAcademicYear($acadYr);
+            $billSumary->setTeacher($teacher);
+            
+            $this->entityManager->persist($billSumary); 
+           
+                      
+
+            //Asuming we did not find any item to bill
+             $flag = 0;
+             $cptOverTime=0;
+             $totalTimeScheduled= 0;
+             
+         
+            foreach($contracts as $contract)
+            {           
+                $amount = 0;
+                $actualTimeToBill = 0; 
+                $totalTimeScheduled += $contract->getVolumeHrs(); 
+                $contractFollowUp = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                
+                //Skip if there is notime to bill
+                if(sizeof($contractFollowUp)<=0) continue; 
+                
+                //lookind only to items not already paid
+                $contractNotYetPaid= $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["contract"=>$contract,"teacherPaymentBill"=>NULL] );
+                if (sizeof($contractNotYetPaid)>0) $flag = 1;
+                if(sizeof($contractNotYetPaid)<=0) continue;
+               
+                //Check if other bills exist on this contract
+                $bills = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["teacher"=>$teacher,"contract"=>$contract]);
+
+
+                //count number of bill already paid 
+                $cptBillAlreadyPaid = sizeof($bills);
+                 
+                //if other bill exist, calculate the over all time already billed
+                $alreadyBilledTime = 0;
+                foreach($bills as $bill) $alreadyBilledTime += $bill->getTotalTimeCurrentlyBilled();  
+                
+                if($contract->getVolumeHrs()< $alreadyBilledTime) continue;
+               
+                
+
+                $paymentDetails = [];
+                $billedTime = 0;
+                
+
+              
+                
+                $pymtBill = new TeacherPaymentBill(); 
+                
+                $this->entityManager->persist($pymtBill); 
+                
+                
+                foreach($contractNotYetPaid as $con)
+                {
+                      
+                        
+                    $actualTimeToBill += $con->getTotalTime();
+
+                    $con->setTeacherPaymentBill($pymtBill);
+                    if($contract->getVolumeHrs()< $alreadyBilledTime+$actualTimeToBill)
+                    { 
+                        $overtime  = ($alreadyBilledTime+$actualTimeToBill)-$contract->getVolumeHrs(); 
+                        $actualTimeToBill = $actualTimeToBill-$overtime;
+                    }
+
+                }
+              
+                 $amount += $actualTimeToBill*$pymtRate;
+                 $totalAmount += $amount;
+               
+                $pymtBill->setOverTime($overtime); 
+                if($contract->getSubject()) $pymtDetails = $contract->getSubject()->getSubjectName(); 
+                if($contract->getTeachingUnit()) $pymtDetails = $contract->getTeachingUnit()->getName(); 
+                $pymtBill->setPaymentDetails($pymtDetails); 
+                $pymtBill->setDate(new \DateTime( date('Y-m-d'))); 
+                $pymtBill->setPaymentAmount($amount); 
+                $pymtBill->setTotalTime($contract->getVolumeHrs()); 
+                ($cptBillAlreadyPaid === 0)? $pymtBill->setTotalTimePreviouslyBilled(0): $pymtBill->setTotalTimePreviouslyBilled($alreadyBilledTime) ; 
+                $pymtBill->setTotalTimeCurrentlyBilled($actualTimeToBill);
+                $pymtBill->setTeacher($teacher);
+                $pymtBill->setContract($contract); 
+                $pymtBill->setTeacherPaymentBillSumary($billSumary);
+                
+                $totalTimeBilled+= $actualTimeToBill;
+               
+
+            }
+            
+
+          
+            $billSumary->setPaymentAmount($totalAmount); 
+            $billSumary->setTotalTimePaid($totalTimeBilled);
+            $billSumary->setTotalTimeScheduled($totalTimeScheduled);
+                      
+ 
+            
+            if($flag === 0){$this->entityManager->remove($billSumary); continue;
+                $output = new JsonModel([
+                    ["error"=>1] //Absence d'heure de cours à facturer
+                ]);
+                return $output;                        
+            } 
+            if(sizeof($contracts) === $cptOverTime){ $this->entityManager->remove($billSumary);  continue;
+                $output = new JsonModel([
+                    ["error"=>2] //Volume horaire dépassé
+                ]);
+                return $output;                        
+            } 
+            
+            $this->entityManager->flush();
+            
+            $billDetails = $this->entityManager->getRepository(TeacherPaymentBill::class)->findByTeacherPaymentBillSumary($billSumary);
+            $hydrator = new ReflectionHydrator();
+            $billSumary = $hydrator->extract($billSumary);
+           
+            $billSumaryItems = [];
+             
+            foreach ($billDetails as $key=>$value)
+            {
+                $hydrator = new ReflectionHydrator();
+                $billSumaryItems[$key] = $hydrator->extract($value);                
+            }
+            
+            $hydrator = new ReflectionHydrator();
+            $teacher = $hydrator->extract($teacher);
+            $teacher["paymentRate"] = $pymtRate;
+            $i++;
+            
+            $teacherInfo[$i]['info']=$teacher;
+            $teacherInfo[$i]["bill_items"] = $billSumaryItems;
+            $teacherInfo[$i]['bill_sumary'] = $billSumary;
+           
+         }
+         
+        
+        if($flagContractCount==0){
+            $output = new JsonModel([
+                ["error"=>3] //Absence d'heure de cours à facturer
+            ]);
+            return $output;                        
+        }         
+         
+        $this->entityManager->getConnection()->commit(); 
+        
+        
+            $output = new ViewModel([
+               "teachers"=>$teacherInfo,
+               
+
+            ]);
+             $output->setTerminal(true);
+            return $output; 
     } 
+    
+    
     public function searchBillAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            $data= $this->params()->fromQuery();           
+            $data= $this->params()->fromQuery();   
+           // var_dump($data);
            
             $subjects=[];
             $bills = [];
@@ -938,10 +1075,12 @@ class IndexController extends AbstractActionController
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             
-            $contract= $this->entityManager->getRepository(Contract::class)->find($data["contractID"] );
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1); 
+            
+            //$contract= $this->entityManager->getRepository(Contract::class)->find($data["contractID"] );
             $teacher= $this->entityManager->getRepository(Teacher::class)->find($data["teacherID"] );
            
-            $bills = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["teacher"=>$teacher,"contract"=>$contract]);
+            $bills = $this->entityManager->getRepository(TeacherPaymentBillSumary::class)->findBy(["teacher"=>$teacher,"academicYear"=>$acadYr]);
             $hydrator = new ReflectionHydrator();
             foreach($bills as $key=>$value)
             $bills[$key]= $hydrator->extract($value);            
@@ -1559,27 +1698,58 @@ public function deleteScheduledCourseAction()
             
             //retrive all current year contract
             $teacher = $this->entityManager->getRepository(Teacher::class)->findAll([],["name"=>"ASC"]);
-            $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll();
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            $contracts = $this->entityManager->getRepository(AllContractsView::class)->findAll(); 
             foreach($teacher as $key=>$teach)
             {
-                $contracts = $this->entityManager->getRepository(Contract::class)->findByTeacher($teach); 
+                $contracts = $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teach,"academicYear"=>$acadYr)); 
+                
                 $totalVolumeAllocated = 0;
                 $totalVolumeDone = 0;
-                
-                foreach($contracts as $con)
+                if(sizeof($contracts)> 0)
                 {
-                    $totalVolumeAllocated += $con->getVolumeHrs();
-                    $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
-                    foreach($contractsFwu as $conFwu)
-                        $totalVolumeDone += $conFwu->getTotalTime();
-                    
-                    
-                }
                 
-                $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
-                $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
-                $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
-                $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
+                    foreach($contracts as $con)
+                    {
+                        $totalVolumeAllocated += $con->getVolumeHrs();
+                        $contractsFwu = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($con);
+                        
+                         
+                        foreach($contractsFwu as $conFwu)
+                            $totalVolumeDone += $conFwu->getTotalTime();
+
+
+                    }
+                    //Collecte the payment rate
+                    if($teach->getAcademicRanck())
+                        $pymtRate = $teach->getAcademicRanck()->getPaymentRate();
+                    else $pymtRate = 0;                    
+
+                    $teachers[$key]["teacherName"]=$teach->getName()." ".$teach->getSurname();
+                    $teachers[$key]["totalVolumeAllocated"] = $totalVolumeAllocated;
+                    $teachers[$key]["totalVolumeDone"] = $totalVolumeDone;
+                    $teachers[$key]["volumeGap"] = $totalVolumeAllocated - $totalVolumeDone;
+                    $teachers[$key]["paymentRate"] = $pymtRate;
+                    
+                    
+                    $totalVolumePaid = 0;
+                    $totalAmountPaid = 0;  
+                    
+                    foreach($contracts as $con)
+                    { 
+                        $paymentBill = $this->entityManager->getRepository(TeacherPaymentBill::class)->findOneBy(array("teacher"=>$teach,"contract"=>$con)); 
+ 
+                        if($paymentBill)
+                        {
+                            $totalVolumePaid += $paymentBill->getTotalTimePreviouslyBilled()+$paymentBill->getTotalTimeCurrentlyBilled(); 
+                            $totalAmountPaid += $paymentBill->getPaymentAmount();
+                            
+
+                        }
+                    }
+                    $teachers[$key]["totalVolumePaid"] = $totalVolumePaid;
+                    $teachers[$key]["amountPaid"] = $totalAmountPaid;                    
+                }
             }
 
             //Sorting the $std array according to the key "nom"
@@ -1607,6 +1777,228 @@ public function deleteScheduledCourseAction()
         }   
     }
     
+    public function generateBillAction()
+    {
+        
+        $this->entityManager->getConnection()->beginTransaction();
+        
+            $subjects=[];
+            $bills = [];
+       
+            $teachers = $this->entityManager->getRepository(Teacher::class)->findAll([],array("name"=>"ASC"));
+            $teacherInfo = [];
+            $i = 0;
+            
+            foreach($teachers as $teach)
+            {
+                $actualBilledTime = 0;
+                $overtime = 0;
+                $totalAmount = 0;
+                $totalTimeBilled = 0; 
+
+            //$teacher= $this->entityManager->getRepository(Teacher::class)->find($data["teacherID"] );
+            
+            $teacher= $this->entityManager->getRepository(Teacher::class)->find($teach->getId());
+            
+            //Collecte the payment rate
+            if($teacher->getAcademicRanck())
+                $pymtRate = $teacher->getAcademicRanck()->getPaymentRate();
+            else $pymtRate = 0;            
+            
+            
+            //Seacrch contracts in which teacher is involved
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1); 
+            $contracts= $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teacher,"academicYear"=>$acadYr) );
+
+            
+            $billSumary = new TeacherPaymentBillSumary();
+            $billSumary->setPaymentAmount($totalAmount); 
+            $billSumary->setDate(new \DateTime( date('Y-m-d'))); 
+            $billSumary->setAcademicYear($acadYr);
+            $billSumary->setTeacher($teacher);
+            
+            $this->entityManager->persist($billSumary); 
+           
+                      
+
+            //Asuming we did not find any item to bill
+             $flag = 0;
+             $cptOverTime=0;
+             $totalTimeScheduled= 0;
+             
+         
+            foreach($contracts as $contract)
+            {           
+                $amount = 0;
+                $actualTimeToBill = 0; 
+                $totalTimeScheduled += $contract->getVolumeHrs(); 
+                $contractFollowUp = $this->entityManager->getRepository(ContractFollowUp::class)->findByContract($contract);
+                
+                //Skip if there is notime to bill
+                if(sizeof($contractFollowUp)<=0) continue; 
+                
+                //lookind only to items not already paid
+                $contractNotYetPaid= $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["contract"=>$contract,"teacherPaymentBill"=>NULL] );
+                if (sizeof($contractNotYetPaid)>0) $flag = 1;
+                
+                if(sizeof($contractNotYetPaid)<=0) continue;
+               
+                //Check if other bills exist on this contract
+                $bills = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["teacher"=>$teacher,"contract"=>$contract]);
+
+
+                //count number of bill already paid 
+                $cptBillAlreadyPaid = sizeof($bills);
+                 
+                //if other bill exist, calculate the over all time already billed
+                $alreadyBilledTime = 0;
+                foreach($bills as $bill) $alreadyBilledTime += $bill->getTotalTimePreviouslyBilled();  
+                
+
+                $paymentDetails = [];
+                $billedTime = 0;
+                
+
+              
+                
+                $pymtBill = new TeacherPaymentBill(); 
+                
+                $this->entityManager->persist($pymtBill); 
+                
+                
+                foreach($contractNotYetPaid as $con)
+                {
+                      
+                        
+                    $actualTimeToBill += $con->getTotalTime();
+
+
+                    if($contract->getVolumeHrs()> $alreadyBilledTime+$actualTimeToBill)
+                    {
+
+                        
+                        $con->setTeacherPaymentBill($pymtBill);
+                        //$this->entityManager->flush();
+
+                        /*$hydrator = new ReflectionHydrator();
+                        $data_1 = $hydrator->extract($con);
+                        $data_1["paymentRate"] = $pymtRate;
+                        $data_1["paymentAmount"] = $billedTime * $pymtRate;
+                        $paymentDetails[$k] = $data; $k++; 
+
+                        $actualBilledTime = $billedTime;
+
+
+                        $amount += $billedTime*$pymtRate;*/
+
+
+                    }else
+                    { 
+                        $overtime  = ($alreadyBilledTime+$actualTimeToBill)-$contract->getVolumeHrs(); 
+                        $actualTimeToBill = $actualTimeToBill-$overtime;
+                       
+                        
+
+                /*        $hydrator = new ReflectionHydrator();
+                        $data_1 = $hydrator->extract($con);
+                        $data_1["paymentRate"] = $pymtRate;
+                        $data_1["overtime"] = $overtime;
+                        $data_1["paymentAmount"] = $billedTime * $pymtRate;
+                        $paymentDetails[$k] = $data_1; $k++; */
+
+                    }
+
+                }
+              
+                 $amount += $actualTimeToBill*$pymtRate;
+                 $totalAmount += $amount;
+               
+                $pymtBill->setOverTime($overtime); 
+                if($contract->getSubject()) $pymtDetails = $contract->getSubject()->getSubjectName(); 
+                if($contract->getTeachingUnit()) $pymtDetails = $contract->getTeachingUnit()->getName(); 
+                $pymtBill->setPaymentDetails($pymtDetails); 
+                $pymtBill->setDate(new \DateTime( date('Y-m-d'))); 
+                $pymtBill->setPaymentAmount($amount); 
+                $pymtBill->setTotalTime($contract->getVolumeHrs()); 
+                ($cptBillAlreadyPaid === 0)? $pymtBill->setTotalTimePreviouslyBilled(0): $pymtBill->setTotalTimePreviouslyBilled($alreadyBilledTime+$actualTimeToBill) ; 
+                $pymtBill->setTotalTimeCurrentlyBilled($actualTimeToBill);
+                $pymtBill->setTeacher($teacher);
+                $pymtBill->setContract($contract); 
+                $pymtBill->setTeacherPaymentBillSumary($billSumary);
+                
+                $totalTimeBilled+= $actualTimeToBill;
+               
+                      
+               
+                
+                
+                //$this->entityManager->flush();
+               
+
+            }
+            
+
+          
+            $billSumary->setPaymentAmount($totalAmount); 
+            $billSumary->setTotalTimePaid($totalTimeBilled);
+            $billSumary->setTotalTimeScheduled($totalTimeScheduled);
+                      
+            $this->entityManager->flush(); 
+            if($flag === 0){$this->entityManager->remove($billSumary); continue;
+                $output = new JsonModel([
+                    ["error"=>1] //Absence d'heure de cours à facturer
+                ]);
+                return $output;                        
+            } 
+            if(sizeof($contracts) === $cptOverTime){ $this->entityManager->remove($billSumary);  continue;
+                $output = new JsonModel([
+                    ["error"=>2] //Volume horaire dépassé
+                ]);
+                return $output;                        
+            } 
+            
+
+             
+              
+                
+    
+           
+            
+            $billDetails = $this->entityManager->getRepository(TeacherPaymentBill::class)->findByTeacherPaymentBillSumary($billSumary);
+            $hydrator = new ReflectionHydrator();
+            $billSumary = $hydrator->extract($billSumary);
+           
+            $billSumaryItems = [];
+             
+            foreach ($billDetails as $key=>$value)
+            {
+                $hydrator = new ReflectionHydrator();
+                $billSumaryItems[$key] = $hydrator->extract($value);                
+            }
+            
+            $hydrator = new ReflectionHydrator();
+            $teacher = $hydrator->extract($teacher);
+            $teacher["paymentRate"] = $pymtRate;
+            $i++;
+            
+            $teacherInfo[$i]['info']=$teacher;
+            $teacherInfo[$i]["bill_items"] = $billSumaryItems;
+            $teacherInfo[$i]['bill_sumary'] = $billSumary;
+           
+         }
+         
+        $this->entityManager->getConnection()->commit(); 
+        
+        
+            $output = new ViewModel([
+               "teachers"=>$teacherInfo,
+               
+
+            ]);
+             $output->setTerminal(true);
+            return $output;          
+    }
+    
     private function checkTimeConflictByClass($classe,$startingTime)
     {
         
@@ -1624,6 +2016,9 @@ public function deleteScheduledCourseAction()
         
         
     }
+    
+
+    
     
     
 }

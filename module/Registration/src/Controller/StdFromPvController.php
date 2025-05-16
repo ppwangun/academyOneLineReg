@@ -15,7 +15,7 @@ use Violet\StreamingJsonEncoder\StreamJsonEncoder;
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 
 use Application\Entity\RegisteredStudentView;
-use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
 
@@ -33,8 +33,9 @@ class StdFromPvController extends AbstractRestfulController
     public function get($id) {
         $this->entityManager->getConnection()->beginTransaction();
         try
-        {      
-            $registeredStd = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findOneByMatricule($id);
+        {  
+            $currentAcadYr = $this->sessionContainer->currentAcadYr;
+            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findOneBy(["acadYrId"=>$currentAcadYr->getId(),"matricule"=>$id]);
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($registeredStd);
                 $data['dateNaissance']=$data['dateNaissance']->format('Y-m-d');
@@ -62,9 +63,10 @@ class StdFromPvController extends AbstractRestfulController
         try
         { 
             $userId = $this->sessionContainer->userId;
+            $currentAcadYr = $this->sessionContainer->currentAcadYr;;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-                   $registeredStd = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findBy(array(),array("nom"=>"ASC"));
+                   $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
             else{
                 $registeredStd = [];
                 //Find clases mananged by the current user

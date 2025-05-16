@@ -1,0 +1,122 @@
+
+
+<link rel="stylesheet" href="js/calendar/fullcalendar/dist/fullcalendar.css"/>
+<?= $this->headScript()
+        ->prependFile($this->basePath('js/calendar/fullcalendar/dist/gcal.js'))
+        ->prependFile($this->basePath('js/calendar/fullcalendar/dist/fullcalendar.min.js'))
+        ->prependFile($this->basePath('js/calendar/angular-ui-calendar/src/calendar.js'))
+        ->prependFile($this->basePath('js/calendar/angular/angular.min.js'))
+         ->prependFile($this->basePath('js/calendar/moment/min/moment.min.js'))
+        ->prependFile($this->basePath('js/calendar/jquery/dist/jquery.min.js'))
+        ?>
+
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+
+</style>
+
+
+<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+        
+            <div class="row">
+                <div class='col-md-6'>
+                    <div ng-show="!$ctrl.schedlingUpdate">
+                    <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Enrégistrer</button>
+                    <span> <a href="home">Annuler</a></span>
+                    </div>
+                    <div ng-show="$ctrl.schedlingUpdate">
+                        <button   ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="updateSchedule(ev,$ctrl.progressionData.scheduledId)"  class="btn btn-primary" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Modifier</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="deleteSchedule($ctrl.progressionData.scheduledId)" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Supprimer</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Repéter</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="confirmEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Confirmer</button>
+                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
+                        <span> <a href="#!/courseProgramming" ng-click="$ctrl.resetSchedule()">Nouvelle Programmation </a></span>
+                    </div>
+                    
+                </div>
+        
+
+
+                
+            </div>
+</div>
+<div class="row">
+<div class="col-md-4"> 
+     <div class="form-view">
+    
+        <md-content layout-padding >
+            <form   name="examForm">
+
+
+        <div layout-gt-sm='row'>
+            <div layout-gt-sm='column' flex="100" >
+            <md-input-container>
+            <label>Semestre</label>
+            <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.code'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)"
+                        md-no-asterisk required >
+                <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
+              <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
+                {{sem.name}}
+              </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.semester.$error">
+              <div ng-message="required">Champ obligatoire</div>
+            </div>
+          </md-input-container>  
+            </div> 
+
+        </div>
+
+
+
+            <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
+            <md-input-container flex="100">
+                <label>Salles de cours</label>
+                <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="endingTime"  ng-model="$ctrl.endingTime" 
+                             ng-required="false"
+                           md-no-asterisk>
+                  <md-option ng-disabled="true"><em>---Salle de cours---</em></md-option>
+
+                        <md-option  ng-value="time" ng-repeat="time in $ctrl.salles" > {{time.name}} </md-option>
+                </md-select>
+                <div class="errors" ng-messages="examForm.endingTime.$error">
+                  <div ng-message="required">Champ obligatoire</div>
+                </div>
+            </md-input-container>  
+            </div>            
+
+
+
+            </form>
+        </md-content>  
+    </div>
+    
+    <!-- comment --></div>
+
+<div class=" col-md-4 ">
+    <div class="form-view">
+
+        
+
+        
+
+                
+           
+    </div>
+</div>
+<div class=" col-md-4 ">
+    <div class="form-view">
+
+        
+
+        
+
+                
+           
+    </div>
+</div>

@@ -13,7 +13,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\Hydrator\ReflectionHydrator;
 
 use Application\Entity\RegisteredStudentView;
-use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\SubjectRegistrationView;
 use Application\Entity\SubjectRegistrationOnlineRegistrationYearView;
 use Application\Entity\Student;
@@ -22,25 +22,29 @@ use Application\Entity\Subject;
 use Application\Entity\UnitRegistration;
 use Application\Entity\Semester;
 use Application\Entity\ClassOfStudyHasSemester;
+use Application\Entity\AllYearsSubjectRegistrationView;
 
 
 class SubjectRegistrationController extends AbstractRestfulController
 {
     private $entityManager;
     
-    public function __construct($entityManager) {
+    public function __construct($entityManager,$sessionContainer) {
         
-        $this->entityManager = $entityManager;   
+        $this->entityManager = $entityManager; 
+        $this->sessionContainer = $sessionContainer ;
     }
     //this function takes as paramer the student ID and 
     //returns the list of of subjects to which student is registered
     public function get($id) {
         $this->entityManager->getConnection()->beginTransaction();
         try
-        {   
+        {  
+            $acadYr = $this->sessionContainer->currentAcadYr;
             // retrieve the sutdent  based on the student ID 
-            $std = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($id); 
-            $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationOnlineRegistrationYearView::class)->findBy(array("matricule"=>$id,"subjectId"=>[NULL," "]));
+           
+            
+            $std_registered_subjects = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("acadYrId"=>$acadYr->getId(),"matricule"=>$id,"idSubject"=>[NULL," "]));
             
 
             foreach($std_registered_subjects as $key=>$value)

@@ -22,9 +22,10 @@ class TeachingunitControllerFactory implements FactoryInterface
                      $requestedName, array $options = null)
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $sessionContainer = $container->get('LoggedInUser');
         
         // Instantiate the controller and inject dependencies
-        return new TeachingunitController($entityManager);
+        return new TeachingunitController($entityManager,$sessionContainer);
     }
 
 }
