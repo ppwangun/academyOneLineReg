@@ -33,11 +33,14 @@ class CalculNotesController extends AbstractRestfulController
 {
     private $entityManager;
     private $examManager;
+    private $sessionContainer;
+    private $crtAcadYr;
     
-    public function __construct($entityManager,$examManager) {
+    public function __construct($entityManager,$examManager,$sessionContainer) {
         
         $this->entityManager = $entityManager;  
         $this->examManager = $examManager; 
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
 
     public function get($id)
@@ -48,8 +51,8 @@ class CalculNotesController extends AbstractRestfulController
             $data = json_decode($id,true);
             
             if(isset($data["isModular"]))
-                $exams = $this->examManager->getModuleExamStatus($data["ue_id"],$data["sem_id"],$data["classe_id"]);
-            else    $exams = $this->examManager->getExamList($data["ue_id"],$data["subject_id"],$data["sem_id"],$data["classe_id"]);
+                $exams = $this->examManager->getModuleExamStatus($data["ue_id"],$data["sem_id"],$data["classe_id"],$this->crtAcadYr->getId());
+            else    $exams = $this->examManager->getExamList($data["ue_id"],$data["subject_id"],$data["sem_id"],$data["classe_id"],$this->crtAcadYr->getId());
             
                 
 
@@ -140,7 +143,7 @@ class CalculNotesController extends AbstractRestfulController
             {
                 $subject = [null," "]; 
                 $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$data["ue_id"],"classe"=>$classe->getCode(),"status"=>1));
-                $subjects = $this->examManager->getSubjectFromUe($data["ue_id"],$data["sem_id"],$data["class_id"]);
+                $subjects = $this->examManager->getSubjectFromUe($data["ue_id"],$data["sem_id"],$data["class_id"],$this->crtAcadYr);
                 $subjectExams = $this->getSubjectExams($subjects);
                 $ueExams = array_merge($ueExams , $subjectExams );
             }
@@ -866,7 +869,7 @@ class CalculNotesController extends AbstractRestfulController
         $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>["EXAM","EXAMC","STAE"],"status"=>1));
         $ueRat = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>"RAT","status"=>1));
 
-        $subjects = $this->examManager->getSubjectFromUe($ueID,$semID,$classeID);
+        $subjects = $this->examManager->getSubjectFromUe($ueID,$semID,$classeID,$this->crtAcadYr);
                     
         $ueExamsRatMark = $this->mergeUeRatMark($ueRat);
             

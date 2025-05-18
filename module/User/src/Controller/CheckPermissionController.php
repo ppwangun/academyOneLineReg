@@ -17,7 +17,7 @@ use Application\Entity\User;
 use Application\Entity\Role;
 use Application\Entity\UserRole;
 use Application\Entity\RegisteredStudentView;
-use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\ClassOfStudy;
 
 class CheckPermissionController extends AbstractRestfulController
@@ -26,6 +26,7 @@ class CheckPermissionController extends AbstractRestfulController
     private $userManager;
     private $sessionContainer;
     private $examManager;
+    private $crtAcadyr;
     
     public function __construct($entityManager,$userManager,$sessionContainer,$examManager)
     {
@@ -33,6 +34,7 @@ class CheckPermissionController extends AbstractRestfulController
         $this->userManager = $userManager;
         $this->sessionContainer = $sessionContainer;
         $this->examManager = $examManager;
+        $this->crtAcadyr = $sessionContainer->currentAcadYr;
         
     }
     public function get($id)
@@ -108,7 +110,7 @@ class CheckPermissionController extends AbstractRestfulController
            {
                 //getting student class of study based on matricule
                $isAdmin = $this->access('global.system.admin',['user'=>$user]);
-                $std = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findOneByMatricule($data['std_id']);
+                $std = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findOneBy(["matricule"=>$data['std_id'],"acadYrId"=>$this->crtAcadyr->getId()]);
                 if($std )
                 {
                     $class_code = $std->getClass();

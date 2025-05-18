@@ -21,6 +21,8 @@ use Application\Entity\AdmittedStudentView;
 use Application\Entity\Subject;
 use Laminas\Hydrator\ReflectionHydrator;
 
+use Laminas\View\Model\JsonModel;
+
 
 use Laminas\Http\Header\Date;
 
@@ -158,14 +160,14 @@ class StudentManager {
         }      
    }
  //adding student from import
-   public function addAdmittedStudent($data)
+   public function addAdmittedStudent($data,$acadyr)
    {
       
                 $date_admission = strtotime($data['date_admission']);
                 $date_admission = date('Y-m-d',$date_admission);
                 //$date_admission= \DateTime::createFromFormat('!d/m/Y H:i', $date_admission);
                 
-                $acadyr = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+                $acadyr = $this->entityManager->getRepository(AcademicYear::class)->find($acadyr->getId());
                 $classeCode = $data["classe"]; 
                 $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("code"=>strval($classeCode)));
                 
@@ -222,19 +224,19 @@ class StudentManager {
  
    }      
    //adding student as a current academic year student
-   public function stdAdminRegistration($data,$status,$isRepeating)
+   public function stdAdminRegistration($data,$status,$isRepeating,$acadYr)
    {
      
         try
-        {      
+        {     
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule(array($data["matricule"],"status"=>1));
-
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
             //Finding student registered for the current academic year       
-            $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$this->getCurrentRegistrationYear()));
+            $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$acadYr));
 
             //Checking if classe provided is available
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classe"]); 
-            if(!$class)  throw ("Class ".$data["classe"]." not found"); 
+            if(!$class) {               echo(   "classe".$data["classe"]." introuvable"           ); exit;}
            // $admission = $this->entityManager->getRepository(Admission::class)->findOneByCode($class_code);
 
              //generate random number of 8 digits and check if the number already exist in the database befor assigning
@@ -253,7 +255,7 @@ class StudentManager {
             {
                 $adminRegistration = new AdminRegistration();
 
-                $adminRegistration->setAcademicYear($this->getCurrentRegistrationYear());
+                $adminRegistration->setAcademicYear($acadYr);
                 $adminRegistration->setClassOfStudy($class);
                 $adminRegistration->setStudent($std);
                 $adminRegistration->setContratId($this->contrat_id);
@@ -270,7 +272,7 @@ class StudentManager {
             //check if student is already registered for the current year
             elseif($isRegistered)
             {
-                $isRegistered->setAcademicYear($this->getCurrentRegistrationYear());
+                $isRegistered->setAcademicYear($acadYr);
                 $isRegistered->setClassOfStudy($class);
                 $isRegistered->setStudent($std);
                 $isRegistered->setRegisteringDate($currentDate);
@@ -293,13 +295,14 @@ class StudentManager {
         }          
    }
  
-   public function updateStdFinancialInfos($data)
+   public function updateStdFinancialInfos($data,$acadYr)
    {
  
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($data["matricule"]);
+            $acadyr = $this->entityManager->getRepository(AcademicYear::class)->find($acadyr->getId());
 
             //Finding student registered for the current academic year       
-            $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$this->getCurrentRegistrationYear()));
+            $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$acadYr));
 
             //Checking if classe provided is available
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classe"]); 
@@ -394,11 +397,11 @@ class StudentManager {
    }
    
    // register student to semesters
-   public function stdSemesterRegistration($crtClasse,$student,$mpc,$nbCreditsCapitalized,$totalRegistered,$totalCredits,$registrationTimes)
+   public function stdSemesterRegistration($crtClasse,$student,$mpc,$nbCreditsCapitalized,$totalRegistered,$totalCredits,$registrationTimes,$acadYr)
    {
-      
+     
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($crtClasse);
-            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
             //$student = $this->entityManager->getRepository(Student::class)->findByClasse($student);
             $semester= $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr));
             foreach($semester as $sem)

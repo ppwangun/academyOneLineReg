@@ -5,9 +5,9 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CurrentYearTeachingUnitView
+ * CurrentYearUesAndSubjectsView
  *
- * @ORM\Table(name="current_year_ues_and_subjects_view", uniqueConstraints={@ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})})
+ * @ORM\Table(name="current_year_ues_and_subjects_view")
  * @ORM\Entity
  */
 class CurrentYearUesAndSubjectsView
@@ -20,6 +20,15 @@ class CurrentYearUesAndSubjectsView
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $id;
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrId", type="integer", nullable=false)
+    * 
+    */
+    private $acadYrId;    
+    
     /**
     * @var integer
     *
@@ -89,13 +98,6 @@ class CurrentYearUesAndSubjectsView
     /**
     * @var integer
     *
-    * @ORM\Column(name="is_previous_year_subject", type="integer", length=255, nullable=false)
-    */
-    private $isPreviousYearSubject;    
-    
-       /**
-    * @var integer
-    *
     * @ORM\Column(name="study_level", type="integer", nullable=true)
     */
     private $studyLevel;
@@ -113,12 +115,14 @@ class CurrentYearUesAndSubjectsView
     * @ORM\Column(name="semID", type="integer", nullable=true)
     */
     private $semId;
+    
     /**
     * @var integer
     *
     * @ORM\Column(name="sem_ranking", type="integer", nullable=true)
     */
     private $semRanking;
+    
     /**
     * @var integer
     *

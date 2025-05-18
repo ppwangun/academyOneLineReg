@@ -27,6 +27,13 @@ class RegisteredStudentForActiveRegistrationYearView
     */
     private $registrationId;
     
+     /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrCode", type="integer", nullable=false)
+    */
+    private $acadYrCode;
+    
     /**
     * @var integer
     *
@@ -238,6 +245,16 @@ class RegisteredStudentForActiveRegistrationYearView
     {
         return $this->id;
     }
+    
+    /**
+     * Get acadYrCode
+     *
+     * @return string
+     */
+    public function getAcadYrCode()
+    {
+        return $this->acadYrCode;
+    }    
     
     /**
      * Get matricule

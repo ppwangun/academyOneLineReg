@@ -29,10 +29,10 @@ z-index: 120000}
                                     <ul class="dropdown-menu pull-right" role="menu">
                                         <li><a href="" ng-click="$ctrl.deleteUe()" ng-disabled="teachingUnitForm.$invalid">Supprimer</a></li>
                                         <li><a href="" ng-click="$ctrl.duplicateUe()"><span>Dupliquer</span></a></li>
-                                        <li><a href="" ng-click="$ctrl.activateUe()"><span>Activer</span></a></li>
+                                        <!--<li><a href="" ng-click="$ctrl.activateUe()"><span>Activer</span></a></li>
                                         <li><a href="" ng-click="$ctrl.unactivateUe()"><span>Désactiver</span></a></li>
                                         
-                                      <!--  <li><a href=""><span>Imprimer étiquette</span></a>
+                                        <li><a href=""><span>Imprimer étiquette</span></a>
                                         </li>
                                         <li><a href=""><span>Imprimer liste étudiants</span></a>
                                         </li> -->
@@ -121,9 +121,9 @@ z-index: 120000}
         </md-input-container>
         <md-input-container class="md-block" flex-gt-sm flex='20'>
                 <label>Choix du smestre</label>
-                <md-select name="semester" ng-model="$ctrl.ue.sem_id"  md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedItem.code);" ng-required="true" md-no-asterisk>
+                <md-select name="semester" ng-model="$ctrl.semester"  ng-model-options="{trackBy: '$value.code'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedItem.code);" ng-required="true" md-no-asterisk>
                    <!--<md-option><em>None</em></md-option> -->
-                   <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem.id" >
+                   <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem" >
                      {{sem.name}}
                    </md-option>
                  </md-select>

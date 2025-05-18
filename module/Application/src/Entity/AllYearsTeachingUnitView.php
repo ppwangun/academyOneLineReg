@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CurrentYearTeachingUnitView
  *
- * @ORM\Table(name="current_year_teaching_unit_view", uniqueConstraints={@ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})})
+ * @ORM\Table(name="all_years_teaching_unit_view", uniqueConstraints={@ORM\UniqueConstraint(name="matricule_UNIQUE", columns={"matricule"})})
  * @ORM\Entity
  */
-class CurrentYearTeachingUnitView
+class AllYearsTeachingUnitView
 {
     /**
     * @var integer
@@ -20,13 +20,6 @@ class CurrentYearTeachingUnitView
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $id;
-    
-    /**
-    * @var string
-    *
-    * @ORM\Column(name="acadYrId", type="integer", nullable=true)
-    */
-    private $acadYrId;     
     
     /**
     * @var string
@@ -98,6 +91,14 @@ class CurrentYearTeachingUnitView
     * @ORM\Column(name="semID", type="integer", nullable=true)
     */
     private $semId;
+
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="year_id", type="integer", nullable=true)
+    */
+    private $acadYrId;    
+    
     /**
     * @var integer
     *

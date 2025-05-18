@@ -38,6 +38,7 @@ class SubjectController extends AbstractRestfulController
             //retrive the current loggedIn User
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
+            $acadyrId = $this->sessionContainer->currentAcadYr->getId() ;
            
             //check first the user has global permission or specific permission to access exams informations
             if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
@@ -47,9 +48,10 @@ class SubjectController extends AbstractRestfulController
                 //$rsm = new ResultSetMapping();
                 // build rsm here
 
-                $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId FROM Application\Entity\CurrentYearTeachingUnitView c'
-                        .' WHERE c.codeUe LIKE :code');
+                $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId FROM Application\Entity\AllYearsTeachingUnitView c'
+                        .' WHERE c.codeUe LIKE :code AND c.acadYrId = :year_id');
                 $query->setParameter('code', '%'.$id.'%');
+                $query->setParameter('year_id', $acadyrId);
 
                 $subjects = $query->getResult();
             }
@@ -62,10 +64,11 @@ class SubjectController extends AbstractRestfulController
 
                     foreach($userClasses as $classe)
                     {
-                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\CurrentYearTeachingUnitView c'
-                                .' WHERE c.classe = :classe AND c.codeUe LIKE :code');
+                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\AllYearsTeachingUnitView c'
+                                .' WHERE c.classe = :classe AND c.codeUe LIKE :code AND c.acadYrId = :year_id');
                         $query->setParameter('code', '%'.$id.'%')
                                 ->setParameter('classe',$classe->getClassOfStudy()->getCode());
+                        $query->setParameter('year_id', $acadyrId);
 
                         $subjects_1 = $query->getResult();
                         $subjects= array_merge($subjects , $subjects_1);

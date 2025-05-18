@@ -287,8 +287,10 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
         })           //returns the users permission level 
     }
     return obj;
-}).controller('testCtrl',function($scope,accessFac,$interval,$timeout,$http){
+}).controller('testCtrl',function($scope,accessFac,$interval,$timeout,$http,toastr){
     var controller = this;
+    var $ctrl = this;
+    $ctrl.selectedAcadYr = null;
 
       controller.date = new Date();
 
@@ -301,7 +303,7 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
               $http.get('currentAcademicYear').then(
               function successCallback(response){
                   $scope.acadyr = response.data[0];
-
+                  //toastr.success('Année académique cangée avec succès');
 
               },
               function errorCallbacl(response){
@@ -312,6 +314,43 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
     $scope.getAccess = function(){
         accessFac.getPermission();       //call the method in acccessFac to allow the user permission.
     }
+    
+    
+    $ctrl.init1 = function(){
+
+        $ctrl.queryAcademicYear = function(academicYear)
+        { 
+           var  dataString = {id: academicYear},
+              config = {
+                params: dataString,
+                headers : {'Accept' : 'application/json; charset=utf-8'}
+                };
+
+                return  $http.get('searchAcademicYear',config).then(function(response){
+                       return response.data[0];
+                    });
+         }; 
+     }
+     
+    $ctrl.selectedYearChange = function(acadYr){ 
+        $scope.acadyr = acadYr;
+
+        var  dataString = {id: acadYr.id},
+           config = {
+             params: dataString,
+             headers : {'Accept' : 'application/json; charset=utf-8'}
+             };
+
+             return  $http.get('switchAcadYr',config).then(function(response){
+                 toastr.success("Année académique changé avec succès")
+                    return response.data[0];
+                 });
+
+        $ctrl.selectedClasse = null;
+        $ctrl.selectedSem = null;
+        $ctrl.disabledSelect = true;
+    }     
+     
 }).filter('sumByKey', function() {
         return function(data, key) {
             if (typeof(data) === 'undefined' || typeof(key) === 'undefined') {

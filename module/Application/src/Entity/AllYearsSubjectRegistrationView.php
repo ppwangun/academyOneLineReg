@@ -22,6 +22,22 @@ class AllYearsSubjectRegistrationView
     private $id;
     
     /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrId", type="integer", nullable=false)
+    * 
+    */
+    private $acadYrId;  
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="subject_id", type="integer", nullable=false)
+    * 
+    */
+    private $idSubject;    
+    
+    /**
     * @var string
     *
     * @ORM\Column(name="code_ue", type="string", length=45, nullable=true)
@@ -257,6 +273,26 @@ class AllYearsSubjectRegistrationView
     public function getIsFromRatrappage()
     {
         return $this->isFromRatrappage;
+    } 
+    
+    /**
+     * Get matricule
+     *
+     * @return string
+     */
+    public function getMatricule()
+    {
+        return $this->matricule;
+    } 
+    
+     /**
+     * Get string
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
     }    
 }
 

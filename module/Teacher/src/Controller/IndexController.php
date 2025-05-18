@@ -50,6 +50,7 @@ class IndexController extends AbstractActionController
 {
     private $sessionContainer;
     private $entityManager;
+    private $crtAcadYr;
     
     /**
      * Constructor.
@@ -59,6 +60,7 @@ class IndexController extends AbstractActionController
 
         $this->sessionContainer = $sessionContainer;
         $this->entityManager = $entityManager;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     public function indexAction()
     {
@@ -135,16 +137,17 @@ class IndexController extends AbstractActionController
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             $ue = []; $ue_1 = [];
             
-            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-            $acadYearId = $acadYear->getId();             
+           // $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            //$acadYearId = $acadYear->getId();  
+            $acadYearId = $this->crtAcadYr->getId();
             
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
                 //collect all courses affected to any semester
                     $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                        //    . 'WHERE c.academicYear = :acadYearId'
+                            .'WHERE c.acadYrId = ?1'
                         );
-                   // $query->setParameter('acadYearId',$acadYearId);
+                $query->setParameter(1,$this->crtAcadYr->getId());
                 $ue= $query->getResult(); 
               
                 //collect all courses affected to any semester
@@ -400,8 +403,8 @@ class IndexController extends AbstractActionController
             //$data = json_decode($data,true);
      
             $teacher = $this->entityManager->getRepository(Teacher::class)->find($data['teacherid']);
-            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-            
+            $acadYear = $this->entityManager->getRepository(AcademicYear::class)->find($this->crtAcadYr->getId());
+           // $acadYear = $this->crtAcadYr;
           
                 foreach($data["subjects"] as $key=>$value)
                 { 
@@ -500,7 +503,6 @@ class IndexController extends AbstractActionController
                         
                         
 
-  
                                 $contract = new Contract();
                                 $contract->setAcademicYear($acadYear);
                                 $contract->setTeacher($teacher);
@@ -592,17 +594,14 @@ class IndexController extends AbstractActionController
            
             //check first the user has global permission or specific permission to access exams informations
             if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-            {            
-                // retrieve subjects based on subject code
-
-                //$rsm = new ResultSetMapping();
-                // build rsm here
-
+            {  
                 $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs FROM Application\Entity\CurrentYearUesAndSubjectsView c'
-                        .' WHERE c.codeUe LIKE :code');
+                        .' WHERE c.codeUe LIKE :code AND c.acadYrId = :acadYrId');
                 $query->setParameter('code', '%'.$id.'%');
+                $query->setParameter('acadYrId', $this->crtAcadYr->getId());
 
-                $subjects = $query->getResult();
+                $subjects = $query->getResult();   
+
             }
             else
             {
@@ -613,7 +612,7 @@ class IndexController extends AbstractActionController
 
                     foreach($userClasses as $classe)
                     {
-                        $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\Application\Entity\CurrentUesAndSubjectsView c'
+                        $query = $this->entityManager->createQuery('SELECT c.id,c.subjectId,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\Application\Entity\CurrentYearUesAndSubjectsView c'
                                 .' WHERE c.classe = :classe AND c.codeUe LIKE :code');
                         $query->setParameter('code', '%'.$id.'%')
                                 ->setParameter('classe',$classe->getClassOfStudy()->getCode());
@@ -631,7 +630,9 @@ class IndexController extends AbstractActionController
                     $subjects
             ]);
 
-            return $output;       }
+            return $output;       
+            
+        }
         catch(Exception $e)
         {
            $this->entityManager->getConnection()->rollBack();
@@ -868,17 +869,18 @@ class IndexController extends AbstractActionController
             
             $teacher= $this->entityManager->getRepository(Teacher::class)->find($teach->getId());
             
+
+             
             //Collecte the payment rate
             if($teacher->getAcademicRanck())
                 $pymtRate = $teacher->getAcademicRanck()->getPaymentRate();
             else $pymtRate = 0;            
             
-            
+
             //Seacrch contracts in which teacher is involved
             $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1); 
             $contracts= $this->entityManager->getRepository(Contract::class)->findBy(array("teacher"=>$teacher,"academicYear"=>$acadYr) );
-            
-           //counting finished or overflow contracat
+                      //counting finished or overflow contracat
             $countFinishedContract=0;
             foreach($contracts as $contract)
             {

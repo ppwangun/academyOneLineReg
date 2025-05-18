@@ -87,6 +87,16 @@ return [
                     ],
                 ],
             ],  
+            'switchAcadYr' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/switchAcadYr[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action' => "switchAcadYr"
+                    ],
+                ],
+            ],            
             'currentAcademicYear' => [
                 'type'    => Segment::class,
                 'options' => [

@@ -15,12 +15,19 @@ use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
 use Laminas\Hydrator\ReflectionHydrator;
 use Application\Entity\TeachingUnit;
+use Application\Entity\UnitRegistration;
 use Application\Entity\Semester;
 use Application\Entity\TrainingCurriculum;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\Subject;
 use Application\Entity\ClassOfStudyHasSemester;
 use Laminas\Hydrator\Aggregate\AggregateHydrator;
+use Application\Entity\Exam;
+use Application\Entity\ExamRegistration;
+use Application\Entity\Contract;
+use Application\Entity\ContractFollowUp;
+use Application\Entity\CourseScheduled;
+use Application\Entity\TeacherPaymentBill;
 
 class SubjectController extends AbstractRestfulController
 {
@@ -165,18 +172,22 @@ class SubjectController extends AbstractRestfulController
         {
            $subject = $this->entityManager->getRepository(Subject::class)->find($data["subject_id"]);
            $semester = $this->entityManager->getRepository(Semester::class)->find($data["smester_id"]);
-           $ueClasse = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester]);
+           $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$subject,"semester"=>$semester]);
 
-            if($ueClasse )
+            if($coshs)
             {
-              
-                $this->entityManager->remove($ueClasse );
+                $msge = $this->deleteSubject($subject,$coshs); 
+                
+                if($msge != "DONE") return new JsonModel([ $msge   ]);              
+                $this->entityManager->remove($coshs);
                 
                 $this->entityManager->flush();
                 $this->entityManager->getConnection()->commit();
+                return new JsonModel([ "DONE"  ]);
                 
             }
-
+            
+        
 
         }
         catch(Exception $e)
@@ -225,4 +236,58 @@ class SubjectController extends AbstractRestfulController
 
         }
     }
+    
+private function deleteSubject($subject1,$coshs1)
+    {
+        $subject = $this->entityManager->getRepository(Subject::class)->find($subject1->getId());
+        $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($coshs1->getId());
+
+        $subjects = $this->entityManager->getRepository(UnitRegistration::class)->findBy(["subject"=>$subject,"semester"=>$coshs->getSemester()]); 
+        if (sizeof($subjects)>0) return "REGISTERED_STUDENT_ERROR";
+
+        foreach($subjects as $sub)
+            $this->entityManager->remove($sub);
+
+        //Delete all exam done
+        
+        $exams = $this->entityManager->getRepository(Exam::class)->findBy(["classOfStudyHasSemester"=>$coshs,"status"=>1]); 
+        if (sizeof($exams)>0) return "EXAMS_EXISTS_ERROR";
+        $exams = $this->entityManager->getRepository(Exam::class)->findBy(["classOfStudyHasSemester"=>$coshs]); 
+        foreach($exams as $exam)
+        {   
+            $examRegistrations = $this->entityManager->getRepository(ExamRegistration::class)->findBy(["exam"=>$exam]);
+            foreach($examRegistrations as $examR)
+                $this->entityManager->remove($examR);
+
+            $this->entityManager->remove($exam);
+        }
+
+        $contracts = $this->entityManager->getRepository(Contract::class)->findBy(["subject"=>$subject,"semester"=>$coshs->getSemester()]);
+        if (sizeof($contracts)>0) return "CONTRACTS_EXIST_ERROR";
+        foreach($contracts as $con)
+        {
+            $paymentBill = $this->entityManager->getRepository(TeacherPaymentBill::class)->findBy(["contract"=>$con]);
+            if(sizeof($paymentBill)>0) return "BILL_EXIST_ERROR";
+            
+            $contractsFwUp = $this->entityManager->getRepository(ContractFollowUp::class)->findBy(["contract"=>$con]);
+            if(sizeof($contractsFwUp)>0) return "PROGRESSION_EXIST_ERROR";
+            foreach($contractsFwUp as $confwp)
+            {
+                $courseScheduled = $this->entityManager->getRepository(CourseScheduled::class)->findBy(["contractFollowUp"=>$confwp]);
+                foreach($courseScheduled as $course)
+                    $this->entityManager->remove($course);
+
+                $this->entityManager->remove($confwp);
+            }
+
+
+            $this->entityManager->remove($con);
+            
+        }                                    
+
+            
+                             
+            
+        return "DONE";                   
+    }    
 }

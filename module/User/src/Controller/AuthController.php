@@ -9,6 +9,7 @@ use Laminas\Uri\Uri;
 use User\Form\LoginForm;
 use Laminas\Permissions\Rbac\Rbac;
 use Application\Entity\User;
+use Application\Entity\AcademicYear;
 
 
 
@@ -120,7 +121,7 @@ class AuthController extends AbstractActionController
                                                 $this->sessionContainer->userName = $user->getNom();
                                                 $this->sessionContainer->userEmail = $user->getEmail();
                                                 $this->sessionContainer->userId = $user->getId();
-
+                                                $this->sessionContainer->currentAcadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
                                                 						
 						if (!empty($redirectUrl)) {
 							// The below check is to prevent possible redirect attack 

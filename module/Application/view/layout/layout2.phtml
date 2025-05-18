@@ -170,7 +170,7 @@
   <script src="js/app/components/version/interpolate-filter.js"></script>
 
     </head>
-<body ng-app="myApp" ng-controller="testCtrl as mainController"ng-cloak >
+<body ng-app="myApp" ng-controller="testCtrl as $ctrl" ng-init="$ctrl.init1()" ng-cloak >
     <div style="height: 3px; position: relative;background-color: red;">
         
     </div>
@@ -191,8 +191,8 @@
 
             <ul class="nav navbar-top-links navbar-right">
 
-                <li><ul style="font-family: 'Oswald', sans-serif;  font-size: 40px;"> {{mainController.date | date:"HH:mm:ss" }}</ul></li>
-                <li><ul style="font-family: 'Oswald', sans-serif;">{{mainController.date | date:"EEEE dd.MM.yyyy" }}</ul></li><!-- comment -->
+                <li><ul style="font-family: 'Oswald', sans-serif;  font-size: 40px;"> {{$ctrl.date | date:"HH:mm:ss" }}</ul></li>
+                <li><ul style="font-family: 'Oswald', sans-serif;">{{$ctrl.date | date:"EEEE dd.MM.yyyy" }}</ul></li><!-- comment -->
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -407,13 +407,34 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li class="sidebar-search">
-                            <div class="input-group custom-search-form">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </span>
+                            <div class="input-group custom-search-form" >
+                                <md-autocomplete  md-search-text="$ctrl.academicYear" 
+                                                 md-selected-item="$ctrl.selectedAcadYr"  
+                                                 md-items="acadYrItem in $ctrl.queryAcademicYear($ctrl.academicYear)" 
+                                                 md-item-text="acadYrItem.code" 
+                                                 md-min-length="0"
+
+                                                 md-selected-item-change="$ctrl.selectedYearChange(acadYrItem)"
+                                                 md-input-name="academicYear"
+
+                                                 required 
+
+                                                md-escape-options="clear"
+                                                md-require-match=""
+                                                md-floating-label="Année académique"
+                                                input-aria-describedby="academicYear"                                 
+                                                 >
+                                    <md-item-template>
+                                      <span md-highlight-text="$ctrl.academicYear" md-highlight-flags="^i">{{acadYrItem.code}}</span>
+
+                                    </md-item-template>
+                                    <md-not-found>
+                                      Aucun élément correspondant à "{{$ctrl.academicYear}}" n'a été trouvé.
+
+                                    </md-not-found>
+                                </md-autocomplete>                                
+
+                            
                             </div>
                             <!-- /input-group -->
                         </li>

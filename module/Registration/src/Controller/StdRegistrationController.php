@@ -15,7 +15,7 @@ use Violet\StreamingJsonEncoder\StreamJsonEncoder;
 use Violet\StreamingJsonEncoder\BufferJsonEncoder;
 
 use Application\Entity\RegisteredStudentView;
-use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\User;
 use Application\Entity\UserManagesClassOfStudy;
 use Application\Entity\Student;
@@ -49,8 +49,11 @@ class StdRegistrationController extends AbstractRestfulController
                 $data["motherPhoneNumber"] = trim($data['fatherPhoneNumber']);
                 $data["sponsorPhoneNumber"] = trim($data['sponsorPhoneNumber']);
                 
+                $currentAcadYr = $this->sessionContainer->currentAcadYr;
+                $student = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findOneBy(["acadYrId"=>$currentAcadYr->getId(),"matricule"=>$id]);                
                 
-                $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($id);
+                
+                
             
                 $hydrator = new ReflectionHydrator();
                 $student = $hydrator->extract($student);

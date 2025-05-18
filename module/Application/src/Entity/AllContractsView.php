@@ -20,6 +20,13 @@ class AllContractsView
     * @ORM\GeneratedValue(strategy="IDENTITY")
     */
     private $id;
+    
+    /**
+    * @var integer
+    *
+    * @ORM\Column(name="AcadYrId", type="integer", nullable=false)
+    */
+    private $acadYrId;    
    
     /**
     * @var integer

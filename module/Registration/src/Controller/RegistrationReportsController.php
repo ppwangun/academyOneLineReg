@@ -24,12 +24,15 @@ class RegistrationReportsController extends AbstractActionController
     private $entityManager;
     private $studentManager;
     private $sessionContainer;
-    
+    private $crtAcadYr;
+            
     public  function __construct($entityManager,$studentManager,$sessionContainer)
     {
         $this->entityManager = $entityManager;
         $this->studentManager = $studentManager;
         $this->sessionContainer = $sessionContainer;
+        
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
  
     }
     
@@ -66,12 +69,12 @@ class RegistrationReportsController extends AbstractActionController
         {  
 
             $classe_code= $this->params()->fromRoute('classe_code', -1); 
-            $stdId = $this->params()->fromRoute('stdId', -1);
-            $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+            $stdId = $this->params()->fromRoute('stdId', -1);            
+            $acadYr =  $this->crtAcadYr;
             $acadCode = $acadYr->getCode();
             //Retrieve all student registered to the given classe
-            if($stdId==-1 || $stdId==0 ) $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("class"=>$classe_code,"status"=>1));
-            else $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("studentId"=>$stdId,"status"=>1));
+            if($stdId==-1 || $stdId==0 ) $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"acadYrId"=>$acadYr->getId(),"status"=>1));
+            else $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("studentId"=>$stdId,"acadYrId"=>$acadYr->getId(),"status"=>1));
             
 
         
@@ -86,6 +89,7 @@ class RegistrationReportsController extends AbstractActionController
             {
                 $student = $this->entityManager->getRepository(Student::class)->findOneByMatricule($value->getMatricule());
                 $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("academicYear"=>$acadYr,"student"=>$student,"classOfStudy"=>$classe_1));
+               
                 $numRef = $adminRegistration->getSchoolCertificateReferenceId();
                 
                 if($adminRegistration->getSchoolCertificateAvailabilityStatus() ==0 && $adminRegistration->getStatus()==1)
@@ -147,7 +151,7 @@ class RegistrationReportsController extends AbstractActionController
 
 
             $this->entityManager->getConnection()->commit();
-           
+            
 
             $view = new ViewModel([
                 'students'=>$students,

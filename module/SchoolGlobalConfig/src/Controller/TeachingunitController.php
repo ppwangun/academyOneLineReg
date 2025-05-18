@@ -24,9 +24,10 @@ class TeachingunitController extends AbstractRestfulController
 {
     private $entityManager;
     
-    public function __construct($entityManager) {
+    public function __construct($entityManager,$sessionContainer) {
         
-        $this->entityManager = $entityManager;   
+        $this->entityManager = $entityManager; 
+        $this->sessionContainer = $sessionContainer;
     }
     
     
@@ -37,6 +38,7 @@ class TeachingunitController extends AbstractRestfulController
         //Convert $id paramater into array or scalar
         //id is either a saclar (specific teaching unit ID or array havind classe_id and sem_id
         $id = json_decode($id,true);
+        $acadYrId = $this->sessionContainer->currentAcadYr->getId();
                 
         if(is_scalar($id))
         {
@@ -47,9 +49,10 @@ class TeachingunitController extends AbstractRestfulController
                     . 'JOIN c.teachingUnit t '
                     . 'JOIN c.semester s '
                     . 'JOIN s.academicYear a '
-                    . 'WHERE t.id = ?1 AND c.status = 1 AND a.isDefault =1'
+                    . 'WHERE t.id = ?1 AND c.status = 1 AND a.id = ?2'
                     );  
             $query->setParameter(1, $id);
+            $query->setParameter(2, $acadYrId);
             $ue = $query->getResult()[0];
 
                // $ue['name']= utf8_encode($ue['name']);

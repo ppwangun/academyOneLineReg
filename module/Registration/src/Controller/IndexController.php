@@ -13,6 +13,7 @@ use Laminas\View\Model\JsonModel;
 use Application\Entity\Student;
 use Application\Entity\RegisteredStudentView;
 use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\UnitRegistration;
 use Application\Entity\AdminRegistration;
 use Application\Entity\AcademicYear;
@@ -48,11 +49,14 @@ class IndexController extends AbstractActionController
     private $studentManager;
     private $sessionContainer;
     private $examManager;
+    private $crtAcadYr;
     public function __construct($entityManager,$studentManager,$sessionContainer,$examManager) {
         $this->entityManager = $entityManager;
         $this->studentManager = $studentManager;
         $this->sessionContainer = $sessionContainer;
         $this->examManager = $examManager;
+        
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
 
     public function indexAction()
@@ -225,31 +229,80 @@ class IndexController extends AbstractActionController
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-
+          
             $data = $this->params()->fromQuery();  
             if(!isset($data['acadYrId']))
             {
-                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+                $acadYr = $this->crtAcadYr;
                 $data['acadYrId'] = $acadYr->getId();
             }else $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
-            if(!isset($data['classeId'])) $data['classeId'] = "%";
-            $conn = $this->entityManager->getConnection();
-            $sql = '
-                SELECT s.id,s.matricule,s.nom,s.prenom,c.code
-                FROM student s
-                INNER JOIN admin_registration a
-                INNER JOIN class_of_study c
-                ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
-                WHERE a.academic_year_id = :acadYrId 
-                AND s.matricule like :matricule
-                AND a.class_of_study_id like :classeId
-                AND a.status=1;
-                ';
+            if(!isset($data['classeId'])) $data['classeId'] = -1;
+            
+            
+            $userId = $this->sessionContainer->userId; 
+            $user = $this->entityManager->getRepository(User::class)->find($userId ); 
+            
+            $classes = trim($data['classeId']);
+            
+            if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
+            {  
+                    $classes ="(".$classes.")";
+                    $conn = $this->entityManager->getConnection();
+                    $sql = '
+                        SELECT s.id,s.matricule,s.nom,s.prenom,c.code
+                        FROM student s
+                        INNER JOIN admin_registration a
+                        INNER JOIN class_of_study c
+                        ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
+                        WHERE a.academic_year_id = :acadYrId 
+                        AND s.matricule like :matricule
+                        AND a.class_of_study_id IN '.$classes.'
+                        AND a.status=1;
+                        ';
 
-            $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
-                                 'classeId' => trim($data['classeId']),
-                                 'matricule' => "%".trim($data['matricule'])."%"));
-            $results = $stmt->fetchAllAssociative();
+                    $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
+                                        'classeId' => trim($data['classeId']),
+                                         'matricule' => "%".trim($data['matricule'])."%"));
+                    $results = $stmt->fetchAllAssociative();
+            }
+            else{            
+               $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));  
+                if($userClasses)
+                {
+                    $count =0;
+                    while($count<sizeof($userClasses)-1)
+                    {
+                        if($count==0)
+                        {
+                            $classes .= ",";
+                            $classes.=$userClasses[$count]->getClassOfStudy()->getId().",";
+                        
+                        }
+                            $classes.=$userClasses[$count]->getClassOfStudy()->getId().",";
+                            $count++;
+                    }
+                    $classes.=$userClasses[$count]->getClassOfStudy()->getId();
+                }
+                $classes ="(".$classes.")";
+            
+
+                    $conn = $this->entityManager->getConnection();
+                    $sql = '
+                        SELECT s.id,s.matricule,s.nom,s.prenom,c.code
+                        FROM student s
+                        INNER JOIN admin_registration a
+                        INNER JOIN class_of_study c
+                        ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
+                        WHERE a.academic_year_id = :acadYrId 
+                        AND s.matricule like :matricule
+                        AND a.class_of_study_id IN '.$classes.'
+                        AND a.status=1;
+                        ';
+
+                    $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
+                                         'matricule' => "%".trim($data['matricule'])."%"));
+                    $results = $stmt->fetchAllAssociative();
+            }
             
         return new JsonModel([
                 $results
@@ -362,7 +415,7 @@ class IndexController extends AbstractActionController
                 $data["motherPhoneNumber"] = trim($data['fatherPhoneNumber']);
                 $data["sponsorPhoneNumber"] = trim($data['sponsorPhoneNumber']);
                 
-                $activeAcadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+                $activeAcadYr = $this->crtAcadYrId;
                 $student = $this->entityManager->getRepository(RegisteredStudentView::class)->find($dataString["id"]);
             
                 $hydrator = new ReflectionHydrator();
@@ -416,14 +469,14 @@ class IndexController extends AbstractActionController
         {  
             $datastring = $this->params()->fromQuery(); 
             
-            $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("class"=>$datastring['classe']));
+            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$datastring['classe'],"acadYrId"=>$this->crtAcadYr->getId()));
            ;
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
             $sem = $this->entityManager->getRepository(Semester::class)->findOneById($datastring["sem"]);
-            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+            $acadYr = $this->crtAcadYr;
             
             //Total credit at the semester of the cycle
-            $totalCredits = $this->totalCreditsPerCycle($classe->getCode(),$sem); 
+            $totalCredits = $this->totalCreditsPerCycle($classe->getCode(),$sem,$acadYr); 
         
             $studyLevel = $classe->getStudyLevel();
             $sem_rank = $sem->getRanking();
@@ -438,13 +491,14 @@ class IndexController extends AbstractActionController
                 $std = $this->entityManager->getRepository(Student::class)->find($value->getStudentId());
 
                 //All courses of the class
-                 $currentYrCourses = $this->findCourses($classe->getStudyLevel(),$classe->getDegree()->getCode());
+                 $currentYrCourses = $this->findCourses($classe->getStudyLevel(),$classe->getDegree()->getCode(),$acadYr);
                 $registeredStd[$key] = $data;
                 $student[$j]["matricule"]= $value->getMatricule();
                 $total_credits_sem = 0;
                 $nbre_credits = 0;
                 $nbre_points = 0;
                 $total_credits_classe = 0;
+                 $total_credits_cycle = 0;
                 $mps = 0;
                 //total credits validés par cycle
                 $total_credits_valides_cycle = 0;
@@ -459,7 +513,7 @@ class IndexController extends AbstractActionController
                     $sem_1 = $this->entityManager->getRepository(Semester::class)->find($course->getSemId());
                     $teachingUnit = $this->entityManager->getRepository(TeachingUnit::class)->find($course->getTeachingUnitId()); 
                     //check if the student is register to the course
-                    if($sem->getRanking()%2==$course->getSemRanking()%2&&$this->checkIscurrentYearSem($course->getSemId()))
+                    if($sem->getRanking()%2==$course->getSemRanking()%2&&$this->checkIscurrentYearSem($course->getSemId(),$acadYr))
                         $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$std,"teachingUnit"=>$teachingUnit,"subject"=>[null," "],"semester"=>$sem_1),array("noteFinal"=>"DESC"));
                     else continue;
                     //return student grade if student is registered to the course or NULL ortherwise
@@ -469,7 +523,7 @@ class IndexController extends AbstractActionController
                     { 
                          
                         //number of credit registered to the cycle
-                        
+                     
                         $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($course->getClasse());
                         $unitRegistrationDetails = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(array("classOfStudy"=>$classe,"teachingUnit"=>$teachingUnit,"semester"=>$sem_1,"status"=>1));
                         $unitRegistrationDetails?$nbre_credits = $unitRegistrationDetails->getCredits():0;
@@ -488,7 +542,7 @@ class IndexController extends AbstractActionController
                             $total_credits_valides_sem += $nbre_credits ;
                         }
                         //compute the number of credits student has register to the classe
-                        if($this->checkIsCurrentClassSubject($datastring["classe"],$sem->getCode(),$course->getId()))
+                        if($this->checkIsCurrentClassSubject($datastring["classe"],$sem->getCode(),$course->getId(),$acadYr))
                         {
                             $student[$j][$course->getCodeUe()] = $unitRegistration->getGrade();
                             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
@@ -503,7 +557,7 @@ class IndexController extends AbstractActionController
                     else
                     {
                         
-                        ($this->checkIsCurrentClassSubject($datastring["classe"],$sem->getCode(),$course->getId()))?$student[$j][$course->getCodeUe()]=NULL:"";
+                        ($this->checkIsCurrentClassSubject($datastring["classe"],$sem->getCode(),$course->getId(),$acadYr))?$student[$j][$course->getCodeUe()]=NULL:"";
                     }
  
                     
@@ -539,11 +593,11 @@ class IndexController extends AbstractActionController
                         
                     $sem_rank_mpc = $studentsSemRegistration->getCountingSemRegistration();
                     
-                                        
-                    $creditRegisteredCycle = $studentsSemRegistration->getTotalCreditRegisteredPreviousCycle()+$total_credits_sem-$this->getStudentBacklogsMarks($std, $sem, $classe);
+                                     
+                    $creditRegisteredCycle = $studentsSemRegistration->getTotalCreditRegisteredPreviousCycle()+$total_credits_sem-$this->getStudentBacklogsMarks($std, $sem, $classe,$acadYr);
                     
                     $totalCreditsCycle = $studentsSemRegistration->getTotalCreditsCyclePreviousYear();
-                    $totalCreditsCycle+=$this->totalCreditPerSem($classe_1->getCode(),$sem->getCode());
+                    $totalCreditsCycle+=$this->totalCreditPerSem($classe_1->getCode(),$sem->getCode(),$acadYr);
                     
                     if($value->getIsStudentRepeating()==1)
                     {
@@ -561,11 +615,16 @@ class IndexController extends AbstractActionController
                     //Get the semester rank
                     
                     //$total_credits_cycle = $this->computeSemRanking($sem_rank)*30;
-                    //$total_credits_cycle = $totalCreditsCycle; 
+                    //
+                    $total_credits_cycle = $totalCreditsCycle; 
                     
                     
-                    if($creditRegisteredCycle==0) $creditRegisteredCycle=1;
-                    $total_credits_cycle = $creditRegisteredCycle;
+                   
+
+                    
+                    if($sem_rank_mpc==0) return new JsonModel([
+                        "ERROR_DIVISION_PAR_0_SEM_RANK"
+                            ]);
                     
                     $mpc = ($studentsSemRegistration->getMpcPrevious()*($sem_rank_mpc-1)+$mps)/$sem_rank_mpc;
                     if(($datastring["classe"]=="MED7")&&($sem->getRanking()==13))
@@ -579,9 +638,10 @@ class IndexController extends AbstractActionController
                     $studentsSemRegistration->setMpcCurrentSem($mpc);
                     $studentsSemRegistration->setAcademicProfile($this->computeMention($mpc));
                     $studentsSemRegistration->setNbCreditsCapitalizedCurrentSem($total_credits_valides_sem);
-                    
-                    $studentsSemRegistration->setValidationPercentage(round(($total_credits_valides_cycle/$creditRegisteredCycle)*100,1, PHP_ROUND_HALF_UP));
-                    
+                    if($creditRegisteredCycle==0)
+                        $studentsSemRegistration->setValidationPercentage(0);
+                    else
+                        $studentsSemRegistration->setValidationPercentage(round(($total_credits_valides_cycle/$creditRegisteredCycle)*100,1, PHP_ROUND_HALF_UP));
                     //After calculating MPC, get it register to the next sem 
                     $year = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
                     //This block of instructions is executed only for the 1rst semster of a year
@@ -590,7 +650,7 @@ class IndexController extends AbstractActionController
                         
  
                     
-                        $nextSem = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$year,"ranking"=>$sem_rank+1));
+                        $nextSem = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$acadYr,"ranking"=>$sem_rank+1));
                         $studentsNextSemRegistration = $this->entityManager->getRepository(StudentSemRegistration::class)->findOneBy(array("student"=>$std,"semester"=>$nextSem));
                         //check if student is registered to the next sem before recording value
                         $sem_rank_mpc++;
@@ -606,7 +666,7 @@ class IndexController extends AbstractActionController
                             $studentsNextSemRegistration->setTotalCreditsCyclePreviousYear($total_credits_cycle);                        
                             $studentsNextSemRegistration->setCountingSemRegistration($sem_rank_mpc);
                             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
-                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe));
+                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe,$acadYr));
                             $this->entityManager->flush();                             
                         }else{ 
                             $studentsNextSemRegistration = new StudentSemRegistration();
@@ -620,7 +680,7 @@ class IndexController extends AbstractActionController
                             $studentsNextSemRegistration->setTotalCreditsCyclePreviousYear($total_credits_cycle);
                             $studentsNextSemRegistration->setCountingSemRegistration($sem_rank_mpc);
                             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
-                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe));
+                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe,$acadYr));
                             
                             $this->entityManager->persist($studentsNextSemRegistration);
 
@@ -634,14 +694,16 @@ class IndexController extends AbstractActionController
                     {
 
                         //$ratio = $this->totalCreditsSucceed($std, $classe)/$this->totalCreditsPerYear($classe);
-                        $ratio = $total_credits_valides_cycle/$total_credits_cycle;
+                        if($total_credits_cycle == 0) $ratio = 0;
+                        else $ratio = $total_credits_valides_cycle/$total_credits_cycle;
                         
                         if($value->getIsStudentRepeating()==1)
                         {
-                            $ratioFailed = $this->totalCreditsFailed($std,$classe)/$this->totalCreditsPerYear($classe) ;
-                            $ratio = ($this->totalCreditsPerYear($classe)-$this->totalCreditsFailed($std,$classe))/$this->totalCreditsPerYear($classe);
-                        } 
-                        $ratio = $total_credits_valides_cycle/$total_credits_cycle;
+                            $ratioFailed = $this->totalCreditsFailed($std,$classe,$acadYr)/$this->totalCreditsPerYear($classe,$acadYr) ;
+                            $ratio = ($this->totalCreditsPerYear($classe,$acadYr)-$this->totalCreditsFailed($std,$classe,$acadYr))/$this->totalCreditsPerYear($classe,$acadYr);
+                        }
+                        if($total_credits_cycle == 0) $ratio = 0;
+                        else $ratio = $total_credits_valides_cycle/$total_credits_cycle;
                         $stdAdminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$acadYr));
                      
                         $stdAdminRegistration->setDecision("ADM");
@@ -839,10 +901,10 @@ class IndexController extends AbstractActionController
                     $row["repeating"] = $sheetData[$i][6];
                     $row["count_sem_registration"] = $sheetData[$i][7];
                     
-            $this->studentManager->stdAdminRegistration($row,$status,$row["repeating"]);
+            $this->studentManager->stdAdminRegistration($row,$status,$row["repeating"],$this->crtAcadYr);
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($row["matricule"]);
             if($std)
-                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"]);            
+                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"],$this->crtAcadYr);            
                 }
             }
             
@@ -925,7 +987,7 @@ class IndexController extends AbstractActionController
             
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($row["matricule"]);
             if($std)
-                $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"]);
+                $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"],$this->crtAcadYr);
 
         }
         
@@ -1003,7 +1065,7 @@ class IndexController extends AbstractActionController
         $status = 0;
         foreach ($reader as $row) {
 
-            $this->studentManager->updateStdFinancialInfos($row);
+            $this->studentManager->updateStdFinancialInfos($row,$this->crtAcadYr);
        
         }
         
@@ -1079,7 +1141,7 @@ class IndexController extends AbstractActionController
                     $row["type_concours"] = $sheetData[$i][6];
                    
 
-                    $this->studentManager->addAdmittedStudent($row);
+                    $this->studentManager->addAdmittedStudent($row,$this->crtAcadYr);
 
                 }
             }
@@ -1188,9 +1250,9 @@ class IndexController extends AbstractActionController
                    
                     $std = $this->studentManager->addStudent($row);
                     $status = 1;
-                    $this->studentManager->stdAdminRegistration($row,$status,0);
-                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std);
-                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
+                    $this->studentManager->stdAdminRegistration($row,$status,0,$this->crtAcadYr);
+                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std);                    
+                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,$this->crtAcadYr);
                     
                     $this->entityManager->flush();
                     
@@ -1307,7 +1369,7 @@ class IndexController extends AbstractActionController
            
            // Retrieve form data from POST variables
 	  $data = $this->params()->fromRoute();
-          $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("onlineRegistrationDefaultYear"=>1));
+          $acadYr =  $this->crtAcadYr;
           $classOfStudy = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classeCode"]);
           $degree = $classOfStudy->getDegree();
           $fieldOfStudy= $degree->getFieldStudy();
@@ -1316,7 +1378,7 @@ class IndexController extends AbstractActionController
           $school = $faculty->getSchool();
           $classe = $data["classeCode"];
          
-          $students = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findBy(array("class"=>$data["classeCode"],"status"=>1),array("nom"=>"ASC"));
+          $students = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$data["classeCode"],"acadYrId"=>$acadYr->getId(),"status"=>1));
                 foreach($students as $key=>$value)
                 {
                     $hydrator = new ReflectionHydrator();
@@ -1362,10 +1424,10 @@ class IndexController extends AbstractActionController
            
            // Retrieve form data from POST variables
 
-          $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+          $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->find($this->crtAcadYr->getId());
           $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($acadYr);
         
-          $students = $this->entityManager->getRepository(RegisteredStudentView::class)->findAll();
+          $students = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findAll(["acadYrId"=>$this->crtAcadYr->getId()]);
                 foreach($students as $key=>$value)
                 {
                     foreach($semesters as $sem)
@@ -1523,7 +1585,7 @@ class IndexController extends AbstractActionController
           //start writting from the 2nd row
           $i=2;
 
-          $students = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findByStatus(1);
+          $students = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(["acadYrId"=>$this->crtAcadYr->getId()]);
           foreach($students as $std)
           {
              $sheet->setCellValue([1, $i], $std->getMatricule());
@@ -1890,31 +1952,31 @@ class IndexController extends AbstractActionController
 
     }     
     
-    private function findCourses($studyLevel,$degreeCode)
+    private function findCourses($studyLevel,$degreeCode,$acadYr)
     {
         return $this->entityManager->createQuery('SELECT e FROM Application\Entity\CurrentYearTeachingUnitView e'
-                .' WHERE e.studyLevel <= :studyLevel')
+                .' WHERE e.studyLevel <= :studyLevel AND e.acadYrId = :acadYrId')
                 //        .' WHERE e.studyLevel <= :studyLevel and e.degreeCode like :degreeCode')
                 ->setParameter('studyLevel', $studyLevel)
-               // ->setParameter('degreeCode', $degreeCode)
+                ->setParameter('acadYrId', $acadYr->getId())
 
                 ->getResult();
     }
     
     //this function takes as paramter class and course and returns truve if the subject belongs to the class
-    private function checkIsCurrentClassSubject($classe,$sem,$courseID)
+    private function checkIsCurrentClassSubject($classe,$sem,$courseID,$acadYr)
     {
           
         return $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)
-                ->findOneBy(array("classe"=>$classe,"semester"=>$sem,"id"=>$courseID));
+                ->findOneBy(array("classe"=>$classe,"semester"=>$sem,"id"=>$courseID,"acadYrId"=>$acadYr->getId()));
 
        
         
     }
-    private function checkIscurrentYearSem($sem)
+    private function checkIscurrentYearSem($sem,$acadYr)
     {
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)
-                ->findOneByIsDefault(1);
+       // $acadYr = $this->entityManager->getRepository(AcademicYear::class)
+        //        ->findOneByIsDefault(1);
         return $this->entityManager->getRepository(Semester::class)
                 ->findOneBy(array("academicYear"=>$acadYr,"id"=>$sem));
     }
@@ -1941,10 +2003,10 @@ class IndexController extends AbstractActionController
         
     } 
     
-    private function totalCreditPerSem($classe,$sem)
+    private function totalCreditPerSem($classe,$sem,$acadYr)
     {
         
-        $courses = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(array("classe"=>$classe,"semester"=>$sem,"isPreviousYearSubject"=>0));
+        $courses = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(array("classe"=>$classe,"semester"=>$sem,"acadYrId"=>$acadYr->getId(),"isPreviousYearSubject"=>0));
         $credits=0;
         foreach($courses as $course)
         {
@@ -1954,13 +2016,13 @@ class IndexController extends AbstractActionController
         return $credits;
     }
     
-    private function totalCreditsPerCycle($classe,$sem)
+    private function totalCreditsPerCycle($classe,$sem,$acadYr)
     {
         $sem_rank = $sem->getRanking();
         $credits = 0;
         //$credits = $this->totalCreditPerSem($classe, $sem->getCode());
         $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneBy(array("code"=>$classe));
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $studyLevel = $classe->getStudyLevel(); 
         
         $degree = $classe->getDegree();
@@ -1977,7 +2039,7 @@ class IndexController extends AbstractActionController
             foreach($semesters as $sem)
             {
                if($sem->getSemester()->getRanking()<=$sem_rank)
-                $credits += $this->totalCreditPerSem($classe->getCode(), $sem->getSemester()->getCode());
+                $credits += $this->totalCreditPerSem($classe->getCode(), $sem->getSemester()->getCode(),$acadYr);
                 
             }
  
@@ -1987,13 +2049,13 @@ class IndexController extends AbstractActionController
     }
     
     //Total credit for the current class. All semesters are included
-    private function totalCreditsPerYear($classe)
+    private function totalCreditsPerYear($classe,$acadYr)
     {
 
         $credits = 0;
         //$credits = $this->totalCreditPerSem($classe, $sem->getCode());
         
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $studyLevel = $classe->getStudyLevel(); 
 
         $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr)); 
@@ -2001,7 +2063,7 @@ class IndexController extends AbstractActionController
         foreach($semesters as $sem)
         {
  
-            $credits += $this->totalCreditPerSem($classe->getCode(), $sem->getSemester()->getCode());
+            $credits += $this->totalCreditPerSem($classe->getCode(), $sem->getSemester()->getCode(),$acadYr);
 
         }
 
@@ -2011,12 +2073,12 @@ class IndexController extends AbstractActionController
     } 
 
     //Calculates the total credits failed in the current class
-    private function totalCreditsRegisteredCurrentClass($std,$classe)
+    private function totalCreditsRegisteredCurrentClass($std,$classe,$acadYr)
     {
         $totalCredits = 0;
 
        
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+       // $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr)); 
         foreach($semesters as $sem)
         {         
@@ -2036,12 +2098,12 @@ class IndexController extends AbstractActionController
     }    
 
     //Calculates the total credits failed in the current class
-    private function totalCreditsSucceed($std,$classe)
+    private function totalCreditsSucceed($std,$classe,$acadYr)
     {
         $totalCredits = 0;
 
        
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr)); 
         foreach($semesters as $sem)
         {         

@@ -26,6 +26,7 @@ use Application\Entity\ClassOfStudy;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\SemesterAssociatedToClass;
 use Application\Entity\SubjectRegistrationView;
+use Application\Entity\AllYearsSubjectRegistrationView;
 use Application\Entity\CurrentYearUeExamsView;
 use Application\Entity\CurrentYearOnlyUeExamsView;
 use Application\Entity\CurrentYearSubjectExamsView;
@@ -49,10 +50,12 @@ class IndexController extends AbstractActionController
     private $entityManager;
     private $examManager;
     private $sessionContainer;
+    private $crtAdadYr;
     public function __construct($entityManager,$examManager,$sessionContainer) {
         $this->entityManager = $entityManager;
         $this->examManager = $examManager;
         $this->sessionContainer = $sessionContainer;
+        $this->crtAdadYr = $sessionContainer->currentAcadYr;
     }
 
     public function indexAction()
@@ -189,12 +192,12 @@ class IndexController extends AbstractActionController
 
 
 
-                  $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$data["ueID"],"classe"=>$class->getCode(),"status"=>1));
-                  $subjects = $this->examManager->getSubjectFromUe($data["ueID"],$data["semID"],$data["classeID"]);
+                  $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$data["ueID"],"classe"=>$class->getCode(),"status"=>1,"acadYrId"=>$this->crtAdadYr->getId()));
+                  $subjects = $this->examManager->getSubjectFromUe($data["ueID"],$data["semID"],$data["classeID"],$this->crtAdadYr);
 
                   foreach($subjects as $sub)
                   {
-                      $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"classe"=>$class->getCode(),"status"=>1));
+                      $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"classe"=>$class->getCode(),"status"=>1,"acadYrId"=>$this->crtAdadYr->getId()));
                       $ueExams = array_merge($ueExams,$subjectExams);
 
                   }
@@ -238,7 +241,7 @@ class IndexController extends AbstractActionController
 
          $this->entityManager->flush();
          $this->entityManager->getConnection()->commit();
-           $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueID"],"idSubject"=>$subjectID),array("nom"=>"ASC")); 
+           $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueID"],"idSubject"=>$subjectID,"acadYrId"=>$this->crtAdadYr->getId()),array("nom"=>"ASC")); 
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
             foreach($std as $key=>$value)

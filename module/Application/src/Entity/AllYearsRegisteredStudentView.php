@@ -32,7 +32,7 @@ class AllYearsRegisteredStudentView
     *
     * @ORM\Column(name="year_id", type="integer", nullable=false)
     */
-    private $yearID;    
+    private $acadYrId;    
     
     /**
     * @var integer
@@ -88,6 +88,8 @@ class AllYearsRegisteredStudentView
     * @ORM\Column(name="date_naissance", type="datetime", nullable=true)
     */
     private $dateNaissance;
+    
+    
     
     /**
     * @var string
@@ -236,7 +238,7 @@ class AllYearsRegisteredStudentView
      * @return integer
      */
     
-     /**
+         /**
      * Get id
      *
      * @return integer
@@ -256,6 +258,20 @@ class AllYearsRegisteredStudentView
         return $this->matricule;
     }
     
+    /**
+     * Set matricule
+     *
+     * @param string $matricule
+     *
+     * @return Student
+     */
+    public function setMatricule($matricule)
+    {
+        $this->matricule = $matricule;
+
+        return $this;
+    }    
+    
       /**
      * Get nom
      *
@@ -265,6 +281,20 @@ class AllYearsRegisteredStudentView
     {
         return $this->nom;
     }
+    
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     *
+     * @return Student
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }    
     
      /**
      * Get prenom
@@ -294,8 +324,35 @@ class AllYearsRegisteredStudentView
     public function getClass()
     {
         return $this->class;
-    } 
+    }
     
+    /**
+     * Set class
+     *
+     * @param string $matricule
+     *
+     * @return Student
+     */
+    public function setClass($class)
+    {
+        $this->class = $class;
+
+        return $this;
+    }    
+    
+    /**
+     * Set class
+     *
+     * @param string $status
+     *
+     * @return Student
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }    
      /**
      * Get dateInscription
      *
@@ -521,6 +578,6 @@ class AllYearsRegisteredStudentView
     public function getIsStudentRepeating()
     {
         return $this->isStudentRepeating;
-    }    
+    }
 }
 

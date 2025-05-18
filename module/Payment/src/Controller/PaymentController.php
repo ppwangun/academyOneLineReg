@@ -15,6 +15,8 @@ use Payment\Service\PaymentManager;
 
 use Application\Entity\RegisteredStudentView;
 use Application\Entity\RegisteredPaymentView;
+use Application\Entity\AllYearsRegisteredPaymentsView;
+use Application\Entity\AllYearsRegisteredStudentView;
 use Application\Entity\Payment;
 use Application\Entity\AdminRegistration;
 use Application\Entity\User;
@@ -27,12 +29,14 @@ class PaymentController extends AbstractRestfulController
     private $entityManager;
     private $paymentManager;
     private $sessionContainer;
+    private $crtAcadYr ;
     
     public function __construct($entityManager,$paymentManager,$sessionContainer) {
         
         $this->entityManager = $entityManager; 
         $this->paymentManager = $paymentManager;
         $this->sessionContainer = $sessionContainer;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
     public function get($id) {
@@ -40,7 +44,7 @@ class PaymentController extends AbstractRestfulController
         try
         {   
             //Find student based on Matricule
-            $registeredStd = $this->entityManager->getRepository(RegisteredPaymentView::class)->find($id);
+            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredPaymentsView::class)->findOneBy(["id"=>$id,"acadYrId"=>$this->crtAcadYr->getId()]);
             $data = $registeredStd;
             
             //Calculate actual payments
@@ -87,11 +91,11 @@ class PaymentController extends AbstractRestfulController
     {
        $this->entityManager->getConnection()->beginTransaction();
         try
-        {      
+        {   
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-                   $registeredStd = $this->entityManager->getRepository(RegisteredPaymentView::class)->findBy(array(),array("nom"=>"ASC"));
+                   $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredPaymentsView::class)->findBy(["acadYrId"=>$this->crtAcadYr->getId()]);
             else{
                 $registeredStd = [];
                 //Find clases mananged by the current user
@@ -101,13 +105,13 @@ class PaymentController extends AbstractRestfulController
                 {
                     foreach($userClasses as $classe)
                     {
-                        $registeredStd_1 = $this->entityManager->getRepository(RegisteredPaymentView::class)->findBy(array("class"=>$classe->getClassOfStudy()->getCode()),array("nom"=>"ASC"));
+                        $registeredStd_1 = $this->entityManager->getRepository(AllYearsRegisteredPaymentsView::class)->findBy(array("class"=>$classe->getClassOfStudy()->getCode(),"acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));
                         $registeredStd = array_merge($registeredStd,$registeredStd_1);
                         
                     }
                 }                
             }
-            $i = 0;
+            $i = 0; 
             foreach($registeredStd as $key=>$value)
             {
                 $i++;

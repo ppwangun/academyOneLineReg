@@ -34,11 +34,13 @@ class TeacherController extends AbstractRestfulController
 {
     private $entityManager;
     private $sessionContainer;
+    private $crtAcadYr;
     
     public function __construct($entityManager,$sessionContainer) {
         
         $this->entityManager = $entityManager;  
         $this->sessionContainer = $sessionContainer;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
     
@@ -96,18 +98,18 @@ class TeacherController extends AbstractRestfulController
                     $teacher["birthdate"]=$data["birthDate"]->format('Y-m-d');
                 $teacher["documents"] = $documents;
                 
-                $acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-                $acadYearId = $acadYear->getId();
+                //$acadYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
+                $acadYearId = $this->crtAcadYr->getId(); 
                 $contracts = [];
               
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
-                        .'WHERE c.teacher = :teacher ' );
+                        .'WHERE c.teacher = :teacher AND c.acadYrId = :acadYearId' );
                 $query->setParameter('teacher',$id);
-               // $query->setParameter('acadYearId',$acadYearId);
+                $query->setParameter('acadYearId',$acadYearId);
 
-                if($query->getResult())
+                //if($query->getResult())
                     $contracts = $query->getResult();
-                
+              
                 foreach ($contracts as $key=>$con) 
                 {
                    

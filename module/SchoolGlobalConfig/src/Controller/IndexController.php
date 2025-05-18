@@ -39,14 +39,17 @@ class IndexController extends AbstractActionController
     private $entityManager;
     private $activeYear;
     private $currentYear;
+    private $crtAcadYr;
     
     const _ETUDIANT_EXCLU_ = 6;
     const _ETUDIANT_DIPLOME_ = 7;
 
 
-    public function __construct($entityManager) {
+    public function __construct($entityManager,$sessionContainer) {
         
-        $this->entityManager = $entityManager;   
+        $this->entityManager = $entityManager; 
+        $this->sessionContainer = $sessionContainer;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
     
@@ -411,12 +414,36 @@ class IndexController extends AbstractActionController
             throw $e; 
       }
     }
+
+    public function switchAcadYrAction()
+    {
+      $this->entityManager->getConnection()->beginTransaction();
+      try
+      {
+            
+            $data = $this->params()->fromQuery();
+            $activeYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("id"=>$data['id']));
+            
+            $this->sessionContainer->currentAcadYr = $activeYr;
+       
+            
+        return new JsonModel([
+               // $results
+        ]);          
+      }
+      catch(Exception $e){
+            $this->entityManager->getConnection()->rollBack();
+            throw $e; 
+      }
+    }    
+    
     public function currentAcademicYearAction()
     {
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
             $activeYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+            $activeYr = $this->sessionContainer->currentAcadYr;
             
             $hydrator = new ReflectionHydrator();
             $data = $hydrator->extract($activeYr);
@@ -466,6 +493,7 @@ class IndexController extends AbstractActionController
       {
         $data = $this->params()->fromQuery();  
         $ue = [];
+      
         if($data)
         {
             $query = $this->entityManager->createQuery('SELECT  s.id,s.subjectName,s.subjectCode,c1.code as classCode,c.subjectCredits,c.subjectWeight,'
@@ -474,9 +502,10 @@ class IndexController extends AbstractActionController
             . 'JOIN c.semester sem '
             . 'JOIN sem.academicYear acad '
             . 'JOIN c.subject s '
-            . 'WHERE s.teachingUnit = ?1 AND acad.isDefault=1 AND c.status = 1'
+            . 'WHERE s.teachingUnit = ?1 AND acad.id= ?2 AND c.status = 1'
             );
             $query->setParameter(1, $data["id"]);
+            $query->setParameter(2, $this->crtAcadYr->getId());
             $ue = $query->getResult(); 
            
         }

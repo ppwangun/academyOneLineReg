@@ -136,7 +136,7 @@ $scope.openNewWindow = function openInNewTab() {
         headers : {'Content-Type': 'application/x-www-form-urlencoded'}
 
     };
-    var data= {matricule: $ctrl.student.matricule,birthdate: $filter('date')($ctrl.student.dateOfBirth, "ddMMyyyy"),remember_me:0,csrf:"ae2869d5287f3d44a6228fe23d4f2637-47449cbb37f3cb390de392b56c3ff5d4",'login-btn':""}
+    var data= {matricule: $ctrl.student.matricule,birthdate: $filter('date')($ctrl.student.dateOfBirth, "ddMMyyyy"),remember_me:0,csrf:"ae2969d5287f3d44a6228fe23d4f2637-47449cbb37f3cb390de392b56c3ff5d4",'login-btn':""}
      //vrate online regsitration user session before opening the windows
      $timeout(
      $http.post('http://localhost/udmonline/public/login',$.param(data),config).then(function(response){
