@@ -108,7 +108,21 @@ class IndexController extends AbstractActionController
 
         return $view;  
 
-    }     
+    }  
+    
+    public function vacationPaymentMethodAction()
+    {
+        
+        $view =  new ViewModel([
+
+            'userName' => $this->sessionContainer->userName
+        ]);
+        
+        $view->setTerminal(true);
+
+        return $view;  
+
+    }    
     
     public function teacherAssignedSubjectsTplAction()
     {

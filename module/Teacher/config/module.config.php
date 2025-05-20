@@ -174,6 +174,16 @@ return [
                         'action'        => 'newAcadRank',
                     ],
                 ],
+            ], 
+            'vacationPaymentMethod' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/vacationPaymentMethod',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'vacationPaymentMethod',
+                    ],
+                ],
             ],            
             'teacherFollowUp' => [
                 'type'    => Literal::class,

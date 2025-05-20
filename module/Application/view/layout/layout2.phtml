@@ -519,7 +519,9 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
                                     <a href="#!/academicRankConfig">Gestion des grades</a>
                                 </li>
-                               
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
+                                    <a href="#!/vacationPaymentMethod">Méthodes de règlesment des frais de vacation </a>
+                                </li>                               
 
                             </ul>                            
                         </li>

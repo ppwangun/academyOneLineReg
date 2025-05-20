@@ -1,0 +1,287 @@
+
+
+
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+li.active a.ng-binding {
+  color: #000 !important;
+	background-color: #eeeeee !important;
+	text-decoration: none;
+}
+
+</style>
+    
+<div ng-cloak novalidate> 
+    <div class="well" style="margin-left: -30px; margin-right: -30px; font-size: 20px" ng-init="initVacationPaymentMethod();"> 
+        
+        <a  href="#!/teacher-list">[Retrour]</a>
+            <div class="row text-align-center"> Facturation des frais de vacation</div>
+
+ </div>
+
+<div class="form-view-main">
+    <div class="form-view">
+
+
+<md-content layout-padding >
+
+    
+        <div layout-gt-sm='row'>                
+            <div class = "col-xs-6">
+                
+              
+                <md-checkbox  ng-model="$ctrl.applyByTrainingType" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
+                               
+                    ng-true-value="1"
+                    ng-false-value="0"             
+                    class="md-primary">
+
+                </md-checkbox>
+                <i>Appliquer par cycle de formation</i>
+            </div>
+            <div class = "col-xs-10">
+                
+            </div>
+        </div>
+     <form   name="paymentMethodForm" ng-hide="$ctrl.applyByTrainingType"> 
+        <div layout-gt-sm='row'  >
+        
+
+
+            <div class = "col-xs-6" >
+                <div layout-gt-sm='column' >
+                    <md-input-container class="md-block" flex-gt-sm >
+                        <label>Choix de la foramtion:</label>
+                        <md-autocomplete  md-search-text="$ctrl.searchTeacher" 
+                                         md-selected-item="$ctrl.selectedTeacher"  
+                                         md-items="item in $ctrl.queryTraining($ctrl.searchTeacher)" 
+                                         md-item-text="item.name" 
+                                         md-min-length="0"
+                                         placeholder="" 
+                                         md-selected-item-change="$ctrl.loadBills($ctrl.selectedTeacher,$ctrl.isBulkBilling)"
+                                         md-input-name="trainingName"
+                                         md-no-asterisk
+                                        required>
+                            <md-item-template>
+                              <span md-highlight-text="$ctrl.searchTeacher" md-highlight-flags="^i">{{item.name}}</span>
+
+                            </md-item-template>
+                            <md-not-found>
+                              Aucun élément correspondant à "{{$ctrl.searchTeacher}}" n'a été trouvé.
+
+                            </md-not-found>
+                        </md-autocomplete>
+                            <div ng-messages="paymentMethodForm.trainingName.$error">
+                                <div ng-message="required">Ce champ est obligatoire</div>
+                            </div> 
+                    </md-input-container >
+                   
+                </div>
+   
+                <div layout-gt-sm='column' style="padding-top: 30px" >
+                    <md-input-container>
+                        <label>Méthode de facturation</label>
+
+                        <md-select name="paymentMethod"  ng-model="$ctrl.paymentMethod"   required>
+                            <md-option  ng-disabled="true"><em>---Choix de la methode de paiement---</em></md-option>
+                            <md-option    ng-value="0"> Grade Enseignant</md-option>                        
+                            <md-option    ng-value="1">Forfait horaire </md-option> 
+
+
+                        </md-select>
+                        <div class="errors" ng-messages="paymentMethodForm.paymentMethod.$error">
+                            <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container> 
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire:</label>
+                        <input name="amount" ng-model="$ctrl.degree.code" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm.amount.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>
+
+                </div>                 
+           
+            </div>
+
+            <div class = "col-xs-6"  >
+                <!-- Display examlis on a table -->
+              <div class="row">
+
+                </div>
+                
+               
+            </div>           
+        </div>
+        <div layout layout-gt-sm='row'>
+            <div class="col-md-12 text-right">
+                <button class="btn btn-danger" ng-disabled="paymentMethodForm.$invalid " ng-click="$ctrl.loadTeacherBill($ctrl.selectedTeacher,$ctrl.applyByTrainingType)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Enregistrer</button>&nbsp;&nbsp;&nbsp;
+            </div>  
+        </div>  
+     </form>
+    
+    <form   name="paymentMethodForm2"  ng-show='$ctrl.applyByTrainingType'>
+        
+        <div layout-gt-sm='row' >
+        
+
+
+            <div class = "col-xs-6" >
+                <div layout-gt-sm='column' >
+                    
+                    
+                <md-input-container flex="flex"  >
+                    <label>Type de formation:</label>
+                    <md-select name="trainingType" placeholder="Choisir le type de formation" ng-model="$ctrl.selecTedrainingType"  ng-model-options="{trackBy: '$value.id'}" style="margin-top: 30px;" required>
+                         <md-option ng-disabled="true"><em>---Choix du type de formation---</em></md-option>
+                         
+                        <md-option ng-value="cycle" ng-repeat="cycle in $ctrl.trainingType">{{cycle.name}}</md-option>
+                    </md-select>
+                    <div class="errors" ng-messages="paymentMethodForm2.trainingType.$error">
+                        <div ng-message="required">Champ obligatoire</div>
+                    </div> 
+               </md-input-container>                    
+                </div>
+   
+                <div layout-gt-sm='column' style="margin-top: 30px" >
+                    <md-input-container>
+                        <label>Méthode de facturation</label>
+
+                        <md-select name="paymentMethod"  ng-model="$ctrl.paymentMethod"   ng-required="true">
+                            <md-option ng-selected="true" ng-disabled="true"><em>---Choix de la methode de paiement---</em></md-option>
+                            <md-option    ng-value="0"> Grade Enseignant</md-option>                        
+                            <md-option    ng-value="1">Forfait horaire </md-option> 
+
+
+                        </md-select>
+                        <div class="errors" ng-messages="paymentMethodForm2.paymentMethod.$error">
+                            <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container> 
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire:</label>
+                        <input name="amount" ng-model="$ctrl.degree.code" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amount.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>
+
+                </div>                 
+         
+            </div>
+            </div>  
+
+          
+              
+
+
+        <div layout layout-gt-sm='row'>
+            <div class="col-md-12 text-right">
+                <button class="btn btn-danger" ng-disabled="paymentMethodForm2.$invalid" ng-click="$ctrl.loadTeacherBill($ctrl.selectedTeacher,$ctrl.applyByTrainingType)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Enregistrer</button>&nbsp;&nbsp;&nbsp;
+            </div>  
+        </div>
+    </form>
+        
+
+    </md-content>
+<!----------------------------------------------------------------------------------------------->
+
+
+<p></p>
+    <uib-tabset>
+      <uib-tab > 
+                    <uib-tab-heading>
+                        <span>Liste factures</span>
+                                               
+                    </uib-tab-heading>
+                    <div id =" tab1">
+                        <table class="table" style="font-size:1em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
+                        <thead>
+
+                            <tr class="bg-primary">
+                                <th class="col-xs-1 align-middle" ></th>
+                                <th class=" align-middle" >N° </th>
+                                <th class=" align-middle">Volume Alloué</th>
+                                <th class=" align-middle">Volume Réalisé</th>
+                                <th class=" align-middle">Montant</th>
+                                <th class=" align-middle">Date</th>
+                                <th class=" align-middle">statut</th>
+
+                            </tr>
+                       </thead>
+                        <tbody>
+
+                            <tr ng-repeat="bill in $ctrl.bills" style="font-size:0.8em;">
+                              <td  class="col-xs-1"> 
+                                    <md-checkbox  ng-model="bills.selected" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
+                                                  ng-true-value="'P'"
+                                                  ng-false-value="'A'"             
+                                                  class="md-primary">
+
+                                    </md-checkbox>                              
+
+                              </td>
+                              <td nclass="col-xs-1"><a ng-href="home#!/subjectBilling/{{bill.refNumber}}" ng-bind="bill.refNumber"></a></td>
+                              <td ng-bind="bill.totalTimeScheduled +'H'" class="col-xs-3"></td>
+                              <td ng-bind="bill.totalTimePaid +'H'" class="col-xs-3"></td>
+                              <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
+                              <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
+                              <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
+                            </tr>
+
+                        </tbody>
+
+                        </table>
+                    </div>
+      </uib-tab>
+           
+              <uib-tab>
+                <uib-tab-heading>
+                    <span>Imprimer les factures</span>
+                </uib-tab-heading>
+                <div class="tab-container"> 
+                    
+    <div layout-gt-sm='column' >
+        <fieldset class="standard">
+            <legend>Choisir une période</legend>
+            <div layout-gt-sm="row">   
+                <h4 id="datepicker-header">Date de début</h4>
+                  <md-datepicker ng-model="$ctrl.billingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de début">
+
+                  </md-datepicker>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <h4 id="datepicker-header">Date de fin</h4>
+                  <md-datepicker ng-model="$ctrl.billingEndingDate" md-min-date="acadyr.startingDate" md-max-date="acadyr.endingDate" md-placeholder="Date de fin">
+
+                  </md-datepicker>
+                
+               
+               
+            </div>
+            <div layout-gt-sm="row" class=""">
+                 <button class="btn btn-inverse" ng-click="$ctrl.deliberation()" ><i class="fa fa-save" ></i>&nbsp;Imprimer</button>
+            </div>
+        </fieldset>
+    </div>                    
+                </div>
+            </uib-tab>        
+    </uib-tabset>
+                    <div id="tab2"></div>
+                 </div>
+                <!--End tab-->
+                
+              
+                
+            </div>  
+        </div>
+
+</div>

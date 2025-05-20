@@ -389,7 +389,7 @@ class ExamReportsController extends AbstractActionController
             //List of teaching unit of the classe
             foreach( $stdRegisteredToModule as $std)
             {
-                $subjects = $this->examManager->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId());
+                $subjects = $this->examManager->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId(),$this->crtAcdYr->getId());
                 $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
                 $stdAdminReg = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std->getStudent(),"academicYear"=>$acadYr));
                 

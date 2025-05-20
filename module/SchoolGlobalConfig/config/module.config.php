@@ -623,6 +623,16 @@ return [
                     ],
                 ],
             ],  
+            'searchTraining' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/searchTraining',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'searchTraining',
+                    ],
+                ],
+            ],            
             'getOdooSettings' => [
                 'type'    => Literal::class,
                 'options' => [

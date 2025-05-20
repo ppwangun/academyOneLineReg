@@ -27,6 +27,7 @@ use Application\Entity\CurrentYearSubjectExamsView;
 use Application\Entity\Grade;
 use Application\Entity\GradeValueRange;
 use Application\Entity\SubjectRegistrationView;
+use Application\Entity\AllYearsSubjectRegistrationView;
 
 
 class CalculNotesController extends AbstractRestfulController
@@ -119,7 +120,7 @@ class CalculNotesController extends AbstractRestfulController
             
             if(isset($data["isMarkAggregation"])&&!isset($data["subject_id"]))
             {
-                $stdMarks = $this->examManager->markAggregation($ue,$classe,$semester);
+                $stdMarks = $this->examManager->markAggregation($ue,$classe,$semester,$this->crtAcadYr->getId());
                 /*foreach($stdMarks as $key=>$value)
                 {
                     $hydrator = new ReflectionHydrator();
@@ -142,15 +143,16 @@ class CalculNotesController extends AbstractRestfulController
             if(!isset($data["subject_id"]))
             {
                 $subject = [null," "]; 
-                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$data["ue_id"],"classe"=>$classe->getCode(),"status"=>1));
+                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$data["ue_id"],"classe"=>$classe->getCode(),"status"=>1,"acadYrId"=>$this->crtAcadYr->getId()));
                 $subjects = $this->examManager->getSubjectFromUe($data["ue_id"],$data["sem_id"],$data["class_id"],$this->crtAcadYr);
                 $subjectExams = $this->getSubjectExams($subjects);
                 $ueExams = array_merge($ueExams , $subjectExams );
+                
             }
             else 
             {
                 $subject = $this->entityManager->getRepository(Subject::class)->findOneById($data["subject_id"]);
-                $ueExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$data["subject_id"],"classe"=>$classe->getCode(),"status"=>1));
+                $ueExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$data["subject_id"],"classe"=>$classe->getCode(),"acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
             }
 
             
@@ -190,7 +192,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setGrade($this->computeGrade($classe, $note));
                         $std->setPoints($this->computePoints($classe, $note));
                        
-                        $this->entityManager->flush();
+                        
                     }
                     break;
                 case "CC_EXAM_CCTP": 
@@ -204,7 +206,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setGrade($this->computeGrade($classe, $note));
                         $std->setPoints($this->computePoints($classe, $note));
                         $std->setNoteExamtp(NULL);
-                        $this->entityManager->flush();
+                        
                     }
                     break;
                 case "CC_EXAM_CCTP_EXAMTP": 
@@ -217,7 +219,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteFinal($note*5);
                         $std->setGrade($this->computeGrade($classe, $note));
                         $std->setPoints($this->computePoints($classe, $note));
-                        $this->entityManager->flush();
+                        
                         
                     }
                     break;
@@ -238,7 +240,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setPoints($this->computePoints($classe, $note));
                         $std->setNoteCctp(NULL);
                         
-                        $this->entityManager->flush();
+                        
                     }
                     break;
                 
@@ -259,7 +261,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteFinal($note);
                         $std->setGrade($this->computeGradeSur100($classe, $note));
                         $std->setPoints($this->computePointsSur100($classe, $note));
-                        $this->entityManager->flush();
+                        
                         
                     }                  
                     break;
@@ -277,7 +279,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteExamtp(NULL);
                         $std->setNoteCc(NULL);
                         $std->setNoteExam(NULL);
-                        $this->entityManager->flush();
+                        
                         
                     }                      
                     break;
@@ -295,7 +297,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteExamtp(NULL);
                         $std->setNoteCc(NULL);
                         $std->setNoteExam(NULL);
-                        $this->entityManager->flush();
+                       
                         
                     }                      
                     break;                    
@@ -314,7 +316,7 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteExamtp(NULL);
                         $std->setNoteCc(NULL);
                         $std->setNoteExam(NULL);
-                        $this->entityManager->flush();
+                        
                         
                     }                      
                     break; 
@@ -332,18 +334,20 @@ class CalculNotesController extends AbstractRestfulController
                         $std->setNoteExamtp(NULL);
                         $std->setNoteCc(NULL);
                         $std->setNoteExam(NULL);
-                        $this->entityManager->flush();
+                        
                         
                     }                      
                     break;                    
                 default : return new JsonModel([ "ERROR_NO_CC_OR_EXAM_DONE"  ]);
 
             }
+            
+            $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
             if(isset($data["subject_id"]))
             // retrieve the sutdent ID based on the student ID 
-                $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>$data["subject_id"]),array("nom"=>"ASC")); 
-            else    $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>[NULL," "]),array("nom"=>"ASC"));  
+                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>$data["subject_id"],"acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC")); 
+            else    $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>[NULL," "],"acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));  
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
             foreach($std as $key=>$value)
@@ -658,7 +662,7 @@ class CalculNotesController extends AbstractRestfulController
             $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
             $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
             if($countEXAM>0)$std->setNoteExam(round($value/$countEXAM,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush(); 
+            
         }
         foreach($noteExamc as $key=>$value)
         {
@@ -669,7 +673,7 @@ class CalculNotesController extends AbstractRestfulController
             if($countEXAMC>0)$std->setNoteExam(round($value/$countEXAMC,2,PHP_ROUND_HALF_UP));
             
             //if(!is_null($value))$std->setNoteExamc(round($value/$countEXAMC,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush(); 
+            
 
         }       
         foreach($noteCc as $key=>$value)
@@ -679,7 +683,7 @@ class CalculNotesController extends AbstractRestfulController
             $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
             $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
             if($countCC>0) $std->setNoteCc(round($value/$countCC,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush(); 
+             
         }
         foreach($noteCctp as $key=>$value)
         { 
@@ -687,7 +691,7 @@ class CalculNotesController extends AbstractRestfulController
             $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
             $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
             if($countCCTP>0 ) $std->setNoteCctp(round($value/$countCCTP,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush();
+            
         }
         foreach($noteExamtp as $key=>$value)
         {
@@ -705,7 +709,7 @@ class CalculNotesController extends AbstractRestfulController
            // if(!is_null($value)) $std->setNoteStagee(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
             if($countSTAGEE>0) $std->setNoteExam(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
      
-            $this->entityManager->flush();
+            
         }
         foreach($noteStageh as $key=>$value)
         {
@@ -715,7 +719,7 @@ class CalculNotesController extends AbstractRestfulController
            // if(!is_null($value)) $std->setNoteStagee(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
             if($countSTAGEH>0) $std->setNoteExam(round($value/$countSTAGEH,2,PHP_ROUND_HALF_UP));
      
-            $this->entityManager->flush();
+            
         }        
         foreach($noteStagec as $key=>$value)
         { 
@@ -725,7 +729,7 @@ class CalculNotesController extends AbstractRestfulController
             //if(!is_null($value)) $std->setNoteStagec(round($value/$countSTAGEC,2,PHP_ROUND_HALF_UP));
             if($countSTAGEC>0)$std->setNoteCc(round($value/$countSTAGEC,2,PHP_ROUND_HALF_UP));
 
-            $this->entityManager->flush();
+            
         } 
         foreach($noteECN as $key=>$value)
         {
@@ -733,7 +737,7 @@ class CalculNotesController extends AbstractRestfulController
             $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
             $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
             if($countECN>0) $std->setNoteExam(round($value/$countECN,2,PHP_ROUND_HALF_UP));
-              $this->entityManager->flush();
+             
         }
         foreach($noteTHESE as $key=>$value)
         {
@@ -742,7 +746,7 @@ class CalculNotesController extends AbstractRestfulController
             $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
             //if(!is_null($value)) $std->setNoteExam(round($value/$countTHESE,2,PHP_ROUND_HALF_UP));
             if($countEXAMC>0 && $countTHESE>0) $std->setNoteExam(round($value/$countTHESE,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush();
+            
         } 
         
         return "SUCCESS";
@@ -838,7 +842,7 @@ class CalculNotesController extends AbstractRestfulController
        
         foreach ($subjects as $sub)
         {
-            $subjectExam = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"status"=>1));
+            $subjectExam = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"acadYrId"=>$this->crtAcadYr->getid(),"status"=>1));
             $myArr = array_merge($myArr,$subjectExam);
       
          
@@ -852,7 +856,7 @@ class CalculNotesController extends AbstractRestfulController
        
        // foreach ($subjects as $sub)
        // {
-            $subjectExam = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$subject["id"],"type"=>"RAT","status"=>1));
+            $subjectExam = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$subject["id"],"type"=>"RAT","acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
            // $myArr = array_merge($myArr,$subjectExam);
       
          
@@ -866,8 +870,8 @@ class CalculNotesController extends AbstractRestfulController
    {
      
         $classe= $this->entityManager->getRepository(ClassOfStudy::class)->findOneById($classeID);
-        $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>["EXAM","EXAMC","STAE"],"status"=>1));
-        $ueRat = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>"RAT","status"=>1));
+        $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>["EXAM","EXAMC","STAE"],"acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
+        $ueRat = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$ueID,"classe"=>$classe->getCode(),"type"=>"RAT","acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
 
         $subjects = $this->examManager->getSubjectFromUe($ueID,$semID,$classeID,$this->crtAcadYr);
                     
@@ -915,7 +919,7 @@ class CalculNotesController extends AbstractRestfulController
                     {                       
 
                         
-                        $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$subject["id"],"classe"=>$classe->getCode(),"type"=>["EXAM","STAC","STAE"],"status"=>1));
+                        $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$subject["id"],"classe"=>$classe->getCode(),"type"=>["EXAM","STAC","STAE"],"acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
                         
                         foreach($subjectExams as $ueExam)
                         {

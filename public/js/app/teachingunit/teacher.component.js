@@ -16,6 +16,11 @@ angular.module('teachingunit')
             templateUrl: 'newAcadRank',
             controller: newTeacherController 
 });
+angular.module('teachingunit')
+        .component('vacationPaymentMethod',{
+            templateUrl: 'vacationPaymentMethod',
+            controller: newTeacherController 
+});
 
 function parseObjectToFormData(object, formData = new FormData(), namespace = '') {
     for(let property in object) {
@@ -77,6 +82,8 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
         identity_document_type: 'nic',
         status: false
     }
+    
+    var $ctrl = this;
 
     $scope.maxFileSize = 1024 * 1024 * 5;
     $scope.maxFileSizeErrorMessage = "La taille maximale allouee pour un fichier est de 5 Mo";
@@ -127,7 +134,9 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
 
             $scope.teachers = response.data[0];
             $scope.hasLoadedTeachers = true;
-        });       
+        });
+        
+       
 
             var id = $routeParams.id; 
             var teachId = $routeParams.teachId;
@@ -428,6 +437,32 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
             }            
     }
     
+    //search training
+    $ctrl.queryTraining = function(training)
+    {
+       var  dataString = {id: training},
+          config = {
+            params: dataString,
+            headers : {'Accept' : 'application/json; charset=utf-8'}
+            };
+    
+            return  $http.get('searchTraining',config).then(function(response){
+                   return response.data[0];
+                });
+     };
+     
+     $scope.initVacationPaymentMethod = function(){
+     
+             $http.get(`cycleFormation`).then(function (response) {
+
+            $ctrl.trainingType = response.data[0];
+            $ctrl.paymentMethod = null;
+            
+        }); 
+    }
+     
+     
+    
     
     
      $scope.dtOptions = DTOptionsBuilder.newOptions()
@@ -535,6 +570,8 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
     });
      
   }; 
+  
+  
   
     /*--------------------------------------------------------------------------
     *---------------------------import teacher from file ---------------------------------

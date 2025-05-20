@@ -112,18 +112,19 @@ class ExamManager {
    //This function takes as paramter the studentId and returns for the given student an array
    //The array contains student performane for each semester he is registered to
    //array()
-   public function showStudentPathByClasse($classe)
+   public function showStudentPathByClasse($classe,$acadYr)
    { 
        $array = [];
       
        $i=0;
        //Retrieving student registered to the class for the current year
-       $students =  $this->entityManager->getRepository(RegisteredStudentView::class)->findBy(array("class"=>$classe->getCode())); 
+       $students =  $this->entityManager->getRepository(\Application\Entity\AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe->getCode(),"acadYrId"=>$acadYr->getId())); 
        foreach($students as $std)
        {
            $array[$i]=[];
+            $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
             $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("matricule"=>$std->getMatricule()));
-            $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+
             $semesters = $this->entityManager->getRepository(\Application\Entity\SemesterAssociatedToClass::class)->findBy(array("academicYear"=>$acadYr,"classOfStudy"=>$classe));
             
             $arr = [];;
@@ -132,7 +133,7 @@ class ExamManager {
             $arr['Nom'] = array("value"=>$std->getNom());   
             foreach($semesters as $sem)
             {
-                $sem = $sem->getSemester();
+                $sem = $this->entityManager->getRepository(Semester::class)->find($sem->getSemester()->getId());
                 $semRegistration = $this->entityManager->getRepository(StudentSemRegistration::class)->findOneBy(array("student"=>$std,"semester"=>$sem));
 
                
@@ -142,11 +143,12 @@ class ExamManager {
                 { 
                     if($sem->getRanking()%2==1)
                     {
-                    $arr["TV n-1"] = array("value"=>$semRegistration->getNbCredtisCapitalizedPrevious());
-                    $arr["MPC n-1"] = array("value"=>$semRegistration->getMpcPrevious());
+                    $arr["Créditvalidés annéée précédente"] = array("value"=>$semRegistration->getNbCredtisCapitalizedPrevious());
+                    $arr["MPC année précédente"] = array("value"=>$semRegistration->getMpcPrevious());
+                    $arr["Nbre Semestre dans le cycle"] = array("value"=>$semRegistration->getCountingSemRegistration());
                     
-                    $arr["TI-".$sem->getCode()] = array("value"=>$semRegistration->getTotalCreditRegisteredCurrentSem());
-                    $arr["TV-".$sem->getCode()] = array("value"=>$semRegistration->getNbCreditsCapitalizedCurrentSem());
+                    $arr["crédits Inscrit ".$sem->getCode()] = array("value"=>$semRegistration->getTotalCreditRegisteredCurrentSem());
+                    $arr["crédits validés ".$sem->getCode()] = array("value"=>$semRegistration->getNbCreditsCapitalizedCurrentSem());
                     $arr["MPC"] = array("value"=>$semRegistration->getMpcCurrentSem());
                     }
 
@@ -154,8 +156,8 @@ class ExamManager {
                 else
                 {
 
-                    $arr["TI-".$sem->getCode()] = array("value"=>"");
-                    $arr["TV-".$sem->getCode()] = array("value"=>"");
+                    $arr["crédits inscrits ".$sem->getCode()] = array("value"=>"");
+                    $arr["crédits validés ".$sem->getCode()] = array("value"=>"");
                     $arr["MPC"] = array("value"=>"");    
                 }
                 $array[$i] = array_merge($array[$i],$arr);
@@ -203,7 +205,7 @@ class ExamManager {
     
    //This fucntion computes the MPS (Moyenne pondérée semestrielle) for a given student
    //It takes as parameter, classe,$semester, and student
-    public function markAggregation($ue,$classe,$semester)
+    public function markAggregation($ue,$classe,$semester,$acadYr)
     {
        
         //collect all subjects to which student is registered
@@ -216,7 +218,7 @@ class ExamManager {
         foreach( $stdRegisteredToModule as $std)
         {
             $student = $std->getStudent();
-            $subjects = $this->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId());
+            $subjects = $this->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId(),$acadYr);
             $mark = 0; $markCC =0; $markCCTP=0; $markEXAMTP = 0; $markEXAM=0;
             $weight = 0;
             $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);

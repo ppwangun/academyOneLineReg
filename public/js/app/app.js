@@ -256,7 +256,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
             template: "<acad-rank-config></acad-rank-config>",
         }).when("/subjectBilling", {
             template: "<subject-billing></subject-billing>",
-                       
+        }).when("/vacationPaymentMethod", {
+            template: "<vacation-payment-method></vacation-payment-method>",
         }).when("/subjectBilling/:numRef", {
             template: "<subject-billing></subject-billing>",
                        

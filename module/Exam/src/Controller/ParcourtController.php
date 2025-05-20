@@ -28,11 +28,13 @@ use Application\Entity\UnitRegistration;
 class ParcourtController extends AbstractActionController
 {
     private $entityManager;
+    private $crtAcadYr;
     
-    public function __construct($entityManager,$examManager) {
+    public function __construct($entityManager,$examManager,$sessionContainer) {
         
         $this->entityManager = $entityManager;
         $this->examManager = $examManager;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
 
     public function getparcourtbyclassAction()
@@ -45,7 +47,7 @@ class ParcourtController extends AbstractActionController
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->find($data["id"]);
            
             
-            $parcourt = $this->examManager->showStudentPathByClasse($classe);
+            $parcourt = $this->examManager->showStudentPathByClasse($classe,$this->crtAcadYr);
            
             $this->entityManager->getConnection()->commit();
 

@@ -66,9 +66,9 @@ z-index: 120000}
         <div layout-gt-sm='row' >
             <md-input-container class="md-block" flex-gt-sm flex='40'>
                   <label>Classe:</label>
-                  <md-autocomplete  md-search-text="$ctrl.searchClasse" 
-                                   md-selected-item="$ctrl.selectedClasse"  
-                                   md-items="item in $ctrl.query($ctrl.searchClasse)" 
+                  <md-autocomplete  md-search-text="$ctrl.searchTarining" 
+                                   md-selected-item="$ctrl.selectedTraining"  
+                                   md-items="item in $ctrl.query($ctrl.searchTarining)" 
                                    md-item-text="item.code" 
                                    md-min-length="0"
                                    placeholder="Faites de la classe" 
@@ -81,7 +81,7 @@ z-index: 120000}
 
                       </md-item-template>
                       <md-not-found>
-                        Aucun élément correspondant à "{{$ctrl.searchClasse}}" n'a été trouvé.
+                        Aucun élément correspondant à "{{$ctrl.searchTarining}}" n'a été trouvé.
 
                       </md-not-found>
                 </md-autocomplete>
