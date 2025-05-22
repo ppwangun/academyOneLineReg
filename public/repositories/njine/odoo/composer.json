@@ -1,0 +1,22 @@
+{
+    "name": "njine/odoo",
+    "description": "Librairie PHP qui permet à l'application W-Academy de synchroniser ses données avec celle de Agenla",
+	"authors": [
+		{
+			"name": "Njine Chuangueu",
+			"email": "chuanguen@gmail.com",
+			"role" : "Consultant, Integrateur Système"
+		}
+	],
+    "require": {
+        "php": ">=7.3",
+        "laminas/laminas-http": ">=2.11.3"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Njine\\Odoo\\": "src/"
+        }
+    },
+	"version": "1.0.0"
+}

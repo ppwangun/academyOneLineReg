@@ -1,0 +1,140 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+
+
+</style>
+
+
+<md-dialog  style="max-width: 60%;
+            max-height: auto;
+    width: 70%;
+    height: auto;
+    border-radius: 0;" aria-label="Modifier les informations sur l'étudiant">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Modifier les informations sur l'étudiant</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+            <div ng-show="student.msgeStatus===1" class="alert alert-success" role="alert">SMS envoyé avec succès</div>
+            <div ng-show="student.msgeStatus===0" class="alert alert-danger" role="alert">Une erreur est survenue lors de l'envoie du SMS</div>
+        <form ng-cloak name="stdRegistrationForm">
+            <div layout-gt-sm='column'>
+                    <div>
+                          <div layout='row' flex>
+                                                    
+                            <md-input-container class="md-floating-label md-icon-float md-block" flex-gt-sm flex>
+
+                                <md-autocomplete    md-search-text="$ctrl.stdMat" 
+                                                md-selected-item="selectedStd"  
+                                                md-items="std in $ctrl.queryStudent($ctrl.stdMat)" 
+                                                md-item-text="std.matricule" 
+                                                md-min-length="0"
+                                                md-no-cache ="true"
+                                                md-selected-item-change="selectedStudentChange(acadYrItem)"
+                                                md-input-name="student"
+                                                md-escape-options="clear"
+                                                md-require-match=""
+                                               
+                                                input-aria-describedby="Student ID"                                 
+                                                 >
+                                    <md-item-template>
+                                      <span md-highlight-text="std.matricule" md-highlight-flags="^i">{{std.matricule}}[{{std.nom+" "+std.prenom}}]</span>
+
+                                    </md-item-template>
+                                    <md-not-found>
+                                      Aucun élément correspondant à "{{$ctrl.stdMat}}" n'a été trouvé.
+
+                                    </md-not-found>
+                                </md-autocomplete>
+                                      <div ng-messages="subjectForm.subject.$error">
+                                          <div ng-message="required">Ce champ est obligatoire</div>
+                                      </div> 
+                            </md-input-container>
+                           <div><!--
+                                <md-button class=" md-raised md-warn" ng-disabled="selectedStd === null" ng-click="addStudent()">
+                                <!-- below is the material icons -->
+                              <!--      <md-icon class="fa fa-plus"></md-icon>
+                                </md-button>-->
+                            </div>
+                              
+                         
+                          </div>
+            </div>
+            </div>
+          
+            <div layout-gt-sm='column'>
+                <div layout-gt-sm="row"  style='margin-top: 15px;'>
+                 <md-input-container class="md-block" flex-gt-sm>
+                   <label>Nom:</label>
+                   <input name="name" ng-model="selectedStd.nom" required />
+                       <div ng-messages="stdRegistrationForm.name.$error">
+                           <div ng-message="required">le champ nom est obligatoire</div>
+
+                       </div>   
+                 </md-input-container>
+
+                 <md-input-container class="md-block" flex-gt-sm>
+                   <label>Prénom:</label>
+                   <input name="prenom" ng-model="selectedStd.prenom" required />
+                       <div ng-messages="stdRegistrationForm.prenom.$error">
+                           <div ng-message="required">le champ Prénom est obligatoire</div>
+
+                       </div> 
+                 </md-input-container>
+                 <md-input-container class="md-block" flex-gt-sm>
+                   <label>Classe:</label>
+                   <input name="classe" ng-model="selectedStd.code" readonly required />
+                       <div ng-messages="stdRegistrationForm.classe.$error">
+                           <div ng-message="required">le champ classe est obligatoire</div>
+
+                       </div> 
+                 </md-input-container>
+               </div>        
+                      
+                <div layout-gt-sm="row"  style='margin-top: 15px;'>
+                    <md-input-container>
+                      <label>Date de la tansaction</label>
+                      <md-datepicker ng-model="selectedStd.transactionDate" aria-label="Enter date" required></md-datepicker>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Montant versé</label>
+                        <input name="feesPaid" ng-model="selectedStd.montant" style="background-color:#fab1a0; color: #fff; font-weight: bold"  required/>
+                        <div ng-messages="stdRegistrationForm.feesPaid.$error">
+                            <div ng-message="required">le champ numéro de téléphone est obligatoire</div>
+                            <div ng-message="pattern">Numéro de téléphone invalid</div>
+
+                        </div>                        
+                    </md-input-container>
+
+               </div>  
+                 
+            </div>
+
+
+            
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()"> Fermer</md-button>
+
+      <md-button class="bg-primary" ng-click="savePymtTransaction(selectedStd)"  ng-disabled="stdRegistrationForm.$invalid" >
+          <span class="fa fa-check">  Enrégistrer </span>
+      </md-button>
+    </md-dialog-actions>
+        </form>    
+          </md-content>
+      </div>
+      
+
+  
+</md-dialog>
