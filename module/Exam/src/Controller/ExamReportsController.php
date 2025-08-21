@@ -1189,7 +1189,7 @@ public function printTranscriptsAction()
                             $recapN["mps"]=$stdSemRegistration->getMpsCurrentSem(); 
                             $recapN["semRank"] = $sem_1->getSemester()->getRanking();
 
-                            $coursesN["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            $coursesN["courses"] = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
                              
                             foreach ($coursesN["courses"]  as $key=>$value)
                             {
@@ -1214,7 +1214,7 @@ public function printTranscriptsAction()
                             $recapN1["semRank"] = $sem_1->getSemester()->getRanking();
                             $mention = $stdSemRegistration->getAcademicProfile();
                             
-                            $coursesN1["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            $coursesN1["courses"] = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
                            
                             foreach ($coursesN1["courses"] as $key=>$value)
                             {

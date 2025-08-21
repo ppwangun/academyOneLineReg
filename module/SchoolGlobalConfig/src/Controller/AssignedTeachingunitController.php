@@ -140,9 +140,8 @@ class AssignedTeachingunitController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {
-            
 
-            $this->addteachingUnit($data);
+            $this->addteachingUnit($data);  
            // $data['sem_id']= null;
             //$this->addteachingUnit($data);
             $this->entityManager->getConnection()->commit();
@@ -309,7 +308,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
                 $teachingunit->setIsCompulsory($data['isCompulsory']);
             $this->entityManager->persist($teachingunit);
             $this->entityManager->flush();
-            
+           
             $class_study_semester = new ClassOfStudyHasSemester();
             $class_study_semester->setTeachingUnit($teachingunit);
             

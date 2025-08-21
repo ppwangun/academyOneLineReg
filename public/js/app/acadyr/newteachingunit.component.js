@@ -130,6 +130,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
 
   $ctrl.addUe = function(){
       $ctrl.ue.class_id = $ctrl.selectedItem.id;
+      $ctrl.ue.sem_id = $ctrl.semester.id;
       $timeout(
               $http.post('assignnewteachingunit',$ctrl.ue).then(
               function successCallback(){
