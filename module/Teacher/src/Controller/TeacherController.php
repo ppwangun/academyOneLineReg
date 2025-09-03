@@ -103,9 +103,9 @@ class TeacherController extends AbstractRestfulController
                 $contracts = [];
               
                 $query = $this->entityManager->createQuery('SELECT c.id as id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId,c.totalHrs,c.teacher   FROM Application\Entity\AllContractsView c '
-                        .'WHERE c.teacher = :teacher AND c.acadYrId = :acadYearId' );
+                        .'WHERE c.teacher = :teacher' );
                 $query->setParameter('teacher',$id);
-                $query->setParameter('acadYearId',$acadYearId);
+                //$query->setParameter('acadYearId',$acadYearId);
 
                 //if($query->getResult())
                     $contracts = $query->getResult();

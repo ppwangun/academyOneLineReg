@@ -1015,7 +1015,7 @@ class IndexController extends AbstractActionController
             $billSumary->setTotalTimeScheduled($totalTimeScheduled);
                       
  
-            
+        /*    
             if($flag === 0){$this->entityManager->remove($billSumary); continue;
                 $output = new JsonModel([
                     ["error"=>1] //Absence d'heure de cours à facturer
@@ -1028,7 +1028,7 @@ class IndexController extends AbstractActionController
                 ]);
                 return $output;                        
             } 
-            
+            */
             $this->entityManager->flush();
             
             $billDetails = $this->entityManager->getRepository(TeacherPaymentBill::class)->findByTeacherPaymentBillSumary($billSumary);
@@ -1055,12 +1055,12 @@ class IndexController extends AbstractActionController
          }
          
         
-        if($flagContractCount==0){
+      /*  if($flagContractCount==0){
             $output = new JsonModel([
                 ["error"=>3] //Absence d'heure de cours à facturer
             ]);
             return $output;                        
-        }         
+        }  */       
          
         $this->entityManager->getConnection()->commit(); 
         
