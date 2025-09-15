@@ -237,7 +237,7 @@ class StudentManager {
 
             //Checking if classe provided is available
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classe"]); 
-            if(!$class) {               echo   "classe".$data["classe"]." introuvable"           ; exit;}
+            
            // $admission = $this->entityManager->getRepository(Admission::class)->findOneByCode($class_code);
 
              //generate random number of 8 digits and check if the number already exist in the database befor assigning

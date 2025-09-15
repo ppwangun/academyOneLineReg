@@ -1252,6 +1252,8 @@ class IndexController extends AbstractActionController
                     $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
                     $std = $this->studentManager->addStudent($row);
                     $status = 1;
+                    $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($row["classe"]);
+                    if(!$class) {   continue;            echo   "classe".$data["classe"]." introuvable"           ; exit;}
                     $this->studentManager->stdAdminRegistration($row,$status,0,$acadYr);
                     $this->studentManager->stdPedagogicRegistration($row["classe"],$std,$acadYr);                    
                     $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,1,$acadYr);
