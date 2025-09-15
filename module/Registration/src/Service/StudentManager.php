@@ -230,7 +230,8 @@ class StudentManager {
         try
         {     
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule(array($data["matricule"],"status"=>1));
-            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
+           // $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault();
             //Finding student registered for the current academic year       
             $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$acadYr));
 
