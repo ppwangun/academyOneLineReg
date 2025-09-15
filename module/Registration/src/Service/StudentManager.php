@@ -231,13 +231,13 @@ class StudentManager {
         {     
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule(array($data["matricule"],"status"=>1));
            // $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYr->getId());
-            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault();
+            $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
             //Finding student registered for the current academic year       
             $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array('student'=>$std,'academicYear'=>$acadYr));
 
             //Checking if classe provided is available
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["classe"]); 
-            if(!$class) {               echo(   "classe".$data["classe"]." introuvable"           ); exit;}
+            if(!$class) {               echo   "classe".$data["classe"]." introuvable"           ; exit;}
            // $admission = $this->entityManager->getRepository(Admission::class)->findOneByCode($class_code);
 
              //generate random number of 8 digits and check if the number already exist in the database befor assigning
@@ -269,6 +269,7 @@ class StudentManager {
                 $adminRegistration->setStatus($status);
                 $this->entityManager->flush();
                 $this->entityManager->persist($adminRegistration);
+                
             }
             //check if student is already registered for the current year
             elseif($isRegistered)
@@ -321,11 +322,11 @@ class StudentManager {
    }
   
    //register student to subjects of a given class
-   public function stdPedagogicRegistration($classe,$student)
+   public function stdPedagogicRegistration($classe,$student,$acadYr)
    {
  
                   //collecting all teaching unit beloging to the classe entered as parameter
-            $classe_ue = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findByClasse($classe);
+            $classe_ue = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(["classe"=>$classe,"acadYrId"=>$acadYr->getId()]);
 
             //Get semester of the current year
 

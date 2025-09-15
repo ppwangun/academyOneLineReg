@@ -1249,12 +1249,12 @@ class IndexController extends AbstractActionController
                     $row["mother_num_tel"] = $sheetData[$i][9];
                     $row["sponsor_num_tel"] = $sheetData[$i][10];
                     $row["mpc"] = 0;
-                    $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault();
+                    $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
                     $std = $this->studentManager->addStudent($row);
                     $status = 1;
                     $this->studentManager->stdAdminRegistration($row,$status,0,$acadYr);
-                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std);                    
-                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,$acadYr);
+                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std,$acadYr);                    
+                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,1,$acadYr);
                     
                     $this->entityManager->flush();
                     
