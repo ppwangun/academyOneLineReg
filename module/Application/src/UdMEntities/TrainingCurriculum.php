@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TrainingCurriculum
  *
- * @ORM\Table(name="training_curriculum", indexes={@ORM\Index(name="fk_cycle_degree1_idx", columns={"degree_id"})})
+ * @ORM\Table(name="training_curriculum", indexes={@ORM\Index(name="fk_cycle_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_training_curriculum_payment_rate1_idx", columns={"payment_rate_id"})})
  * @ORM\Entity
  */
 class TrainingCurriculum
@@ -48,6 +48,23 @@ class TrainingCurriculum
      * @ORM\Column(name="cycle_level", type="integer", nullable=true)
      */
     private $cycleLevel;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="payment_method_id", type="integer", nullable=true)
+     */
+    private $paymentMethodId;
+
+    /**
+     * @var \TeacherPaymentRate
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentRate")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="payment_rate_id", referencedColumnName="id")
+     * })
+     */
+    private $paymentRate;
 
     /**
      * @var \Degree
@@ -165,6 +182,54 @@ class TrainingCurriculum
     public function getCycleLevel()
     {
         return $this->cycleLevel;
+    }
+
+    /**
+     * Set paymentMethodId.
+     *
+     * @param int|null $paymentMethodId
+     *
+     * @return TrainingCurriculum
+     */
+    public function setPaymentMethodId($paymentMethodId = null)
+    {
+        $this->paymentMethodId = $paymentMethodId;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentMethodId.
+     *
+     * @return int|null
+     */
+    public function getPaymentMethodId()
+    {
+        return $this->paymentMethodId;
+    }
+
+    /**
+     * Set paymentRate.
+     *
+     * @param \TeacherPaymentRate|null $paymentRate
+     *
+     * @return TrainingCurriculum
+     */
+    public function setPaymentRate(\TeacherPaymentRate $paymentRate = null)
+    {
+        $this->paymentRate = $paymentRate;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentRate.
+     *
+     * @return \TeacherPaymentRate|null
+     */
+    public function getPaymentRate()
+    {
+        return $this->paymentRate;
     }
 
     /**

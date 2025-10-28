@@ -174,6 +174,16 @@ return [
                         'action'        => 'newAcadRank',
                     ],
                 ],
+            ], 
+            'vacationPaymentMethod' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/vacationPaymentMethod',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'vacationPaymentMethod',
+                    ],
+                ],
             ],            
             'teacherFollowUp' => [
                 'type'    => Literal::class,
@@ -353,6 +363,77 @@ return [
                         'action'=>'loadTeacherBill'
                     ],
                 ],
+            ], 
+            'printSchedule' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/printSchedule[/:classe][/:fromDate][/:toDate]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'printSchedule'
+                       
+                    ],
+                ],
+            ],
+            'setVacationPaymentMethod' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/setVacationPaymentMethod[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'=>'setVacationPaymentMethod'
+                    ],
+                ],
+            ],  
+            'paymentsgridlist' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/paymentsgridlist[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'paymentsgridlist'
+                    ],
+                ],
+            ], 
+            'newPaymentGrid' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/newPaymentGrid[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'newPaymentGrid'
+                    ],
+                ],
+            ],
+            'createPymtGrid' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/createPymtGrid[/:data]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'createPymtGrid'
+                    ],
+                ],
+            ], 
+            'allPaymentTypes' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/allPaymentTypes[/:data]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'allPaymentTypes'
+                    ],
+                ],
+            ],  
+            'setDefaultPymtGrid' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/setDefaultPymtGrid[/:data]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'setDefaultPymtGrid'
+                    ],
+                ],
             ],            
              /*  'home' => [
                 'type' => Literal::class,
@@ -374,6 +455,7 @@ return [
             Controller\TeacherController::class => Controller\Factory\TeacherControllerFactory::class,
             Controller\ResourceController::class => Controller\Factory\ResourceControllerFactory::class,
             Controller\ProgressionController::class => Controller\Factory\ProgressionControllerFactory::class,
+            Controller\PaymentController::class => Controller\Factory\PaymentControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -413,7 +495,15 @@ return [
 
                 ['actions' => '*', 
                         'allow' => '@'],
-                   ],            
+                   ],  
+            Controller\PaymentController::class => [
+
+                // Give access to "index", "add", "edit", "view", "changePassword" actions 
+                // to users having the "user.manage" permission.
+
+                ['actions' => '*', 
+                        'allow' => '@'],
+                   ],             
             Controller\AuthController::class => [
                 // Give access to "resetPassword", "message" and "setPassword" actions
                 // to anyone.

@@ -267,7 +267,7 @@ $ctrl.updateExamRegistration = function(){
 
                                 }
                             }).then(function(){
-                                data ={id: $ctrl.selectedUe.id}
+                                data ={id: $ctrl.selectedUe.id,classe_id:$ctrl.selectedClasse.id}
                                     var config = {
                                     params: data,
                                     headers : {'Accept' : 'application/json'}

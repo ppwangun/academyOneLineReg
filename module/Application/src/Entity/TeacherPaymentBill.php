@@ -38,6 +38,13 @@ class TeacherPaymentBill
      * @ORM\Column(name="date", type="datetime", nullable=true)
      */
     private $date;
+    
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="payment_rate", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $paymentRate;    
 
     /**
      * @var float|null
@@ -184,6 +191,30 @@ class TeacherPaymentBill
     {
         return $this->date;
     }
+    
+    /**
+     * Set paymentRate.
+     *
+     * @param float|null $paymentRate
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setPaymentRate($paymentRate = null)
+    {
+        $this->paymentRate = $paymentRate;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentRate.
+     *
+     * @return float|null
+     */
+    public function getPaymentRate()
+    {
+        return $this->paymentRate;
+    }    
 
     /**
      * Set paymentAmount.

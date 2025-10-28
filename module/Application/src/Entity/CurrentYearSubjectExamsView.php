@@ -22,6 +22,14 @@ class CurrentYearSubjectExamsView
     private $id;
     
     /**
+    * @var integer
+    *
+    * @ORM\Column(name="acadYrId", type="integer", nullable=false)
+    * 
+    */
+    private $acadYrId;     
+    
+    /**
     * @var string
     *
     * @ORM\Column(name="code", type="string", length=45, nullable=true)

@@ -28,11 +28,13 @@ use Application\Entity\AllYearsSubjectRegistrationView;
 class SubjectRegistrationController extends AbstractRestfulController
 {
     private $entityManager;
+    private $crtAcadYr;
     
     public function __construct($entityManager,$sessionContainer) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer = $sessionContainer ;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     //this function takes as paramer the student ID and 
     //returns the list of of subjects to which student is registered
@@ -40,11 +42,11 @@ class SubjectRegistrationController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {  
-            $acadYr = $this->sessionContainer->currentAcadYr;
+         
             // retrieve the sutdent  based on the student ID 
            
             
-            $std_registered_subjects = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("acadYrId"=>$acadYr->getId(),"matricule"=>$id,"idSubject"=>[NULL," "]));
+            $std_registered_subjects = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("acadYrId"=>$this->crtAcadYr->getId(),"matricule"=>$id,"idSubject"=>[NULL," "]));
             
 
             foreach($std_registered_subjects as $key=>$value)
@@ -77,7 +79,7 @@ class SubjectRegistrationController extends AbstractRestfulController
        $this->entityManager->getConnection()->beginTransaction();
         try
         {      
-            $registeredStd = $this->entityManager->getRepository(RegisteredStudentView::class)->findAll();
+        $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findAll(["acadYrId"=>$this->crtAcadYr->getId()]);
             $i= 0;
             foreach($registeredStd as $key=>$value)
             {
@@ -116,7 +118,7 @@ class SubjectRegistrationController extends AbstractRestfulController
            // Retrieve form data from POST variables
 
             if(isset($data["ueId"])&&!isset($data["subjectId"]))
-            {
+            { 
                 $teachingUnit = $this->entityManager->getRepository(TeachingUnit::class)->find($data['ueId']);
                 $semester = $this->entityManager->getRepository(Semester::class)->find($data['semId']);
                 foreach ($data["students"] as $key=>$value)
@@ -185,7 +187,7 @@ class SubjectRegistrationController extends AbstractRestfulController
                     //check if the subject is already registered for the student
                     $isRegistered = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$student,"teachingUnit"=>$teachingUnit,"subject"=>$subject,"semester"=>$semester));
 
-                    if(!$isRegistered && $value["status"]!= -1 )
+                    if(sizeof($isRegistered)<=0 )
                     {
 
                         $unitRegistration = new UnitRegistration();

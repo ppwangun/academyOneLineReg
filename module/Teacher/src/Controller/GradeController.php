@@ -56,20 +56,18 @@ class GradeController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         {   
-        $classes = $this->entityManager->getRepository(ClassListView::class)->findAll();
-                
-            foreach($classes as $key=>$value)
+            $ranks = $this->entityManager->getRepository(AcademicRanck::class)->findAll();
+        
+            foreach($ranks as $key=>$rank)
             {
-                
-                $hydrator = new ReflectionHydrator();
-                $data = $hydrator->extract($value);
-                $classes[$key] = $data;
+                    $hydrator = new ReflectionHydrator();
+                    $data = $hydrator->extract($rank);
+                    $ranks[$key] = $data;
             }
-            $this->entityManager->getConnection()->commit();
+
             return new JsonModel([
-                  $classes  
-                
-            ]);  
+                    $ranks
+            ]); 
         }
         catch(Exception $e)
         {
@@ -105,7 +103,7 @@ class GradeController extends AbstractRestfulController
             $rank= new AcademicRanck();
             $rank->setName($data['name']);
             $rank->setCode($data['code']);
-            $rank->setPaymentRate($data["paymentRate"]);
+         
 
             $this->entityManager->persist($rank);
 
@@ -168,7 +166,7 @@ class GradeController extends AbstractRestfulController
             $rank =$this->entityManager->getRepository(AcademicRanck::class)->findOneById($id);
             $rank->setName($data['name']);
             $rank->setCode($data['code']);
-            $rank->setPaymentRate($data['paymentRate']);
+            
 
             
             $this->entityManager->flush();

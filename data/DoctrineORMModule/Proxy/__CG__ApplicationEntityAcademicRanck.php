@@ -67,10 +67,10 @@ class AcademicRanck extends \Application\Entity\AcademicRanck implements \Doctri
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'paymentRate'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'code'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'paymentRate'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\AcademicRanck' . "\0" . 'code'];
     }
 
     /**
@@ -234,28 +234,6 @@ class AcademicRanck extends \Application\Entity\AcademicRanck implements \Doctri
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getCode', []);
 
         return parent::getCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setPaymentRate($paymentRate = NULL)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setPaymentRate', [$paymentRate]);
-
-        return parent::setPaymentRate($paymentRate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPaymentRate()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getPaymentRate', []);
-
-        return parent::getPaymentRate();
     }
 
 }

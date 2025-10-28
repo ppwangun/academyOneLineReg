@@ -43,16 +43,6 @@ class FieldOfStudy
     private $status;
 
     /**
-     * @var \Department
-     *
-     * @ORM\ManyToOne(targetEntity="Department")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
-     * })
-     */
-    private $department;
-
-    /**
      * @var \Faculty
      *
      * @ORM\ManyToOne(targetEntity="Faculty")
@@ -61,6 +51,16 @@ class FieldOfStudy
      * })
      */
     private $faculty;
+
+    /**
+     * @var \Department
+     *
+     * @ORM\ManyToOne(targetEntity="Department")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
+     */
+    private $department;
 
 
 
@@ -147,30 +147,6 @@ class FieldOfStudy
     }
 
     /**
-     * Set department.
-     *
-     * @param \Department|null $department
-     *
-     * @return FieldOfStudy
-     */
-    public function setDepartment(\Department $department = null)
-    {
-        $this->department = $department;
-
-        return $this;
-    }
-
-    /**
-     * Get department.
-     *
-     * @return \Department|null
-     */
-    public function getDepartment()
-    {
-        return $this->department;
-    }
-
-    /**
      * Set faculty.
      *
      * @param \Faculty|null $faculty
@@ -192,5 +168,29 @@ class FieldOfStudy
     public function getFaculty()
     {
         return $this->faculty;
+    }
+
+    /**
+     * Set department.
+     *
+     * @param \Department|null $department
+     *
+     * @return FieldOfStudy
+     */
+    public function setDepartment(\Department $department = null)
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    /**
+     * Get department.
+     *
+     * @return \Department|null
+     */
+    public function getDepartment()
+    {
+        return $this->department;
     }
 }

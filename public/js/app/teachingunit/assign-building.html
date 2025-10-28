@@ -1,0 +1,66 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 60%;
+            max-height: auto;
+    width: 60%;
+    height: auto;
+    border-radius: 0;" aria-label="Ajouter une matière">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Associer le batiment à une école/faculté</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+            <form ng-cloak name="subjectForm">
+            <div layout-gt-sm='column'>
+
+                       
+        <table class="table">
+            <tbody>
+                <tr ng-repeat="fac in faculties" >
+                    <td>
+                        <md-checkbox  ng-model="fac.status"  aria-label="Checkbox Indeterminate" 
+                                      ng-true-value="1"
+                                      ng-false-value="0"             
+                                      class="md-primary">
+
+                        </md-checkbox>
+                    </td>
+                    <td ng-bind="fac.name">
+
+                    </td>
+
+                </tr>
+            
+        </table>
+               
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()"> Annuler</md-button>
+      <md-button  class="md-warn" ng-click="saveChoices(faculties)" ng-disabled="subjectForm.$invalid">
+          <span class="fa fa-check">  Valider </span>
+      </md-button>
+ 
+
+    </md-dialog-actions>
+                </div>
+        </form>    
+          </md-content>
+      
+      </div>   
+
+  
+</md-dialog>

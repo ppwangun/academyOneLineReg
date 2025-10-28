@@ -166,7 +166,7 @@ $tb1 = '<table id ="exam "style=" width:100%">'.$tb.'</table>';
 $totalAdmis = $this->totalStudent - $this->totalFailure;
 $tbHeader = '<tr><th style=" color: red; font-style: normal; font-weight: bold;">Crédits: '.$this->credits.'</th><th style="border: 0px;" colspan="3"></th></tr>'
         . '<tr style="color: #0c4c8c; font-style: italic;"><th align="center" ><strong>Inscrits</strong></th><th align="center" ><strong>Admis</strong></th><th align="center" ><strong>Echecs</strong></th><th align="center"><strong>Taux de reussite</strong></th></tr>';
-$tbBody='<tr style="color:#0c4c8c; font-style: italic;"><td align="center">'.$this->totalStudent.'</td><td align="center" >'.$totalAdmis.'</td><td align="center">'.$this->totalFailure.'</td><td align="center">'. number_format(($totalAdmis/$this->totalStudent)*100,2) .'%</td></tr>';
+$tbBody='<tr style="color:#0c4c8c; font-style: italic;"><td align="center">'.$this->totalStudent.'</td><td align="center" >'.$totalAdmis.'</td><td align="center">'.$this->totalFailure.'</td><td align="center">'.(($this->totalStudent!=0)? number_format(($totalAdmis/$this->totalStudent)*100,2) :0) .'%</td></tr>';
 $tb=$tbHeader.$tbBody; 
 
 $tb2 = '<table id="stats"  style="width:100%" >'.$tb.'</table>';

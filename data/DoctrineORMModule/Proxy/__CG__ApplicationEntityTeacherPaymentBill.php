@@ -67,10 +67,10 @@ class TeacherPaymentBill extends \Application\Entity\TeacherPaymentBill implemen
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'refNumber', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'date', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentAmount', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentStatus', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'overtime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'vacationDeduction', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimePreviouslyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimeCurrentlyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentDetails', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'contract', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacherPaymentBillSumary', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacher'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'refNumber', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'date', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentRate', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentAmount', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentStatus', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'overtime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'vacationDeduction', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimePreviouslyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimeCurrentlyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentDetails', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'contract', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacherPaymentBillSumary', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacher'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'refNumber', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'date', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentAmount', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentStatus', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'overtime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'vacationDeduction', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimePreviouslyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimeCurrentlyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentDetails', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'contract', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacherPaymentBillSumary', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacher'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'refNumber', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'date', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentRate', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentAmount', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentStatus', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'overtime', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'vacationDeduction', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimePreviouslyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'totalTimeCurrentlyBilled', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'paymentDetails', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'contract', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacherPaymentBillSumary', '' . "\0" . 'Application\\Entity\\TeacherPaymentBill' . "\0" . 'teacher'];
     }
 
     /**
@@ -234,6 +234,28 @@ class TeacherPaymentBill extends \Application\Entity\TeacherPaymentBill implemen
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getDate', []);
 
         return parent::getDate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPaymentRate($paymentRate = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setPaymentRate', [$paymentRate]);
+
+        return parent::setPaymentRate($paymentRate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentRate()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getPaymentRate', []);
+
+        return parent::getPaymentRate();
     }
 
     /**

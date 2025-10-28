@@ -205,7 +205,7 @@ $ctrl.asignedSemToClasse = function(class_code){
    
  //Looad all student who are registered to the subject
  //Load all subjects associated withe the UE as well
- $ctrl.loadStd = function(selectedUeId){
+ $ctrl.loadStd = function(selectedUeId,selectedClasseId){
         $ctrl.isActivatedMatiereSelect = false;
         $ctrl.isMatiereRequired = false;
         $ctrl.isActivatedSubjectSelect = false;
@@ -228,6 +228,7 @@ $ctrl.asignedSemToClasse = function(class_code){
                 }
             }
         }).then(function(){
+            var data = {id: selectedUeId,classe_id:selectedClasseId};
                 var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}

@@ -106,7 +106,7 @@ class ExamController extends AbstractRestfulController
 
                 foreach($userClasses as $classe)
                 {
-                    $ueExam1s = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode()),Array("date"=>'DESC'));
+                    $ueExam1s = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode(),"acadYrId"=>$this->crtAdadYr->getId()),Array("date"=>'DESC'));
                     $ueExams = array_merge($ueExams,$ueExam1s);
                     //$subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode()),Array("date"=>'DESC'));
 

@@ -21,14 +21,19 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     {id:2,time:"13:00:00-15:00:00",name:"13h00-15h00"},
     {id:3,time:"15:30:00-17:30:00",name:"15h30-17h30"},
     {id:4,time:"18:00:00-20:00:00",name:"18h00-20h00"},
-    {id:5,time:"20:00:00-09:30:00",name:"20h00-22h00"}]
+    {id:5,time:"20:30:00-21:30:00",name:"22h00-00h00"}]
 
     $ctrl.startingTime = null;
     $ctrl.endingTime = null;
+    $ctrl.timeFrame = null;
 
     $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
     $ctrl.isScheduleValidated = false
+    $ctrl.dataToSchedule ={};
+    
+
+    
     $scope.eventSources = [ ];
     
     $ctrl.resetSchedule = function(){
@@ -103,10 +108,13 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    $ctrl.startingTime = $ctrl.startingTime[0];
                    $ctrl.endingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].endingTime; }); 
                    $ctrl.endingTime = $ctrl.endingTime[0]; 
-                   
+                   $ctrl.timeFrame = $ctrl.times.filter(function(item) { return item.time === response.data[0].timeFrame; }); console.log($ctrl.timeFrame)
+                   $ctrl.timeFrame = $ctrl.timeFrame[0]
                    $ctrl.date = response.data[0].dateScheduled.date;
                    
                    $ctrl.selectedSem = response.data[0].semester;
+                   $ctrl.classroom = response.data[0].classroom;
+                console.log($ctrl.classroom)
                    
                    //**************************************************
                     $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)
@@ -164,14 +172,28 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     $scope.uiConfig = {
       calendar:{
         //height: 450,
-        height: 900,
+        defaultView: 'agendaWeek',
+        height: '100%',
         editable: true,
-        lang: 'fr',
+        locale: 'fr',
+        firstDay: 1,
+        viewRender: function(view) {
+             $scope.startOfWeek = view.intervalStart.format('YYYY-MM-DD');
+             $scope.endOfWeek = view.intervalEnd.subtract(1, 'days').format('YYYY-MM-DD');},
+        
+        
         header:{
           //left: 'month basicWeek basicDay agendaWeek agendaDay',
-          left: ' month agendaWeek',
+          left: ' month agendaWeek agendaDay',
           center: 'title',
           right: 'today prev,next'
+        },
+        buttonText : {
+            today: "Aujourd'hui",
+            month: "Mois",
+            week:  "Semaine",
+            day:   "Jour"
+            
         },
         selectable: true,
 		monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -191,6 +213,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     //Loading classes of study asynchronously
     $ctrl.query = function(classe)
     {
+       var classe;
        var  dataString = {id: classe},
           config = {
             params: dataString,
@@ -198,9 +221,16 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
             };
     
             return  $http.get('classes',config).then(function(response){
+                    classe = response.data[0]
                    return response.data[0];
                 });
+        
      };
+     
+     $http.get('getCampuses').then(function(response){
+                   return response.data[0];
+                });
+     
      
     
      
@@ -284,71 +314,23 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         });
     }
     
+    if($ctrl.selectedClasse)
+    {
+        var data = {id: $ctrl.selectedClasse.id};
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };         
+    
+                        $http.get('getClassroomsAssignedToClass',config).then(function(response){
+                        $ctrl.classrooms = response.data[0];
+                    })
+                }
 
 
  };
  
- $scope.addEvent = function(ev)
- {
-     $ctrl.date = moment($ctrl.date).format("YYYY-MM-DD");
-     if($ctrl.selectedSubject) var eventName= $ctrl.selectedSubject.code;
-     else var eventName= $ctrl.selectedUe.code;
-     
-     if($ctrl.selectedSubject)         var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,subject:$ctrl.selectedSubject.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
-     else var data = {classe:$ctrl.selectedClasse.id,sem:$ctrl.selectedSem.id,ue:$ctrl.selectedUe.id,date:$ctrl.date,startingTime:$ctrl.startingTime.time,endingTime:$ctrl.endingTime.time,scheduleType:$ctrl.scheduleType}
-        var config = {
-        params: data,
-        headers : {'Accept' : 'application/json'}
-        };      
-        $http.get('schedulingCourse',config).then(function(response){
-     
-            var timeConflict = response.data.timeConflict;
-            var contractNotFound = response.data.contractNotFound;
-            if(timeConflict)
-            {
-                    $mdDialog.show(
-                    $mdDialog.alert()
-                      .parent(angular.element(document.querySelector('#popupContainer')))
-                      .clickOutsideToClose(true)
-                      .title('Erreur ')
-                      .textContent("Conflit sur l'heure de planification  ")
-                      .ariaLabel('Alert Dialog Demo')
-                      .ok('Fermer!')
-                      .targetEvent(ev)
-                  );
-                
-                return;    
-            }
-            
-            if(contractNotFound)
-            {
-                    $mdDialog.show(
-                    $mdDialog.alert()
-                      .parent(angular.element(document.querySelector('#popupContainer')))
-                      .clickOutsideToClose(true)
-                      .title('Erreur ')
-                      .textContent("Cours non affecté, ne peut être programmé ")
-                      .ariaLabel('Alert Dialog Demo')
-                      .ok('Fermer!')
-                      .targetEvent(ev)
-                  );
-                
-                return;    
-            }            
-            
-            
-            toastr.success("Opération effectuée avec succès");
-            event = response.data[0];
-            $scope.eventSources[0].events.push({
-                id : event.id,
-                title  : event.eventName,
-                start  : event.startingTime.date,
-                end    : event.endingTime.date
-            })
 
-        });     
-     
- }
  
   $scope.updateSchedule = function(ev,idEvent)
  {console.log(idEvent)
@@ -407,6 +389,37 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         });     
      
  }
+ 
+ $scope.printSchedule = function(ev){
+
+
+        
+        $mdDialog.show({
+         
+          controller: DialogControllerPrintSchedule,
+          controllerAs: 'ctrl',
+          templateUrl: 'printSchedule/'+$ctrl.selectedClasse.id+'/'+$scope.startOfWeek+'/'+$scope.endOfWeek,
+
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          
+          
+        })
+        .then(function(answer) {
+          
+          $ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $ctrl.status = 'You cancelled the dialog.';
+        });         
+ }
+ 
+ 
  
   $scope.deleteSchedule = function(idEvent)
  { 
@@ -547,7 +560,317 @@ $ctrl.loadForValidation = function(ev)
         return date;       
   }
   
+ $ctrl.initResources = function(){
+
+
+     
+     $http.get('getCampuses').then(function(response){
+                   $ctrl.campuses =  response.data[0];
+                });
+
+ };  
+ 
+  $ctrl.campuses = [];
+  $ctrl.campus = {};
+  $ctrl.building = {};
+  $ctrl.classroom = {};
+  $ctrl.showBuilding = false;
+ $scope.addCampus =  function (campus)
+  {
+    var  data ={campus:campus}
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('newcampus',config).then(function(response){
+
+            $ctrl.campuses =  response.data[0];
+            toastr.success("opération effectuée avec succès")
+     });
+  }
   
+  $scope.addBuilding =  function (campus,building)
+  {
+    var  data ={campus:campus,building:building} ; console.log(data)
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('newbuilding',config).then(function(response){
+
+            $ctrl.campuses =  response.data[0];
+            toastr.success("opération effectuée avec succès")
+     });
+  }
+  
+  $scope.addClassroom =  function (building,classroom)
+  {
+    var  data ={building:building,classroom:classroom} ; 
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('newclassroom',config).then(function(response){
+
+            $ctrl.classrooms =  response.data[0];
+            //toastr.success("opération effectuée avec succès")
+     });
+  }  
+  
+  $scope.showBuildings = function(campus)
+  {
+    $ctrl.campus.campusName = campus.name;
+    $ctrl.campus.campusCode = campus.name;
+    $ctrl.campus.id = campus.id;
+    
+    $scope.selectedCampusId = campus.id
+
+    var  data ={campusId:campus.id}
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('getBuildings',config).then(function(response){
+
+            $ctrl.buildings =  response.data[0];
+            $ctrl.building = null;
+            $ctrl.showBuildingForm = false;
+            $ctrl.showBuilding = true;
+            $scope.selectedBuilding = null;
+            //toastr.success("opération effectuée avec succès")
+     });
+  }
+  
+  $scope.showClassrooms = function(building)
+  {
+    $ctrl.building = building;
+
+    
+    $scope.selectedBuilding = building
+
+    var  data ={buildingId:building.id}
+    var config = {
+    params: data,
+    headers : {'Accept' : 'application/json'}
+    };   
+        $http.get('getClassrooms',config).then(function(response){
+
+            $ctrl.classrooms =  response.data[0];
+            $ctrl.classroom = null;
+            $ctrl.showClassroomForm = false;
+            $ctrl.showClassroom = true;
+            //toastr.success("opération effectuée avec succès")
+     });
+  }
+  
+      /*--------------------------------------------------------------------------
+     *--------------------------- updating curriculum---------------------------
+     *----------------------------------------------------------------------- */
+    
+    $ctrl.dataToSchedule.slectedUe = $ctrl.selectedUe;
+    $ctrl.dataToSchedule.slectedSem = $ctrl.selectedSem;
+    $ctrl.dataToSchedule.slectedClasse = $ctrl.selectedClasse;
+    $ctrl.dataToSchedule.slectedSuject= $ctrl.selectedSublect;
+    $ctrl.dataToSchedule.classroom= $ctrl.classroom;
+    $ctrl.dataToSchedule.scheduleType = $ctrl.scheduleType;   
+    
+    $ctrl.courseSchedulingDialog = function(timeFrames,ev){
+        $mdDialog.show({
+          
+          controller: DialogControllerCourseScheduling,
+          controllerAs: 'ctrl',
+          templateUrl: 'js/app/teachingunit/save-schedule.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          locals: {timeFrames:timeFrames,selectedClasse:$ctrl.selectedClasse,selectedSem:$ctrl.selectedSem,selectedUe:$ctrl.selectedUe,selectedSubject:$ctrl.selectedSubject,classroom:$ctrl.classroom,scheduleType:$ctrl.scheduleType}
+          
+        })
+        .then(function(answer) {
+          
+          $ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $ctrl.status = 'You cancelled the dialog.';
+        });        
+    }; 
+  
+  
+    /*--------------------------------------------------------------------------
+     *--------------------------- updating curriculum---------------------------
+     *----------------------------------------------------------------------- */
+    
+    $ctrl.assignBuildingToSchool = function(build,ev){
+        $mdDialog.show({
+          
+          controller: DialogController1,
+          controllerAs: 'ctrl',
+          templateUrl: 'js/app/teachingunit/assign-building.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          locals: {build:build}
+          
+        })
+        .then(function(answer) {
+          
+          $ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $ctrl.status = 'You cancelled the dialog.';
+        });        
+    }; 
+    
+  function DialogController1($scope, $mdDialog,build) { console.log(build)
+ 
+        var  data ={buildingId:build.id}
+        var config = {
+            params: data,
+            headers : {'Accept' : 'application/json'}
+        };
+        
+        $http.get('getBuildingAssignedTofaculties',config)
+            .then( function (response){
+               $scope.faculties = response.data[0]
+               
+            });   
+            
+    $scope.saveChoices = function(choices){    
+        var  data ={data:{faculties:choices,buildingId:build.id}}
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };   
+            $http.get('assignBuildingToFaculties',config).then(function(response){
+
+
+         });
+    }
+    $scope.cancel = function() {
+       $mdDialog.cancel();
+    };
+
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };       
+      
+  };
+  
+  
+  function DialogControllerCourseScheduling($scope,toastr, $mdDialog,timeFrames,selectedClasse,selectedSem,selectedUe,selectedSubject,classroom,scheduleType) {
+      
+        $scope.timeFrames = timeFrames;
+        $scope.dateEnding = null;
+        $scope.dateBegining = null;
+        $scope.planingForWeekend = 0;
+
+
+ 
+        $scope.addEvent = function(ev)
+        {
+            $scope.dateBegining.setHours(12,0,0);
+            $scope.dateEnding.setHours(12,0,0);
+            var dateBegining = $scope.dateBegining.toISOString().split('T')[0];
+            var dateEnding = $scope.dateEnding.toISOString().split('T')[0];
+            if(selectedSubject)
+               var data = {classe:selectedClasse.id,sem:selectedSem.id,ue:selectedUe.id,subject:selectedSubject.id,classroom:classroom.id,scheduleType:scheduleType,dateBegining:dateBegining,dateEnding:dateEnding,timeFrames:JSON.stringify($scope.timeFrames),planingForWeekend:$scope.planingForWeekend}
+           else
+               var data = {classe:selectedClasse.id,sem:selectedSem.id,ue:selectedUe.id,subject:null,classroom:classroom.id,scheduleType:scheduleType,dateBegining:dateBegining,dateEnding:dateEnding,timeFrames:JSON.stringify($scope.timeFrames),planingForWeekend:$scope.planingForWeekend}
+               var config = {
+                params: data,
+                headers : {'Accept' : 'application/json'}
+               };      
+               $http.get('schedulingCourse',config).then(function(response){
+
+                   var timeConflict = response.data.timeConflict;
+                   var contractNotFound = response.data.contractNotFound;
+                   var classroomConflict = response.data.classroomConflict;
+                   var msge = response.data;
+                   if(msge.timeConflict)
+                   {
+                           $mdDialog.show(
+                           $mdDialog.alert()
+                             .parent(angular.element(document.querySelector('#popupContainer')))
+                             .clickOutsideToClose(true)
+                             .title('Erreur ')
+                             .textContent("Conflit sur l'heure de planification  "+msge.msge)
+                             .ariaLabel('Alert Dialog Demo')
+                             .ok('Fermer!')
+                             .targetEvent(ev)
+                         );
+
+                       return;    
+                   }
+
+                   if(contractNotFound)
+                   {
+                           $mdDialog.show(
+                           $mdDialog.alert()
+                             .parent(angular.element(document.querySelector('#popupContainer')))
+                             .clickOutsideToClose(true)
+                             .title('Erreur ')
+                             .textContent("Cours non attrinué, ne peut être programmé ")
+                             .ariaLabel('Alert Dialog')
+                             .ok('Fermer!')
+                             .targetEvent(ev)
+                         );
+
+                       return;    
+                   }            
+                   if(classroomConflict)
+                   {
+                           $mdDialog.show(
+                           $mdDialog.alert()
+                             .parent(angular.element(document.querySelector('#popupContainer')))
+                             .clickOutsideToClose(true)
+                             .title('Erreur: Conflit  ')
+                             .textContent(" Un autre cours affecté dans la même salle à la même heure ")
+                             .ariaLabel('Alert Dialog Demo')
+                             .ok('Fermer!')
+                             .targetEvent(ev)
+                         );
+
+                       return;    
+                   }
+                   
+                   $mdDialog.cancel();
+                   toastr.success("Opération effectuée avec succès");
+ 
+
+               });     
+
+        }
+    
+    $scope.cancel = function() {
+       $mdDialog.cancel();
+    };
+
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };       
+      
+  }; 
+  
+    function DialogControllerPrintSchedule($scope, $mdDialog) {
+        
+        
+        
+    $scope.cancel = function() {
+       $mdDialog.cancel();
+    };
+
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };     
+    }
   
  //Dialog Controller
   function DialogController($scope, $mdDialog,progr,times) {
@@ -722,5 +1045,7 @@ $ctrl.loadForValidation = function(ev)
 
 
 };
+
+
 
 

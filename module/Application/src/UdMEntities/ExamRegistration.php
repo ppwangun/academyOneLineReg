@@ -64,16 +64,6 @@ class ExamRegistration
     private $ismarkfromcatchupexam = '0';
 
     /**
-     * @var \Exam
-     *
-     * @ORM\ManyToOne(targetEntity="Exam")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
-     * })
-     */
-    private $exam;
-
-    /**
      * @var \Student
      *
      * @ORM\Id
@@ -84,6 +74,16 @@ class ExamRegistration
      * })
      */
     private $student;
+
+    /**
+     * @var \Exam
+     *
+     * @ORM\ManyToOne(targetEntity="Exam")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
+     * })
+     */
+    private $exam;
 
 
 
@@ -256,30 +256,6 @@ class ExamRegistration
     }
 
     /**
-     * Set exam.
-     *
-     * @param \Exam|null $exam
-     *
-     * @return ExamRegistration
-     */
-    public function setExam(\Exam $exam = null)
-    {
-        $this->exam = $exam;
-
-        return $this;
-    }
-
-    /**
-     * Get exam.
-     *
-     * @return \Exam|null
-     */
-    public function getExam()
-    {
-        return $this->exam;
-    }
-
-    /**
      * Set student.
      *
      * @param \Student $student
@@ -301,5 +277,29 @@ class ExamRegistration
     public function getStudent()
     {
         return $this->student;
+    }
+
+    /**
+     * Set exam.
+     *
+     * @param \Exam|null $exam
+     *
+     * @return ExamRegistration
+     */
+    public function setExam(\Exam $exam = null)
+    {
+        $this->exam = $exam;
+
+        return $this;
+    }
+
+    /**
+     * Get exam.
+     *
+     * @return \Exam|null
+     */
+    public function getExam()
+    {
+        return $this->exam;
     }
 }

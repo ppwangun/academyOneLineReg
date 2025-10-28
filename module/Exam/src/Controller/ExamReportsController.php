@@ -204,7 +204,7 @@ class ExamReportsController extends AbstractActionController
              
             
             $sem =  $this->entityManager->getRepository(Semester::class)->find($semID);
-            $subjects = $this->examManager->getSubjectFromUe($id,$sem->getId(),$classe->getId());
+            $subjects = $this->examManager->getSubjectFromUe($id,$sem->getId(),$classe->getId(),$this->crtAcdYr);
 
             $semestre = $sem->getCode();
             //$classe = $classe->getClassOfStudy();
@@ -220,7 +220,7 @@ class ExamReportsController extends AbstractActionController
             $acadYr = $acadYr->getCode();
             
             //List of exam performed for the given subject
-            $exams = $this->examManager->getExamWithMarkRegistered($id,$semID,$classeID);
+            $exams = $this->examManager->getExamWithMarkRegistered($id,$semID,$classeID,$this->crtAcdYr);
             $school =  $this->entityManager->getRepository(School::class)->findAll()[0];
             
             //compute statistics
@@ -281,7 +281,7 @@ class ExamReportsController extends AbstractActionController
 
              $ue = null;
              // retrieve the sutdent ID based on the student ID 
-             $std1 = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$ueID,"status"=>1,"idSubject"=>$subjectID),array("nom"=>"ASC"));
+             $std1 = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("acadYrId"=>$this->crtAcdYr->getId(),"idSubject"=>$subjectID,"classe"=>$classe->getCode()),array("nom"=>"ASC"));
              $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$ueID,"status"=>1,"idSubject"=>$subjectID,"grade"=>$grode_of_failures),array("nom"=>"ASC")); 
             // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
              if($std1)
@@ -298,12 +298,12 @@ class ExamReportsController extends AbstractActionController
              }
              $ue =  $this->entityManager->getRepository(TeachingUnit::class)->find($ueID);
              $subject = $this->entityManager->getRepository(Subject::class)->find($subjectID);
-             $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1)); 
+             $acadYr = $this->crtAcdYr;
              $school =  $this->entityManager->getRepository(School::class)->findAll()[0]; 
              
             // $classe =  $this->entityManager->getRepository(ClassOfStudy::class)->find($classeID);
              $sem =  $this->entityManager->getRepository(Semester::class)->find($semID);
-             $subjects = $this->examManager->getSubjectFromUe($ueID,$sem->getId(),$classe->getId());
+             $subjects = $this->examManager->getSubjectFromUe($ueID,$sem->getId(),$classe->getId(),$this->crtAcdYr);
 
              $semestre = $sem->getCode();
              //$classe = $classe->getClassOfStudy();
@@ -322,7 +322,7 @@ class ExamReportsController extends AbstractActionController
              
 
              //List of exam performed for the given subject
-             $exams = $this->examManager->getExamList($ueID,$subjectID,$semID,$classeID);
+             $exams = $this->examManager->getExamList($ueID,$subjectID,$semID,$classeID,$this->crtAcdYr);
 
              //compute statistics*
              if($std1) $totalStudent = sizeof($std1); else $totalStudent = 1;
@@ -379,20 +379,21 @@ class ExamReportsController extends AbstractActionController
            // if($classe->getCycle()->getCycleLevel() == 1)  $grode_of_failures = ["F","E","D","D+","C-"];
            // else $grode_of_failures = ["F","E","D","D+","C-","C","C+"];             
             $semester = $this->entityManager->getRepository(Semester::class)->findOneById($data["semID"]);
-            $ue = $this->entityManager->getRepository(TeachingUnit::class)->findOneById($data["ueID"]);
+            $ue = $this->entityManager->getRepository(TeachingUnit::class)->findOneById($data["ueID"]); 
             $credits = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(array('teachingUnit'=>$ue,'semester'=>$semester,"classOfStudy"=>$classe))->getCredits();
             
             $stdRegisteredToModule = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"semester"=>$semester,"subject"=>[NULL," "]));
             $stdRegisteredToModuleFailed = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"semester"=>$semester,"subject"=>[NULL," "],"grade"=>$grode_of_failures));
             $stdOutput = [];
+            
             $i=0;
             //List of teaching unit of the classe
             foreach( $stdRegisteredToModule as $std)
-            {
-                $subjects = $this->examManager->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId());
-                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneByIsDefault(1);
-                $stdAdminReg = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std->getStudent(),"academicYear"=>$acadYr));
+            { 
+                $subjects = $this->examManager->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId(),$this->crtAcdYr->getId());
                 
+                $stdAdminReg = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std->getStudent(),"academicYear"=>$this->crtAcdYr));
+               
                 if($stdAdminReg->getStatus()==1)
                 {
                 
@@ -416,7 +417,7 @@ class ExamReportsController extends AbstractActionController
             }
 
 
-             $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1)); 
+             $acadYr =  $this->crtAcdYr; 
              $school =  $this->entityManager->getRepository(School::class)->findAll()[0]; 
              
 
@@ -445,15 +446,16 @@ class ExamReportsController extends AbstractActionController
              //compute statistics
              $totalStudent = sizeof($stdRegisteredToModule);
              $totalFailure = sizeof($stdRegisteredToModuleFailed);
+           
 
              $this->entityManager->getConnection()->commit();
              $brandInfo = "Report generated with UdMAcademy By W-TECH(" . date("d-m-Y H:i") .")";
-
+             
              $view = new ViewModel([
                  'module'=>$ue->getName(),
                  'codeUe'=>$ue->getCode(),
                  'credits'=>$credits,
-                 'subjectName'=>$subject->getSubjectName(),
+                 //'subjectName'=>$subject->getSubjectName(),
                  'students'=>$stdOutput,
                  'acadYr'=>$acadYr,
                  'semestre'=>$semestre,
@@ -825,7 +827,7 @@ public function printFinalYrMpsAction()
                
             }
             
-            $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1)); 
+            $acadYr =  $this->crtAcdYr; 
              
             $classe =  $exam->getClassOfStudyHasSemester()->getClassOfStudy();
  
@@ -908,7 +910,7 @@ public function printFinalYrMpsAction()
             // retrieve the sutdent ID based on the student ID 
             $exam = $this->entityManager->getRepository(Exam::class)->findOneById($id); 
             //$exam_registration = $this->entityManager->getRepository(ExamRegistration::class)->findByExam($exam);
-            $exam_registration = $this->entityManager->getRepository(StudentExamRegistrationView::class)->findBy(array("codeExam"=>$exam->getCode(),"status"=>1,"attendance"=>"P"));
+            $exam_registration = $this->entityManager->getRepository(StudentExamRegistrationView::class)->findBy(array("codeExam"=>$exam->getCode(),"status"=>1,"attendance"=>"P","acadYrId"=>$this->crtAcdYr->getId()));
             if($exam_registration)
             {
                 $i=0;
@@ -934,7 +936,7 @@ public function printFinalYrMpsAction()
                
             }
             
-            $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1)); 
+            $acadYr =  $this->crtAcdYr; 
              
             $classe =  $exam->getClassOfStudyHasSemester()->getClassOfStudy();
           
@@ -1128,24 +1130,25 @@ public function printTranscriptsAction()
             $acadYrId = $this->params()->fromRoute('acadYrId', -1); 
             $stdId = $this->params()->fromRoute('stdId', -1);
             $duplicata = $this->params()->fromRoute('duplicata', -1);
-          
+            
             if($duplicata==-1) $duplicata = 0;
 
             //Retrieve all student registered to the given classe
-            if($stdId==-1 || $stdId==0 || $stdId==1) $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"yearID"=>$acadYrId,"status"=>[1,6,7]));
-            else $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("studentId"=>$stdId,"yearID"=>$acadYrId,"status"=>[1,6,7]));
-            
-            if($acadYrId!=-1)
+            if($stdId==-1 || $stdId==0 || $stdId==1) $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"acadYrId"=>$acadYrId,"status"=>[1,6,7]));
+            else $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("studentId"=>$stdId,"acadYrId"=>$acadYrId,"status"=>[1,6,7]));
+
+            if($acadYrId==-1)
             {           
-                $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->find($acadYrId);
+                $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
                  
             }
             else
             {
-                $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+                
+                $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->find($acadYrId);
                
             }
-        
+         
             $students = [];
             $studentsWithBaclogs = [];
             $sem = $this->entityManager->getRepository(Semester::class)->find($sem_id);
@@ -1189,7 +1192,7 @@ public function printTranscriptsAction()
                             $recapN["mps"]=$stdSemRegistration->getMpsCurrentSem(); 
                             $recapN["semRank"] = $sem_1->getSemester()->getRanking();
 
-                            $coursesN["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            $coursesN["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId(),"idSubject"=>[NULL,' ']));
                              
                             foreach ($coursesN["courses"]  as $key=>$value)
                             {
@@ -1214,7 +1217,7 @@ public function printTranscriptsAction()
                             $recapN1["semRank"] = $sem_1->getSemester()->getRanking();
                             $mention = $stdSemRegistration->getAcademicProfile();
                             
-                            $coursesN1["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId()));
+                            $coursesN1["courses"] = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$value1->getStudentId(),"semID"=>$sem_1->getSemester()->getId(),"idSubject"=>[NULL,' ']));
                            
                             foreach ($coursesN1["courses"] as $key=>$value)
                             {
@@ -1775,7 +1778,7 @@ public function printTranscriptsAction()
     {
         $subjects = [];
         $i=0;
-
+       
         
             $maxSem =$sem->getRanking()-2;
         
@@ -1786,9 +1789,9 @@ public function printTranscriptsAction()
                 {   
                     $semester = $this->entityManager->getRepository(Semester::class)->findOneBy(array("academicYear"=>$acadYr,"ranking"=>$rank));
 
-                   $unitRegistration = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$student->getId(),"semID"=>$semester->getId(),$this->crtAcdYr->getId()));
+                   $unitRegistration = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("studentId"=>$student->getId(),"semID"=>$semester->getId(),"acadYrId"=>$acadYr->getId(),"idSubject"=>["",NULL]));
                    // $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$student,"semester"=>$semester));
-                   
+                 
                     foreach ($unitRegistration as $unit)
                     {
                         $hydrator = new ReflectionHydrator();

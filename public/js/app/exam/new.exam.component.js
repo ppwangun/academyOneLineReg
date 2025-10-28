@@ -112,7 +112,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     $scope.currentExamCode = $ctrl.examCode;
     $ctrl.exam = null;
    
-    var id,ue_class_id;
+    var id,ue_class_id,class_id;
    // $ctrl.selectedItemChange = selectedItemChange;
     
  //collecte and load all the available classes of study  
@@ -260,13 +260,13 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                             $timeout(
                             $http.get('teachingunit',config).then(
                                 function(response){
-                                    $ctrl.selectedUe = response.data[0];
+                                    $ctrl.selectedUe = response.data[0]; 
                                     $ctrl.isActivatedUeSelect = true; 
                                     $ctrl.markCalculationStatus = $ctrl.selectedUe.mark_calculation_status; 
       
-                        }),1000);}).then(function(){
+                        }),1000)}).then(function(){
                                     var config = {
-                                    params: {id:response.data[0].ue_id},
+                                    params: {id:response.data[0].ue_id,classe_id: $ctrl.selectedClasse.id},
                                     headers : {'Accept' : 'application/json'}
                                     };   
 
@@ -560,7 +560,7 @@ $ctrl.updateExamRegistration = function(){
                                 }
                             }).then(function(){
                                 
-                                    data = {id : $ctrl.selectedUe.id};
+                                    data = {id : $ctrl.selectedUe.id,classe_id: $ctrl.selectedUe.class_id};
                                     var config = {
                                     params: data,
                                     headers : {'Accept' : 'application/json'}

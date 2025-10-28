@@ -1,0 +1,72 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 30%;
+    border-radius: 0;" aria-label="Ajouter une faculté">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Ajouter un élément de la grille de facturation</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <form ng-cloak name="gradeSubForm">
+            <div class="md-dialog-content" >
+
+
+                    <div layout-gt-sm layout-gt-xs layout-xs='row' >
+
+                        <md-input-container class="md-block"  flex='40'>
+                                    <label>Choix du grade</label>
+                                    <md-select name="grade" ng-model="teacherPayment.grade"   
+                                                md-no-asterisk required ng-model-options="{trackBy: '$value'}">
+                                        <md-option ng-disabled="true"><em>---Choix du grade---</em></md-option>
+                                        <md-option ng-repeat="grade in teachersGrades" value="{{grade}}">
+                                            {{grade.name}}
+                                        </md-option>
+
+                                    </md-select>
+                                    <div class="errors" ng-messages="gradeSubForm.grade.$error">
+                                      <div ng-message="required">Champ obligatoire</div>
+                                    </div>
+                        </md-input-container>  
+
+                        <md-input-container class="md-block"  flex='60'>
+                            <label>Montant</label>
+                            <input type="text"  name="amount" ng-model="teacherPayment.amount" required md-no-asterisk  /> 
+                            <div ng-messages="gradeSubForm.amount.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+
+
+
+
+                    <md-dialog-actions layout="row">
+
+                      <span flex></span>
+                      <md-button ng-click="cancel()">
+                       Annuler
+                      </md-button>
+                      <md-button class="md-warn"  ng-click="addPaymentLine(teacherPayment)" ng-disabled="gradeSubForm.$invalid">
+                        Ajouter 
+                      </md-button>
+                    </md-dialog-actions>
+            </div>
+        </form>
+    </md-dialog-content>
+</md-dialog>

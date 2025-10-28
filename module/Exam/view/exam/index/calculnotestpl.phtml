@@ -133,7 +133,7 @@ z-index: 120000}
                     
                     <md-select name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe;" 
                                ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse)" 
-                               ng-change="$ctrl.loadExams($ctrl.selectedUe.id,-1); $ctrl.loadStd($ctrl.selectedUe.id);$ctrl.isModuleComputation=0" md-no-asterisk ng-required="true">
+                               ng-change="$ctrl.loadExams($ctrl.selectedUe.id,-1); $ctrl.loadStd($ctrl.selectedUe.id,$ctrl.selectedClasse.id);$ctrl.isModuleComputation=0" md-no-asterisk ng-required="true">
                         <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}">
                             <em >Choisissez une UE</em>
                          
@@ -278,7 +278,7 @@ z-index: 120000}
                     <label>Module</label>
                     <md-select name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe;" 
                                ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse)" 
-                               ng-change="$ctrl.loadExamsPerModuleStatus($ctrl.selectedUe.id); $ctrl.loadStd($ctrl.selectedUe.id);$ctrl.isModuleComputation=1;" md-no-asterisk ng-required="true">
+                               ng-change="$ctrl.loadExamsPerModuleStatus($ctrl.selectedUe.id); $ctrl.loadStd($ctrl.selectedUe.id,$ctrl.selectedClasse.id);$ctrl.isModuleComputation=1;" md-no-asterisk ng-required="true">
                         <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}">
                             <em>Choisissez un module</em>
                         </md-option>

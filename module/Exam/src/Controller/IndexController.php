@@ -26,6 +26,7 @@ use Application\Entity\ClassOfStudy;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\SemesterAssociatedToClass;
 use Application\Entity\SubjectRegistrationView;
+use Application\Entity\AllYearsSubjectRegistrationView;
 use Application\Entity\CurrentYearUeExamsView;
 use Application\Entity\CurrentYearOnlyUeExamsView;
 use Application\Entity\CurrentYearSubjectExamsView;
@@ -191,12 +192,12 @@ class IndexController extends AbstractActionController
 
 
 
-                  $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$data["ueID"],"classe"=>$class->getCode(),"status"=>1));
-                  $subjects = $this->examManager->getSubjectFromUe($data["ueID"],$data["semID"],$data["classeID"]);
+                  $ueExams = $this->entityManager->getRepository(CurrentYearOnlyUeExamsView::class)->findBy(array("subjectId"=>$data["ueID"],"classe"=>$class->getCode(),"status"=>1,"acadYrId"=>$this->crtAdadYr->getId()));
+                  $subjects = $this->examManager->getSubjectFromUe($data["ueID"],$data["semID"],$data["classeID"],$this->crtAdadYr);
 
                   foreach($subjects as $sub)
                   {
-                      $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"classe"=>$class->getCode(),"status"=>1));
+                      $subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$sub["id"],"classe"=>$class->getCode(),"status"=>1,"acadYrId"=>$this->crtAdadYr->getId()));
                       $ueExams = array_merge($ueExams,$subjectExams);
 
                   }
@@ -240,7 +241,7 @@ class IndexController extends AbstractActionController
 
          $this->entityManager->flush();
          $this->entityManager->getConnection()->commit();
-           $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueID"],"idSubject"=>$subjectID),array("nom"=>"ASC")); 
+           $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueID"],"idSubject"=>$subjectID,"acadYrId"=>$this->crtAdadYr->getId()),array("nom"=>"ASC")); 
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
             foreach($std as $key=>$value)
@@ -348,8 +349,8 @@ class IndexController extends AbstractActionController
             else
                 $unitRegistration = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("semester"=>$semester,"teachingUnit"=>$ue,"subject"=>null));
             
-            $exam = $this->entityManager->getRepository(Exam::class)->find($data["examId"]);
-            $examRegistration = $this->entityManager->getRepository(ExamRegistration::class)->findByExam($exam );
+            $exam = $this->entityManager->getRepository(Exam::class)->find($data["examId"]); 
+            $examRegistration = $this->entityManager->getRepository(ExamRegistration::class)->findByExam($exam ); 
             
             //Searching student who registered to subject but not registered to exam related to that subject
             //update exam_registration in order to add the missed student
@@ -359,7 +360,7 @@ class IndexController extends AbstractActionController
                 $flag = false; 
                 foreach ($examRegistration as $examR)
                 {
-                    if($unitR->getStudent()==$examR->getStudent()) 
+                    if($unitR->getStudent()->getId()==$examR->getStudent()->getId()) 
                     {
                         $flag = true;
                         break;
@@ -383,7 +384,7 @@ class IndexController extends AbstractActionController
                 $flag = false; 
                 foreach ($unitRegistration as $unitR)
                 {
-                    if($unitR->getStudent()==$examR->getStudent()) 
+                    if($unitR->getStudent()->getId()==$examR->getStudent()->getId()) 
                     {
                         //for clearing duplicates if student is registered to exam twice
                         if($flag)
@@ -397,6 +398,7 @@ class IndexController extends AbstractActionController
                         
                     }
                 }
+                
                 if(!$flag)
                 {
                     //updating the exam_registration table

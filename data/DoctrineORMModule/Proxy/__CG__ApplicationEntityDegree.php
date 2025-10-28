@@ -67,10 +67,10 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'methodRegltFraisVac', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'montantFraisVac', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'isCoreCurriculum', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'methodRegltFraisVac', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'montantFraisVac', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'fieldStudy', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'speciality', '' . "\0" . 'Application\\Entity\\Degree' . "\0" . 'specialityOption'];
     }
 
     /**
@@ -234,6 +234,50 @@ class Degree extends \Application\Entity\Degree implements \Doctrine\ORM\Proxy\P
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getName', []);
 
         return parent::getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMethodRegltFraisVac($methodRegltFraisVac = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setMethodRegltFraisVac', [$methodRegltFraisVac]);
+
+        return parent::setMethodRegltFraisVac($methodRegltFraisVac);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMethodRegltFraisVac()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getMethodRegltFraisVac', []);
+
+        return parent::getMethodRegltFraisVac();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMontantFraisVac($montantFraisVac = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setMontantFraisVac', [$montantFraisVac]);
+
+        return parent::setMontantFraisVac($montantFraisVac);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMontantFraisVac()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getMontantFraisVac', []);
+
+        return parent::getMontantFraisVac();
     }
 
     /**

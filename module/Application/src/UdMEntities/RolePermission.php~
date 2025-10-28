@@ -29,16 +29,6 @@ class RolePermission
     private $rolePermission;
 
     /**
-     * @var \Role
-     *
-     * @ORM\ManyToOne(targetEntity="Role")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
-     * })
-     */
-    private $role;
-
-    /**
      * @var \Permission
      *
      * @ORM\ManyToOne(targetEntity="Permission")
@@ -47,6 +37,16 @@ class RolePermission
      * })
      */
     private $permission;
+
+    /**
+     * @var \Role
+     *
+     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
+     * })
+     */
+    private $role;
 
 
 }

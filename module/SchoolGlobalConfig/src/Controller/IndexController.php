@@ -31,6 +31,7 @@ use Application\Entity\UnitRegistration;
 use Application\Entity\StudentSemRegistration;
 use Application\Entity\CurrentYearTeachingUnitView;
 use Application\Entity\Contract;
+
 use PhpOffice\PhpSpreadsheet;
 
 class IndexController extends AbstractActionController
@@ -493,21 +494,22 @@ class IndexController extends AbstractActionController
       {
         $data = $this->params()->fromQuery();  
         $ue = [];
-      
+       
         if($data)
         {
+ 
             $query = $this->entityManager->createQuery('SELECT  s.id,s.subjectName,s.subjectCode,c1.code as classCode,c.subjectCredits,c.subjectWeight,'
             . 'c.subjectHours,c.subjectCmHours,c.subjectTdHours,c.subjectTpHours  FROM Application\Entity\ClassOfStudyHasSemester c '
             . 'JOIN c.classOfStudy c1 '
             . 'JOIN c.semester sem '
             . 'JOIN sem.academicYear acad '
             . 'JOIN c.subject s '
-            . 'WHERE s.teachingUnit = ?1 AND acad.id= ?2 AND c.status = 1'
-            );
+            . 'WHERE s.teachingUnit = ?1 AND acad.id= ?2 AND c1.id = ?3 AND c.status = 1' 
+            );   
             $query->setParameter(1, $data["id"]);
             $query->setParameter(2, $this->crtAcadYr->getId());
-            $ue = $query->getResult(); 
-           
+            $query->setParameter(3, $data['classe_id']);
+            $ue = $query->getResult();             
         }
         $this->entityManager->getConnection()->commit();
         return new JsonModel([
@@ -1207,7 +1209,7 @@ class IndexController extends AbstractActionController
                     }
                }
               
-             //  $classes1 =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
+               $classes =  $this->entityManager->getRepository(ClassOfStudy::class)->findAll();
              //  foreach($classes1 as $key=>$value)
                //    if(in_array($value->getCode(),["AU1","AU2","AU3"] ))
                //            $classes[$key]=$value; 
@@ -1553,7 +1555,48 @@ class IndexController extends AbstractActionController
         //seconsemster of the active year to the first semester of the current year
         
 
-    }   
+    } 
+    
+    public  function searchTrainingAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        { 
+            $data= $this->params()->fromQuery();           
+            $id = $data["id"];
+            $subjects=[];
+           
+          //  if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) {
+                
+                $query = $this->entityManager->createQuery('SELECT d.id,d.name FROM Application\Entity\Degree d'
+                        .' WHERE d.name LIKE :name AND d.status = 1');
+                $query->setParameter('name', '%'.$id.'%');
+                //$query->setParameter('userId', $userId);
+                $training = $query->getResult();  
+                
+
+           // }
+
+
+            
+            
+           
+            $output = new JsonModel([
+                    $training
+            ]);
+
+            return $output;       
+            
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+            
+        }         
+    }
+    
+    
     private function totalCreditPerSem($classe,$sem)
     {
 

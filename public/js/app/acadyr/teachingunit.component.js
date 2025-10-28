@@ -17,8 +17,8 @@ function teachingunitCtrl($timeout,$http,$location,$mdDialog,$scope,DTOptionsBui
  };
  
  
-  $ctrl.redirect= function(id,ue_class_id,ue_sem_id){
-     $location.path("/assignnewteachingunit/"+id+"/"+ue_class_id+"/"+ue_sem_id);
+  $ctrl.redirect= function(id,ue_class_id,ue_sem_id,classe_id){
+     $location.path("/assignnewteachingunit/"+id+"/"+ue_class_id+"/"+ue_sem_id+"/"+classe_id);
      
  };
  

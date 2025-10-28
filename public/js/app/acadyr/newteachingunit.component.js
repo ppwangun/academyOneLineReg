@@ -29,7 +29,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
     $scope.subjects = [];
     
    
-    var id,ue_class_id;
+    var id,ue_class_id,classe_id;
    // $ctrl.selectedItemChange = selectedItemChange;
     
  //collecte and load all the available classes of study  
@@ -43,6 +43,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
      
      id = $routeParams.id;
      ue_class_id =$routeParams.ue_class_id;
+     classe_id = $routeParams.classe_id;
      if(ue_class_id)
      {
                 
@@ -57,7 +58,9 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
                         $http.get('assignnewteachingunit',config).then(
                         function(response){
                             $ctrl.ue=response.data[0];
-                            $ctrl.ue.sem_id = $routeParams.ue_sem_id;
+                            if($ctrl.ue.isPreviousYearSubject) $ctrl.ue.isPreviousYearSubject=1;
+                            else $ctrl.ue.isPreviousYearSubject=0;
+                            $ctrl.ue.sem_id = parseInt($routeParams.ue_sem_id);
                             
                             
                         }).then(function(){
@@ -70,7 +73,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
                                 $ctrl.selectedItem = response.data[0];
                             }).then(function(){
       
-                            var data= {id: id};
+                            var data= {id: id,classe_id:classe_id};
                             var config = {
                             params: data,
                             headers : {'Accept' : 'application/json'}
@@ -79,6 +82,15 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
                                                 $scope.subjects=response.data[0];
                                             });
                                 
+                            }).then(function(){
+                            var data = {id: $routeParams.ue_sem_id};
+                            var config = {
+                            params: data,
+                            headers : {'Accept' : 'application/json'}
+                            };                                 
+                                         $http.get('semester',config).then(function(response){
+                                         $ctrl.semester = response.data[0];
+                                         });
                             }).then(function(){
                                          $http.get('semester').then(function(response){
                                          $ctrl.semesters = response.data[0];
@@ -121,6 +133,7 @@ function newteachingunitCtrl($timeout,$http,$location,$mdDialog,$routeParams,$sc
 
   $ctrl.addUe = function(){
       $ctrl.ue.class_id = $ctrl.selectedItem.id;
+      $ctrl.ue.sem_id = $ctrl.semester.id;
       $timeout(
               $http.post('assignnewteachingunit',$ctrl.ue).then(
               function successCallback(){
@@ -176,8 +189,9 @@ $ctrl.asignedSemToClasse = function(class_code){
               //remove the current object from the array
               $ctrl.classes.splice(index,1);*/
             const output = {
+                SUBJECT_HAS_COMPONENT_ERROR: 'Vous devez au préalable supprimer les composantes de l\'unité d\'enseignement',
                 REGISTERED_STUDENT_ERROR: 'Impossible de supprimer: des étudiants sont inscrits sur cette unité d\'enseignement',
-                EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existes sur cette unité d\'enseignement ',
+                EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existent sur cette unité d\'enseignement ',
                 CONTRACTS_EXIST_ERROR: 'Impossible de supprimer: un contrat d\'enseignement existe sur cette unité d\'enseignement',
                 BILL_EXIST_ERROR: 'Impossible de supprimer: une  ou plusieurs factures   existent sur cette unité d\'enseignement',
                 PROGRESSION_EXIST_ERROR: 'Impossible de supprimer: des cours ont été réalisés sur cette unité d\'enseignement',
@@ -227,6 +241,7 @@ $ctrl.asignedSemToClasse = function(class_code){
     *-------------------------------------------------------------------------*/    
    $ctrl.updateUe = function(){
        $ctrl.ue.class_id = $ctrl.selectedItem.id;
+       $ctrl.ue.sem_id = $ctrl.semester.id
         var data = {id: $ctrl.ue.id,data:$ctrl.ue}; 
         var config = {
         params: data,
@@ -276,31 +291,62 @@ $ctrl.asignedSemToClasse = function(class_code){
    $scope.deleteSubject = function(subject,ev)
       {
       
-      var data = {id: {subject_id:subject.id,smester_id:$ctrl.ue.sem_id}}; 
+      var data = {id: {subject_id:subject.id,smester_id:$ctrl.ue.sem_id,classe_id:$ctrl.selectedItem.id}}; 
       var config = {
       params: data,
       headers : {'Accept' : 'application/json'}
       };
-
-// Preparing the confirm windows
-      var confirm = $mdDialog.confirm()
+      
+        // Preparing the confirm windows
+        var confirm = $mdDialog.confirm()
             .title('Voulez vous vraiment supprimer?')
             .textContent('Toutes les données associées à cette information seront perdues')
              // .ariaLabel('Lucky day')
             .targetEvent(ev)
             .ok('Supprimer')
-            .cancel('Annuler');
-//open de confirm window
-    $mdDialog.show(confirm).then(function() {
+            .cancel('Annuler');      
+      
+        $mdDialog.show(confirm).then(function() {
         //in case delete is pressee excute  the delete backend 
         $http.delete('subject',config).then(
-          function successCallback(response){
-              //check the index of the current object in the array
+          function successCallback(response){      
+
+            const output = {
+                SUBJECT_HAS_COMPONENT_ERROR: 'Vous devez au préalable supprimer les composantes de l\'matière',
+                REGISTERED_STUDENT_ERROR: 'Impossible de supprimer: des étudiants sont inscrits sur cette matière',
+                EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existent sur cette matière ',
+                CONTRACTS_EXIST_ERROR: 'Impossible de supprimer: un contrat d\'enseignement existe sur cette matière',
+                BILL_EXIST_ERROR: 'Impossible de supprimer: une  ou plusieurs factures   existent sur cette matière',
+                PROGRESSION_EXIST_ERROR: 'Impossible de supprimer: des cours ont été réalisés sur cette matière',
+                SUBJECT_REGISTERED_STUDENT_ERROR: 'Impossible de supprimer: des étudiants sont inscrit  sur une ou plusieurs matières',
+                SUBJECT_EXAMS_EXISTS_ERROR: 'Impossible de supprimer: des évaluations existes  sur une ou plusieurs matières ',
+                SUBJECT_CONTRACTS_EXIST_ERROR: 'Impossible de supprimer: un contrat d\'enseignement existe sur une ou plusieurs matières',
+                SUBJECT_BILL_EXIST_ERROR: 'Impossible de supprimer: une  ou plusieurs factures   existent sur une ou plusieurs matières',
+                SUBJECT_PROGRESSION_EXIST_ERROR: 'Impossible de supprimer: des cours ont été réalisés sur une ou plusieurs matières',
+            } 
+           
+              if(response.data[0]!="DONE")
+              {
+
+                        $mdDialog.show(
+                          $mdDialog.alert()
+                            .parent(angular.element(document.body))
+                            .clickOutsideToClose(true)
+                            .title('Erreur')
+                            .textContent(output[response.data[0]])
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('OK')
+                            .targetEvent(ev)
+                        );
+
+                  
+              }
+              else
+              {
               
-              var index = $scope.subjects.findIndex(x => x.id === subject.id)
-              //remove the current object from the array
-              $scope.subjects.splice(index,1);
-              toastr.success("Opération exécutée avec succès")
+                toastr.success("Opération effectuée avec succès");
+              
+              }
 
          },
         function errorCallback(response){

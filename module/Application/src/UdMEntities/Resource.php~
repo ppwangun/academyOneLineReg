@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Resource
  *
- * @ORM\Table(name="resource")
+ * @ORM\Table(name="resource", indexes={@ORM\Index(name="fk_resource_resource1_idx", columns={"resource_id"})})
  * @ORM\Entity
  */
 class Resource
@@ -41,6 +41,16 @@ class Resource
      * @ORM\Column(name="type", type="string", length=45, nullable=true)
      */
     private $type;
+
+    /**
+     * @var \Resource
+     *
+     * @ORM\ManyToOne(targetEntity="Resource")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
+     * })
+     */
+    private $resource;
 
 
 }

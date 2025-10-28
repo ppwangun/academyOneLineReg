@@ -64,10 +64,11 @@ class SubjectController extends AbstractRestfulController
 
                     foreach($userClasses as $classe)
                     {
-                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\CurrentYearTeachingUnitView c'
-                                .' WHERE c.classe = :classe AND c.codeUe LIKE :code');
+                        $query = $this->entityManager->createQuery('SELECT c.id,c.codeUe,c.nomUe,c.classe,c.semester,c.semId  FROM Application\Entity\AllYearsTeachingUnitView c'
+                                .' WHERE c.classe = :classe AND c.codeUe LIKE :code AND c.acadYrId = :year_id');
                         $query->setParameter('code', '%'.$id.'%')
                                 ->setParameter('classe',$classe->getClassOfStudy()->getCode());
+                        $query->setParameter('year_id', $acadyrId);
 
                         $subjects_1 = $query->getResult();
                         $subjects= array_merge($subjects , $subjects_1);

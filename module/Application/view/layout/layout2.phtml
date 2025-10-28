@@ -160,6 +160,7 @@
     <script src="js/app/student/admission.component.js"></script>
     <script src="js/app/student/print.student.component.js"></script>
     <script src="js/app/student/subjectregistration.component.js"></script>
+    <script src="js/app/teacher_payments/teacher.payment.component.js"></script>
     <script src="js/app/app.js"></script>
   <script src="js/app/acadyr-list/acadyr-list.js"></script>
   <script src="js/app/acadyr/acadyr.js"></script>
@@ -185,7 +186,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand " href="index"><span class="zf-green">Agenla Academy &nbsp;&nbsp;[{{acadyr.code}}]</a>
+                <a class="navbar-brand " href="index"><span class="zf-green">UdMAcademy &nbsp;&nbsp;[{{acadyr.code}}]</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -519,8 +520,12 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
                                     <a href="#!/academicRankConfig">Gestion des grades</a>
                                 </li>
-                               
-
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
+                                    <a href="#!/vacationPaymentMethod">Méthodes de règlesment des frais de vacation </a>
+                                </li>                               
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
+                                    <a href="#!/paymentsgrid">Grilles de facturation frais de vacation </a>
+                                </li>  
                             </ul>                            
                         </li>
                         <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('view.exams', null)))?true:false?>">
@@ -567,7 +572,7 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.planing', null)))?true:false?>">
                                     <a href="#!/courseProgramming"><i >&nbsp;</i>Programmation</a>
                                 </li>    
-                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.resoourse.edit', null)))?true:false?>">
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('course.resource.edit', null)))?true:false?>">
                                     <a href="#!/classroom"><i >&nbsp;</i>Gestion des salles de cours</a>
                                 </li>                                 
                             </ul>

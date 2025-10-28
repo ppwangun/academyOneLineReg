@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Degree
  *
- * @ORM\Table(name="degree", uniqueConstraints={@ORM\UniqueConstraint(name="course_code_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_degree_speciality_option1_idx", columns={"speciality_option_id"}), @ORM\Index(name="fk_degree_speciality1_idx", columns={"speciality_id"}), @ORM\Index(name="fk_degree_field_of_study1_idx", columns={"field_study_id"})})
+ * @ORM\Table(name="degree", uniqueConstraints={@ORM\UniqueConstraint(name="course_code_UNIQUE", columns={"id"})}, indexes={@ORM\Index(name="fk_degree_speciality1_idx", columns={"speciality_id"}), @ORM\Index(name="fk_degree_field_of_study1_idx", columns={"field_study_id"}), @ORM\Index(name="fk_degree_speciality_option1_idx", columns={"speciality_option_id"})})
  * @ORM\Entity
  */
 class Degree
@@ -50,6 +50,30 @@ class Degree
     private $iscorecurriculum;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="method_reglt_frais_vac", type="string", length=45, nullable=true, options={"default"="ACADEMIC_RANK"})
+     */
+    private $methodRegltFraisVac = 'ACADEMIC_RANK';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="montant_frais_vac", type="string", length=45, nullable=true)
+     */
+    private $montantFraisVac;
+
+    /**
+     * @var \FieldOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
+     * })
+     */
+    private $fieldStudy;
+
+    /**
      * @var \Speciality
      *
      * @ORM\ManyToOne(targetEntity="Speciality")
@@ -68,16 +92,6 @@ class Degree
      * })
      */
     private $specialityOption;
-
-    /**
-     * @var \FieldOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="FieldOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="field_study_id", referencedColumnName="id")
-     * })
-     */
-    private $fieldStudy;
 
 
 
@@ -188,6 +202,78 @@ class Degree
     }
 
     /**
+     * Set methodRegltFraisVac.
+     *
+     * @param string|null $methodRegltFraisVac
+     *
+     * @return Degree
+     */
+    public function setMethodRegltFraisVac($methodRegltFraisVac = null)
+    {
+        $this->methodRegltFraisVac = $methodRegltFraisVac;
+
+        return $this;
+    }
+
+    /**
+     * Get methodRegltFraisVac.
+     *
+     * @return string|null
+     */
+    public function getMethodRegltFraisVac()
+    {
+        return $this->methodRegltFraisVac;
+    }
+
+    /**
+     * Set montantFraisVac.
+     *
+     * @param string|null $montantFraisVac
+     *
+     * @return Degree
+     */
+    public function setMontantFraisVac($montantFraisVac = null)
+    {
+        $this->montantFraisVac = $montantFraisVac;
+
+        return $this;
+    }
+
+    /**
+     * Get montantFraisVac.
+     *
+     * @return string|null
+     */
+    public function getMontantFraisVac()
+    {
+        return $this->montantFraisVac;
+    }
+
+    /**
+     * Set fieldStudy.
+     *
+     * @param \FieldOfStudy|null $fieldStudy
+     *
+     * @return Degree
+     */
+    public function setFieldStudy(\FieldOfStudy $fieldStudy = null)
+    {
+        $this->fieldStudy = $fieldStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get fieldStudy.
+     *
+     * @return \FieldOfStudy|null
+     */
+    public function getFieldStudy()
+    {
+        return $this->fieldStudy;
+    }
+
+    /**
      * Set speciality.
      *
      * @param \Speciality|null $speciality
@@ -233,29 +319,5 @@ class Degree
     public function getSpecialityOption()
     {
         return $this->specialityOption;
-    }
-
-    /**
-     * Set fieldStudy.
-     *
-     * @param \FieldOfStudy|null $fieldStudy
-     *
-     * @return Degree
-     */
-    public function setFieldStudy(\FieldOfStudy $fieldStudy = null)
-    {
-        $this->fieldStudy = $fieldStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get fieldStudy.
-     *
-     * @return \FieldOfStudy|null
-     */
-    public function getFieldStudy()
-    {
-        return $this->fieldStudy;
     }
 }

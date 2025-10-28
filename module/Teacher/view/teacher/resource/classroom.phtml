@@ -21,22 +21,15 @@ z-index: 120000}
 </style>
 
 
-<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.initResources()">
         
             <div class="row">
                 <div class='col-md-6'>
-                    <div ng-show="!$ctrl.schedlingUpdate">
-                    <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid" >Enrégistrer</button>
+                    <div >
+                    
                     <span> <a href="home">Annuler</a></span>
                     </div>
-                    <div ng-show="$ctrl.schedlingUpdate">
-                        <button   ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="updateSchedule(ev,$ctrl.progressionData.scheduledId)"  class="btn btn-primary" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Modifier</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="deleteSchedule($ctrl.progressionData.scheduledId)" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Supprimer</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Repéter</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="confirmEvent()" class="btn btn-danger" ng-disabled="examForm.$invalid || $ctrl.isScheduleValidated" >Confirmer</button>
-                        <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('exam.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="$ctrl.loadForValidation()" class="btn btn-info" ng-disabled="examForm.$invalid" >Vailder</button>
-                        <span> <a href="#!/courseProgramming" ng-click="$ctrl.resetSchedule()">Nouvelle Programmation </a></span>
-                    </div>
+
                     
                 </div>
         
@@ -48,52 +41,68 @@ z-index: 120000}
 <div class="row">
 <div class="col-md-4"> 
      <div class="form-view">
-    
-        <md-content layout-padding >
-            <form   name="examForm">
+         
+        <md-content  >
+            <h3>Gérer les campus</h3>
+            <md-checkbox  ng-model="$ctrl.showCampusForm" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
 
+                ng-true-value="1"
+                ng-false-value="0"             
+                class="md-primary">
 
-        <div layout-gt-sm='row'>
-            <div layout-gt-sm='column' flex="100" >
-            <md-input-container>
-            <label>Semestre</label>
-            <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.code'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)"
-                        md-no-asterisk required >
-                <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
-              <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
-                {{sem.name}}
-              </md-option>
-            </md-select>
-            <div class="errors" ng-messages="examForm.semester.$error">
-              <div ng-message="required">Champ obligatoire</div>
-            </div>
-          </md-input-container>  
-            </div> 
+            </md-checkbox>
+            <i ng-show="$ctrl.showCampusForm">Cacher le formulaire</i>  
+            <i ng-hide="$ctrl.showCampusForm">Afficher le formulaire</i>             
+            <form   name="classroomForm" ng-show="$ctrl.showCampusForm">
+                
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Nom du Campus:</label>
+                        <input name="name" ng-model="$ctrl.campus.campusName" required />
+                            <div ng-messages="classroomForm.name.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Code campus:</label>
+                        <input name="name" ng-model="$ctrl.campus.campusCode" required />
+                            <div ng-messages="classroomForm.code.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>                 
 
-        </div>
-
-
-
-            <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
-            <md-input-container flex="100">
-                <label>Salles de cours</label>
-                <md-select ng-disabled="!$ctrl.isActivatedMatiereSelect " name="endingTime"  ng-model="$ctrl.endingTime" 
-                             ng-required="false"
-                           md-no-asterisk>
-                  <md-option ng-disabled="true"><em>---Salle de cours---</em></md-option>
-
-                        <md-option  ng-value="time" ng-repeat="time in $ctrl.salles" > {{time.name}} </md-option>
-                </md-select>
-                <div class="errors" ng-messages="examForm.endingTime.$error">
-                  <div ng-message="required">Champ obligatoire</div>
-                </div>
-            </md-input-container>  
-            </div>            
+                <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('campus.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addCampus($ctrl.campus)" class="btn btn-danger" ng-disabled="classroomForm.$invalid" ><i class="fa fa-plus"></i> &nbsp;Enrégistrer</button>
+                <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('campus.update', null))?true:false?> && $ctrl.isUpdate" type="button" ng-click="updateCampus($ctrl.campus)" class="btn btn-danger" ng-disabled="classroomForm3.$invalid" ><i class="fa fa-plus"></i> &nbsp;Modifier</button>
+         
+           
 
 
 
             </form>
         </md-content>  
+         
+            <table id="tblfilieres"  class="table table-striped table-hover table-condensed datatable">
+                <thead>
+                    <tr>
+                        <!--<th  > Nom campus</th>-->
+                        <th >Code</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="camp in $ctrl.campuses" 
+                                        ng-style="{'background-color': camp.id === selectedCampusId ? 'gainsboro' : 'initial','color': camp.id === selectedCampusId ? 'white' : 'initial'}"
+                                        >
+                     <!-- <td ng-bind="camp.name"></td> -->
+                        <td ng-bind="camp.code" ng-click='showBuildings(camp)'></td>
+                        <td>
+                          <div class="btn-group">
+                          <button  type="button" ng-click="deleteCampus(fil)" class="btn btn-default btn btn-xs" ><i class="fa fa-trash-o "></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>         
     </div>
     
     <!-- comment --></div>
@@ -102,9 +111,65 @@ z-index: 120000}
     <div class="form-view">
 
         
-
         
+        <md-content ng-show='$ctrl.showBuilding' >
+            <h3>Gérer les bâtiments</h3>
+            <md-checkbox  ng-model="$ctrl.showBuildingForm" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
 
+                ng-true-value="1"
+                ng-false-value="0"             
+                class="md-primary">
+
+            </md-checkbox>  
+            <i ng-show="$ctrl.showBuildingForm">Cacher le formulaire</i>  
+            <i ng-hide="$ctrl.showBuildingForm">Afficher le formulaire</i>  
+            
+            <form   name="classroomForm2" ng-show="$ctrl.showBuildingForm">
+
+               
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Nom du bâtiment:</label>
+                        <input name="name" ng-model="$ctrl.building.name" required />
+                            <div ng-messages="classroomForm2.name.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Code bâtiment:</label>
+                        <input name="name" ng-model="$ctrl.building.code" required />
+                            <div ng-messages="classroomForm2.code.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>                
+
+                <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('building.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addBuilding($ctrl.campus,$ctrl.building)" class="btn btn-danger" ng-disabled="classroomForm2.$invalid" ><i class="fa fa-plus"></i> &nbsp;Enrégistrer</button>
+            </form>
+          
+        </md-content>  
+        
+            <table id="tblfilieres"  class="table table-striped table-hover table-condensed datatable">
+                <thead>
+                    <tr>
+                        <!--<th  > Nom campus</th>-->
+                        <th >Code</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="build in $ctrl.buildings" ng-style="{'background-color': build.id === selectedBuilding.id ? 'gainsboro' : 'initial','color': build.id === selectedBuildingId ? 'white' : 'initial'}" >
+                     <!-- <td ng-bind="camp.name"></td> -->
+                        <td ng-bind="build.code" ng-click='showClassrooms(build)'></td>
+                        <td style="text-align: right;">
+                          <div class="btn-group">
+                              <button  type="button" ng-click="$ctrl.assignBuildingToSchool(build)" class="btn btn-default btn btn-xs" ><i class="fa fa-adjust "></i></button>
+                          <button  type="button" ng-click="deleteCampus(fil)" class="btn btn-default btn btn-xs" ><i class="fa fa-trash-o "></i></button>
+                          </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
                 
            
     </div>
@@ -113,9 +178,64 @@ z-index: 120000}
     <div class="form-view">
 
         
+         
+        <md-content  ng-show='$ctrl.showClassroom'>
+            <h3>Gérer les salles de cours</h3>
+            <md-checkbox  ng-model="$ctrl.showClassroomForm" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
 
+                ng-true-value="1"
+                ng-false-value="0"             
+                class="md-primary">
+
+            </md-checkbox>
+            <i ng-show="$ctrl.showClassroomForm">Cacher le formulaire</i>  
+            <i ng-hide="$ctrl.showClassroomForm">Afficher le formulaire</i> 
+            <form   name="classroomForm3" ng-show="$ctrl.showClassroomForm">
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Nom due la salle de cours:</label>
+                        <input name="name" ng-model="$ctrl.classroom.name" required />
+                            <div ng-messages="classroomForm3.name.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm  >
+                        <label>Code salle de cours:</label>
+                        <input name="name" ng-model="$ctrl.classroom.code" required />
+                            <div ng-messages="classroomForm3.code.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>                 
+
+                <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('campus.create', null))?true:false?> && !$ctrl.isUpdate" type="button" ng-click="addClassroom(selectedBuilding,$ctrl.classroom)" class="btn btn-danger" ng-disabled="classroomForm3.$invalid" ><i class="fa fa-plus"></i> &nbsp;Enrégistrer</button>
+                <button  ng-show=" <?=($this->access('global.system.admin', null))||($this->access('campus.create', null))?true:false?> && $ctrl.isUpdate" type="button" ng-click="updateCampus()" class="btn btn-danger" ng-disabled="classroomForm3.$invalid" ><i class="fa fa-plus"></i> &nbsp;Modifier</button>
+         
+
+
+
+            </form>
+        </md-content>  
         
-
+            <table id="tblfilieres"  class="table table-striped table-hover table-condensed datatable">
+                <thead>
+                    <tr>
+                        <!--<th  > Nom campus</th>-->
+                        <th >Code</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="class in $ctrl.classrooms"  >
+                     <!-- <td ng-bind="camp.name"></td> -->
+                        <td ng-bind="class.code" ng-click='showClassrooms(build)'></td>
+                        <td>
+                          <div class="btn-group">
+                          <button  type="button" ng-click="deleteCampus(fil)" class="btn btn-default btn btn-xs" ><i class="fa fa-trash-o "></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
                 
            
     </div>

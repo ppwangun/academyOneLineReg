@@ -76,7 +76,7 @@ class StdFromPvController extends AbstractRestfulController
                 {
                     foreach($userClasses as $classe)
                     {
-                        $registeredStd_1 = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findBy(array("class"=>$classe->getClassOfStudy()->getCode()),array("nom"=>"ASC"));
+                        $registeredStd_1 = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe->getClassOfStudy()->getCode(),"acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
                         $registeredStd = array_merge($registeredStd,$registeredStd_1);
                         
                     }

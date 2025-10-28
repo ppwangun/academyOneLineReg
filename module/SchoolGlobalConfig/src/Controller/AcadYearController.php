@@ -18,11 +18,15 @@ use Laminas\Hydrator\ReflectionHydrator;
 class AcadYearController extends AbstractRestfulController
 {
      private $entityManager;
+     private $sessionContainer;
      private $acadyear;
     
-    public function __construct($entityManager)
+    public function __construct($entityManager,$sessionContainer)
     {
         $this->entityManager = $entityManager;
+        $this->sessionContainer = $sessionContainer;
+        
+        
     }
 
     private function notFound()
@@ -142,6 +146,7 @@ class AcadYearController extends AbstractRestfulController
                     $this->entityManager->flush();
                }
                $acadyear->setIsDefault(1);
+               $this->sessionContainer->currentAcadYr = $acadyear;
 
             }else $acadyear->setIsDefault(0);
             

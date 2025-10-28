@@ -22,8 +22,9 @@ class AcadYearControllerFactory implements FactoryInterface
                      $requestedName, array $options = null)
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $sessionContainer = $container->get('LoggedInUser');
         
         // Instantiate the controller and inject dependencies
-        return new AcadYearController($entityManager);
+        return new AcadYearController($entityManager,$sessionContainer);
     }
 }

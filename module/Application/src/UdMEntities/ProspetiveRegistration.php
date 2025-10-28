@@ -92,16 +92,6 @@ class ProspetiveRegistration
     private $prospetiveRegistrationcol;
 
     /**
-     * @var \ProspectiveStudent
-     *
-     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
-     * })
-     */
-    private $prospectiveStudent;
-
-    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -110,6 +100,16 @@ class ProspetiveRegistration
      * })
      */
     private $academicYear;
+
+    /**
+     * @var \ProspectiveStudent
+     *
+     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
+     * })
+     */
+    private $prospectiveStudent;
 
 
 
@@ -364,30 +364,6 @@ class ProspetiveRegistration
     }
 
     /**
-     * Set prospectiveStudent.
-     *
-     * @param \ProspectiveStudent|null $prospectiveStudent
-     *
-     * @return ProspetiveRegistration
-     */
-    public function setProspectiveStudent(\ProspectiveStudent $prospectiveStudent = null)
-    {
-        $this->prospectiveStudent = $prospectiveStudent;
-
-        return $this;
-    }
-
-    /**
-     * Get prospectiveStudent.
-     *
-     * @return \ProspectiveStudent|null
-     */
-    public function getProspectiveStudent()
-    {
-        return $this->prospectiveStudent;
-    }
-
-    /**
      * Set academicYear.
      *
      * @param \AcademicYear|null $academicYear
@@ -409,5 +385,29 @@ class ProspetiveRegistration
     public function getAcademicYear()
     {
         return $this->academicYear;
+    }
+
+    /**
+     * Set prospectiveStudent.
+     *
+     * @param \ProspectiveStudent|null $prospectiveStudent
+     *
+     * @return ProspetiveRegistration
+     */
+    public function setProspectiveStudent(\ProspectiveStudent $prospectiveStudent = null)
+    {
+        $this->prospectiveStudent = $prospectiveStudent;
+
+        return $this;
+    }
+
+    /**
+     * Get prospectiveStudent.
+     *
+     * @return \ProspectiveStudent|null
+     */
+    public function getProspectiveStudent()
+    {
+        return $this->prospectiveStudent;
     }
 }

@@ -49,7 +49,7 @@
                                 </thead>
                                 <tbody>
     
-                                    <tr ng-repeat="ue in $ctrl.ue" style="cursor: hand;cursor: pointer;" ng-dblclick="$ctrl.redirect(ue.id,ue.ue_class_id,ue.sem_id)">
+                                    <tr ng-repeat="ue in $ctrl.ue" style="cursor: hand;cursor: pointer;" ng-dblclick="$ctrl.redirect(ue.id,ue.ue_class_id,ue.sem_id,ue.class_id)">
                                       <!-- alla the teaching unit having at least two subjects will be displayed with *-->  
                                       <td ng-bind='ue.subjects>0?ue.name+"*":ue.name'> {{}}</td>
                                       <td ng-bind="ue.code">toto</td>

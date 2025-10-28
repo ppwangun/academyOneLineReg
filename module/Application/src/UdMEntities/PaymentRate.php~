@@ -13,16 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class PaymentRate
 {
     /**
-     * @var \AcademicRanck
-     *
-     * @ORM\ManyToOne(targetEntity="AcademicRanck")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="academic_ranck_id", referencedColumnName="id")
-     * })
-     */
-    private $academicRanck;
-
-    /**
      * @var \TrainingCurriculum
      *
      * @ORM\Id
@@ -33,6 +23,16 @@ class PaymentRate
      * })
      */
     private $trainingCurriculum;
+
+    /**
+     * @var \AcademicRanck
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicRanck")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_ranck_id", referencedColumnName="id")
+     * })
+     */
+    private $academicRanck;
 
 
 }

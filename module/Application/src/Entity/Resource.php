@@ -1,13 +1,13 @@
 <?php
-
 namespace Application\Entity;
+
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Resource
  *
- * @ORM\Table(name="resource")
+ * @ORM\Table(name="resource", indexes={@ORM\Index(name="fk_resource_resource1_idx", columns={"resource_id"})})
  * @ORM\Entity
  */
 class Resource
@@ -31,7 +31,7 @@ class Resource
     /**
      * @var string|null
      *
-     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     * @ORM\Column(name="code", type="string", length=40, nullable=true)
      */
     private $code;
 
@@ -43,30 +43,15 @@ class Resource
     private $type;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Resource
      *
-     * @ORM\ManyToMany(targetEntity="CourseScheduled", inversedBy="resource")
-     * @ORM\JoinTable(name="associated_resoure",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="course_scheduled_date_scheduled_date", referencedColumnName="date_scheduled"),
-     *     @ORM\JoinColumn(name="course_scheduled_class_of_study_id", referencedColumnName="class_of_study_id"),
-     *     @ORM\JoinColumn(name="course_scheduled_teacher_id", referencedColumnName="teacher_id"),
-     *     @ORM\JoinColumn(name="course_scheduled_teaching_unit_id", referencedColumnName="teaching_unit_id")
-     *   }
-     * )
+     * @ORM\ManyToOne(targetEntity="Resource")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
+     * })
      */
-    private $courseScheduledDateScheduledDate = array();
+    private $resource;
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->courseScheduledDateScheduledDate = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
 
     /**
@@ -89,7 +74,7 @@ class Resource
     public function setName($name = null)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -113,7 +98,7 @@ class Resource
     public function setCode($code = null)
     {
         $this->code = $code;
-    
+
         return $this;
     }
 
@@ -137,7 +122,7 @@ class Resource
     public function setType($type = null)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
@@ -152,38 +137,26 @@ class Resource
     }
 
     /**
-     * Add courseScheduledDateScheduledDate.
+     * Set resource.
      *
-     * @param \CourseScheduled $courseScheduledDateScheduledDate
+     * @param Resource|null $resource
      *
      * @return Resource
      */
-    public function addCourseScheduledDateScheduledDate(\CourseScheduled $courseScheduledDateScheduledDate)
+    public function setResource(Resource $resource = null)
     {
-        $this->courseScheduledDateScheduledDate[] = $courseScheduledDateScheduledDate;
-    
+        $this->resource = $resource;
+
         return $this;
     }
 
     /**
-     * Remove courseScheduledDateScheduledDate.
+     * Get resource.
      *
-     * @param \CourseScheduled $courseScheduledDateScheduledDate
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * @return Resource|null
      */
-    public function removeCourseScheduledDateScheduledDate(\CourseScheduled $courseScheduledDateScheduledDate)
+    public function getResource()
     {
-        return $this->courseScheduledDateScheduledDate->removeElement($courseScheduledDateScheduledDate);
-    }
-
-    /**
-     * Get courseScheduledDateScheduledDate.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getCourseScheduledDateScheduledDate()
-    {
-        return $this->courseScheduledDateScheduledDate;
+        return $this->resource;
     }
 }

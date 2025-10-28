@@ -29,16 +29,6 @@ class RolePermission
     private $rolePermission;
 
     /**
-     * @var \Role
-     *
-     * @ORM\ManyToOne(targetEntity="Role")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
-     * })
-     */
-    private $role;
-
-    /**
      * @var \Permission
      *
      * @ORM\ManyToOne(targetEntity="Permission")
@@ -47,6 +37,16 @@ class RolePermission
      * })
      */
     private $permission;
+
+    /**
+     * @var \Role
+     *
+     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
+     * })
+     */
+    private $role;
 
 
 
@@ -85,30 +85,6 @@ class RolePermission
     }
 
     /**
-     * Set role.
-     *
-     * @param \Role|null $role
-     *
-     * @return RolePermission
-     */
-    public function setRole(\Role $role = null)
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * Get role.
-     *
-     * @return \Role|null
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
      * Set permission.
      *
      * @param \Permission|null $permission
@@ -130,5 +106,29 @@ class RolePermission
     public function getPermission()
     {
         return $this->permission;
+    }
+
+    /**
+     * Set role.
+     *
+     * @param \Role|null $role
+     *
+     * @return RolePermission
+     */
+    public function setRole(\Role $role = null)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role.
+     *
+     * @return \Role|null
+     */
+    public function getRole()
+    {
+        return $this->role;
     }
 }

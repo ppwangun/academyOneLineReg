@@ -64,16 +64,6 @@ class ExamRegistration
     private $ismarkfromcatchupexam = '0';
 
     /**
-     * @var \Exam
-     *
-     * @ORM\ManyToOne(targetEntity="Exam")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
-     * })
-     */
-    private $exam;
-
-    /**
      * @var \Student
      *
      * @ORM\Id
@@ -84,6 +74,16 @@ class ExamRegistration
      * })
      */
     private $student;
+
+    /**
+     * @var \Exam
+     *
+     * @ORM\ManyToOne(targetEntity="Exam")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
+     * })
+     */
+    private $exam;
 
 
 }

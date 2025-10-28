@@ -22,6 +22,7 @@ angular.module('myApp', [
   'exam',
   'users',
   'teachingunit',
+  'teacher.payment',
   'myApp.version',
   'datatables',
   'datatables.buttons',
@@ -104,7 +105,7 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
               template: '<new-classe></new-classe>'
           }).when('/assignedteachingunit',{
               template: '<assignedteachingunit-details></assignedteachingunit-details>'
-          }).when('/assignnewteachingunit/:id/:ue_class_id/:ue_sem_id',{
+          }).when('/assignnewteachingunit/:id/:ue_class_id/:ue_sem_id/:classe_id',{
               template: '<assignnewteachingunit-details></assignnewteachingunit-details>'
           }).when('/assignnewteachingunit',{
               template: '<assignnewteachingunit-details></assignnewteachingunit-details>'
@@ -256,7 +257,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
             template: "<acad-rank-config></acad-rank-config>",
         }).when("/subjectBilling", {
             template: "<subject-billing></subject-billing>",
-                       
+        }).when("/vacationPaymentMethod", {
+            template: "<vacation-payment-method></vacation-payment-method>",
         }).when("/subjectBilling/:numRef", {
             template: "<subject-billing></subject-billing>",
                        
@@ -287,7 +289,7 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
         })           //returns the users permission level 
     }
     return obj;
-}).controller('testCtrl',function($scope,accessFac,$interval,$timeout,$http){
+}).controller('testCtrl',function($scope,accessFac,$interval,$timeout,$http,toastr){
     var controller = this;
     var $ctrl = this;
     $ctrl.selectedAcadYr = null;
@@ -303,7 +305,7 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
               $http.get('currentAcademicYear').then(
               function successCallback(response){
                   $scope.acadyr = response.data[0];
-
+                  //toastr.success('Année académique cangée avec succès');
 
               },
               function errorCallbacl(response){
@@ -342,6 +344,7 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
              };
 
              return  $http.get('switchAcadYr',config).then(function(response){
+                 toastr.success("Année académique changé avec succès")
                     return response.data[0];
                  });
 

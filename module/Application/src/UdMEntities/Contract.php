@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Contract
  *
- * @ORM\Table(name="contract", indexes={@ORM\Index(name="fk_contract_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_contract_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_contract_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_contract_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_contract_academic_year1_idx", columns={"academic_year_id"})})
+ * @ORM\Table(name="contract", indexes={@ORM\Index(name="fk_contract_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_contract_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_contract_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_contract_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_contract_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class Contract
@@ -85,26 +85,6 @@ class Contract
     private $contractStatus;
 
     /**
-     * @var \AcademicYear
-     *
-     * @ORM\ManyToOne(targetEntity="AcademicYear")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
-     * })
-     */
-    private $academicYear;
-
-    /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
-
-    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -133,6 +113,26 @@ class Contract
      * })
      */
     private $subject;
+
+    /**
+     * @var \AcademicYear
+     *
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
 
 
 
@@ -363,54 +363,6 @@ class Contract
     }
 
     /**
-     * Set academicYear.
-     *
-     * @param \AcademicYear|null $academicYear
-     *
-     * @return Contract
-     */
-    public function setAcademicYear(\AcademicYear $academicYear = null)
-    {
-        $this->academicYear = $academicYear;
-
-        return $this;
-    }
-
-    /**
-     * Get academicYear.
-     *
-     * @return \AcademicYear|null
-     */
-    public function getAcademicYear()
-    {
-        return $this->academicYear;
-    }
-
-    /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return Contract
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
-    }
-
-    /**
      * Set semester.
      *
      * @param \Semester|null $semester
@@ -480,5 +432,53 @@ class Contract
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    /**
+     * Set academicYear.
+     *
+     * @param \AcademicYear|null $academicYear
+     *
+     * @return Contract
+     */
+    public function setAcademicYear(\AcademicYear $academicYear = null)
+    {
+        $this->academicYear = $academicYear;
+
+        return $this;
+    }
+
+    /**
+     * Get academicYear.
+     *
+     * @return \AcademicYear|null
+     */
+    public function getAcademicYear()
+    {
+        return $this->academicYear;
+    }
+
+    /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return Contract
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }
 }

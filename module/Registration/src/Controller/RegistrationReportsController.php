@@ -196,8 +196,9 @@ class RegistrationReportsController extends AbstractActionController
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($classe_code);
             $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYrId);
             $semClass = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findOneBy(array("academicYear"=>$acadYr,"semester"=>$semester,"classOfStudy"=>$classe));
+            
             //Retrieve all student registered to the given classe
-            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"yearID"=>$acadYrId,"status"=>[1,6,7]));
+            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"acadYrId"=>$acadYrId,"status"=>[1,6,7]));
             $i=1;
             $totalStudent = sizeof($registeredStd);
             
@@ -253,7 +254,7 @@ public function getTranscriptReferenceGenerationStatusAction()
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($classe_code);
             $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($acadYrId);
             //Retrieve all student registered to the given classe
-            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"yearID"=>$acadYrId,"status"=>[1,6,7]));
+            $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe_code,"acadYrId"=>$acadYrId,"status"=>[1,6,7]));
             $semClass = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findOneBy(array("academicYear"=>$acadYr,"semester"=>$semester,"classOfStudy"=>$classe));
             
             $this->entityManager->flush();

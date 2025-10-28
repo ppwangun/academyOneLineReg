@@ -31,7 +31,7 @@ class SemesterController extends AbstractRestfulController
             $query = $this->entityManager->createQuery('SELECT c.id,c.code,c.name FROM Application\Entity\Semester c'
                     .' JOIN c.academicYear a'
                     .' WHERE c.id LIKE :id'
-                    .' AND a.isDefault = 1'
+                   // .' AND a.isDefault = 1'
                     );
             $query->setParameter('id', '%'.$id.'%');
             $sem = $query->getResult()[0];

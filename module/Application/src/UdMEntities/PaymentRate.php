@@ -13,16 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class PaymentRate
 {
     /**
-     * @var \AcademicRanck
-     *
-     * @ORM\ManyToOne(targetEntity="AcademicRanck")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="academic_ranck_id", referencedColumnName="id")
-     * })
-     */
-    private $academicRanck;
-
-    /**
      * @var \TrainingCurriculum
      *
      * @ORM\Id
@@ -34,31 +24,17 @@ class PaymentRate
      */
     private $trainingCurriculum;
 
-
-
     /**
-     * Set academicRanck.
+     * @var \AcademicRanck
      *
-     * @param \AcademicRanck|null $academicRanck
-     *
-     * @return PaymentRate
+     * @ORM\ManyToOne(targetEntity="AcademicRanck")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_ranck_id", referencedColumnName="id")
+     * })
      */
-    public function setAcademicRanck(\AcademicRanck $academicRanck = null)
-    {
-        $this->academicRanck = $academicRanck;
+    private $academicRanck;
 
-        return $this;
-    }
 
-    /**
-     * Get academicRanck.
-     *
-     * @return \AcademicRanck|null
-     */
-    public function getAcademicRanck()
-    {
-        return $this->academicRanck;
-    }
 
     /**
      * Set trainingCurriculum.
@@ -82,5 +58,29 @@ class PaymentRate
     public function getTrainingCurriculum()
     {
         return $this->trainingCurriculum;
+    }
+
+    /**
+     * Set academicRanck.
+     *
+     * @param \AcademicRanck|null $academicRanck
+     *
+     * @return PaymentRate
+     */
+    public function setAcademicRanck(\AcademicRanck $academicRanck = null)
+    {
+        $this->academicRanck = $academicRanck;
+
+        return $this;
+    }
+
+    /**
+     * Get academicRanck.
+     *
+     * @return \AcademicRanck|null
+     */
+    public function getAcademicRanck()
+    {
+        return $this->academicRanck;
     }
 }

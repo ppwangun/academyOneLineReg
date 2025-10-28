@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ClassOfStudyHasSemester
  *
- * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"})})
+ * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class ClassOfStudyHasSemester
@@ -134,14 +134,18 @@ class ClassOfStudyHasSemester
     private $subjectCredits;
 
     /**
-     * @var \Subject
+     * @var string|null
      *
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="payment_method", type="string", length=45, nullable=true, options={"default"="GRADE"})
      */
-    private $subject;
+    private $paymentMethod = 'GRADE';
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_per_hr", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amountPerHr;
 
     /**
      * @var \ClassOfStudy
@@ -182,6 +186,16 @@ class ClassOfStudyHasSemester
      * })
      */
     private $teachingUnit;
+
+    /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
 
 
 
@@ -580,27 +594,51 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set subject.
+     * Set paymentMethod.
      *
-     * @param \Subject|null $subject
+     * @param string|null $paymentMethod
      *
      * @return ClassOfStudyHasSemester
      */
-    public function setSubject(\Subject $subject = null)
+    public function setPaymentMethod($paymentMethod = null)
     {
-        $this->subject = $subject;
+        $this->paymentMethod = $paymentMethod;
 
         return $this;
     }
 
     /**
-     * Get subject.
+     * Get paymentMethod.
      *
-     * @return \Subject|null
+     * @return string|null
      */
-    public function getSubject()
+    public function getPaymentMethod()
     {
-        return $this->subject;
+        return $this->paymentMethod;
+    }
+
+    /**
+     * Set amountPerHr.
+     *
+     * @param float|null $amountPerHr
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setAmountPerHr($amountPerHr = null)
+    {
+        $this->amountPerHr = $amountPerHr;
+
+        return $this;
+    }
+
+    /**
+     * Get amountPerHr.
+     *
+     * @return float|null
+     */
+    public function getAmountPerHr()
+    {
+        return $this->amountPerHr;
     }
 
     /**
@@ -697,5 +735,29 @@ class ClassOfStudyHasSemester
     public function getTeachingUnit()
     {
         return $this->teachingUnit;
+    }
+
+    /**
+     * Set subject.
+     *
+     * @param \Subject|null $subject
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setSubject(\Subject $subject = null)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    /**
+     * Get subject.
+     *
+     * @return \Subject|null
+     */
+    public function getSubject()
+    {
+        return $this->subject;
     }
 }

@@ -1,0 +1,102 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="max-width: 50%;
+            max-height: 70%;
+    width: 50%;
+    height: 70%;
+    border-radius: 0;" aria-label="Ajouter une matière">
+
+
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+
+
+      <div class="md-dialog-content" >
+        <md-content layout-padding >
+            <form ng-cloak name="subjectForm">
+           
+                
+       <div class='row'>         
+        <div class='col-md-4' style="margin-top:15px;" >
+            <md-input-container flex="100">
+                
+             <div layout-gt-sm='column' >
+                 <label>Date de debut</label>
+                   <md-datepicker name="dateBegining" ng-model="dateBegining" md-placeholder="Date "  required></md-datepicker>   
+
+            </div> 
+            </md-input-container>
+        </div>  
+                
+                    
+        <div class='col-md-4'  style="margin-top:15px;" >
+            <md-input-container flex="100">
+
+             <div layout-gt-sm='column' >
+                 <label>Date de fin</label>
+                   <md-datepicker name="dateEnding" ng-model="dateEnding" md-placeholder="Date "  required></md-datepicker>   
+
+            </div> 
+            </md-input-container>
+        </div>  
+           
+           <div class='col-md-4'>
+            
+                
+                    <md-checkbox ng-model="planingForWeekend"   class="md-primary"            
+                    aria-label="Tronc commun?"
+                    ng-true-value="1"
+                    ng-false-value="0"> 
+                </md-checkbox>
+            <span>Inclure le weekend</span>
+          
+           </div>
+       </div>
+
+                       
+        <table class="table">
+            <thead>
+            <th col-span='2'> Choix ddes tranches horaire</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="time in timeFrames" >
+                    <td>
+                        <md-checkbox  ng-model="time.status"  aria-label="Checkbox Indeterminate" 
+                                      ng-true-value="1"
+                                      ng-false-value="0"             
+                                      class="md-primary">
+
+                        </md-checkbox>
+                    </td>
+                    <td ng-bind="time.time">
+
+                    </td>
+
+                </tr>
+            
+        </table>
+               
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancel()"> Annuler</md-button>
+      <md-button  class="md-warn" ng-click="addEvent()" ng-disabled="subjectForm.$invalid">
+          <span class="fa fa-check">  Valider </span>
+      </md-button>
+ 
+
+    </md-dialog-actions>
+                </div>
+        </form>    
+          </md-content>
+      
+      </div>   
+
+  
+</md-dialog>

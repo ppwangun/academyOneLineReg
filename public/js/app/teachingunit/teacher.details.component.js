@@ -546,6 +546,10 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         });
     }; 
     
+    /*-------------------------------------------------------------------------------
+     * ---------------------------Set vacation payment method------------------------
+     --------------------------------------------------------------------------------*/
+    
     
      /*--------------------------------------------------------------------------
      *--------------------------- Printing Teacher's bill ---------------------------
@@ -572,6 +576,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
           fullscreen: true // Only for -xs, -sm breakpoints.
         })
         .then(function(answer) {
+
           
           $ctrl.status = 'You said the information was "' + answer + '".';
         }, function() {

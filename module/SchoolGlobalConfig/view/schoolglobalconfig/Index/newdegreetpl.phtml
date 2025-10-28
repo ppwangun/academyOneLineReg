@@ -79,7 +79,7 @@ z-index: 120000}
      
                 <md-input-container class="md-block" flex-gt-sm  style=" margin-top: 15px;" >
                     <label>Option:</label>
-                    <md-select name="dpt" placeholder="Choisir l'option" ng-model="$trl.degree.opt_id"   style="width: 60%;"  >
+                    <md-select name="dpt" placeholder="Choisir l'option" ng-model="$ctrl.degree.opt_id"   style="width: 60%;"  >
                          <md-option ng-disabled="true"><em>---Choix de l'option---</em></md-option>
                         <md-option ng-value="opt.id" ng-repeat="opt in options">{{fil.name}}</md-option>
                     </md-select>

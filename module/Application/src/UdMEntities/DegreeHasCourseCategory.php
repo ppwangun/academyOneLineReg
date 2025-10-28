@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DegreeHasCourseCategory
  *
- * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"}), @ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"})})
+ * @ORM\Table(name="degree_has_course_category", indexes={@ORM\Index(name="fk_degree_has_Course_category_field_of_study1_idx", columns={"field_of_study_id"}), @ORM\Index(name="fk_degree_has_Course_category_Course_category1_idx", columns={"Course_category_id"}), @ORM\Index(name="fk_degree_has_Course_category_degree1_idx", columns={"degree_id"})})
  * @ORM\Entity
  */
 class DegreeHasCourseCategory
@@ -20,16 +20,6 @@ class DegreeHasCourseCategory
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
-
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
 
     /**
      * @var \FieldOfStudy
@@ -51,6 +41,16 @@ class DegreeHasCourseCategory
      */
     private $courseCategory;
 
+    /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
 
 
     /**
@@ -61,30 +61,6 @@ class DegreeHasCourseCategory
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set degree.
-     *
-     * @param \Degree|null $degree
-     *
-     * @return DegreeHasCourseCategory
-     */
-    public function setDegree(\Degree $degree = null)
-    {
-        $this->degree = $degree;
-
-        return $this;
-    }
-
-    /**
-     * Get degree.
-     *
-     * @return \Degree|null
-     */
-    public function getDegree()
-    {
-        return $this->degree;
     }
 
     /**
@@ -133,5 +109,29 @@ class DegreeHasCourseCategory
     public function getCourseCategory()
     {
         return $this->courseCategory;
+    }
+
+    /**
+     * Set degree.
+     *
+     * @param \Degree|null $degree
+     *
+     * @return DegreeHasCourseCategory
+     */
+    public function setDegree(\Degree $degree = null)
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+
+    /**
+     * Get degree.
+     *
+     * @return \Degree|null
+     */
+    public function getDegree()
+    {
+        return $this->degree;
     }
 }

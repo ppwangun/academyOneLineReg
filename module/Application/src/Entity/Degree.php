@@ -44,7 +44,21 @@ class Degree
      *
      * @ORM\Column(name="isCoreCurriculum", type="boolean", nullable=true)
      */
-    private $isCoreCurriculum = '0';    
+    private $isCoreCurriculum = '0';  
+    
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="method_reglt_frais_vac", type="string", length=45, nullable=true, options={"default"="ACADEMIC_RANK"})
+     */
+    private $methodRegltFraisVac = 'ACADEMIC_RANK';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="montant_frais_vac", type="string", length=45, nullable=true)
+     */
+    private $montantFraisVac;    
 
     /**
      * @var int|null
@@ -142,6 +156,54 @@ class Degree
     {
         return $this->name;
     }
+    
+    /**
+     * Set methodRegltFraisVac.
+     *
+     * @param string|null $methodRegltFraisVac
+     *
+     * @return Degree
+     */
+    public function setMethodRegltFraisVac($methodRegltFraisVac = null)
+    {
+        $this->methodRegltFraisVac = $methodRegltFraisVac;
+
+        return $this;
+    }
+
+    /**
+     * Get methodRegltFraisVac.
+     *
+     * @return string|null
+     */
+    public function getMethodRegltFraisVac()
+    {
+        return $this->methodRegltFraisVac;
+    }
+
+    /**
+     * Set montantFraisVac.
+     *
+     * @param string|null $montantFraisVac
+     *
+     * @return Degree
+     */
+    public function setMontantFraisVac($montantFraisVac = null)
+    {
+        $this->montantFraisVac = $montantFraisVac;
+
+        return $this;
+    }
+
+    /**
+     * Get montantFraisVac.
+     *
+     * @return string|null
+     */
+    public function getMontantFraisVac()
+    {
+        return $this->montantFraisVac;
+    }    
 
     /**
      * Set status.

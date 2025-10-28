@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TeacherPaymentBill
  *
- * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"})})
+ * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"})})
  * @ORM\Entity
  */
 class TeacherPaymentBill
@@ -34,6 +34,13 @@ class TeacherPaymentBill
      * @ORM\Column(name="date", type="datetime", nullable=true)
      */
     private $date;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="payment_rate", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $paymentRate;
 
     /**
      * @var float|null
@@ -92,16 +99,6 @@ class TeacherPaymentBill
     private $paymentDetails;
 
     /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
-
-    /**
      * @var \Contract
      *
      * @ORM\ManyToOne(targetEntity="Contract")
@@ -120,6 +117,16 @@ class TeacherPaymentBill
      * })
      */
     private $teacherPaymentBillSumary;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
 
 
 
@@ -179,6 +186,30 @@ class TeacherPaymentBill
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set paymentRate.
+     *
+     * @param float|null $paymentRate
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setPaymentRate($paymentRate = null)
+    {
+        $this->paymentRate = $paymentRate;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentRate.
+     *
+     * @return float|null
+     */
+    public function getPaymentRate()
+    {
+        return $this->paymentRate;
     }
 
     /**
@@ -374,30 +405,6 @@ class TeacherPaymentBill
     }
 
     /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return TeacherPaymentBill
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
-    }
-
-    /**
      * Set contract.
      *
      * @param \Contract|null $contract
@@ -443,5 +450,29 @@ class TeacherPaymentBill
     public function getTeacherPaymentBillSumary()
     {
         return $this->teacherPaymentBillSumary;
+    }
+
+    /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }
 }

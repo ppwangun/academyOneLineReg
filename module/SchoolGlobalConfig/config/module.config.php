@@ -27,6 +27,7 @@ return [
             Controller\AssignedTeachingunitController::class => Controller\Factory\AssignedTeachingunitControllerFactory::class,
             Controller\SubjectController::class => Controller\Factory\SubjectControllerFactory::class,
             Controller\AssignSemesterToClassController::class => Controller\Factory\AssignSemesterToClassControllerFactory::class,
+            Controller\CampusResourcesController::class => Controller\Factory\CampusResourcesControllerFactory::class,
         ],
     ],
     'router' => [
@@ -623,6 +624,106 @@ return [
                     ],
                 ],
             ],  
+            'searchTraining' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/searchTraining',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'searchTraining',
+                    ],
+                ],
+            ],  
+            'newcampus' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newcampus',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'newcampus',
+                    ],
+                ],
+            ], 
+            'newbuilding' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newbuilding',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'newbuilding',
+                    ],
+                ],
+            ],   
+            'newclassroom' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newclassroom',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'newclassroom',
+                    ],
+                ],
+            ],             
+            'getCampuses' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getCampuses',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'getCampuses',
+                    ],
+                ],
+            ],
+            'getBuildings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getBuildings',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'getBuildings',
+                    ],
+                ],
+            ], 
+            'getBuildingAssignedTofaculties' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getBuildingAssignedTofaculties',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'getBuildingAssignedTofaculties',
+                    ],
+                ],
+            ],             
+            'assignBuildingToFaculties' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/assignBuildingToFaculties',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'assignBuildingToFaculties',
+                    ],
+                ],
+            ],            
+            'getClassrooms' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getClassrooms',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'getClassrooms',
+                    ],
+                ],
+            ], 
+            'getClassroomsAssignedToClass' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/getClassroomsAssignedToClass',
+                    'defaults' => [
+                        'controller' => Controller\CampusResourcesController::class,
+                        'action'        => 'getClassroomsAssignedToClass',
+                    ],
+                ],
+            ],            
             'getOdooSettings' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -693,7 +794,23 @@ return [
                 ['actions' => '*', 
                  'allow' => '@'],
 
-            ],            
+            ],  
+            Controller\CampusResourcesController::class => [
+
+                // Give access to "index", "add", "edit", "view", "changePassword" actions 
+                // to users having the "user.manage" permission.
+                ['actions' => '*', 
+                 'allow' => '@'],
+
+            ],    
+            Controller\AssignSemesterToClassController::class => [
+
+                // Give access to "index", "add", "edit", "view", "changePassword" actions 
+                // to users having the "user.manage" permission.
+                ['actions' => '*', 
+                 'allow' => '@'],
+
+            ],             
         ]
     ],
 ];

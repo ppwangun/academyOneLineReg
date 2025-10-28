@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UnitRegistration
  *
- * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_unit_registration_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"})})
+ * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_unit_registration_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_unit_registration_admin_registration1_idx", columns={"admin_registration_id"}), @ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"})})
  * @ORM\Entity
  */
 class UnitRegistration
@@ -162,6 +162,26 @@ class UnitRegistration
     private $calculationstatus = '0';
 
     /**
+     * @var \Subject
+     *
+     * @ORM\ManyToOne(targetEntity="Subject")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * })
+     */
+    private $subject;
+
+    /**
+     * @var \AdminRegistration
+     *
+     * @ORM\ManyToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
+     * })
+     */
+    private $adminRegistration;
+
+    /**
      * @var \TeachingUnit
      *
      * @ORM\ManyToOne(targetEntity="TeachingUnit")
@@ -180,16 +200,6 @@ class UnitRegistration
      * })
      */
     private $semester;
-
-    /**
-     * @var \Subject
-     *
-     * @ORM\ManyToOne(targetEntity="Subject")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
-     * })
-     */
-    private $subject;
 
 
 
@@ -684,6 +694,54 @@ class UnitRegistration
     }
 
     /**
+     * Set subject.
+     *
+     * @param \Subject|null $subject
+     *
+     * @return UnitRegistration
+     */
+    public function setSubject(\Subject $subject = null)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    /**
+     * Get subject.
+     *
+     * @return \Subject|null
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * Set adminRegistration.
+     *
+     * @param \AdminRegistration|null $adminRegistration
+     *
+     * @return UnitRegistration
+     */
+    public function setAdminRegistration(\AdminRegistration $adminRegistration = null)
+    {
+        $this->adminRegistration = $adminRegistration;
+
+        return $this;
+    }
+
+    /**
+     * Get adminRegistration.
+     *
+     * @return \AdminRegistration|null
+     */
+    public function getAdminRegistration()
+    {
+        return $this->adminRegistration;
+    }
+
+    /**
      * Set teachingUnit.
      *
      * @param \TeachingUnit|null $teachingUnit
@@ -729,29 +787,5 @@ class UnitRegistration
     public function getSemester()
     {
         return $this->semester;
-    }
-
-    /**
-     * Set subject.
-     *
-     * @param \Subject|null $subject
-     *
-     * @return UnitRegistration
-     */
-    public function setSubject(\Subject $subject = null)
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
-
-    /**
-     * Get subject.
-     *
-     * @return \Subject|null
-     */
-    public function getSubject()
-    {
-        return $this->subject;
     }
 }

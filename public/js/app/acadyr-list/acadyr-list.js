@@ -65,7 +65,7 @@ angular.module('myApp.acadyrList', ['ngRoute','datatables'])
                 });
         
         $scope.redirect = function(id){
-            $location.path("/updateacadyr/"+id);
+            $location.path("/updateacadyr/"+id); 
         }
         
 

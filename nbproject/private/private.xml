@@ -4,53 +4,27 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/view/registration/registration-reports/transcripts.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/SemesterController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teacher_payments/teacher.payment.component.js</file>
             <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/Factory/IndexControllerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/resource/classroom.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/Factory/CalculNotesControllerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/StdRegistrationController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/StdRegisteredToSubjectController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/ProgressionController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/SubjectController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/TeachingunitController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/AssignSemesterToClassController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/view/layout/layout2.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/teacher.details.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/SubjectRegistrationController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/TeacherController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/Factory/IndexControllerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/course.programming.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/RegisteredStudentView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/GradeController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/Factory/ExamReportsControllerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/StudentExamRegistrationView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/StdFromPvController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/AllYearsRegisteredStudentView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/CurrentYearUeExamsView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/ExamController.php</file>
             <file>file:/C:/xampp/htdocs/wacademy/public/js/app/app.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/RegisteredStudentForActiveRegistrationYearView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/exam/new.exam.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/AllYearsTeachingUnitView.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/exam/calcul.notes.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/ResourceController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/view/exam/exam-reports/printdetailedmps.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/AcademicRanck.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/PaymentController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/payment/newteachertpl.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/AllYearsSubjectRegistrationView.php</file>
             <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/IndexController.php</file>
             <file>file:/C:/xampp/htdocs/wacademy/public/js/app/acadyr/newteachingunit.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/new.teachingunit.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Service/ExamManager.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/CalculNotesController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/search-progressions-timeline.html</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/Factory/ResourceControllerFactory.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Application/view/layout/layout2.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/public/js/my_js/globalconfig/gradefeesform.html</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/config/module.config.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/ExamRegistrationController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/GradeController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/IndexController.php</file>
             <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/ExamReportsController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/view/schoolglobalconfig/Index/assignedteachingunitpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/student/registration.reports.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/view/schoolglobalconfig/Index/assignnewteachingunitpl.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Registration/src/Controller/StdRegisteredToExamController.php</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/payment/paymentsgridlist.phtml</file>
+            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/payment/new-payment-grid.phtml</file>
         </group>
     </open-files>
 </project-private>

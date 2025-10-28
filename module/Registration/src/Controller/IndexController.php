@@ -229,31 +229,93 @@ class IndexController extends AbstractActionController
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-
+          
             $data = $this->params()->fromQuery();  
             if(!isset($data['acadYrId']))
             {
                 $acadYr = $this->crtAcadYr;
-                $data['acadYrId'] = $acadYr->getId();
+                $data['acadYrId'] = $acadYr->getId();                
             }else $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
-            if(!isset($data['classeId'])) $data['classeId'] = "%";
-            $conn = $this->entityManager->getConnection();
-            $sql = '
-                SELECT s.id,s.matricule,s.nom,s.prenom,c.code
-                FROM student s
-                INNER JOIN admin_registration a
-                INNER JOIN class_of_study c
-                ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
-                WHERE a.academic_year_id = :acadYrId 
-                AND s.matricule like :matricule
-                AND a.class_of_study_id like :classeId
-                AND a.status=1;
-                ';
+            if(!isset($data['classeId'])) $data['classeId'] = -1;
+            
+            
+            $userId = $this->sessionContainer->userId; 
+            $user = $this->entityManager->getRepository(User::class)->find($userId ); 
+            
+            $classes = trim($data['classeId']);           
+            
+            if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
+            {  
+                    $classes ="(".$classes.")";
+                    $conn = $this->entityManager->getConnection();
+                    if($data['classeId'] != -1)
+                    $sql = '
+                        SELECT s.id,s.matricule,s.nom,s.prenom,c.code
+                        FROM student s
+                        INNER JOIN admin_registration a
+                        INNER JOIN class_of_study c
+                        ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
+                        WHERE a.academic_year_id = :acadYrId 
+                        AND s.matricule like :matricule 
+                        AND c.id = :classe 
+                        AND a.status=1;
+                        ';
+                    else
+                    $sql = '
+                        SELECT s.id,s.matricule,s.nom,s.prenom,c.code
+                        FROM student s
+                        INNER JOIN admin_registration a
+                        INNER JOIN class_of_study c
+                        ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
+                        WHERE a.academic_year_id = :acadYrId 
+                        AND s.matricule like :matricule 
 
-            $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
-                                 'classeId' => trim($data['classeId']),
-                                 'matricule' => "%".trim($data['matricule'])."%"));
-            $results = $stmt->fetchAllAssociative();
+                        AND a.status=1;
+                        ';                        
+
+                    $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
+                                        'classe' => trim($data['classeId']),
+                                         'matricule' => "%".trim($data['matricule'])."%"));
+                    $results = $stmt->fetchAllAssociative();
+            }
+            else{            
+               $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));  
+                if($userClasses)
+                {
+                    $count =0;
+                    while($count<sizeof($userClasses)-1)
+                    {
+                        if($count==0)
+                        {
+                            $classes .= ",";
+                            $classes.=$userClasses[$count]->getClassOfStudy()->getId().",";
+                        
+                        }
+                            $classes.=$userClasses[$count]->getClassOfStudy()->getId().",";
+                            $count++;
+                    }
+                    $classes.=$userClasses[$count]->getClassOfStudy()->getId();
+                }
+                $classes ="(".$classes.")";
+            
+
+                    $conn = $this->entityManager->getConnection();
+                    $sql = '
+                        SELECT s.id,s.matricule,s.nom,s.prenom,c.code
+                        FROM student s
+                        INNER JOIN admin_registration a
+                        INNER JOIN class_of_study c
+                        ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
+                        WHERE a.academic_year_id = :acadYrId 
+                        AND s.matricule like :matricule
+                        AND a.class_of_study_id IN '.$classes.'
+                        AND a.status=1;
+                        ';
+
+                    $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
+                                         'matricule' => "%".trim($data['matricule'])."%"));
+                    $results = $stmt->fetchAllAssociative();
+            }
             
         return new JsonModel([
                 $results
@@ -421,13 +483,18 @@ class IndexController extends AbstractActionController
             $datastring = $this->params()->fromQuery(); 
             
             $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$datastring['classe'],"acadYrId"=>$this->crtAcadYr->getId()));
-           ;
+           
             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
             $sem = $this->entityManager->getRepository(Semester::class)->findOneById($datastring["sem"]);
             $acadYr = $this->crtAcadYr;
             
+            //All courses of the class
+            $currentYrCourses = $this->findCourses($classe->getStudyLevel(),$classe->getDegree()->getCode(),$acadYr);            
             //Total credit at the semester of the cycle
             $totalCredits = $this->totalCreditsPerCycle($classe->getCode(),$sem,$acadYr); 
+            $totalCreditsPerYear = $this->totalCreditsPerYear($classe,$acadYr);
+            
+            $grades = [];
         
             $studyLevel = $classe->getStudyLevel();
             $sem_rank = $sem->getRanking();
@@ -441,8 +508,7 @@ class IndexController extends AbstractActionController
                 $data = $hydrator->extract($value);
                 $std = $this->entityManager->getRepository(Student::class)->find($value->getStudentId());
 
-                //All courses of the class
-                 $currentYrCourses = $this->findCourses($classe->getStudyLevel(),$classe->getDegree()->getCode(),$acadYr);
+
                 $registeredStd[$key] = $data;
                 $student[$j]["matricule"]= $value->getMatricule();
                 $total_credits_sem = 0;
@@ -501,9 +567,7 @@ class IndexController extends AbstractActionController
                             $unitRegistrationDetails_1?$total_credits_classe += $unitRegistrationDetails_1->getCredits():0;
                            // $totalCreditsCycle+=$unitRegistrationDetails_1->getCredits();
                         }
-                     
-                   
-                        
+  
                     }
                     else
                     {
@@ -549,11 +613,12 @@ class IndexController extends AbstractActionController
                     
                     $totalCreditsCycle = $studentsSemRegistration->getTotalCreditsCyclePreviousYear();
                     $totalCreditsCycle+=$this->totalCreditPerSem($classe_1->getCode(),$sem->getCode(),$acadYr);
-                    
+                  
                     if($value->getIsStudentRepeating()==1)
                     {
                         
                         $creditRegisteredCycle = $studentsSemRegistration->getTotalCreditRegisteredPreviousCycle();
+                        $totalCreditsCycle = $studentsSemRegistration->getTotalCreditsCyclePreviousYear();
                         
                         //$creditRegisteredCycle = $studentsSemRegistration->getNbCredtisCapitalizedPrevious()+$total_credits_sem;
                     }
@@ -574,7 +639,7 @@ class IndexController extends AbstractActionController
 
                     
                     if($sem_rank_mpc==0) return new JsonModel([
-                        "ERROR_DIVISION_PAR_0_SEM_RANK"
+                        ["ERROR_DIVISION_PAR_0_SEM_RANK"=>$std->getMatricule()]
                             ]);
                     
                     $mpc = ($studentsSemRegistration->getMpcPrevious()*($sem_rank_mpc-1)+$mps)/$sem_rank_mpc;
@@ -592,7 +657,7 @@ class IndexController extends AbstractActionController
                     if($creditRegisteredCycle==0)
                         $studentsSemRegistration->setValidationPercentage(0);
                     else
-                        $studentsSemRegistration->setValidationPercentage(round(($total_credits_valides_cycle/$creditRegisteredCycle)*100,1, PHP_ROUND_HALF_UP));
+                        $studentsSemRegistration->setValidationPercentage(round(($total_credits_valides_cycle/$total_credits_cycle)*100,1, PHP_ROUND_HALF_UP));
                     //After calculating MPC, get it register to the next sem 
                     $year = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
                     //This block of instructions is executed only for the 1rst semster of a year
@@ -617,7 +682,7 @@ class IndexController extends AbstractActionController
                             $studentsNextSemRegistration->setTotalCreditsCyclePreviousYear($total_credits_cycle);                        
                             $studentsNextSemRegistration->setCountingSemRegistration($sem_rank_mpc);
                             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
-                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe,$acadYr));
+                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($totalCreditsPerYear);
                             $this->entityManager->flush();                             
                         }else{ 
                             $studentsNextSemRegistration = new StudentSemRegistration();
@@ -631,7 +696,7 @@ class IndexController extends AbstractActionController
                             $studentsNextSemRegistration->setTotalCreditsCyclePreviousYear($total_credits_cycle);
                             $studentsNextSemRegistration->setCountingSemRegistration($sem_rank_mpc);
                             $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
-                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($this->totalCreditsPerYear($classe,$acadYr));
+                            $studentsNextSemRegistration->setTotalCreditsCurrentClass($totalCreditsPerYear);
                             
                             $this->entityManager->persist($studentsNextSemRegistration);
 
@@ -641,19 +706,20 @@ class IndexController extends AbstractActionController
                 }
                     $classe = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($datastring["classe"]);
                     $ratioFailed = 1;
+                    
                     if($sem_rank%2==0)
                     {
-
+ 
                         //$ratio = $this->totalCreditsSucceed($std, $classe)/$this->totalCreditsPerYear($classe);
                         if($total_credits_cycle == 0) $ratio = 0;
                         else $ratio = $total_credits_valides_cycle/$total_credits_cycle;
-                        
+                        $ratioFailed = $this->totalCreditsFailed($std,$classe,$acadYr,$grades)/$totalCreditsPerYear ;
                         if($value->getIsStudentRepeating()==1)
                         {
-                            $ratioFailed = $this->totalCreditsFailed($std,$classe,$acadYr)/$this->totalCreditsPerYear($classe,$acadYr) ;
-                            $ratio = ($this->totalCreditsPerYear($classe,$acadYr)-$this->totalCreditsFailed($std,$classe,$acadYr))/$this->totalCreditsPerYear($classe,$acadYr);
+                            $ratioFailed = $this->totalCreditsFailed($std,$classe,$acadYr,$grades)/$totalCreditsPerYear ;
+                            $ratio = ($totalCreditsPerYear-$this->totalCreditsFailed($std,$classe,$acadYr,$grades))/$totalCreditsPerYear;
                         }
-                        if($total_credits_cycle == 0) $ratio = 0;
+                        if($total_credits_cycle == 0) $ratio = 0; 
                         else $ratio = $total_credits_valides_cycle/$total_credits_cycle;
                         $stdAdminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$acadYr));
                      
@@ -664,21 +730,21 @@ class IndexController extends AbstractActionController
                         {
                             case 1:
                                 
-                                if(!$this->isCompulsorySubjectCleared($std,$classe))
-                                    $stdAdminRegistration->setDecision("AJR");
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
+                                if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr)){  
+                                $stdAdminRegistration->setDecision("AJR");}
+                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                                    $stdAdminRegistration->setDecision("ADM");
-                                elseif(($ratioFailed <= 0.5))
-                                    $stdAdminRegistration->setDecision("ADM");                                
+                                //elseif(($ratioFailed <= 0.5))
+                                    //$stdAdminRegistration->setDecision("ADM");                                
                                 elseif($ratio < 0.5)
                                     $stdAdminRegistration->setDecision("AJR");
 
                                 break;
-                            case 2:
+                            case 2: 
                                 //check backlog if tere is a single backlog the failed
-                                if(!$this->isCompulsorySubjectCleared($std,$classe))
+                                if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
+                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                                    $stdAdminRegistration->setDecision("ADM");
                                 //check backlog if there is a single backlog the failed
                                // elseif($this->isBacklogAvailable($std,$classe))
@@ -694,12 +760,14 @@ class IndexController extends AbstractActionController
                                 break;
                             case 3:
                                 //check backlog if tere is a single backlog the failed
-                                if($this->isBacklogAvailable($std,$classe)) 
+                                if($this->isBacklogAvailable($std,$classe,$grades,$acadYr)) 
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($ratioFailed <= 0))
-                                    $stdAdminRegistration->setDecision("ADM");
+                                //elseif(($ratioFailed <= 0))
+                                //<    $stdAdminRegistration->setDecision("ADM");
                                 elseif($ratio < 1)
                                     $stdAdminRegistration->setDecision("AJR");
+                                
+                                
 
                                 break; 
                             case 4: 
@@ -707,47 +775,47 @@ class IndexController extends AbstractActionController
                                 //if($ratioFailed <= 0.40)
                                    // $stdAdminRegistration->setDecision("ADM");                                
  
-                                if(!$this->isCompulsorySubjectCleared($std,$classe))
+                                if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
+                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                                    $stdAdminRegistration->setDecision("ADM");                                
-                                elseif($ratio < 0.6)
+                               elseif($ratio < 0.6)
                                     $stdAdminRegistration->setDecision("AJR");
                                 break;
                             case 5:
-                                if(!$this->isCompulsorySubjectCleared($std,$classe))
+                                if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
+                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                                    $stdAdminRegistration->setDecision("ADM");
                                 //check backlog if there is a single backlog the failed
-                                elseif($this->isBacklogAvailable($std,$classe))
+                                elseif($this->isBacklogAvailable($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($ratioFailed <= 0))
-                                    $stdAdminRegistration->setDecision("ADM");
+                                //elseif(($ratioFailed <= 0))
+                                //    $stdAdminRegistration->setDecision("ADM");
                                 elseif($ratio < 1)
                                     $stdAdminRegistration->setDecision("AJR");
                                 break;
                            case 6:
                                 //check backlog if tere is a single backlog the failed
                                 
-                                if($this->isBacklogAvailable($student, $classe))
+                                if($this->isBacklogAvailable($student, $classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($ratioFailed <= 0))
-                                    $stdAdminRegistration->setDecision("ADM");
+                                //elseif(($ratioFailed <= 0))
+                                //    $stdAdminRegistration->setDecision("ADM");
                                 elseif($ratio < 1)
                                     $stdAdminRegistration->setDecision("AJR");
                                 break;                                
                                 
                         }
                         //Allowing special delib to all classes
-                        if(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"])))
+                        if(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                             $stdAdminRegistration->setDecision("ADM");                        
                         
                     } 
-                $this->entityManager->flush();    
+                    
                 $j++;
             }
-            
+            $this->entityManager->flush();
 
 
             $this->entityManager->getConnection()->commit();
@@ -852,10 +920,10 @@ class IndexController extends AbstractActionController
                     $row["repeating"] = $sheetData[$i][6];
                     $row["count_sem_registration"] = $sheetData[$i][7];
                     
-            $this->studentManager->stdAdminRegistration($row,$status,$row["repeating"]);
+            $this->studentManager->stdAdminRegistration($row,$status,$row["repeating"],$this->crtAcadYr);
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($row["matricule"]);
             if($std)
-                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"]);            
+                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"],$this->crtAcadYr);            
                 }
             }
             
@@ -938,7 +1006,7 @@ class IndexController extends AbstractActionController
             
             $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($row["matricule"]);
             if($std)
-                $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"]);
+                $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],$row["credits_capitalized"],$row["total_credits_registered"],$row["total_credits"],$row["count_sem_registration"],$this->crtAcadYr);
 
         }
         
@@ -1016,7 +1084,7 @@ class IndexController extends AbstractActionController
         $status = 0;
         foreach ($reader as $row) {
 
-            $this->studentManager->updateStdFinancialInfos($row);
+            $this->studentManager->updateStdFinancialInfos($row,$this->crtAcadYr);
        
         }
         
@@ -1092,7 +1160,7 @@ class IndexController extends AbstractActionController
                     $row["type_concours"] = $sheetData[$i][6];
                    
 
-                    $this->studentManager->addAdmittedStudent($row);
+                    $this->studentManager->addAdmittedStudent($row,$this->crtAcadYr);
 
                 }
             }
@@ -1201,9 +1269,9 @@ class IndexController extends AbstractActionController
                    
                     $std = $this->studentManager->addStudent($row);
                     $status = 1;
-                    $this->studentManager->stdAdminRegistration($row,$status,0);
-                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std);
-                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,0);
+                    $this->studentManager->stdAdminRegistration($row,$status,0,$this->crtAcadYr);
+                    $this->studentManager->stdPedagogicRegistration($row["classe"],$std);                    
+                    $this->studentManager->stdSemesterRegistration($row["classe"],$std,$row["mpc"],0,0,0,0,$this->crtAcadYr);
                     
                     $this->entityManager->flush();
                     
@@ -1375,10 +1443,10 @@ class IndexController extends AbstractActionController
            
            // Retrieve form data from POST variables
 
-          $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+          $acadYr =  $this->entityManager->getRepository(AcademicYear::class)->find($this->crtAcadYr->getId());
           $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($acadYr);
         
-          $students = $this->entityManager->getRepository(RegisteredStudentView::class)->findAll();
+          $students = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findAll(["acadYrId"=>$this->crtAcadYr->getId()]);
                 foreach($students as $key=>$value)
                 {
                     foreach($semesters as $sem)
@@ -1536,7 +1604,7 @@ class IndexController extends AbstractActionController
           //start writting from the 2nd row
           $i=2;
 
-          $students = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->findByStatus(1);
+          $students = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(["acadYrId"=>$this->crtAcadYr->getId()]);
           foreach($students as $std)
           {
              $sheet->setCellValue([1, $i], $std->getMatricule());
@@ -1906,10 +1974,12 @@ class IndexController extends AbstractActionController
     private function findCourses($studyLevel,$degreeCode,$acadYr)
     {
         return $this->entityManager->createQuery('SELECT e FROM Application\Entity\CurrentYearTeachingUnitView e'
-                .' WHERE e.studyLevel <= :studyLevel AND e.acadYrId = :acadYrId')
+               // .' WHERE e.studyLevel <= :studyLevel AND e.acadYrId = :acadYrId AND e.degreeCode like :degreeCode')
+                .' WHERE e.studyLevel <= :studyLevel AND e.acadYrId = :acadYrId ')
                 //        .' WHERE e.studyLevel <= :studyLevel and e.degreeCode like :degreeCode')
                 ->setParameter('studyLevel', $studyLevel)
                 ->setParameter('acadYrId', $acadYr->getId())
+                //->setParameter('degreeCode', $degreeCode)
 
                 ->getResult();
     }
@@ -1959,11 +2029,13 @@ class IndexController extends AbstractActionController
         
         $courses = $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findBy(array("classe"=>$classe,"semester"=>$sem,"acadYrId"=>$acadYr->getId(),"isPreviousYearSubject"=>0));
         $credits=0;
+        
         foreach($courses as $course)
         {
+           
             $credits+=$course->getCredits();
         }
-        
+       
         return $credits;
     }
     
@@ -2049,7 +2121,7 @@ class IndexController extends AbstractActionController
     }    
 
     //Calculates the total credits failed in the current class
-    private function totalCreditsSucceed($std,$classe,$acadYr)
+    private function totalCreditsSucceed($std,$classe,$acadYr,$failedsGrades)
     {
         $totalCredits = 0;
 
@@ -2062,7 +2134,7 @@ class IndexController extends AbstractActionController
          
             foreach ($unitRegistration as $unitR)
             {
-                if($unitR->getGrade()!="F"&&$unitR->getGrade()!="E"&&$unitR->getGrade()!=NULL&&$unitR->getGrade()!="")
+                if(!in_array($unitR->getGrade(),$failedsGrades))
                 {
                     $credits  = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(array("teachingUnit"=>$unitR->getTeachingUnit(),"semester"=>$sem->getSemester(),"classOfStudy"=>$classe));
                     if($credits)
@@ -2074,15 +2146,12 @@ class IndexController extends AbstractActionController
         return $totalCredits;
     }
     //Calculates the total credits failed in the current class
-    private function totalCreditsFailed($std,$classe)
+    private function totalCreditsFailed($std,$classe,$acadYr,$failedsGrades)
     {
         $totalCredits = 0;
         $grades = [];
 
-        if($classe->getCycle()->getCycleLevel()<=1)
-           $grades = ["F","E","D","D+","C-",null];
-        else
-           $grades = ["F","E","D","D+","C-","C","C+",null];  
+ 
         $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $semesters = $this->entityManager->getRepository(Semester::class)->findBy(array("academicYear"=>$acadYr)); 
         foreach($semesters as $sem)
@@ -2091,7 +2160,7 @@ class IndexController extends AbstractActionController
          
             foreach ($unitRegistration as $unitR)
             {
-                if(in_array($unitR->getGrade(),$grades))
+                if(in_array($unitR->getGrade(),$failedsGrades))
                 //if($unitR->getGrade()=="F"||$unitR->getGrade()=="E"||$unitR->getGrade()==" "||$unitR->getGrade()==NULL)
                 {
                     $credits  = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(array("teachingUnit"=>$unitR->getTeachingUnit(),"semester"=>$sem,"classOfStudy"=>$classe));
@@ -2106,14 +2175,14 @@ class IndexController extends AbstractActionController
     }
     //this function takes as parameter, student and classe 
     //It checks wtether or not student has non validated subject from previous classes
-    private function isBacklogAvailable($student,$classe)
+    private function isBacklogAvailable($student,$classe,$failedsGrades,$acadYr)
     {
         // level of the current classe 
         $studyLevel = $classe->getStudyLevel();
         //As we are planing to check 
         $degree = $classe->getDegree();
         
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         if($studyLevel<=3) $beginingCycle =1;
         if($studyLevel>3 && $studyLevel<=5) $beginingCycle = 4;
         if($studyLevel>5) $beginingCycle= 6;
@@ -2128,7 +2197,7 @@ class IndexController extends AbstractActionController
                 $unitRegistrations =  $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("semester"=>$sem->getSemester(),"student"=>$student,"subject"=>[NULL," "]));    
 
                     foreach($unitRegistrations as $unitR)
-                        if($unitR->getGrade()=="F"||$unitR->getGrade()=="E"||$unitR->getGrade()==NULL||$unitR->getGrade()=="")
+                        if(in_array($unitR->getGrade(),$failedsGrades))
                             return true;
             }
         }
@@ -2137,12 +2206,12 @@ class IndexController extends AbstractActionController
         return false;
     } 
     
-    private function isCompulsorySubjectCleared($student,$classe)
+    private function isCompulsorySubjectCleared($student,$classe,$failedsGrades,$acadYr)
     {
         $totalCredits = 0;
 
        
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr)); 
         foreach($semesters as $sem)
         {         
@@ -2151,9 +2220,10 @@ class IndexController extends AbstractActionController
             foreach ($unitRegistration as $unitR)
             {
                 if($unitR->getTeachingUnit()->getIsCompulsory()==1)
-                {
-                    if($unitR->getGrade()=="F"||$unitR->getGrade()=="E"||$unitR->getGrade()==NULL||$unitR->getGrade()=="")
+                {  
+                    if(in_array($unitR->getGrade(),$failedsGrades)) { 
                             return false;
+                    }
                 }
             }
           
@@ -2161,12 +2231,12 @@ class IndexController extends AbstractActionController
         return true;
     } 
     
-    private function isSpecialDelibAllow($std,$classe,$nbreSubjects)
+    private function isSpecialDelibAllow($std,$classe,$nbreSubjects,$acadYr,$failedsGrades)
     {
         $totalCredits = 0;
 
        
-        $acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
+        //$acadYr = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array("isDefault"=>1));
         $semesters = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$classe,"academicYear"=>$acadYr)); 
         foreach($semesters as $sem)
         {         
@@ -2174,7 +2244,7 @@ class IndexController extends AbstractActionController
          
             foreach ($unitRegistration as $unitR)
             {
-                if($unitR->getGrade()=="F" || $unitR->getGrade()=="E" || $unitR->getGrade()==NULL || $unitR->getGrade()=="")
+                if(in_array($unitR->getGrade(),$failedsGrades))
                 {
                     $credits  = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(array("teachingUnit"=>$unitR->getTeachingUnit(),"semester"=>$sem->getSemester(),"classOfStudy"=>$classe));
                     if($credits)
@@ -2187,7 +2257,7 @@ class IndexController extends AbstractActionController
         return false;
     }   
     
-     private function  getStudentBacklogsMarks($std,$sem,$classe)
+     private function  getStudentBacklogsMarks($std,$sem,$classe,$acadYr)
     {
         $flag =false;
         $total_credits = 0;
@@ -2208,7 +2278,7 @@ class IndexController extends AbstractActionController
                 foreach($sems as $sem)
                 {
                     //Retrive all courses to which student is registered for a given semester
-                    if($sem->getAcademicYear()->getIsDefault()==1)
+                    if($sem->getAcademicYear()->getId()==$acadYr->getId())
                     {   
                     $backlogs = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("student"=>$std,"semester"=>$sem,"subject"=>[NULL," "]));
                     foreach($backlogs as $unitR)

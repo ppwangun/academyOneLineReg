@@ -34,11 +34,13 @@ class AssignSemesterToClassController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            $data = json_decode($id,true);            
-            if(json_last_error() === JSON_ERROR_NONE) { 
-               // if(isset($data['acadYrId'])) $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
+            $data = json_decode($id,true);          
+           
+            if(isset($data['acadYrId'])) 
+            {
+                $acadYr = $this->entityManager->getRepository(AcademicYear::class)->find($data['acadYrId']);
                 //else 
-                $acadYr = $this->sessionContainer->currentAcadYr;
+               // $acadYr = $this->sessionContainer->currentAcadYr;
                 $id = $data['classeCode'];
             // JSON is valid
             }
@@ -47,7 +49,7 @@ class AssignSemesterToClassController extends AbstractRestfulController
                 $acadYr = $this->sessionContainer->currentAcadYr;
             }
 
-            
+           
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($id);
             $assignedSemToClass = $this->entityManager->getRepository(SemesterAssociatedToClass::class)->findBy(array("classOfStudy"=>$class,"academicYear"=>$acadYr ));
             $semesters= []; $i =0;

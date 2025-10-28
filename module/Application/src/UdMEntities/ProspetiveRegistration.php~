@@ -92,16 +92,6 @@ class ProspetiveRegistration
     private $prospetiveRegistrationcol;
 
     /**
-     * @var \ProspectiveStudent
-     *
-     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
-     * })
-     */
-    private $prospectiveStudent;
-
-    /**
      * @var \AcademicYear
      *
      * @ORM\ManyToOne(targetEntity="AcademicYear")
@@ -110,6 +100,16 @@ class ProspetiveRegistration
      * })
      */
     private $academicYear;
+
+    /**
+     * @var \ProspectiveStudent
+     *
+     * @ORM\ManyToOne(targetEntity="ProspectiveStudent")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prospective_student_id", referencedColumnName="id")
+     * })
+     */
+    private $prospectiveStudent;
 
 
 }
