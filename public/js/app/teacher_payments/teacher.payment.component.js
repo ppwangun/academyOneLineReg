@@ -35,6 +35,8 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
     $scope.semesters = [];
     $scope.teachersRanks = [];
     $scope.paymentGrid = [];
+    $scope.classes = [];
+    $scope.subjects = [];
     $scope.pymtGridName;
     $scope.isUpdate = false;
     $scope.itemAlreadyExistsError = false;
@@ -79,7 +81,8 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
     //creatae a new payment grid
     $scope.createPymentGrid = function(){
         $http({
-                method:'POST', url:'createPymtGrid',data: {title:$scope.pymtGridName,pymtGridDetails : $scope.paymentGrid,isUpdate:$scope.isUpdate}
+                method:'POST', url:'createPymtGrid',data: {title:$scope.pymtGridName,isDefaultPaymentGrid:$scope.isDefaultPaymentGrid,pymtGridDetails : $scope.paymentGrid,isUpdate:$scope.isUpdate,
+                subjects : $scope.subjects,classes: $scope.classes}
             }).then(function successCallBack(response){
 
                 
@@ -96,7 +99,8 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
     //update a new payment grid
     $scope.updatePymentGrid = function(){
         $http({
-                method:'POST', url:'createPymtGrid',data: {id : $routeParams.id,title:$scope.pymtGridName,pymtGridDetails : $scope.paymentGrid,isUpdate:$scope.isUpdate}
+                method:'POST', url:'createPymtGrid',data: {id : $routeParams.id,title:$scope.pymtGridName,isDefaultPaymentGrid:$scope.isDefaultPaymentGrid,pymtGridDetails : $scope.paymentGrid,isUpdate:$scope.isUpdate,
+                subjects : $scope.subjects,classes: $scope.classes}
             }).then(function successCallBack(response){
 
                 
@@ -138,7 +142,7 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
               //remove the current object from the array
               $ctrl.classes.splice(index,1);*/
               toastr.success("Opération effectuée avec succès");
-              $location.path("/paymentsgrid");
+              window.location.reload();
 
          },
         function errorCallback(response){
@@ -148,9 +152,24 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
     }, function() {
      // $scope.status = 'You decided to keep your debt.';
     });
-      };    
+   };    
     
- 
+    $scope.showElement = function(){
+        if($scope.selectedCriteria==="classe") 
+        {
+            $scope.showClasseElement = true;
+            $scope.showUeElement = false;
+            $scope.subejcts = [];
+
+        }
+        else if($scope.selectedCriteria==="ue")
+        {
+            $scope.showClasseElement = false;
+            $scope.showUeElement = true;   7
+            $scope.classes = []
+        }
+
+    } 
         
     $scope.init = function(){
          //$scope.acadyr.inscription_ending_date= moment($scope.acadyr.inscription_ending_date).format("YYYY-MM-DD");
@@ -166,21 +185,85 @@ angular.module('teacher.payment', ['ngRoute','ui.bootstrap'])
                  $scope.allPaymentTypes = response.data.allPaymentRate;
                  $scope.pymtGridName = response.data.paymentRate.description;
                  $scope.paymentGrid = response.data.paymentGrid
+                 if(response.data.paymentRate.isDefaultPayment) $scope.isDefaultPaymentGrid = 1; else $scope.isDefaultPaymentGrid = 0;
                  $scope.defaultPymtGridId = $scope.allPaymentTypes.find((item) => item.isDefaultPayment === true)
                  if($scope.defaultPymtGridId) $scope.defaultPymtGridId= $scope.defaultPymtGridId.id;
 
          }) 
          
-        
-
-
         if(id)
         if(id != -1)
         {
             $scope.isUpdate =true;
         }
+        
+        
+        //Loading classes of study asynchronously
+        $scope.query = function(classe)
+        {
+           var  dataString = {id: classe},
+              config = {
+                params: dataString,
+                headers : {'Accept' : 'application/json; charset=utf-8'}
+                };
+
+                return  $http.get('classes',config).then(function(response){
+                       return response.data[0];
+                    });
+         };
+     
+    };
+    
+    
+    
+    
+    $scope.addClasse = function(){
+    //Cehck if the value exist in the array be for pushinng
+    //Avoiding duplicates
+    if ($scope.classes.includes($scope.selectedClasse.code) === false) $scope.classes.push($scope.selectedClasse.code);
 
     };
+
+    $scope.removeClasse = function(cl){
+             var index = $scope.classes.indexOf(cl);
+             $scope.classes.splice(index,1);
+    };
+    
+    
+    //Loading subjects asynchronously
+    $scope.querySubject = function(subject)
+    {
+       var  dataString = {id: subject},
+          config = {
+            params: dataString,
+            headers : {'Accept' : 'application/json; charset=utf-8'}
+            };
+    
+            return  $http.get('subjectsearch',config).then(function(response){ 
+                   return response.data[0];
+                });
+     };
+     $scope.subjectRequired = function()
+     {
+         return $scope.subjects.length() > 0;
+     }
+     
+    
+  
+    //Select subjects to be add    
+     $scope.addSubject = function()
+     {
+         //Cehck if the value exist in the array be for pushinng
+         //Avoiding duplicates
+         if ($scope.subjects.includes($scope.selectedSubject) === false) $scope.subjects.push($scope.selectedSubject);
+         
+         
+     };
+    //Delete selected subject
+     $scope.removeSubject = function(sub){
+         var index = $scope.subjects.indexOf(sub);
+         $scope.subjects.splice(index,1);
+     };    
         
         //function for adding a new semester
         $scope.saveSemester = function(){

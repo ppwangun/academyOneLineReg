@@ -120,16 +120,6 @@ class Exam
     private $isCatchUpExamPerformed = '0';
 
     /**
-     * @var \ClassOfStudyHasSemester
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudyHasSemester;
-
-    /**
      * @var \ExamSession
      *
      * @ORM\ManyToOne(targetEntity="ExamSession")
@@ -138,6 +128,16 @@ class Exam
      * })
      */
     private $examSession;
+
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
 
 
 
@@ -488,30 +488,6 @@ class Exam
     }
 
     /**
-     * Set classOfStudyHasSemester.
-     *
-     * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
-     *
-     * @return Exam
-     */
-    public function setClassOfStudyHasSemester(\ClassOfStudyHasSemester $classOfStudyHasSemester = null)
-    {
-        $this->classOfStudyHasSemester = $classOfStudyHasSemester;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudyHasSemester.
-     *
-     * @return \ClassOfStudyHasSemester|null
-     */
-    public function getClassOfStudyHasSemester()
-    {
-        return $this->classOfStudyHasSemester;
-    }
-
-    /**
      * Set examSession.
      *
      * @param \ExamSession|null $examSession
@@ -533,5 +509,29 @@ class Exam
     public function getExamSession()
     {
         return $this->examSession;
+    }
+
+    /**
+     * Set classOfStudyHasSemester.
+     *
+     * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
+     *
+     * @return Exam
+     */
+    public function setClassOfStudyHasSemester(\ClassOfStudyHasSemester $classOfStudyHasSemester = null)
+    {
+        $this->classOfStudyHasSemester = $classOfStudyHasSemester;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudyHasSemester.
+     *
+     * @return \ClassOfStudyHasSemester|null
+     */
+    public function getClassOfStudyHasSemester()
+    {
+        return $this->classOfStudyHasSemester;
     }
 }

@@ -98,14 +98,23 @@ li.active a.ng-binding {
                         </div>
                     </md-input-container> 
                     
-                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' require ='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
                         <label>Coût horaire:</label>
-                        <input name="amount" ng-model="$ctrl.amount" ng-required='$ctrl.paymentMethod===1' />
-                            <div ng-messages="paymentMethodForm.amount.$error">
+                        <input name="amountT" ng-model="$ctrl.amountTheoritical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amount.$error">
                                 <div ng-message="required">le champ code de spécialité est obligatoire</div>
                                 <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
                             </div> 
                     </md-input-container>
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire:</label>
+                        <input name="amountp" ng-model="$ctrl.amountPractical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amount.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container> 
 
                 </div>                 
            
@@ -168,12 +177,21 @@ li.active a.ng-binding {
                     
                     <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
                         <label>Coût horaire:</label>
-                        <input name="amount" ng-model="$ctrl.amount" ng-required='$ctrl.paymentMethod===1' />
+                        <input name="amountT" ng-model="$ctrl.amountTheoritical" ng-required='$ctrl.paymentMethod===1' />
                             <div ng-messages="paymentMethodForm2.amount.$error">
                                 <div ng-message="required">le champ code de spécialité est obligatoire</div>
                                 <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
                             </div> 
                     </md-input-container>
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire:</label>
+                        <input name="amountp" ng-model="$ctrl.amountPractical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amount.$error">
+                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
+                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                            </div> 
+                    </md-input-container>                    
 
                 </div>                 
          

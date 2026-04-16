@@ -71,16 +71,6 @@ class ContractFollowUp
     private $paymentStatus = '0';
 
     /**
-     * @var \TeacherPaymentBill
-     *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
-     * })
-     */
-    private $teacherPaymentBill;
-
-    /**
      * @var \ClassOfStudyHasSemester
      *
      * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
@@ -99,6 +89,16 @@ class ContractFollowUp
      * })
      */
     private $contract;
+
+    /**
+     * @var \TeacherPaymentBill
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBill;
 
 
 
@@ -281,30 +281,6 @@ class ContractFollowUp
     }
 
     /**
-     * Set teacherPaymentBill.
-     *
-     * @param \TeacherPaymentBill|null $teacherPaymentBill
-     *
-     * @return ContractFollowUp
-     */
-    public function setTeacherPaymentBill(\TeacherPaymentBill $teacherPaymentBill = null)
-    {
-        $this->teacherPaymentBill = $teacherPaymentBill;
-
-        return $this;
-    }
-
-    /**
-     * Get teacherPaymentBill.
-     *
-     * @return \TeacherPaymentBill|null
-     */
-    public function getTeacherPaymentBill()
-    {
-        return $this->teacherPaymentBill;
-    }
-
-    /**
      * Set classOfStudyHasSemester.
      *
      * @param \ClassOfStudyHasSemester|null $classOfStudyHasSemester
@@ -350,5 +326,29 @@ class ContractFollowUp
     public function getContract()
     {
         return $this->contract;
+    }
+
+    /**
+     * Set teacherPaymentBill.
+     *
+     * @param \TeacherPaymentBill|null $teacherPaymentBill
+     *
+     * @return ContractFollowUp
+     */
+    public function setTeacherPaymentBill(\TeacherPaymentBill $teacherPaymentBill = null)
+    {
+        $this->teacherPaymentBill = $teacherPaymentBill;
+
+        return $this;
+    }
+
+    /**
+     * Get teacherPaymentBill.
+     *
+     * @return \TeacherPaymentBill|null
+     */
+    public function getTeacherPaymentBill()
+    {
+        return $this->teacherPaymentBill;
     }
 }

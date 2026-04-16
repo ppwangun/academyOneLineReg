@@ -37,6 +37,7 @@ use Application\Entity\OdooSettings;
 use Application\Entity\StudentAttendance;
 use Application\Entity\RegisteredStudentForActiveRegistrationYearView;
 use Application\Entity\Student;
+use Application\Entity\Resource;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -126,7 +127,7 @@ class ResourceController extends AbstractActionController
 
         return $view;        
     }    
-    public function teacherAssignedSubjectsAction()
+    public function allClassroomsAction()
     {
         $this->entityManager->getConnection()->beginTransaction();
         try
@@ -141,45 +142,17 @@ class ResourceController extends AbstractActionController
             if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
             {
                 //collect all courses affected to any semester
-                    $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                        //    . 'WHERE c.academicYear = :acadYearId'
+                    $query = $this->entityManager->createQuery('SELECT r.id, r.code ,r.name  FROM Application\Entity\Resource c '
+                            . 'WHERE r.type LIKE "CLASSroom"'
                         );
                    // $query->setParameter('acadYearId',$acadYearId);
                 $ue= $query->getResult(); 
-              
-                //collect all courses affected to any semester
-           /* $query = $this->entityManager->createQuery('SELECT con.id, c.id as ue_class_id,s.id as sem_id,s.code as sem_code,t.subjectName as name,t.subjectCode as code,c1.code as class,c.subjectWeight as credits, c.subjectHours as hoursVolume ,c.subjectCmHours  as cm_hrs,c.subjectTpHours  as tp_hrs, c.subjectTdHours  as td_hrs, teach.name as lecturer FROM Application\Entity\ClassOfStudyHasSemester c '
-                        . 'JOIN c.classOfStudy c1 JOIN c.subject t JOIN c.semester s JOIN s.academicYear a JOIN t.contract con JOIN con.teacher teach    WHERE a.isDefault = 1 '
-                        . 'AND c.status = 1 ');  
-            $ue_1= $query->getResult();   */ 
+
              $ue = array_merge($ue,$ue_1);
                
             }
-            else
-            {
-                //Find clases mananged by the current user
-                $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));
-                
-                if($userClasses)
-                {
-                    foreach($userClasses as $classe)
-                    {
-                        //collect all courses affected to any semester
-                        $query = $this->entityManager->createQuery('SELECT c.id, c.semId as sem_id,c.semester as sem_code,c.nomUe as name,c.codeUe as code, c.classe as class,c.credits, c.totalHrs AS hoursVolume ,c.cmHrs as cm_hrs,c.tpHrs as tp_hrs, c.tdHrs as td_hrs, c.teacherName as lecturer FROM Application\Entity\AllContractsView c '
-                                . 'AND c.classe= ?1 AND c.academicYear = :acadYearId');
-                        $query->setParameter(1, $classe->getClassOfStudy()->getCode());
-                        $query->setParameter('acadYearId',$acadYearId);
-                        $ue_1= $query->getResult(); 
-                        $ue = array_merge($ue,$ue_1);
-                        
-                    }
-                }
-            }
-            for($i=0;$i<sizeof($ue);$i++)
-            {
-               // $ue[$i]['name']= utf8_encode($ue[$i]['name']);
 
-            }            
+           
 
             $this->entityManager->getConnection()->commit();
             return new JsonModel([

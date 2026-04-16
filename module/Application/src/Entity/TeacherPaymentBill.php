@@ -80,6 +80,13 @@ class TeacherPaymentBill
      * @ORM\Column(name="vacation_deduction", type="float", precision=10, scale=0, nullable=true)
      */
     private $vacationDeduction;
+    
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="lecture_type", type="string", length=45, nullable=true, options={"default"="CM"})
+     */
+    private $lectureType = 'CM';    
 
     /**
      * @var float|null
@@ -335,6 +342,30 @@ class TeacherPaymentBill
     {
         return $this->vacationDeduction;
     }
+    
+    /**
+     * Set lectureType.
+     *
+     * @param string|null $lectureType
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setLectureType($lectureType = null)
+    {
+        $this->lectureType = $lectureType;
+
+        return $this;
+    }
+
+    /**
+     * Get lectureType.
+     *
+     * @return string|null
+     */
+    public function getLectureType()
+    {
+        return $this->lectureType;
+    }    
 
     /**
      * Set totalTimePreviouslyBilled.

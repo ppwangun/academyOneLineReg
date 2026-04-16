@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ExamSession
  *
- * @ORM\Table(name="exam_session", indexes={@ORM\Index(name="fk_exam_session_semester1_idx", columns={"semester_id"})})
+ * @ORM\Table(name="exam_session", indexes={@ORM\Index(name="fk_exam_session_academic_year1_idx", columns={"academic_year_id"})})
  * @ORM\Entity
  */
 class ExamSession
@@ -24,33 +24,33 @@ class ExamSession
     /**
      * @var string|null
      *
-     * @ORM\Column(name="sesion name", type="string", length=45, nullable=true)
+     * @ORM\Column(name="session_type", type="string", length=45, nullable=true)
      */
-    private $sesionName;
+    private $sessionType;
 
     /**
-     * @var \DateTime|null
+     * @var string|null
      *
-     * @ORM\Column(name="begeningDate", type="datetime", nullable=true)
+     * @ORM\Column(name="session_code", type="string", length=45, nullable=true)
      */
-    private $begeningdate;
+    private $sessionCode;
 
     /**
-     * @var \DateTime|null
+     * @var string|null
      *
-     * @ORM\Column(name="endingDate", type="datetime", nullable=true)
+     * @ORM\Column(name="session_name", type="string", length=45, nullable=true)
      */
-    private $endingdate;
+    private $sessionName;
 
     /**
-     * @var \Semester
+     * @var \AcademicYear
      *
-     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
      * })
      */
-    private $semester;
+    private $academicYear;
 
 
 
@@ -65,98 +65,98 @@ class ExamSession
     }
 
     /**
-     * Set sesionName.
+     * Set sessionType.
      *
-     * @param string|null $sesionName
+     * @param string|null $sessionType
      *
      * @return ExamSession
      */
-    public function setSesionName($sesionName = null)
+    public function setSessionType($sessionType = null)
     {
-        $this->sesionName = $sesionName;
+        $this->sessionType = $sessionType;
 
         return $this;
     }
 
     /**
-     * Get sesionName.
+     * Get sessionType.
      *
      * @return string|null
      */
-    public function getSesionName()
+    public function getSessionType()
     {
-        return $this->sesionName;
+        return $this->sessionType;
     }
 
     /**
-     * Set begeningdate.
+     * Set sessionCode.
      *
-     * @param \DateTime|null $begeningdate
+     * @param string|null $sessionCode
      *
      * @return ExamSession
      */
-    public function setBegeningdate($begeningdate = null)
+    public function setSessionCode($sessionCode = null)
     {
-        $this->begeningdate = $begeningdate;
+        $this->sessionCode = $sessionCode;
 
         return $this;
     }
 
     /**
-     * Get begeningdate.
+     * Get sessionCode.
      *
-     * @return \DateTime|null
+     * @return string|null
      */
-    public function getBegeningdate()
+    public function getSessionCode()
     {
-        return $this->begeningdate;
+        return $this->sessionCode;
     }
 
     /**
-     * Set endingdate.
+     * Set sessionName.
      *
-     * @param \DateTime|null $endingdate
+     * @param string|null $sessionName
      *
      * @return ExamSession
      */
-    public function setEndingdate($endingdate = null)
+    public function setSessionName($sessionName = null)
     {
-        $this->endingdate = $endingdate;
+        $this->sessionName = $sessionName;
 
         return $this;
     }
 
     /**
-     * Get endingdate.
+     * Get sessionName.
      *
-     * @return \DateTime|null
+     * @return string|null
      */
-    public function getEndingdate()
+    public function getSessionName()
     {
-        return $this->endingdate;
+        return $this->sessionName;
     }
 
     /**
-     * Set semester.
+     * Set academicYear.
      *
-     * @param \Semester|null $semester
+     * @param \AcademicYear|null $academicYear
      *
      * @return ExamSession
      */
-    public function setSemester(\Semester $semester = null)
+    public function setAcademicYear(\AcademicYear $academicYear = null)
     {
-        $this->semester = $semester;
+        $this->academicYear = $academicYear;
 
         return $this;
     }
 
     /**
-     * Get semester.
+     * Get academicYear.
      *
-     * @return \Semester|null
+     * @return \AcademicYear|null
      */
-    public function getSemester()
+    public function getAcademicYear()
     {
-        return $this->semester;
+        return $this->academicYear;
     }
 }

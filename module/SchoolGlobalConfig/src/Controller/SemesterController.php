@@ -18,10 +18,16 @@ use Application\Entity\AcademicYear;
 class SemesterController extends AbstractRestfulController
 {
     private $entityManager;
-    public function __construct($entityManager)
+     private $crtAcadyr;
+    
+    public function __construct($entityManager,$sessionContainer)
     {
         $this->entityManager = $entityManager;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
+        
+        
     }
+    
     public function get($id)
     {
         $this->entityManager->getConnection()->beginTransaction();
@@ -31,12 +37,12 @@ class SemesterController extends AbstractRestfulController
             $query = $this->entityManager->createQuery('SELECT c.id,c.code,c.name FROM Application\Entity\Semester c'
                     .' JOIN c.academicYear a'
                     .' WHERE c.id LIKE :id'
-                   // .' AND a.isDefault = 1'
+                  //  .' AND a.id = :acadYr'
                     );
             $query->setParameter('id', '%'.$id.'%');
+           // $query->setParameter('acadYr', $this->crtAcadYr->getId());
             $sem = $query->getResult()[0];
 
-           
 
             return new JsonModel([
                 $sem
@@ -54,8 +60,8 @@ class SemesterController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            $academic_year = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array('isDefault'=>'1'));
-            $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($academic_year);
+           // $academic_year = $this->entityManager->getRepository(AcademicYear::class)->findOneBy(array('isDefault'=>'1'));
+            $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($this->crtAcadYr);
            // $semesters = $this->entityManager->getRepository(FieldOfStudy::class)->findAll();
             foreach($semesters as $key=>$value)
             {

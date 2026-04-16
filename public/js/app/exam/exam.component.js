@@ -4,6 +4,9 @@ angular.module('exam')
         .component('examList',{
             templateUrl: 'examlistpl',
             controller: examCtrl 
+}).component('examSessions',{
+            templateUrl: 'examSessionsList',
+            controller: examCtrl 
 }).config(['$routeProvider','$mdDateLocaleProvider', function($routeProvider,$mdDateLocaleProvider) {
 
     $mdDateLocaleProvider.parseDate = function(dateString) {
@@ -29,11 +32,11 @@ function examCtrl($timeout,$http,$location,$mdDialog,$scope,DTOptionsBuilder,DTC
          $ctrl.exams = response.data[0];
                 for(var i=0;i<$ctrl.exams.length;i++)
                 {
-                    $ctrl.exams[i].num = i+1;
                     $ctrl.exams[i].date = $ctrl.exams[i].date.date;
 
                 }
      }),500);
+    
  };
  
 $ctrl.formatDate = function(date){
@@ -46,6 +49,8 @@ $ctrl.formatDate = function(date){
      $location.path("/newexam/"+id);
      
  };
+ 
+
  
  
   $ctrl.dtOptions = DTOptionsBuilder.newOptions()

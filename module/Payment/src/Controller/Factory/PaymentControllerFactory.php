@@ -12,7 +12,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Payment\Controller\PaymentController;
 use Payment\Service\PaymentManager;
-
+use User\Service\UserManager;
 /**
  * This is the factory for IndexController. Its purpose is to instantiate the
  * controller.
@@ -25,8 +25,9 @@ class PaymentControllerFactory implements FactoryInterface
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $paymentManager = $container->get(PaymentManager::class);
         $sessionContainer = $container->get('LoggedInUser');
+        $userManager = $container->get(UserManager::class);
         
         // Instantiate the controller and inject dependencies
-        return new PaymentController($entityManager,$paymentManager,$sessionContainer);
+        return new PaymentController($entityManager,$paymentManager,$sessionContainer,$userManager);
     }
 }

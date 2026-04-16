@@ -18,6 +18,7 @@ use Application\Entity\TeachingUnit;
 use Application\Entity\UnitRegistration;
 use Application\Entity\Subject;
 use Application\Entity\Exam;
+use Application\Entity\ExamType;
 use Application\Entity\ExamRegistration;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\Student;
@@ -26,8 +27,13 @@ use Application\Entity\CurrentYearOnlyUeExamsView;
 use Application\Entity\CurrentYearSubjectExamsView;
 use Application\Entity\Grade;
 use Application\Entity\GradeValueRange;
+use Application\Entity\CalculationRule;
+use Application\Entity\CalculationRulesWeight;
 use Application\Entity\SubjectRegistrationView;
 use Application\Entity\AllYearsSubjectRegistrationView;
+use Application\Entity\UnitReportPerExamType;
+use Application\Entity\UnitReportPerSession;
+use Application\Entity\ExamSession;
 
 
 class CalculNotesController extends AbstractRestfulController
@@ -112,9 +118,10 @@ class CalculNotesController extends AbstractRestfulController
         { 
             $this->entityManager->getConnection()->beginTransaction();
             //Retrieve all exams performed for the geiving course
-            $classe= $this->entityManager->getRepository(ClassOfStudy::class)->findOneById($data["class_id"]);
-            $semester = $this->entityManager->getRepository(Semester::class)->findOneById($data["sem_id"]);
-            $ue = $this->entityManager->getRepository(TeachingUnit::class)->findOneById($data["ue_id"]);
+            $classe= $this->entityManager->getRepository(ClassOfStudy::class)->find($data["class_id"]);
+            $semester = $this->entityManager->getRepository(Semester::class)->find($data["sem_id"]);
+            $examSession = $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
+            $ue = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ue_id"]);
             
             
             
@@ -154,214 +161,251 @@ class CalculNotesController extends AbstractRestfulController
                 $subject = $this->entityManager->getRepository(Subject::class)->findOneById($data["subject_id"]);
                 $ueExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$data["subject_id"],"classe"=>$classe->getCode(),"acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
             }
-
             
-           
-           
+            $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(array("teachingUnit"=>$ue,"classOfStudy"=>$classe,"status"=>1,"semester"=>$semester));
 
-
+            $subjectId = $data["subject_id"]??null;
+                $evaluations= $this->entityManager->createQueryBuilder();
+                $exp = $evaluations->expr();
+                $evaluations = $evaluations->select( 'er','std','e','es','cosh','ue')
+                    ->from('Application\Entity\ExamRegistration','er')
+                    ->leftjoin('er.student','std')
+                    ->leftjoin('er.exam','e')
+                    ->leftjoin('e.examSession','es')
+                   ->leftjoin('e.classOfStudyHasSemester','cosh')
+                    ->leftjoin('cosh.teachingUnit','ue')
+                    ->where('cosh.classOfStudy = :classId')
+                    ->andWhere('cosh.semester = :semId')
+                    ->andWhere('cosh.teachingUnit = :ueId')
+                    ->andWhere($exp->orX(
+                        $exp->eq('e.examSession', ':sessionId'),
+                        $exp->isNull('e.examSession')
+                        )
+                    )
+                    ->andWhere('e.status = 1')
+                    ->setParameter('classId', $data["class_id"])    
+                    ->setParameter('semId', $data["sem_id"])
+                    ->setParameter('ueId', $data["ue_id"])
+                    ->setParameter('sessionId', $data["session_id"])
+                    ->getQuery()
+            ->getArrayResult();    
+            if($subjectId)
+            {  
+                $evaluations= $this->entityManager->createQueryBuilder();
+                $exp = $evaluations->expr();
+                $evaluations = $evaluations->select( 'er','std','e','es','cosh','ue')
+                    ->from('Application\Entity\ExamRegistration','er')
+                    ->leftjoin('er.student','std')
+                    ->leftjoin('er.exam','e')
+                    ->leftjoin('e.examSession','es')
+                   ->leftjoin('e.classOfStudyHasSemester','cosh')
+                    ->leftjoin('cosh.subject','ue')
+                    ->where('cosh.classOfStudy = :classId')
+                    ->andWhere('cosh.semester = :semId')
+                    ->andWhere('cosh.subject = :subjectId')
+                    ->andwhere($exp->orX(
+                        $exp->eq('e.examSession', ':sessionId'),
+                        $exp->isNull('e.examSession')
+                        )
+                    )
+                    ->andWhere('e.status = 1')
+                   // ->andWhere('cosh.subject = :subjectId')
+                    //->setParameter('role', $role)
+                    ->setParameter('classId', $data["class_id"])    
+                    ->setParameter('semId', $data["sem_id"])
+                    ->setParameter('subjectId', $subjectId)
+                    ->setParameter('sessionId', $data["session_id"])  
+                    ->getQuery()
+                    ->getArrayResult();                        
+            }
+            
             //check first if all the mark are register
             //throw an errow if there is even a single exam that the mark is not yet registered
-            if(!$this->checkAllMarksAreRegistered($ueExams))
-                return new JsonModel([ "ERROR_NO_CC_OR_EXAM_DONE"  ]);
+    /*        if(!$this->checkAllMarksAreRegistered($ueExams))
+                return new JsonModel([ "ERROR_NO_CC_OR_EXAM_DONE"  ]);            
+    */        
+            $examtypes = array_map(fn($e) => $e['exam']['type'], $evaluations);
+            $examtypes = array_unique($examtypes);
+            sort($examtypes);
             
-            //Processing catchup exam 
-            //
-            //Thje aim of this code is reportong mark of student that have attended catch up exam to the respective exam
-            $this->computeRattrapeMark($data["ue_id"],$data["sem_id"],$data["class_id"]);
+           
+            $students = $this->entityManager->createQueryBuilder()->select('ur','std')
+            ->from('Application\Entity\UnitRegistration','ur')
+            ->leftjoin('ur.student','std')
+            ->leftjoin('ur.teachingUnit','ue')
+            ->leftjoin('ur.subject','sub')
+            ->leftjoin('ur.semester','sem')
+            ->where('ur.teachingUnit = :ue')
+            //->andwhere('ur.subject = :subject')
+            ->andwhere($exp->orX(
+                $exp->isNull('ur.subject')
+                ) )                  
+            ->andwhere('ur.semester = :semester')
+            ->setParameter('ue',$data["ue_id"])
+            //->setParameter('subject',$subjectId)
+            ->setParameter('semester',$data["sem_id"])
+            ->getQuery()
+            ->getArrayResult();
             
-            $msge = $this->computeNotesAndReport($ueExams, $semester, $ue, $subject); 
-                if (strcmp($msge, "ERROR_PED_REGISTRATION")==0) return new JsonModel([ "ERROR_PED_REGISTRATION"  ]);
-                    
-            switch($this->checkTypeOfExamsDone($ueExams))
+            if(!is_null($subjectId))
             {
-               
-                case "CC_EXAM": 
-                    
-                    
-
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteCc()*0.40 + $std->getNoteExam()*0.60),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note*5);
-                        $std->setNoteCctp(NULL);
-                        $std->setNoteExamtp(NULL);
-                        $std->setGrade($this->computeGrade($classe, $note));
-                        $std->setPoints($this->computePoints($classe, $note));
-                       
-                        
-                    }
-                    break;
-                case "CC_EXAM_CCTP": 
-                
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteCc()*0.20 + $std->getNoteCctp()*0.20 + $std->getNoteExam()*0.60),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note*5);
-                        $std->setGrade($this->computeGrade($classe, $note));
-                        $std->setPoints($this->computePoints($classe, $note));
-                        $std->setNoteExamtp(NULL);
-                        
-                    }
-                    break;
-                case "CC_EXAM_CCTP_EXAMTP": 
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteCc()*0.20 + $std->getNoteCctp()*0.10 + $std->getNoteExam()*0.50+ $std->getNoteExamtp()*0.20),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note*5);
-                        $std->setGrade($this->computeGrade($classe, $note));
-                        $std->setPoints($this->computePoints($classe, $note));
-                        
-                        
-                    }
-                    break;
-                case "CC_EXAM_EXAMTP" : 
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        switch($this->examManager->getCodeFiliere($classe))
-                        {
-                            case "PHA": $note = round(($std->getNoteCc()*0.20 +  $std->getNoteExam()*0.30+ $std->getNoteExamtp()*0.50),2, PHP_ROUND_HALF_UP);
-                                        break;
-                            default : $note = round(($std->getNoteCc()*0.30 +  $std->getNoteExam()*0.50+ $std->getNoteExamtp()*0.20),2, PHP_ROUND_HALF_UP);        
-                        }
-                        
-                        $std->setNoteFinal($note*5);
-                        $std->setGrade($this->computeGrade($classe, $note));
-                        $std->setPoints($this->computePoints($classe, $note));
-                        $std->setNoteCctp(NULL);
-                        
-                        
-                    }
-                    break;
-                
-                case "RATTRAPAGE": 
-                   
-                break;
-
-                case "STAGE_CLINIQUE_EXAM_CLINIQUE" :
-                    
-                   
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    { 
-                        
-                        $note = round(($std->getNoteCc()*0.40 + $std->getNoteExam()*0.60),2, PHP_ROUND_HALF_UP);
-                        if($std->getNoteExam()<60) $note =$std->getNoteExam();
-                        
-                        $std->setNoteFinal($note);
-                        $std->setGrade($this->computeGradeSur100($classe, $note));
-                        $std->setPoints($this->computePointsSur100($classe, $note));
-                        
-                        
-                    }                  
-                    break;
-                case "STAGE_ENTREPRISE" :
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note);
-                        $std->setGrade($this->computeGradeSur100($classe, $note));
-                        $std->setPoints($this->computePointsSur100($classe, $note));
-                        $std->setNoteCctp(NULL);
-                        $std->setNoteExamtp(NULL);
-                        $std->setNoteCc(NULL);
-                        $std->setNoteExam(NULL);
-                        
-                        
-                    }                      
-                    break;
-                case "STAGE_HOSPITALIER" :
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note);
-                        $std->setGrade($this->computeGradeSur100($classe, $note));
-                        $std->setPoints($this->computePointsSur100($classe, $note));
-                        $std->setNoteCctp(NULL);
-                        $std->setNoteExamtp(NULL);
-                        $std->setNoteCc(NULL);
-                        $std->setNoteExam(NULL);
-                       
-                        
-                    }                      
-                    break;                    
-                case "ECN" :
-                    
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note);
-                        $std->setGrade($this->computeGradeSur100($classe, $note));
-                        $std->setPoints($this->computePointsSur100($classe, $note));
-                        $std->setNoteCctp(NULL);
-                        $std->setNoteExamtp(NULL);
-                        $std->setNoteCc(NULL);
-                        $std->setNoteExam(NULL);
-                        
-                        
-                    }                      
-                    break; 
-                case "THESE" :
-                    
-                    $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester ));
-                    foreach($stdRegisteredToSubject as $std)
-                    {
-                        
-                        $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);
-                        $std->setNoteFinal($note);
-                        $std->setGrade($this->computeGradeSur100($classe, $note));
-                        $std->setPoints($this->computePointsSur100($classe, $note));
-                        $std->setNoteCctp(NULL);
-                        $std->setNoteExamtp(NULL);
-                        $std->setNoteCc(NULL);
-                        $std->setNoteExam(NULL);
-                        
-                        
-                    }                      
-                    break;                    
-                default : return new JsonModel([ "ERROR_NO_CC_OR_EXAM_DONE"  ]);
-
+                $students = $this->entityManager->createQueryBuilder()->select('ur','std')
+                ->from('Application\Entity\UnitRegistration','ur')
+                ->leftjoin('ur.student','std')
+                ->leftjoin('ur.teachingUnit','ue')
+                ->leftjoin('ur.subject','sub')
+                ->leftjoin('ur.semester','sem')
+                //->where('ur.teachingUnit = :ue')
+                ->andwhere('ur.subject = :subject')
+                ->andwhere('ur.semester = :semester')
+                //->setParameter('ue',$data["ue_id"])
+                ->setParameter('subject',$subjectId)
+                ->setParameter('semester',$data["sem_id"])
+                ->getQuery()
+                ->getArrayResult();                
             }
+            
+            $report = [];
+            
+            $students= array_map(fn($e)=>$e['student'],$students);
+            $studentsInExam = array_map(fn($e)=>$e['student']["matricule"],$evaluations);
+           
+            //check student that are registered to evaluation are registered to subject
+            foreach($studentsInExam  as $std):
+                //$this->checkStudentInExam ($std, $students);
+                if(!$this->checkStudentInExam ($std, $students)) return new JsonModel([ "ERROR_PED_REGISTRATION"  ]);
+            endforeach;
+             
+            $sequence = 0;
+      
+            foreach($students as $key=>$value)
+            {
+                $stdEvals = array_filter($evaluations,fn($e)=>$e['student']['id']===$value['id']);
+                $studentId = $value['id'];
+                
+                $grouped = [];
+                foreach($stdEvals as $eval)
+                {
+                    $grouped[$eval['exam']['type']][] = $eval['registeredMark'];
+                }
+                $std = $this->entityManager->getRepository(Student::class)->find($studentId);
+                $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester,"student"=>$std ));
+                // Average per type
+                $typeAverages = [];
+                foreach ($grouped as $type => $values) {
+                    $typeAverages[$type] = round(array_sum($values) / count($values),2);
+                    $examT = $this->entityManager->getRepository(ExamType::class)->findOneByCode($type);
+                    $stdReporPerExamType = $this->entityManager->getRepository(UnitReportPerExamType::class)->findOneBy(array("unitRegistration"=>$stdRegisteredToSubject,"examType"=>$examT,"examSession"=>$examSession));
+                    $flag = 0;
+                    if(is_null($stdReporPerExamType))
+                    {
+                        $flag = 1;
+                        $stdReporPerExamType = new UnitReportPerExamType();
+                    }
+                    
+                    $stdReporPerExamType->setNote(round(array_sum($values) / count($values),2));
+                    $stdReporPerExamType->setUnitRegistration($stdRegisteredToSubject);
+                    $stdReporPerExamType->setExamType($examT);
+                    $stdReporPerExamType->setExamSession($examSession);
+                    
+                    if($flag)
+                        $this->entityManager->persist($stdReporPerExamType);
+                    
+                }  
+                
+                // Detect combination
+                $combination = array_keys($typeAverages);
+                sort($combination);
+                $key = implode('+', $combination);
+
+                // Find rule
+                //if rule is not difine directly to the subject, find the default rule;
+                $weightRules = [];
+                $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("classOfStudyHasSemester"=>$coshs,'combination'=>$key));
+                if($rule);
+                else 
+                    $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("isDefault"=>1,'combination'=>$key));
+                
+                if($rule)
+                    $weightRules = $this->entityManager->createQueryBuilder()->select('rw','e')
+                        ->from('Application\Entity\CalculationRulesWeight','rw')
+                        ->leftjoin('rw.calculationRule','r')
+                        ->leftjoin('rw.examType','e')
+                        ->where('rw.calculationRule = :ruleId')
+                        ->setParameter('ruleId',$rule->getId())
+                        ->getQuery()
+                        ->getArrayResult();
+                else
+                    return new JsonModel([ "ERROR_NO_RULE_DEFINE"  ]);
+
+                
+                $report[$sequence]["Nom"] = $std->getNom()." ".$std->getPrenom();
+                $report[$sequence]["Matricule"] = $std->getMatricule();
+                
+                $total =0;
+                $totalWeight = null;
+                $coef =1;
+               // var_dump($weightRules); exit;
+                foreach($typeAverages as $key=>$value)
+                {   
+                    $report[$sequence][$key]=$value;
+                    foreach($weightRules as $weight)
+                        if($weight['examType']['code'] === $key)
+                        {   
+                            if (in_array($key,["CC","EXAM"])) $coef = 5;
+                            
+                                $total +=  $value*$weight['ruleweightvalue'];
+                                $totalWeight += $weight['ruleweightvalue'];
+                        }
+                }
+                
+                
+                $note = $totalWeight ? round($total/$totalWeight,2, PHP_ROUND_HALF_UP) : null;
+                $note = $note*$coef;
+                
+
+                $report[$sequence]["Note Finale"]=['note'=>$note,'isFromDeliberation'=>$stdRegisteredToSubject->getIsFromDeliberation()];
+                $report[$sequence]["Grade"]=$this->computeGradeSur100($classe, $note);
+                $report[$sequence]["Points"]=$this->computePointsSur100($classe, $note);
+                $report[$sequence]["Statut"]=$this->resultStatus($classe, $note);
+
+                $stdRegisteredToSubject->setNoteFinal($note);
+                $stdRegisteredToSubject->setGrade($this->computeGradeSur100($classe, $note));
+                $stdRegisteredToSubject->setPoints($this->computePointsSur100($classe, $note));
+                $stdRegisteredToSubject->setStudentUnitResult($this->resultStatus($classe, $note));
+                $stdRegisteredToSubject->setExamSession($examSession);
+
+                $sessionReport = $this->entityManager->getRepository(UnitReportPerSession::class)->findOneBy(array("unitRegistration"=>$stdRegisteredToSubject,"examSession"=>$examSession));
+                $flag = 0;
+                if(is_null($sessionReport))
+                {
+                    $flag = 1;
+                    $sessionReport = new UnitReportPerSession();
+                }
+                $sessionReport->setNote($note);
+                $sessionReport->setGrade($this->computeGradeSur100($classe, $note));
+                $sessionReport->setPoints($this->computePointsSur100($classe, $note));
+                $sessionReport->setExamSession($examSession);
+                $sessionReport->setResultStatus($this->resultStatus($classe, $note));
+                $sessionReport->setUnitRegistration($stdRegisteredToSubject);
+                
+                if($flag)
+                    $this->entityManager->persist($sessionReport);
+                
+                
+                $sequence ++;
+            }
+
+
             
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
-            if(isset($data["subject_id"]))
-            // retrieve the sutdent ID based on the student ID 
-                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>$data["subject_id"],"acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC")); 
-            else    $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ue_id"],"idSubject"=>[NULL," "],"acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));  
-           // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
 
-            foreach($std as $key=>$value)
-            {
-                $hydrator = new ReflectionHydrator();
-                $data = $hydrator->extract($value);
-                $std[$key] = $data;
-
-            }
-           
+            array_multisort(array_column($report, 'Nom'), SORT_ASC, $report);
             
            
             $output = new JsonModel([
-                   $std
+                   $report
             ]);
             
             return $output;
@@ -375,102 +419,7 @@ class CalculNotesController extends AbstractRestfulController
         }
     }
     
- 
-  
-   //This function takes as parameter a list of exams performed for a given course
-   //the fonction identifies all the exam types performed and returns a code 
-   //the code returned is  used to match the algorithm that  performs mark calculation
-   private function checkTypeOfExamsDone($exams)
-   { 
-       $isCcPerformed = FALSE;
-       $isExamPerformed = FALSE;
-       $isCcTpPerformed = FALSE;
-       $isExamTpPerformed = FALSE;
-       $isRattrapagePerformed = FALSE;
-       $isStageCliniquePerformed = FALSE;
-       $isExamCliniquePerformed = FALSE;
-       $isStageExamPerformed = FALSE;
-       $isStageEntreprisePerformed = FALSE;
-       $isStageHospitalierPerformed = FALSE;
-       $isEcnPerformed = FALSE;
-       $isThesePerformed = FALSE;
 
-        foreach($exams as $exam)
-        { 
-            
-                switch($exam->getType())
-                {
-                    case 'CC' : 
-                        if($exam->getIsMarkRegistered()==1)
-                            $isCcPerformed = true;
-                        break;
-                    case 'EXAM':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isExamPerformed = true;
-                        break;
-                    case 'CCTP' : 
-                        if($exam->getIsMarkRegistered()==1)
-                            $isCcTpPerformed = true;
-                        break;
-                    case 'EXAMTP':
-                        if($exam->getIsMarkRegistered()==1)
-                        $isExamTpPerformed = true;
-                        break;
-                    case 'RAT' : 
-                        if($exam->getIsMarkRegistered()==1)
-                            $isRattrapagePerformed = true;
-                        break;
-                    case 'STAC':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isStageCliniquePerformed = true;
-                        break;
-                    case 'EXAMC':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isExamCliniquePerformed = true;
-                        break;                        
-                    case 'STAE':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isStageEntreprisePerformed = true;
-                        break;  
-                    case 'STAH':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isStageHospitalierPerformed = true;
-                        break;                         
-                    case 'ECN':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isEcnPerformed = true;
-                        break; 
-                    case 'THESE':
-                        if($exam->getIsMarkRegistered()==1)
-                            $isThesePerformed = true;
-                        break;                         
-                } 
-                
-        } 
-  
-        
-        if($isCcPerformed&&$isExamPerformed && !$isCcTpPerformed && !$isExamTpPerformed)
-            return "CC_EXAM";
-        if($isCcPerformed&&$isExamPerformed && $isCcTpPerformed && !$isExamTpPerformed)
-            return "CC_EXAM_CCTP";
-        if($isCcPerformed&&$isExamPerformed && !$isCcTpPerformed && $isExamTpPerformed)
-            return "CC_EXAM_EXAMTP";
-        if($isCcPerformed&&$isExamPerformed && $isCcTpPerformed && $isExamTpPerformed)
-            return "CC_EXAM_CCTP_EXAMTP";
-       /* if($isRattrapagePerformed)
-            return "RATTRAPAGE";*/
-        if($isStageCliniquePerformed && $isExamCliniquePerformed) 
-            return "STAGE_CLINIQUE_EXAM_CLINIQUE";
-        if($isStageEntreprisePerformed)
-            return "STAGE_ENTREPRISE";
-        if($isStageHospitalierPerformed)
-            return "STAGE_HOSPITALIER";        
-        if($isEcnPerformed)
-            return "ECN";  
-        if($isThesePerformed)
-            return "THESE";        
-        return -1;
-   }
    //This function takes as parameter a list of exams performed for a given course
    //the fonction checks if all marks are registered 
    //return true in case all mark are registered and 0 otherwise
@@ -486,272 +435,14 @@ class CalculNotesController extends AbstractRestfulController
    }  
    //This fonction takes as parameters semester, course and  list of exam performed for the given course
    //for each exam types, it calculates it calculates the mean value of marks for each student and report it to course registration table (unit_registration)
-   private function computeNotesAndReport($ueExams,$sem,$ue,$subject)
-   {
-        $countCC = 0;
-        $countEXAM = 0;
-        $countCCTP = 0;
-        $countEXAMTP = 0;
-        $countSTAGEC = 0;
-        $countEXAMC = 0;
-        $countSTAGEE = 0;
-        $countSTAGEH = 0;
-        $countRAT = 0;
-        $countECN = 0;
-        $countTHESE = 0;
-	$noteCc = [];
-        $noteExam = [];
-        $noteCctp = [];
-        $noteExamtp = [];
-        $noteStagee = [];
-        $noteStageh = [];
-        $noteStagec = [];
-        $noteRat = [];
-        $noteECN = [];
-        $noteTHESE = [];
-        $noteExamc = [];
-        //initializing 
+   private function checkStudentInExam($student,$evaluation)
+   { 
+        $evaluation = array_map(fn($e)=>$e["matricule"],$evaluation);  
         
-        $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem ));
-        foreach ($stdRegisteredToSubject as $std)
-        {
-            
-                $noteCc[$std->getStudent()->getId()] = 0;
-                $noteExam[$std->getStudent()->getId()] = 0;
-                $noteCctp[$std->getStudent()->getId()] = 0;
-                $noteExamtp[$std->getStudent()->getId()] = 0;
-                $noteStagee[$std->getStudent()->getId()] = 0;
-                $noteStageh[$std->getStudent()->getId()] = 0;
-                $noteStagec[$std->getStudent()->getId()] = 0;
-                $noteRat[$std->getStudent()->getId()] = 0;
-                $noteECN[$std->getStudent()->getId()] = 0;
-                $noteTHESE[$std->getStudent()->getId()] = 0;
-                $noteExamc[$std->getStudent()->getId()] = 0;
-                
-        }
-        
+        if (in_array($student,$evaluation)) return true ;
 
-        foreach($ueExams as $exam)
-        {
-            $tmp = 0;
-            $examObject = $this->entityManager->getRepository(Exam::class)->findOneById($exam->getId());
-            $examRegistration = $this->entityManager->getRepository(ExamRegistration::class)->findByExam($examObject );
-            if($exam->getType()=="CC")
-            {
-                $countCC++;
-
-                foreach ($examRegistration as $examR)
-                { 
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteCc)) return "ERROR_PED_REGISTRATION";
-                  
-                        $tmp = $noteCc[$examR->getStudent()->getId()] + $this->getMark($examObject, $examR);
-                        $noteCc[$examR->getStudent()->getId()] = $tmp;
-                
-                } 
-
-            }
-            if($exam->getType()=="EXAM")
-            {
-                $countEXAM++; 
-
-                foreach ($examRegistration as $examR)
-                { 
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteExam))   return "ERROR_PED_REGISTRATION";
-                                        
-                        $tmp = $noteExam[$examR->getStudent()->getId()] + $this->getMark($examObject, $examR);
-                        $noteExam[$examR->getStudent()->getId()] =  $tmp;
-                    
-                }
-            }
-            if($exam->getType()=="EXAMC")
-            {
-                $countEXAMC++; 
-
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteExamc)) return "ERROR_PED_REGISTRATION";
-                                        
-                        $tmp = $noteExamc[$examR->getStudent()->getId()] + $this->getMark($examObject, $examR);
-                        $noteExamc[$examR->getStudent()->getId()] =  $tmp;
-                    
-                }
-
-            }
-
-            if($exam->getType()=="CCTP")
-            {
-                $countCCTP++;
-                foreach ($examRegistration as $examR) 
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteCctp)) return "ERROR_PED_REGISTRATION";
-                        $tmp =$noteCctp[$examR->getStudent()->getId()] + $this->getMark($examObject, $examR);
-                        $noteCctp[$examR->getStudent()->getId()] =  $tmp;
-                }
-                
-
-            }
-            if($exam->getType()=="EXAMTP")
-            {
-                $countEXAMTP++;
-
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteExamtp)) return "ERROR_PED_REGISTRATION";
-                        $noteExamtp[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }
-            if($exam->getType()=="STAC")
-            {
-                $countSTAGEC++;
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteStagec)) return "ERROR_PED_REGISTRATION";
-                        $noteStagec[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }
-            if($exam->getType()=="STAE")
-            {
-                $countSTAGEE++;
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteStagee)) return "ERROR_PED_REGISTRATION";
-                        $noteStagee[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }
-            if($exam->getType()=="STAH")
-            {
-                $countSTAGEH++;
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteStageh)) return "ERROR_PED_REGISTRATION";
-                        $noteStageh[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }            
-            if($exam->getType()=="ECN")
-            {
-                $countECN++; 
-                foreach ($examRegistration as $examR)
-                {
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteECN)) return "ERROR_PED_REGISTRATION";
-                        $noteECN[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }
-            if($exam->getType()=="THESE")
-            {
-                $countTHESE++;
-                foreach ($examRegistration as $examR)
-                {
-                    //Saving mark only for students who have atten
-                    if(!array_key_exists($examR->getStudent()->getId(), $noteTHESE)) return "ERROR_PED_REGISTRATION";
-                   if(strcmp($examR->getAttendance(),"P")==0 ) 
-                    $noteTHESE[$examR->getStudent()->getId()] += $this->getMark($examObject, $examR);
-                }
-
-            }            
-        }
-
-        foreach($noteExam as $key=>$value)
-        {
-            
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countEXAM>0)$std->setNoteExam(round($value/$countEXAM,2,PHP_ROUND_HALF_UP));
-            
-        }
-        foreach($noteExamc as $key=>$value)
-        {
-            
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countEXAMC>0)$std->setNoteExam(round($value/$countEXAMC,2,PHP_ROUND_HALF_UP));
-            
-            //if(!is_null($value))$std->setNoteExamc(round($value/$countEXAMC,2,PHP_ROUND_HALF_UP));
-            
-
-        }       
-        foreach($noteCc as $key=>$value)
-        {
-            //Collect all student registered to the given unit for a given semester
-            
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countCC>0) $std->setNoteCc(round($value/$countCC,2,PHP_ROUND_HALF_UP));
-             
-        }
-        foreach($noteCctp as $key=>$value)
-        { 
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countCCTP>0 ) $std->setNoteCctp(round($value/$countCCTP,2,PHP_ROUND_HALF_UP));
-            
-        }
-        foreach($noteExamtp as $key=>$value)
-        {
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countEXAMTP>0) $std->setNoteExamtp(round($value/$countEXAMTP,2,PHP_ROUND_HALF_UP));
-            $this->entityManager->flush();
-        }
-        foreach($noteStagee as $key=>$value)
-        {
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-           // if(!is_null($value)) $std->setNoteStagee(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
-            if($countSTAGEE>0) $std->setNoteExam(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
-     
-            
-        }
-        foreach($noteStageh as $key=>$value)
-        {
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-           // if(!is_null($value)) $std->setNoteStagee(round($value/$countSTAGEE,2,PHP_ROUND_HALF_UP));
-            if($countSTAGEH>0) $std->setNoteExam(round($value/$countSTAGEH,2,PHP_ROUND_HALF_UP));
-     
-            
-        }        
-        foreach($noteStagec as $key=>$value)
-        { 
-            //Collect all student registered to the given unit for a given semester
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            //if(!is_null($value)) $std->setNoteStagec(round($value/$countSTAGEC,2,PHP_ROUND_HALF_UP));
-            if($countSTAGEC>0)$std->setNoteCc(round($value/$countSTAGEC,2,PHP_ROUND_HALF_UP));
-
-            
-        } 
-        foreach($noteECN as $key=>$value)
-        {
-            //Collect all student registered to the given unit related exam
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            if($countECN>0) $std->setNoteExam(round($value/$countECN,2,PHP_ROUND_HALF_UP));
-             
-        }
-        foreach($noteTHESE as $key=>$value)
-        {
-            //Collect all student registered to the given unit related exam
-            $std = $this->entityManager->getRepository(Student::class)->findOneBy(array("id"=>$key ));
-            $std = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$sem,"student"=>$std ));
-            //if(!is_null($value)) $std->setNoteExam(round($value/$countTHESE,2,PHP_ROUND_HALF_UP));
-            if($countEXAMC>0 && $countTHESE>0) $std->setNoteExam(round($value/$countTHESE,2,PHP_ROUND_HALF_UP));
-            
-        } 
-        
-        return "SUCCESS";
-        
-        
+        return false;
+  
    }
    
    
@@ -788,7 +479,22 @@ class CalculNotesController extends AbstractRestfulController
        }
        
        
-   }    
+   }  
+   private function resultStatus($classe,$moyenne)
+   {
+       //$grade = $this->entityManager->getRepository(Grade::class)->findByClassOfStudy($classe);
+       $gradevalues = $this->entityManager->getRepository(GradeValueRange::class)->findByGrade($classe->getGrade());
+       
+       foreach ($gradevalues as $gv)
+       {
+           $min = $gv->getMinsur100();
+           $max = $gv->getMaxsur100();
+           $resultStatus = $gv->getResultStatus();
+           if ($min <= $moyenne && $moyenne <= $max)
+               return $resultStatus;
+           
+       }
+   }
    private function computePoints($classe,$moyenne)
    {
       // $grade = $this->entityManager->getRepository(Grade::class)->findByClassOfStudy($classe);

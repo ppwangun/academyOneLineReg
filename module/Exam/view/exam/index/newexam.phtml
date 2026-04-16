@@ -12,7 +12,7 @@ z-index: 120000}
 </style>
 
 
-<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init()">
+<div class="well" style="margin-left: -30px; margin-right: -30px;" ng-init="$ctrl.init();">
         
             <div class="row">
                 <div class='col-md-4'>
@@ -51,17 +51,18 @@ z-index: 120000}
 
     <md-content layout-padding >
         <form   name="examForm">
-            <div layout-gt-sm='row' >
-                <div layout-gt-sm='column' >
-                    <label>Code Examen: </label>
-                </div>
-                <div flex="60"><span class="text-primary" style=" font-size: 18px;">&nbsp;&nbsp; {{$ctrl.examCode}}</span></div>
-
-                 <div layout-gt-sm='column' >
-                       <md-datepicker name="dateExam" ng-model="$ctrl.dateExam" md-placeholder="Date de l'examen" md-is-open="$ctrl.isOpen" required></md-datepicker>   
-
-                </div>  
+            
+        <div layout-gt-sm='row' >
+            <div layout-gt-sm='column' >
+                <label>Code Examen: </label>
             </div>
+            <div flex="60"><span class="text-primary" style=" font-size: 18px;">&nbsp;&nbsp; {{$ctrl.examCode}}</span></div>
+
+             <div layout-gt-sm='column' >
+                   <md-datepicker name="dateExam" ng-model="$ctrl.dateExam" md-placeholder="Date de l'examen" md-is-open="$ctrl.isOpen" required></md-datepicker>   
+
+            </div>  
+        </div>
    
         <div layout-gt-sm='row' >
             <md-input-container class="md-block" flex-gt-sm flex='40'>
@@ -72,7 +73,7 @@ z-index: 120000}
                                    md-item-text="item.code" 
                                    md-min-length="0"
                                    placeholder="Faites de la classe" 
-                                   md-selected-item-change="$ctrl.selectedItemChange(item)"
+                                   md-selected-item-change="selectedItemChange(item)"
                                    md-input-name="classe"
                                    md-no-asterisk
                                    required>
@@ -89,11 +90,27 @@ z-index: 120000}
                           <div ng-message="required">Ce champ est obligatoire</div>
                       </div> 
             </md-input-container >
+            
         <div layout-gt-sm='column' flex="35" >
+        <md-input-container >
+            <label>Type d'examen</label>
+            <md-select name="typeExam" ng-model="$ctrl.selectedExamType"  ng-change="$ctrl.activateExamSesion($ctrl.selectedExamType)" md-no-asterisk required>
+                <md-option ng-disabled="true"><em>---Choix type d'évaluation---</em></md-option>
+              <md-option ng-repeat="examtype in $ctrl.examtypes" ng-value="examtype.code" >
+                {{examtype.name}}
+              </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.typeExam.$error">
+              <div ng-message="required">Champ obligatoire</div>
+            </div>
+        </md-input-container>
+        </div>            
+            
+            <div layout-gt-sm='column' flex="35" >
         <md-input-container>
         <label>Semestre</label>
         <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.code'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)"
-                    md-no-asterisk required >
+                   md-no-asterisk required ng-disabled="!$ctrl.isActivatedSemesterSelect" >
             <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
           <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
             {{sem.name}}
@@ -103,30 +120,34 @@ z-index: 120000}
           <div ng-message="required">Champ obligatoire</div>
         </div>
       </md-input-container>  
-        </div> 
-        <div layout-gt-sm='column' flex="35" >
-        <md-input-container >
-            <label>Type d'examen</label>
-            <md-select name="typeExam" ng-model="$ctrl.selectedExam" ng-model-options="{trackBy: '$value.id'}" md-no-asterisk required>
-                <md-option ng-disabled="true"><em>---Choix type d'évaluation---</em></md-option>
-              <md-option ng-repeat="examtype in $ctrl.examtypes" ng-value="examtype" >
-                {{examtype.name}}
+    
+            
+     
+        <md-input-container ng-show="$ctrl.showExamSession" style="margin-top:20px;">
+            <label>Session d'evaluation</label>
+            <md-select name="session1"  ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id)" 
+                        ng-change="$ctrl.resetSubject()" md-no-asterisk ng-required="$ctrl.showExamSession">
+                <md-option ng-disabled="true"><em>---Choix de la session d'evaluation---</em></md-option>
+               <md-option ng-repeat="examSession in $ctrl.examSessions" ng-value="examSession"  >
+                {{examSession.sessionName}}
               </md-option>
+
             </md-select>
-            <div class="errors" ng-messages="examForm.typeExam.$error">
+            <div class="errors" ng-messages="examForm.session1.$error">
               <div ng-message="required">Champ obligatoire</div>
             </div>
-        </md-input-container>
-        </div>
+        </md-input-container>  
+    </div>             
+
     </div>
      
-            <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
+    <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
         <md-input-container flex="50">
             <label>Unité d'enseignement</label>
             <md-select   name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe"  
-                       ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id);" 
+                       ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id,$ctrl.selectedExamSession.id);" 
                        ng-change="$ctrl.loadStd();"  md-no-asterisk ng-required="true">
-                <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1}"><em>Choisissez une UE</em></md-option>
+                <md-option ng-disabled="true"  ng-value="{id:-1}"><em>Choisissez une UE</em></md-option>
               <md-option ng-repeat="ue in $ctrl.ues" ng-value="ue" >
                 {{ue.code}}[{{ue.name}}]
                 
@@ -152,7 +173,7 @@ z-index: 120000}
               <div ng-message="required">Champ obligatoire</div>
             </div>
         </md-input-container>  
-        </div>           
+    </div>           
 
 
 

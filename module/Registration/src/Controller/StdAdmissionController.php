@@ -29,12 +29,14 @@ class StdAdmissionController extends AbstractRestfulController
     private $sessionContainer;
     private $studentManager;
     private $crtAcadYr;
+    private $userManager;
     
-    public function __construct($entityManager,$studentManager,$sessionContainer) {
+    public function __construct($entityManager,$studentManager,$sessionContainer,$userManager) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer = $sessionContainer;
         $this->studentManager = $studentManager;
+        $this->userManager = $userManager;
         $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
@@ -66,27 +68,22 @@ class StdAdmissionController extends AbstractRestfulController
         { 
             $userId = $this->sessionContainer->userId; 
             $user = $this->entityManager->getRepository(User::class)->find($userId );
-            if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-            {
+            $registeredStd= [];
+            $classes = $user->getClasses();
 
-                   $registeredStd = $this->entityManager->getRepository(AllYearsAdmittedStdView::class)->findBy(array("acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));
-            }
-            
-            else{
-                $registeredStd = [];
-                //Find clases mananged by the current user
-                $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));
-                
-                if($userClasses)
-                {
-                    foreach($userClasses as $classe)
+            //check if user has any admin permission   
+            if ($this->userManager->userHasAdminPermission($user)){ 
+                       $registeredStd = $this->entityManager->getRepository(AllYearsAdmittedStdView::class)->findBy(array("acadYrId"=>$this->crtAcadYr->getId()),array("nom"=>"ASC"));
+                }
+                else{
+                     
+                    foreach($classes as $classe)
                     {
-                        $registeredStd_1 = $this->entityManager->getRepository(AdmittedStudentForActiveRegistrationYearView::class)->findBy(array("classe"=>$classe->getClassOfStudy()->getCode()),array("nom"=>"ASC"));
+                        $registeredStd_1 = $this->entityManager->getRepository(AdmittedStudentForActiveRegistrationYearView::class)->findBy(array("classe"=>$classe->getCode()),array("nom"=>"ASC"));
                         $registeredStd = array_merge($registeredStd,$registeredStd_1);
-                        
                     }
-                }                
-            }
+                }
+            
          
             foreach($registeredStd as $key=>$value)
             {

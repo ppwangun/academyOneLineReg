@@ -7,6 +7,7 @@ use Application\Entity\Student;
 use Application\Entity\Semester;
 use Application\Entity\TeachingUnit;
 use Application\Entity\Subject;
+use Application\Entity\ExamSession;
 
 /**
  * UnitRegistration
@@ -158,6 +159,13 @@ class UnitRegistration
     private $calculationStatus = '0';
     
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="student_unit_result", type="string", length=45, nullable=true, options={"default"="FAILED"})
+     */
+    private $studentUnitResult = 'FAILED';    
+    
+    /**
      * @var Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -186,6 +194,16 @@ class UnitRegistration
      * })
      */
     private $teachingUnit;
+    
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;    
 
     /**
      * @var Subject
@@ -658,7 +676,32 @@ class UnitRegistration
     public function getIsFromDeliberation()
     {
         return $this->isFromDeliberation;
-    }    
+    } 
+    
+    /**
+     * Set studentUnitResult.
+     *
+     * @param string|null $studentUnitResult
+     *
+     * @return UnitRegistration
+     */
+    public function setStudentUnitResult($studentUnitResult = null)
+    {
+        $this->studentUnitResult = $studentUnitResult;
+
+        return $this;
+    }
+
+    /**
+     * Get studentUnitResult.
+     *
+     * @return string|null
+     */
+    public function getStudentUnitResult()
+    {
+        return $this->studentUnitResult;
+    }
+    
     /**
      * Set semester
      *
@@ -752,5 +795,29 @@ class UnitRegistration
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    /**
+     * Set examSession.
+     *
+     * @param ExamSession|null $examSession
+     *
+     * @return UnitRegistration
+     */
+    public function setExamSession(ExamSession $examSession = null)
+    {
+        $this->examSession = $examSession;
+
+        return $this;
+    }
+
+    /**
+     * Get examSession.
+     *
+     * @return ExamSession|null
+     */
+    public function getExamSession()
+    {
+        return $this->examSession;
     }    
 }

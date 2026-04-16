@@ -19,6 +19,7 @@ return [
             Controller\GradeRangeController::class => Controller\Factory\GradeRangeControllerFactory::class,
             Controller\DelibConfigController::class => Controller\Factory\DelibConfigControllerFactory::class,
             Controller\ParcourtController::class => Controller\Factory\ParcourtControllerFactory::class,
+            Controller\EvalWeightController::class => Controller\Factory\EvalWeightControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -227,7 +228,7 @@ return [
             'graderangeconfig' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/graderangeconfig[/:id]',
+                    'route'    => '/graderangeconfig',
                     'defaults' => [
                         'controller' => Controller\GradeRangeController::class,
                        
@@ -477,7 +478,29 @@ return [
                        
                     ],
                 ],
-            ],            
+            ],  
+            'evalWeightMgt' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/evalWeightMgt[/:classe_code][/:sem_id][/:acadYrId][/:duplicata][/:stdId]',
+                    'defaults' => [
+                        'controller' => Controller\EvalWeightController::class,
+                        'action'     => 'evalWeightMgt'
+                       
+                    ],
+                ],
+            ], 
+            'addRule' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/addRule[/:classe_code][/:sem_id][/:acadYrId][/:duplicata][/:stdId]',
+                    'defaults' => [
+                        'controller' => Controller\EvalWeightController::class,
+                        'action'     => 'addRule'
+                       
+                    ],
+                ],
+            ],           
         ],
     ],
     'view_manager' => [

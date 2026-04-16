@@ -195,6 +195,13 @@ class AllYearsSubjectRegistrationView
      * @ORM\Column(name="points", type="float", precision=10, scale=0, nullable=true)
      */
     private $points;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="result_status", type="string",length=45, nullable=true)
+     */
+    private $resultStatus;   
     
     /**
      * @var integer

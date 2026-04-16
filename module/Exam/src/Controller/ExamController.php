@@ -22,6 +22,7 @@ use Application\Entity\Student;
 use Application\Entity\CurrentYearUeExamsView;
 use Application\Entity\UserManagesClassOfStudy;
 use Application\Entity\User;
+use Application\Entity\ExamSession;
 
 class ExamController extends AbstractRestfulController
 {
@@ -48,6 +49,23 @@ class ExamController extends AbstractRestfulController
             $user = $this->entityManager->getRepository(User::class)->find($userId );
    
             $ueExam = $this->entityManager->getRepository(Exam::class)->find($id);
+            $ueExam = $this->entityManager->createQueryBuilder()->select( 'e','et','cosh','s','es','cl','tu','sub','subtu')
+                    ->from('Application\Entity\Exam','e')
+                    ->leftjoin('e.examTypeCode','et')
+                    ->leftjoin('e.classOfStudyHasSemester','cosh')
+                    ->leftjoin('cosh.classOfStudy','cl')
+                    ->leftjoin('cosh.semester','s')
+                    ->leftjoin('cosh.teachingUnit','tu')
+                    ->leftjoin('cosh.subject','sub')
+                    ->leftjoin('sub.teachingUnit','subtu')
+                    ->leftjoin('e.examSession','es')
+                    ->where('e.id = :id')
+                    ->setParameter('id',$id)
+                    ->getQuery()
+            ->getArrayResult();
+            return new JsonModel(
+                    $ueExam
+            );            
             $coshs = $ueExam->getClassOfStudyHasSemester();
 
             //check first wether or not the user has access permission to the given classe
@@ -56,9 +74,13 @@ class ExamController extends AbstractRestfulController
             $isAdmin = $this->access('global.system.admin',['user'=>$user]);
             if($this->examManager->checkUserCanAccessClass($user,$coshs->getClassOfStudy(),$isAdmin))
             {
+                $hydrator = new ReflectionHydrator();
+                $session= $hydrator->extract($ueExam->getExamSession());
+                
                 $exam= array("classe_id"=>$coshs->getClassOfStudy()->getId(),
                             "exam_code"=>$ueExam->getCode(),
                             "sem_id"=>$coshs->getSemester()->getId(),
+                            "session"=>$session,
                             "exam_type_code"=>$ueExam->getType(),
                             "ue_id"=>$coshs->getTeachingUnit()?$coshs->getTeachingUnit()->getId():$coshs->getSubject()->getTeachingUnit()->getId(),
                             "subject_id"=>$coshs->getSubject()?$coshs->getSubject()->getId():"",
@@ -94,25 +116,27 @@ class ExamController extends AbstractRestfulController
             //retrive the current loggedIn User
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
+            $classes = $user->getClasses();
+            $ueExams = [];
            
             //check first the user has global permission or specific permission to access exams informations
-            if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-            {
+            foreach($user->getRoles() as $role)
+            {         
+                if($role->getName()=='Administrator') 
+
                 $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("acadYrId"=>$this->crtAdadYr->getId()),Array("date"=>'DESC'));                
-            }
-            else{
-                //Find clases mananged by the current user
-                $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));
+            
+                else{
+                    foreach($classes as $classe)
+                    {
+                        $ueExam1s = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("classe"=>$classe->getCode(),"acadYrId"=>$this->crtAdadYr->getId()),Array("date"=>'DESC'));
+                        $ueExams = array_merge($ueExams,$ueExam1s);
+                        //$subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode()),Array("date"=>'DESC'));
 
-                foreach($userClasses as $classe)
-                {
-                    $ueExam1s = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode(),"acadYrId"=>$this->crtAdadYr->getId()),Array("date"=>'DESC'));
-                    $ueExams = array_merge($ueExams,$ueExam1s);
-                    //$subjectExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(Array("classe"=>$classe->getClassOfStudy()->getCode()),Array("date"=>'DESC'));
+                        //$ueExams = array_merge($ueExams , $subjectExams );
+                    }
 
-                    //$ueExams = array_merge($ueExams , $subjectExams );
                 }
-
             }
             //converting the $ueExams array of objects to array of arrays
                 $i= 0;
@@ -159,9 +183,13 @@ class ExamController extends AbstractRestfulController
                 //the associative table clas_of_study_has_smester is retrieved and stores  in the exam table
                 //the exam cam be base on a teaching unit or a subject associted to a teaching unit
                 $subject = null;
+                $examSessionId = $data["examSession"]??null;
+               // var_dump($data); exit;
                 $semester = $this->entityManager->getRepository(Semester::class)->find($data["semester"]);
                 $class= $this->entityManager->getRepository(ClassOfStudy::class)->find($data["classe"]);
                 $teachingUnit = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ue_id"]);
+                
+                    $examSession = $examSessionId?$this->entityManager->getRepository(ExamSession::class)->find($examSessionId):null;
                 
                 if (isset($data["subject"]))
                 {
@@ -209,6 +237,7 @@ class ExamController extends AbstractRestfulController
                 $examRegistration->setIsMarkValidated($value);
                 $examRegistration->setIsMarkConfirmed($value);
                 $examRegistration->setClassOfStudyHasSemester($classSemSubject);
+                $examRegistration->setExamSession($examSession);
 
                 $this->entityManager->persist($examRegistration);
                 $this->entityManager->flush();

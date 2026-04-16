@@ -56,11 +56,11 @@ z-index: 120000}
             <div layout-gt-sm='column' style="padding-top: 10px" >
                 <md-input-container >
                     <label>Critère d'application</label>
-                    <md-select name="criteria" ng-model="$ctrl.selectedCriteria"  md-on-open="" ng-change="$ctrl.showElement()"
+                    <md-select name="criteria" ng-model="selectedCriteria"  md-on-open="" ng-change="showElement()"
                                 md-no-asterisk  >
                         <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
-                        <md-option value='cycle' >---Par cycle---</md-option>
                         <md-option value='classe'>---Par classe---</md-option>
+                        <md-option value='ue' >---Par unité d'enseignement---</md-option>
                       
                         {{sem.name}}
                       </md-option>
@@ -70,31 +70,45 @@ z-index: 120000}
                     </div>
                   </md-input-container>  
             </div> 
+            <div layout-gt-sm='column' style="padding-top: 35px">
+                
+            <i>Par défaut</i>
+                <md-checkbox  ng-model="isDefaultPaymentGrid" ng-disabled=""   aria-label="Checkbox Indeterminate" ng-
+                               
+                    ng-true-value="1"
+                    ng-false-value="0"             
+                    class="md-primary">
+
+                </md-checkbox>
+               
+            </div>            
+            
 
         </div>
+        
      
         <div class = "col-lg-12" style="background-color: #dfe4ea;" >
-            <div class="row" ng-show="$ctrl.showClasseElement">  
+            <div class="row" ng-show="showClasseElement">  
             <div class="col-md-10"  style="margin-top:25px;">
 
                 <md-input-container class="column md-block" flex-gt-sm>
                     <label>Classe:</label>
-                    <md-autocomplete  md-search-text="$ctrl.searchClasse" 
-                                     md-selected-item="$ctrl.selectedClasse"  
-                                     md-items="item in $ctrl.query($ctrl.searchClasse)" 
+                    <md-autocomplete  md-search-text="searchClasse" 
+                                     md-selected-item="selectedClasse"  
+                                     md-items="item in query(searchClasse)" 
                                      md-item-text="item.code" 
                                      md-min-length="0"
                                      placeholder="Faites le choix de la classe" 
-                                     md-selected-item-change="$ctrl.selectedItemChange(item)"
+                                     md-selected-item-change="selectedItemChange(item)"
                                      md-input-name="classe"
                                      md-no-asterisk
                                      ng-required='$ctrl.showClasseElement'>
                         <md-item-template>
-                          <span md-highlight-text="$ctrl.searchClasse" md-highlight-flags="^i">{{item.code}}</span>
+                          <span md-highlight-text="searchClasse" md-highlight-flags="^i">{{item.code}}</span>
 
                         </md-item-template>
                         <md-not-found>
-                          Aucun élément correspondant à "{{$ctrl.searchClasse}}" n'a été trouvé.
+                          Aucun élément correspondant à "{{searchClasse}}" n'a été trouvé.
 
                         </md-not-found>
                     </md-autocomplete>
@@ -105,37 +119,63 @@ z-index: 120000}
 
             </div>
             <div class="col-md-2" style="margin-top:40px;" >
-                <button class="btn btn-primary" ng-click="$ctrl.addClasse()"><i class="fa fa-plus"></i></button>
+                <button class="btn btn-primary" ng-click="addClasse()"><i class="fa fa-plus"></i></button>
             </div>
         </div>
             <table>
                
                 <tbody>
-                    <tr ng-repeat="classe in $ctrl.classes">
+                    <tr ng-repeat="classe in classes">
                         <td class="text-primary" ng-bind="classe"></td>&nbsp;<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-                        <td ><button class="btn btn-default" ng-click="$ctrl.removeClasse(classe)"><i class="fa fa-trash"></i></button></td>
+                        <td ><button class="btn btn-default" ng-click="removeClasse(classe)"><i class="fa fa-trash"></i></button></td>
                     </tr>
                 </tbody>
             </table>
-            <div layout-gt-sm='column' style="padding-top: 10px" ng-show="$ctrl.showCycleElement">
-                    <md-input-container>
-                    <label>Choix du cycle</label>
-                    <md-select name="cycle" ng-model="$ctrl.selectedCycle"  md-on-open="" 
-                                md-no-asterisk ng-required='$ctrl.showCycleElement' >
-                        <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
-                        <md-option value='1' >Premier cycle</md-option>
-                        <md-option value='2'>Deuxième cycle</md-option>
-                        <md-option value='3'>Troisième cycle</md-option>
-                        <md-option value=-1'>Tous les cycles</md-option>
-                      
-                        {{sem.name}}
-                      </md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="gradeForm.cycle.$error">
-                      <div ng-message="required">Champ obligatoire</div>
-                    </div>
-                  </md-input-container>  
+            <div layout-gt-sm='column' style="padding-top: 10px" ng-show="showUeElement">
+            <div class="row" ng-show="showUeElement">  
+            <div class="col-md-10"  style="margin-top:25px;">
+
+                <md-input-container class="column md-block" flex-gt-sm>
+                    <label>Classe:</label>
+                    <md-autocomplete  md-search-text="searchSubject" 
+                                     md-selected-item="selectedSubject"  
+                                     md-items="item in querySubject(searchSubject)" 
+                                     md-item-text="item.codeUe" 
+                                     md-min-length="0"
+                                     placeholder="Choisisser une unité d'enseignement" 
+                                     md-selected-item-change="selectedItemChange(item)"
+                                     md-input-name="classe"
+                                     md-no-asterisk
+                                     ng-required='showUeElement'>
+                        <md-item-template>
+                          <span md-highlight-text="searchSubject" md-highlight-flags="^i">{{item.codeUe}}[{{item.classe}}]</span>
+
+                        </md-item-template>
+                        <md-not-found>
+                          Aucun élément correspondant à "{{searchSubject}}" n'a été trouvé.
+
+                        </md-not-found>
+                    </md-autocomplete>
+                        <div ng-messages="gradeForm.classe.$error">
+                            <div ng-message="required">Ce champ est obligatoire</div>
+                        </div> 
+                </md-input-container >
+
+            </div>
+            <div class="col-md-2" style="margin-top:40px;" >
+                <button class="btn btn-primary" ng-click="addSubject()"><i class="fa fa-plus"></i></button>
+            </div>
+        </div>
             </div> 
+                        <table>
+               
+                <tbody>
+                    <tr ng-repeat="subject in subjects">
+                        <td class="text-primary" ng-bind="subject.codeUe"></td>&nbsp;<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                        <td ><button class="btn btn-default" ng-click="removeSubeject(subject)"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>           
     </div>
         
@@ -155,14 +195,15 @@ z-index: 120000}
                     </ul>
     <table class="table table-bordered table-striped table-condensed " >
         <thead>
-            <tr class="bg-primary" ><th></th><th >Grade</th><th >Montant</th><th></th></tr>
+            <tr class="bg-primary" ><th></th><th >Grade</th><th >CM Montant/H</th><th >TD(TP) Montant/H</th><th></th></tr>
 
         </thead>
         <tbody>
             <tr ng-repeat='rg in paymentGrid'>
                 <td></td>
                 <td ng-bind="rg.grade.name"></td>
-                <td ng-bind="rg.amount"></td>
+                <td ng-bind="rg.amountTheoritical"></td>
+                <td ng-bind="rg.amountPractical"></td>
 
                 <td><button class="btn btn-default" ng-click="removePymtItem(rg)"><i class="fa fa-trash bg-warning"></i></button></td>
             </tr>

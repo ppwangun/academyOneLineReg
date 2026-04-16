@@ -42,11 +42,13 @@ class AssignedTeachingunitController extends AbstractRestfulController
     private $entityManager;
     private $sessionContainer;
     private $crtYrAcad;
+    private $usermanager;
     
-    public function __construct($entityManager,$sessionContainer) {
+    public function __construct($entityManager,$sessionContainer,$userManager) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer = $sessionContainer;
+        $this->userManager = $userManager;
         $this->crtYrAcad = $sessionContainer->currentAcadYr;
         
     }
@@ -79,8 +81,11 @@ class AssignedTeachingunitController extends AbstractRestfulController
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
             $ue = [];
-         
-            if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
+            $classes = $user->getClasses();
+
+
+            //check if user has any admin permission   
+            if ($this->userManager->userHasAdminPermission($user)) 
             {
                 //collect all courses affected to any semester
                     $query = $this->entityManager->createQuery('SELECT t.id, c.id as ue_class_id,s.id as sem_id,s.code as sem_code,t.name,t.code,t.numberOfSubjects as subjects, c1.id as class_id, c1.code as class,c.credits, c.hoursVolume ,c.cmHours as cm_hrs,c.tpHours as tp_hrs, c.tdHours as td_hrs FROM Application\Entity\ClassOfStudyHasSemester c '
@@ -88,35 +93,25 @@ class AssignedTeachingunitController extends AbstractRestfulController
                         . 'AND c.status = 1');
                     $query->setParameter(1, $this->crtYrAcad->getId());
                 $ue= $query->getResult();
-               
+
             }
             else
             {
-                //Find clases mananged by the current user
-                $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));
-                
-                if($userClasses)
-                {  
-                    foreach($userClasses as $classe)
-                    {
-                        //collect all courses affected to any semester
-                        $query = $this->entityManager->createQuery('SELECT t.id, c.id as ue_class_id,s.id as sem_id,s.code as sem_code,t.name,t.code,t.numberOfSubjects as subjects,c1.id as class_id, c1.code as class,c.credits, c.hoursVolume ,c.cmHours as cm_hrs,c.tpHours as tp_hrs, c.tdHours as td_hrs FROM Application\Entity\ClassOfStudyHasSemester c '
-                                . 'JOIN c.classOfStudy c1   JOIN c.teachingUnit t JOIN c.semester s JOIN s.academicYear a WHERE a.id = ?2 '
-                                . 'AND c.status = 1 '
-                                . 'AND c1.code = ?1 ');
-                        $query->setParameter(1, $classe->getClassOfStudy()->getCode());
-                        $query->setParameter(2, $this->crtYrAcad->getId());
-                        $ue_1= $query->getResult(); 
-                        $ue = array_merge($ue,$ue_1);
-                        
-                    }
+                foreach($classes as $classe)
+                {
+                    //collect all courses affected to any semester
+                    $query = $this->entityManager->createQuery('SELECT t.id, c.id as ue_class_id,s.id as sem_id,s.code as sem_code,t.name,t.code,t.numberOfSubjects as subjects,c1.id as class_id, c1.code as class,c.credits, c.hoursVolume ,c.cmHours as cm_hrs,c.tpHours as tp_hrs, c.tdHours as td_hrs FROM Application\Entity\ClassOfStudyHasSemester c '
+                            . 'JOIN c.classOfStudy c1   JOIN c.teachingUnit t JOIN c.semester s JOIN s.academicYear a WHERE a.id = ?2 '
+                            . 'AND c.status = 1 '
+                            . 'AND c1.code = ?1 ');
+                    $query->setParameter(1, $classe->getCode());
+                    $query->setParameter(2, $this->crtYrAcad->getId());
+                    $ue_1= $query->getResult(); 
+                    $ue = array_merge($ue,$ue_1);
+
                 }
             }
-            for($i=0;$i<sizeof($ue);$i++)
-            {
-               // $ue[$i]['name']= utf8_encode($ue[$i]['name']);
-
-            }            
+            
 
             $this->entityManager->getConnection()->commit();
             return new JsonModel([
@@ -209,7 +204,7 @@ class AssignedTeachingunitController extends AbstractRestfulController
     {
         $this->entityManager->getConnection()->beginTransaction();
         try{
-            $data= $data['data'];            
+            $data= $data['data'];           
             
             $ueOld =$this->entityManager->getRepository(TeachingUnit::class)->find($id);
             $sem =$this->entityManager->getRepository(Semester::class)->find($data['sem_id']);
@@ -238,7 +233,6 @@ class AssignedTeachingunitController extends AbstractRestfulController
             }
             $this->entityManager->flush();
             
-             
             $contracts = $this->entityManager->getRepository(Contract::class)->findBy(["teachingUnit"=>$ueOld,"subject"=>null,"semester"=>$ueClasse->getSemester()]);
             foreach($contracts as $con)
             {
@@ -247,12 +241,14 @@ class AssignedTeachingunitController extends AbstractRestfulController
             }
             $this->entityManager->flush();
             
-          
-
+           
+             
+ 
             $subjects = $this->entityManager->getRepository(Subject::class)->findBy(["teachingUnit"=>$ueOld]);
             
+             
             foreach($subjects as $sub)
-            {
+            { 
                 $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findOneBy(["subject"=>$sub,"semester"=>$ueClasse->getSemester()]);
                 if($coshs)
                 {

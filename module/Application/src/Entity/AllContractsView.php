@@ -139,7 +139,15 @@ class AllContractsView
     private $teacher;   
     
     
-    
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }    
     
 }
 

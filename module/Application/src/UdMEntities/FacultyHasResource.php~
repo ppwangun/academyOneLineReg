@@ -22,16 +22,6 @@ class FacultyHasResource
     private $id;
 
     /**
-     * @var \Faculty
-     *
-     * @ORM\ManyToOne(targetEntity="Faculty")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
-     * })
-     */
-    private $faculty;
-
-    /**
      * @var \Resource
      *
      * @ORM\ManyToOne(targetEntity="Resource")
@@ -40,6 +30,16 @@ class FacultyHasResource
      * })
      */
     private $resource;
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
 
 
 }

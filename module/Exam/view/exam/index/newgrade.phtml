@@ -155,19 +155,21 @@ z-index: 120000}
                     </ul>
     <table class="table table-bordered table-striped table-condensed " >
         <thead>
-            <tr class="bg-primary" ><th></th><th colspan="2">Minimum</th><th colspan="2">Maximum</th><th rowspan="2">Grade</th><th rowspan="2">Points</th><th rowspan="2"></th></tr>
-            <tr class="bg-primary" ><th>#</th><th>/20</th><th>/100</th><th>/20</th><th>/100</th></tr>
+            <tr class="bg-primary" ><th></th><th colspan="2">Minimum</th><th colspan="2">Maximum</th><th rowspan="2">Grade</th><th rowspan="2">Points</th><th rowspan="2">statut</th><th rowspan="2"></th></tr>
+            <tr class="bg-primary" ><th>#</th><th>/20</th><th>/100</th><th>/20</th><th>/100</th>
+                </tr>
         </thead>
         <tbody>
             <tr ng-repeat='rg in $ctrl.gradeRanges'>
-                <td ng-bind="rg.num"></td>
+                <td >{{$index+1}}</td>
                 <td ng-bind="rg.minsur20"></td>
                 <td ng-bind="rg.maxsur20"></td>
                 <td ng-bind="rg.minsur100"></td>
                 <td ng-bind="rg.maxsur100"></td>
                 <td ng-bind="rg.gradeValue"></td>
                 <td ng-bind="rg.gradePoints"></td>
-                <td><button class="btn btn-default" ng-click="$ctrl.deleteGradeRange(rg.id)"><i class="fa fa-trash bg-warning"></i></button></td>
+                <td ng-bind="rg.resultStatus"></td>
+                <td><button class="btn btn-default" ng-click="deleteGradeRange(rg.id)"><i class="fa fa-trash bg-warning"></i></button></td>
             </tr>
             <tr><td><a  href="" ng-click="$ctrl.showCreateRangeOfValues(ev)">Ajouter une plage</a></td></tr>
             

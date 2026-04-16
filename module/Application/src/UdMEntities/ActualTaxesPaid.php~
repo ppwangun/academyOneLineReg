@@ -1,0 +1,73 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ActualTaxesPaid
+ *
+ * @ORM\Table(name="actual_taxes_paid", indexes={@ORM\Index(name="fk_actual_taxes_paid_teacher_associated_taxes1_idx", columns={"teacher_associated_taxes_id"}), @ORM\Index(name="fk_actual_taxes_paid_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"})})
+ * @ORM\Entity
+ */
+class ActualTaxesPaid
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amount;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="rate", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $rate;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="refundable", type="boolean", nullable=true)
+     */
+    private $refundable;
+
+    /**
+     * @var \TeacherPaymentBillSumary
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBillSumary")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_sumary_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBillSumary;
+
+    /**
+     * @var \TeacherAssociatedTaxes
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherAssociatedTaxes")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_associated_taxes_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherAssociatedTaxes;
+
+
+}

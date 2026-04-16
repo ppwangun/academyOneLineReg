@@ -187,17 +187,7 @@ $ctrl.deleteGrade= function(ev){
     });    
 }
 
-$ctrl.addGradeRange = function(){
-       
-        $ctrl.grade.grade_id =grade_id;
-         
-          $timeout(
-              $http.post('graderangeconfig',$ctrl.grade).then(function(response){
-             toastr.success("Opéraction effectuée avec succès");
-              
-              $ctrl.gradeRanges.push(response.data[0]);
-          }),500);    
-};
+
 
 $ctrl.deleteGradeRange = function(id,ev){
       var data = {id: id}; 
@@ -256,7 +246,8 @@ $ctrl.deleteGradeRange = function(id,ev){
           autoWrap: false,
           targetEvent: ev,
           clickOutsideToClose:false,
-          fullscreen: true // Only for -xs, -sm breakpoints.
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          locals: {grade_id:grade_id,gradeRanges:$ctrl.gradeRanges}
         })
         .then(function(answer) {
           
@@ -267,182 +258,115 @@ $ctrl.deleteGradeRange = function(id,ev){
     }; 
     
  //Dialog Controller
-  function DialogController($scope, $mdDialog) {
+  function DialogController($scope, $mdDialog,grade_id,gradeRanges) {
+      $scope.selectedItem = null;
+      $scope.grade = {};
+      $scope.gradeRanges = gradeRanges;
+      
+      $scope.selectItem = function(item){
+         $scope.selectedItem = item; 
+         $scope.loadGradeData (item)
+      }
 
       //
+$scope.activateRangeUpdate = false;
+    $scope.grade.min20 = null;
+    $scope.grade.max20 = null;
+    $scope.grade.min100 = null;
+    $scope.grade.max100 = null;
+    $scope.grade.value = null;
+    $scope.grade.points = null; 
+    $scope.grade.resultStatus =null;
+$scope.loadGradeData = function(data)
+{
+    $scope.grade.id = data.id;
+    $scope.grade.min20 = data.minsur20;
+    $scope.grade.max20 = data.maxsur20;
+    $scope.grade.min100 = data.minsur100;
+    $scope.grade.max100 = data.maxsur100;
+    $scope.grade.value = data.gradeValue;
+    $scope.grade.points = data.gradePoints; console.log($scope.grade.points)
+    $scope.grade.resultStatus =data.resultStatus;
+    $scope.activateRangeUpdate = true;
+}
 
+$scope.addGradeRange = function(){
+       
+        $scope.grade.grade_id = grade_id;
+         
+          $timeout(
+              $http.post('graderangeconfig',$scope.grade).then(function(response){
+             toastr.success("Opéraction effectuée avec succès");
+              
+              $ctrl.gradeRanges.push(response.data[0]);
+          }),500);    
+};
 
-      $scope.saveAttendance = function()
-      {
-          var queryString = [];
-          $scope.isAnonymatButtonActive = true;
-          $scope.isDisabledCheckbox = true;
-          $scope.isAttendanceButtonActive = false;
-          $ctrl.registeredStd = $scope.students;
-          
-            for(i=0;i<$ctrl.registeredStd.length;i++)
-            {
-               $ctrl.registeredStd[i].attendance = $scope.students[i].attend;
-               $ctrl.registeredStd[i].anonymat = $scope.students[i].anonym;
-               $ctrl.registeredStd[i].note = $scope.students[i].mark;
-            } 
-  
-                var data = {id: $ctrl.examCode, data : $ctrl.registeredStd,"typeOperation":"SAVE_ATTENDANCE"}; 
+$scope.updateGradeRange = function(){
+    
+        var data ={
+            grade: $scope.grade,
+            id : $scope.grade.id
+        };
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+      };    
+          $timeout(
+              $http.put('graderangeconfig',data,config).then(function(response){
+              toastr.success("Opéraction effectuée avec succès")
+
+          }).then(function(){
+                var data = {id: grade_id}; 
                 var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}
                 };
-                $timeout(function(){  
-                    $http.put('exam',data,config).then(            
-                        function successCallback(response){
-                            
-                
-                    },
-                     function errorCallback(response){
-                            alert("Une erreur inattendue s'est produite");
-           
-                    })},1000);
+              
+             $http.get('graderangeconfig',config).then(
+             function successCallback(response){
+                $ctrl.gradeRanges = response.data[0];
+                $scope.gradeRanges = response.data[0];
+             })             
+          })),500;    
+};
 
-          $mdDialog.hide();
+$scope.deleteGradeRange = function(id,ev){
+      var data = {id: id}; 
+      var config = {
+      params: data,
+      headers : {'Accept' : 'application/json'}
       };
-      
-      
-      $scope.saveAnonymat= function(){
-          $scope.isAnonymatButtonActive = false;
-          $scope.isNoteButtonActive = true;
-          $scope.isNoteActive = true;
-          $scope.isReportNoteButtonActive= true;
-          
-                    $ctrl.registeredStd = $scope.students;
-          
-            for(i=0;i<$ctrl.registeredStd.length;i++)
-            {
-               $ctrl.registeredStd[i].attendance = $scope.students[i].attend;
-              $ctrl.registeredStd[i].anonymat = $scope.students[i].anonym;
-              $ctrl.registeredStd[i].note = $scope.students[i].mark;
-            } 
-            
-                var data = {id: $ctrl.examCode, data : $ctrl.registeredStd,"typeOperation":"SAVE_ANONYMAT"}; 
-                var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-                };
-                $timeout(function(){  
-                    $http.put('exam',data,config).then(            
-                        function successCallback(response){
-                            
-                
-                    },
-                     function errorCallback(response){
-                            alert("Une erreur inattendue s'est produite");
-           
-                    })},1000);
-          
-            $mdDialog.hide();
-      }
-      
-      $scope.saveNotes = function(){
-            $ctrl.registeredStd = $scope.students;
-          
-            for(i=0;i<$ctrl.registeredStd.length;i++)
-            {
-               $ctrl.registeredStd[i].attendance = $scope.students[i].attend;
-              $ctrl.registeredStd[i].anonymat = $scope.students[i].anonym;
-              $ctrl.registeredStd[i].note = $scope.students[i].mark;
-              $ctrl.registeredStd[i].registeredMark = $scope.students[i].mark;
-            } 
-            
-                var data = {id: $ctrl.examCode, data : $ctrl.registeredStd,"typeOperation":"REGISTER_MARK"}; 
-                var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-                };
-                $timeout(function(){  
-                    $http.put('exam',data,config).then(            
-                        function successCallback(response){
-                            
-                
-                    },
-                     function errorCallback(response){
-                            alert("Une erreur inattendue s'est produite");
-           
-                    })},1000);
-            
-            $scope.isNoteButtonActive = false;
-            $scope.isNoteValidationButtonActive = true;
-            $scope.isDisabledCheckbox = false;
-            
-            $mdDialog.hide();
-      }
 
-      $scope.validateNotes = function(){
-            $ctrl.registeredStd = $scope.students;
-          
-            for(i=0;i<$ctrl.registeredStd.length;i++)
-            {
-               $ctrl.registeredStd[i].attendance = $scope.students[i].attend;
-              $ctrl.registeredStd[i].anonymat = $scope.students[i].anonym;
-              $ctrl.registeredStd[i].note = $scope.students[i].mark;
-              $ctrl.registeredStd[i].validatedMark = $scope.students[i].mark;
-             } 
-            
-                var data = {id: $ctrl.examCode, data : $ctrl.registeredStd,"typeOperation":"VALIDATE_MARK"}; 
-                var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-                };
-                $timeout(function(){  
-                    $http.put('exam',data,config).then(            
-                        function successCallback(response){
-                            
-                
-                    },
-                     function errorCallback(response){
-                            alert("Une erreur inattendue s'est produite");
-           
-                    })},1000);
-            
-            $scope.isNoteValidationButtonActive = false;
-            $scope.isNoteFinalisationButtonActive = true;
-            
-            $mdDialog.hide();
-      }
+// Preparing the confirm windows
+      var confirm = $mdDialog.confirm()
+            .title('Voulez vous vraiment supprimer?')
+            .textContent('Toutes les données associées à cette information seront perdues')
+             // .ariaLabel('Lucky day')
+            .targetEvent(ev)
+            .ok('Supprimer')
+            .cancel('Annuler');
+    
+//open de confirm window
+    $mdDialog.show(confirm).then(function() {
+        //in case delete is pressee excute  the delete backend 
+        $http.delete('graderangeconfig',config).then(
+          function successCallback(response){
+              toastr.success("Opéraction effectuée avec succès");
+              //check the index of the current object in the array
+              var x;
+              var index = $ctrl.gradeRanges.findIndex(x => x.id === id);
+              //remove the current object from the array
+              $ctrl.gradeRanges.splice(index,1);
 
-      $scope.finaliseNotes = function(){
-            $ctrl.registeredStd = $scope.students;
-          
-            for(i=0;i<$ctrl.registeredStd.length;i++)
-            {
-               $ctrl.registeredStd[i].attendance = $scope.students[i].attend;
-              $ctrl.registeredStd[i].anonymat = $scope.students[i].anonym;
-              $ctrl.registeredStd[i].note = $scope.students[i].mark;
-              $ctrl.registeredStd[i].confirmedMark = $scope.students[i].mark;
+         },
+        function errorCallback(response){
 
-            } 
-                var data = {id: $ctrl.examCode, data : $ctrl.registeredStd,"typeOperation":"CONFIRM_MARK"}; 
-                var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-                };
-                $timeout(function(){  
-                    $http.put('exam',data,config).then(            
-                        function successCallback(response){
-                        //$ctrl.selectedClasse.code = response.data[0].classe;    
-                
-                    },
-                     function errorCallback(response){
-                            alert("Une erreur inattendue s'est produite");
-           
-                    })},1000);
-            
-            $scope.isNoteFinalisationButtonActive = false;
-            $scope.isReportNoteButtonActive= false;
-            $mdDialog.hide();
-      }
-      
-      $scope.printStudentList = function(){
-          
-      };
+            });
+    }, function() {
+     // $scope.status = 'You decided to keep your debt.';
+    });    
+}
 
  
   

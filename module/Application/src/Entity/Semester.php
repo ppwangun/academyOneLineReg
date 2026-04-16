@@ -3,8 +3,12 @@
 namespace Application\Entity;
 
 use Application\Entity\AcademicYear;
+use Application\Entity\ExamSession;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
+
 
 /**
  * Semester
@@ -75,6 +79,57 @@ class Semester
      * })
      */
     private $academicYear;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection|ExamSession[]
+     *
+     * @ORM\ManyToMany(targetEntity="ExamSession", inversedBy="semesters")
+     * @ORM\JoinTable(
+     *  name="semester_has_exam_session",
+     *  joinColumns={
+     *      @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     *  },
+     *  inverseJoinColumns={
+     *      @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     *  }
+     * )
+     */
+    protected $examSessions; 
+    
+    /**
+     * Default constructor, initializes collections
+     */
+    public function __construct()
+    {
+        $this->examSessions = new ArrayCollection();
+    }
+    
+    /**
+     * @param ExamSession $examSession
+     */
+    public function addExamSession(ExamSession $examSession)
+    {
+        if ($this->examSessions->contains($examSession)) {
+            return;
+        }
+
+        $this->examSessions->add($examSession);
+        $examSession->addSemester($this);
+    }
+
+    /**
+     * @param ExamSession $examSession
+     */
+    public function removeExamSession(ExamSession $examSession)
+    {
+        if (!$this->examSessions->contains($examSession)) {
+            return;
+        }
+
+        $this->examSessions->removeElement($examSession);
+        $examSession->removeSemester($this);
+    }    
+        
 
 
 

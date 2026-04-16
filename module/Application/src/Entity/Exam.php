@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\ExamType;
+use Application\Entity\ExamSession;
 
 /**
  * Exam
@@ -124,6 +125,16 @@ class Exam
      * })
      */
     private $classOfStudyHasSemester;
+    
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;  
 
     /**
      * @var ExamType
@@ -505,5 +516,29 @@ class Exam
     public function getIsCatchUpExamPerformed()
     {
         return $this->isCatchUpExamPerformed;
+    }  
+    
+   /**
+     * Set examSession.
+     *
+     * @param ExamSession|null $examSession
+     *
+     * @return Exam
+     */
+    public function setExamSession(ExamSession $examSession = null)
+    {
+        $this->examSession = $examSession;
+
+        return $this;
+    }
+
+    /**
+     * Get examSession.
+     *
+     * @return ExamSession|null
+     */
+    public function getExamSession()
+    {
+        return $this->examSession;
     }    
 }

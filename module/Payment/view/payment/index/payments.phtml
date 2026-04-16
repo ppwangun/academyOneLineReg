@@ -27,8 +27,8 @@
                             
                             <div ng-show="<?=($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())])==1)||($this->access('manage.payment', null)==1)?true:false?>">
                             <button  ng-click="$ctrl.importBalance()" class="btn btn-primary" id='newacadyr'><i class="fa fa-file"></i>&nbsp;Importer la balance</button>
-                            <button  ng-click="$ctrl.loadStdDotation()" class="btn btn-primary" id='newacadyr'><i class="fa fa-file"></i>&nbsp;Dotation</button>
-                            
+                            <!--<button  ng-click="$ctrl.loadStdDotation()" class="btn btn-primary" id='newacadyr'><i class="fa fa-file"></i>&nbsp;Dotation</button>-->
+                            <button  ng-click="$ctrl.loadStdFees()" class="btn btn-default " id='newacadyr'><i class="fa fa-money"></i>&nbsp;Importer les dotations</button>
                             <button  ng-click="$ctrl.addStdToSubject()" class="btn btn-default " id='newacadyr'><i class="fa fa-money"></i>&nbsp;Mise à Jour des règlements</button>
                             <button  ng-click="$ctrl.loadStdPayments()" class="btn btn-default " id='newacadyr'><i class="fa fa-money"></i>&nbsp;Importer les règlements</button>
                             </div>

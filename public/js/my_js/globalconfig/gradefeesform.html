@@ -45,12 +45,20 @@ z-index: 120000}
                         </md-input-container>  
 
                         <md-input-container class="md-block"  flex='60'>
-                            <label>Montant</label>
-                            <input type="text"  name="amount" ng-model="teacherPayment.amount" required md-no-asterisk  /> 
-                            <div ng-messages="gradeSubForm.amount.$error">
+                            <label>CM Montant/H</label>
+                            <input type="text"  name="amountT" ng-model="teacherPayment.amountTheoritical" required md-no-asterisk  /> 
+                            <div ng-messages="gradeSubForm.amountT.$error">
                                     <div ng-message="required">le champ nom est obligatoire</div>
                             </div>
                         </md-input-container>
+                        
+                        <md-input-container class="md-block"  flex='60'>
+                            <label>TD(TP )Montant/H</label>
+                            <input type="text"  name="amountP" ng-model="teacherPayment.amountPractical" required md-no-asterisk  /> 
+                            <div ng-messages="gradeSubForm.amounPt.$error">
+                                    <div ng-message="required">le champ nom est obligatoire</div>
+                            </div>
+                        </md-input-container>                        
                     </div>
 
 

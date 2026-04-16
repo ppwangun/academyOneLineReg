@@ -27,11 +27,13 @@ class ClassesController extends AbstractRestfulController
 {
     private $entityManager;
     private $sessionContainer;
+    private $userManager;
     
-    public function __construct($entityManager,$sessionContainer) {
+    public function __construct($entityManager,$sessionContainer,$userManager) {
         
         $this->entityManager = $entityManager;  
         $this->sessionContainer = $sessionContainer;
+        $this->userManager = $userManager;
     }
     
     
@@ -56,16 +58,17 @@ class ClassesController extends AbstractRestfulController
 
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
+            $classes = $user->getClasses();
            
-         
-            if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) {
-                
+            //check if user has any admin permission   
+            if ($this->userManager->userHasAdminPermission($user)){  
+
                 $query = $this->entityManager->createQuery('SELECT c.id,c.code,c.name,c.studyLevel,c.isEndCycle,c.isEndDegreeTraining FROM Application\Entity\ClassListView c'
                         .' WHERE c.code LIKE :code');
                 $query->setParameter('code', '%'.$id.'%');
                 //$query->setParameter('userId', $userId);
                 $classe = $query->getResult();  
-                
+
 
             }
             else{
@@ -75,6 +78,7 @@ class ClassesController extends AbstractRestfulController
                 $query->setParameter('userId', $userId);
                 $classe = $query->getResult();               
             }
+
             
             
             return new JsonModel([

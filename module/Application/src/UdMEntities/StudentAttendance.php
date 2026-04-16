@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * StudentAttendance
  *
- * @ORM\Table(name="student_attendance", indexes={@ORM\Index(name="fk_student_attendance_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_course_scheduled_idx", columns={"course_scheduled_id"})})
+ * @ORM\Table(name="student_attendance", indexes={@ORM\Index(name="fk_course_scheduled_idx", columns={"course_scheduled_id"}), @ORM\Index(name="fk_student_attendance_student1_idx", columns={"student_id"})})
  * @ORM\Entity
  */
 class StudentAttendance
@@ -29,16 +29,6 @@ class StudentAttendance
     private $status = true;
 
     /**
-     * @var \CourseScheduled
-     *
-     * @ORM\ManyToOne(targetEntity="CourseScheduled")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="course_scheduled_id", referencedColumnName="id")
-     * })
-     */
-    private $courseScheduled;
-
-    /**
      * @var \Student
      *
      * @ORM\ManyToOne(targetEntity="Student")
@@ -47,6 +37,16 @@ class StudentAttendance
      * })
      */
     private $student;
+
+    /**
+     * @var \CourseScheduled
+     *
+     * @ORM\ManyToOne(targetEntity="CourseScheduled")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="course_scheduled_id", referencedColumnName="id")
+     * })
+     */
+    private $courseScheduled;
 
 
 
@@ -85,30 +85,6 @@ class StudentAttendance
     }
 
     /**
-     * Set courseScheduled.
-     *
-     * @param \CourseScheduled|null $courseScheduled
-     *
-     * @return StudentAttendance
-     */
-    public function setCourseScheduled(\CourseScheduled $courseScheduled = null)
-    {
-        $this->courseScheduled = $courseScheduled;
-
-        return $this;
-    }
-
-    /**
-     * Get courseScheduled.
-     *
-     * @return \CourseScheduled|null
-     */
-    public function getCourseScheduled()
-    {
-        return $this->courseScheduled;
-    }
-
-    /**
      * Set student.
      *
      * @param \Student|null $student
@@ -130,5 +106,29 @@ class StudentAttendance
     public function getStudent()
     {
         return $this->student;
+    }
+
+    /**
+     * Set courseScheduled.
+     *
+     * @param \CourseScheduled|null $courseScheduled
+     *
+     * @return StudentAttendance
+     */
+    public function setCourseScheduled(\CourseScheduled $courseScheduled = null)
+    {
+        $this->courseScheduled = $courseScheduled;
+
+        return $this;
+    }
+
+    /**
+     * Get courseScheduled.
+     *
+     * @return \CourseScheduled|null
+     */
+    public function getCourseScheduled()
+    {
+        return $this->courseScheduled;
     }
 }

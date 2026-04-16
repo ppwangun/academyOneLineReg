@@ -88,79 +88,52 @@ li.active a.ng-binding {
                 </div>
 
           
-
-
-               <!-- <div  ng-hide = "$ctrl.showbillDetails"  layout-gt-sm='column' style="padding-top: 15px">
-                    <md-input-container>
-                    <label>Unité d'enseignement affectés</label>
-                    
-                    <md-select name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe;" 
-                               ng-model-options="{trackBy: '$value.id'}"  
-                               ng-change="$ctrl.loadBills($ctrl.selectedTeacher,$ctrl.selectedUe)" md-no-asterisk ng-required="true">
-                        <md-option ng-hide="$ctrl.showbillDetails" ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}">
-                            <em >Choisissez une UE</em>
-                         
-                        </md-option>
-                    
-                        
-                        <md-option  ng-repeat="ue in $ctrl.assignedSubjects" ng-value="ue" >
-                        {{ue.codeUe}}[{{ue.nomUe}}]
-
-                      </md-option>
-
-
-                    </md-select>
-                    <div class="errors" ng-messages="examForm.ue.$error">
-                        <div ng-message="required">Champ obligatoire</div>
-                      </div>
-                    </md-input-container> 
-
-                </div> -->
+  
+            <div layout layout-sm="row">
                 
-                <!--<div layout-gt-sm='column' style="padding-top: 15px" ng-show="$ctrl.showbillDetails">
-                    <md-input-container>
-                    <label>Unité d'enseignement affectés</label>
+                <md-input-container flex="flex" style="width: 20%; margin-top: 15px;" >
+                  
+                    <label>Cout du transport:</label>
+                    <input type='text'  name="transport_rate" ng-model="$ctrl.xport.amount" width='80%'  md-no-asterisk required />
+                        <div ng-messages="examForm.transport_rate.$error">
+                            <div ng-message="required">le champ montant  est obligatoire</div>
+                           
+                        </div>
+                    </md-input-container>                 
+                
+                
+                    <md-input-container flex="flex" style="width: 20%; margin-top: 15px;">
                     
-                    <md-select name="ue" disabled ng-model="$ctrl.selectedUe;" 
-                               ng-model-options="{trackBy: '$value.id'}"  
-                                md-no-asterisk ng-required="true">
-
-                        <md-option  ng-disabled="true" ng-selected="true" ng-value="$ctrl.selectedUe">
-                            <em >{{$ctrl.selectedUe.codeUe}}[{{$ctrl.selectedUe.nomUe}}]</em>
-                         
-                        </md-option>                        
-                        
-
+                    <label>Nombre de séjours </label>
+                    <md-select name="stay"  ng-model="$ctrl.xport.nbStay;" md-no-asterisk ng-required="true">
+                        <md-option  ng-repeat="nbStay in $ctrl.nbStays" ng-value="nbStay.id" >
+                        {{nbStay.id}}
+                       </md-option>
 
 
                     </md-select>
-                    <div class="errors" ng-messages="examForm.ue.$error">
+                    <div class="errors" ng-messages="examForm.stay.$error">
                         <div ng-message="required">Champ obligatoire</div>
                       </div>
                     </md-input-container> 
 
-                </div>  -->    
-                <div layout-gt-sm='column' style="padding-top: 15px" >
-                    <md-input-container>
-                    <label>Taux horaire</label>
+            </div> 
+                
+            <div layout layout-sm="row">
+                <div >
+                   
+                    <md-checkbox  ng-model="$ctrl.xport.isXportSupportingDocsAvailable" ng-disabled="" aria-label="Checkbox Indeterminate" ng-
+                                   
+                        ng-true-value="1"
+                        ng-false-value="0"             
+                        class="md-primary">
+
+                    </md-checkbox> 
+                    <i>Pièces justificatives de transport disponible</i>
+
+                </div>                    
                     
-                    <md-select name="ue" disabled ng-model="$ctrl.paymentRate"  md-no-asterisk ng-required="true">
-
-                        <md-option  ng-disabled="true" ng-selected="true" ng-value="$ctrl.paymentRate">
-                            <em >{{$ctrl.paymentRate}}FCFA</em>
-                         
-                        </md-option>                        
-                        
-
-
-
-                    </md-select>
-                    <div class="errors" ng-messages="examForm.ue.$error">
-                        <div ng-message="required">Champ obligatoire</div>
-                      </div>
-                    </md-input-container> 
-
-                </div>                 
+            </div>
            
             </div>
 
@@ -168,42 +141,6 @@ li.active a.ng-binding {
                 <!-- Display examlis on a table -->
               <div class="row">
 
-                  <!--    <table class="table" style="font-size:0.8em; background-color: #dfe4ea; color: #0c2461;" ng-show="tableBillsShow===1">
-                    <thead>
-
-                        <tr class="bg-primary">
-                            <th class="col-xs-1 align-middle" ></th>
-                            <th class=" align-middle" >N° Facture</th>
-                            <th class=" align-middle">Volume Horaire</th>
-                            <th class=" align-middle">Montant</th>
-                            <th class=" align-middle">Date</th>
-                            <th class=" align-middle">statut</th>
-                            
-                        </tr>
-                   </thead>
-                    <tbody>
-
-                        <tr ng-repeat="bill in $ctrl.bills" style="font-size:0.8em;">
-                          <td  class="col-xs-1"> 
-                                <md-checkbox  ng-model="bill.selected" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
-                                              ng-true-value="'P'"
-                                              ng-false-value="'A'"             
-                                              class="md-primary">
-            
-                                </md-checkbox>                              
-                          
-                          </td>
-                          <td nclass="col-xs-1"><a ng-href="home#!/subjectBilling/{{bill.refNumber}}" ng-bind="bill.refNumber"></a></td>
-                          <td ng-bind="bill.totalTime +'H'" class="col-xs-3"></td>
-                          <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
-                          <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
-                          <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
-                        </tr>
-
-                    </tbody>
-
-                    </table>
-              -->
                 </div>
                 
                
@@ -225,7 +162,7 @@ li.active a.ng-binding {
 
                 </md-checkbox> 
                 
-                <button class="btn btn-danger" ng-click="$ctrl.loadTeacherBill($ctrl.selectedTeacher,$ctrl.isBulkBilling)" ng-hide = "$ctrl.showbillDetails" ><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-click="$ctrl.loadTeacherBill($ctrl.selectedTeacher,$ctrl.isBulkBilling)" ng-hide = "$ctrl.showbillDetails" ng-disabled="examForm.$invalid"><i class="fa fa-refresh" ></i>&nbsp;Générer la facture</button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" ng-click="$ctrl.deliberation()" ><i class="fa fa-save" ></i>&nbsp;Valider le paiement</button>
             </div>
         </div>
@@ -255,12 +192,13 @@ li.active a.ng-binding {
                                 <th class=" align-middle">Montant</th>
                                 <th class=" align-middle">Date</th>
                                 <th class=" align-middle">statut</th>
+                                <th></th>
 
                             </tr>
                        </thead>
                         <tbody>
 
-                            <tr ng-repeat="bill in $ctrl.bills" style="font-size:0.8em;">
+                            <tr ng-repeat="bill in bills" style="font-size:0.8em;">
                               <td  class="col-xs-1"> 
                                     <md-checkbox  ng-model="bills.selected" ng-disabled="isDisabledCheckbox" aria-label="Checkbox Indeterminate" 
                                                   ng-true-value="'P'"
@@ -276,6 +214,12 @@ li.active a.ng-binding {
                               <td ng-bind="bill.paymentAmount" class="col-xs-1" ng-class="{'zf-red': (exam.isMarkRegistered!==1)}"></td>
                               <td ng-bind="$ctrl.formatDate(bill.date.date) | date:'dd/MM/yyyy'" class="col-xs-2"></td>
                               <td ng-bind="bill.status===1?'Payé':'En cours...'"></td>
+                              <td>  
+                                    <div class="btn-group">
+
+                                        <button  type="button" ng-click="$ctrl.deleteBill(bill.id)" class="btn btn-warning  btn-xs" ><i class="fa fa-trash-o"></i></button>
+                                    </div>
+                              </td>
                             </tr>
 
                         </tbody>

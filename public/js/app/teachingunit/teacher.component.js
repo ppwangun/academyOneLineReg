@@ -1,3 +1,4 @@
+'use strict';
 angular.module('teachingunit').component('manageTeacher',{
             templateUrl: 'teacherList',
             controller: newTeacherController 
@@ -93,6 +94,7 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
 
     $scope.identityDocumentFile = null;
     $scope.teachers = [];
+    $scope.selectedTaxes = [];
     $scope.coverLetterFile = null;
     $scope.resumeFile = null;
     $scope.highestDegreeFile = null;
@@ -124,19 +126,16 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
 
      $location.path("/newAcademicRank/"+id)
     $scope.isUpdate = true;
-    console.log($scope.isUpdate)
-
     };    
  
     $scope.init = function(){
-        
+       
         $http.get(`teachers`).then(function (response) {
 
             $scope.teachers = response.data[0];
             $scope.hasLoadedTeachers = true;
         });
         
-       
 
             var id = $routeParams.id; 
             var teachId = $routeParams.teachId;
@@ -163,7 +162,8 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
                 };
                 $http.get('teachers',config).then(function(response){
                      $scope.teacher = response.data[0];
-                     console.log($scope.teacher);
+                     $scope.teacher.birthdate = new Date($scope.teacher.birthdate)
+                    // console.log($scope.teacher);
                     })               
            }
 //
@@ -182,9 +182,15 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
                 //$scope.specialities = response[0].data.specialities;
                 $scope.hasLoadedAssets = true;
             }, function (error) {
-                console.error(error);
+               // console.error(error);
                 $scope.hasLoadedAssets = false;
-            });
+            }).then(function(resp){
+                $timeout(
+                 $http.get('allTaxesAndWithholdings').then(function(response){
+                     $scope.taxes = response.data[0];
+
+                 }),500)            
+        });
     }
     
     $scope.newBareme = function(grd){
@@ -333,9 +339,18 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
         $scope.syllabusFile = null;
     }
 
-    $scope.onSubmit = function (teacherForm) {console.log("je suis dedans");
+    $scope.onSubmit = function (teacherForm,ev) {
         if (!teacherForm.$valid) {
-            alert('Formulaire invalide !');
+            $mdDialog.show(
+                    $mdDialog.alert()
+                                  .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur')
+                      .textContent("Formulaire invalide")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev))
+           // alert('Formulaire invalide !');
             return;
         }
 
@@ -422,7 +437,7 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
         headers : {'Accept' : 'application/json'}
       };            
             $http.put(`teachers`, data1,config).then(function (response) {
-                    alert('L\'enseignant a ete enregistre avec succes !');
+                    toastr.success('L\'enseignant a ete enregistre avec succes !');
                     $scope.isProcessing = false;
                    /* $scope.teacher = {
                         identity_document_type: 'nic',
@@ -451,6 +466,15 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
                 });
      };
      
+    $ctrl.switchCriteria = function(){ 
+        $ctrl.selecTedrainingType = ""
+        $ctrl.selectedTraining = "";
+        $ctrl.paymentMethod = "";
+        $ctrl.paymentGrid = -1;
+        $ctrl.amountTheoritical = "";
+        $ctrl.amountPractical = "";
+    }
+    
      $scope.initVacationPaymentMethod = function(){
      
              $http.get(`cycleFormation`).then(function (response) {
@@ -459,14 +483,23 @@ function newTeacherController($scope, $http, $location,$routeParams,$timeout,toa
             $ctrl.paymentMethod = null;
             
         }); 
+        var id;
+        $http.post('allPaymentTypes',{id:id}).then(function(response){ 
+                 $scope.allPaymentTypes = response.data.allPaymentRate;
+                 $scope.pymtGridName = response.data.paymentRate.description;
+                 $scope.paymentGrid = response.data.paymentGrid
+                 $scope.defaultPymtGridId = $scope.allPaymentTypes.find((item) => item.isDefaultPayment === true)
+                 if($scope.defaultPymtGridId) $scope.defaultPymtGridId= $scope.defaultPymtGridId.id;
+
+         })         
     }
     
      $scope.setVacationPaymentMethod = function(){
      
             if($ctrl.selecTedrainingType)
-                var  dataString = {paymentMethod : $ctrl.paymentMethod,amount : $ctrl.amount,trainingType : $ctrl.selecTedrainingType.id}
+                var  dataString = {paymentMethod : $ctrl.paymentMethod,amountTheoritical : $ctrl.amountTheoritical,amountPractical : $ctrl.amountPractical,trainingType : $ctrl.selecTedrainingType.id,paymentGrid : $ctrl.paymentGrid}
             if($ctrl.selectedTraining)
-                var  dataString = {paymentMethod : $ctrl.paymentMethod,amount : $ctrl.amount,selectedtraining : $ctrl.selectedTraining.id}
+                var  dataString = {paymentMethod : $ctrl.paymentMethod,amountTheoritical : $ctrl.amountTheoritical,amountPractical : $ctrl.amountPractical,selectedtraining : $ctrl.selectedTraining.id,paymentGrid : $ctrl.paymentGrid}
             
             
           config = {

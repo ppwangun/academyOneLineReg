@@ -12,7 +12,8 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use SchoolGlobalConfig\Controller\SettingsController;
 
-
+use Application\Entity\ExamSession;
+use Application\MyRepository\ExamSessionRepository;
 /**
  * This is the factory for IndexController. Its purpose is to instantiate the
  * controller.
@@ -24,9 +25,11 @@ class SettingsControllerFactory implements FactoryInterface
                      $requestedName, array $options = null)
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        // Inject the specific repository service
+        $examSessionRepository = $container->get(\Application\MyRepository\ExamSessionRepository::class);
         
         // Instantiate the controller and inject dependencies
-        return new SettingsController($entityManager);
+        return new SettingsController($entityManager,$examSessionRepository);
     }
 
 }

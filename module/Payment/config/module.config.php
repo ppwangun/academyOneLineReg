@@ -173,6 +173,16 @@ return [
                     ],
                 ],
             ], 
+            'importStdFees' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/importStdFees',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'importStdFees',
+                    ],
+                ],
+            ],             
             'importPayments' => [
                 'type'    => 'Literal',
                 'options' => [
@@ -190,6 +200,16 @@ return [
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'        => 'importDotations',
+                    ],
+                ],
+            ],
+            'financialStatements' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/financialStatements',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'financialStatements',
                     ],
                 ],
             ],            

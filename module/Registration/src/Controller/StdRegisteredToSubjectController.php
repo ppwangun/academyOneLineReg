@@ -21,6 +21,7 @@ use Application\Entity\UnitRegistration;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\Semester;
 use Application\Entity\AcademicYear;
+use Application\Entity\ExamSession;
 
 
 class StdRegisteredToSubjectController extends AbstractRestfulController
@@ -102,7 +103,21 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
             else
                 $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>$data["subjectId"]),array("nom"=>"ASC"));
             //$std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
-
+            
+            if(isset($data["session_id"]))
+                $examSession= $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
+            
+            if(isset($data["session_id"])&&isset($data["subjectId"]))
+            {
+                $examSession= $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
+                if($examSession->getSessionType()=='RAT')
+                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data,"acadYrId"=>$acadYrId,"idSubject"=>[null," "],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));    
+            }
+            elseif(isset($data["session_id"]))
+            {   if($examSession->getSessionType()=='RAT')
+                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>[null," "],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));
+            }
+           
             foreach($std as $key=>$value)
             {
                 $hydrator = new ReflectionHydrator();

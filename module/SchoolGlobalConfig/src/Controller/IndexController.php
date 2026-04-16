@@ -492,11 +492,12 @@ class IndexController extends AbstractActionController
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-        $data = $this->params()->fromQuery();  
+        $data = $this->params()->fromQuery();   
         $ue = [];
        
         if($data)
         {
+            if(!isset($data['classe_id'])) $data['classe_id']=-1;
  
             $query = $this->entityManager->createQuery('SELECT  s.id,s.subjectName,s.subjectCode,c1.code as classCode,c.subjectCredits,c.subjectWeight,'
             . 'c.subjectHours,c.subjectCmHours,c.subjectTdHours,c.subjectTpHours  FROM Application\Entity\ClassOfStudyHasSemester c '
@@ -1317,7 +1318,7 @@ class IndexController extends AbstractActionController
     {
         
         $isRegistered = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("academicYear"=>$this->currentYear,"student"=>$std));
-        if($isRegistered)
+       /* if($isRegistered)
         {
             $isRegistered->setStudent($std);
             $isRegistered->setClassOfStudy($newClasse);            
@@ -1330,7 +1331,7 @@ class IndexController extends AbstractActionController
             //$this->entityManager->flush();
 
         }
-        else 
+        else */
             if(!$isRegistered){
             $adminRegistration = new AdminRegistration();
             $adminRegistration->setStudent($std);

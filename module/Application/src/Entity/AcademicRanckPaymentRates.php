@@ -30,6 +30,20 @@ class AcademicRanckPaymentRates
      * @ORM\Column(name="amount", type="float", precision=10, scale=0, nullable=true)
      */
     private $amount;
+    
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_theoritical", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amountTheoritical;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_practical", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amountPractical;    
 
     /**
      * @var TeacherPaymentRate
@@ -86,6 +100,54 @@ class AcademicRanckPaymentRates
     {
         return $this->amount;
     }
+    
+    /**
+     * Set amountTheoritical.
+     *
+     * @param float|null $amountTheoritical
+     *
+     * @return AcademicRanckPaymentRates
+     */
+    public function setAmountTheoritical($amountTheoritical = null)
+    {
+        $this->amountTheoritical = $amountTheoritical;
+
+        return $this;
+    }
+
+    /**
+     * Get amountTheoritical.
+     *
+     * @return float|null
+     */
+    public function getAmountTheoritical()
+    {
+        return $this->amountTheoritical;
+    }
+
+    /**
+     * Set amountPractical.
+     *
+     * @param float|null $amountPractical
+     *
+     * @return AcademicRanckPaymentRates
+     */
+    public function setAmountPractical($amountPractical = null)
+    {
+        $this->amountPractical = $amountPractical;
+
+        return $this;
+    }
+
+    /**
+     * Get amountPractical.
+     *
+     * @return float|null
+     */
+    public function getAmountPractical()
+    {
+        return $this->amountPractical;
+    }    
 
     /**
      * Set teacherPaymentRate.

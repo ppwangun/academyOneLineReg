@@ -78,7 +78,7 @@ z-index: 120000}
               <!--tabs widget-->
                 <div class="row" style='padding: 25px;' >
                     <ul class="nav nav-tabs">
-                      <li class="active"><a href="#">Historique des paiements</a></li>
+                        <li class="active"><a href="">Historique des paiements &nbsp;&nbsp;&nbsp;&nbsp; <i  style="color:#7393B3;  font-size: 22px; cursor: pointer;" class="fa fa-line-chart" ng-click="$ctrl.downloadStudentJournal()"></i></a> </li>
 
                     </ul>
 
@@ -88,7 +88,9 @@ z-index: 120000}
                                                     <th >Num</th>
                                                     <th >ID de paiement</th>
                                                     <th>Date de la transaction</th>
+                                                    
                                                     <th>Montant</th>
+                                                    <th>...</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -96,9 +98,10 @@ z-index: 120000}
                                                   <td ng-bind="pmt.num"></td>
                                                   <td ng-bind="pmt.mobilePaymentId"></td>
                                                   <td ng-bind="$ctrl.formatDate(pmt.dateTransaction) | date:'dd/MM/yyyy H:m:s'"></td>
-                                                  <td ng-bind="pmt.amount | currency:'':0" style="text-align: right"></td>
+                                                  <td ng-bind="pmt.amount | currency:'':0" style=""></td>
+                                                  <td><i class ='fa fa-trash' style='color: red; text-align: right; cursor: pointer;'></i></td>
                                                 </tr>
-                                                <tr class="bg-info"><td colspan=3 style="vertical-align: middle; text-align: center;"><strong>Total</strong></td><td style="text-align: right"><strong>{{$ctrl.totalPayments | currency:'':0}}</strong></td></tr>
+                                                <tr class="bg-info"><td colspan=3 style="vertical-align: middle; text-align: center;"><strong>Total</strong></td><td ><strong>{{$ctrl.totalPayments | currency:'':0}}</strong></td><td></td></tr>
                                             </tbody>
                                         </table>
                     

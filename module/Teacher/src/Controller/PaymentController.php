@@ -27,7 +27,10 @@ use Application\Entity\FileDocument;
 use Application\Entity\AllContractsView;
 use Application\Entity\AllContractsFollowUpView;
 use Application\Entity\TeacherPaymentRate;
+use Application\Entity\PaymentTeachingAssignmentMethod;
 use Application\Entity\AcademicRanckPaymentRates;
+use Application\Entity\Semester;
+use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\OdooSettings;
 
 use Njine\Odoo\Synchronisation;
@@ -36,12 +39,14 @@ use Njine\Odoo\Synchronisation;
 class PaymentController extends AbstractActionController
 {
     private $entityManager;
+    private $teacherManager;
     private $sessionContainer;
     private $crtAcadYr;
     
-    public function __construct($entityManager,$sessionContainer) {
+    public function __construct($entityManager,$teacherManager,$sessionContainer) {
         
         $this->entityManager = $entityManager;  
+        $this->teacherManager = $teacherManager;
         $this->sessionContainer = $sessionContainer;
         $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
@@ -96,7 +101,7 @@ class PaymentController extends AbstractActionController
         { 
             $data = $this->getRequest()->getContent(); 
             $data = json_decode($data, true);
-       
+            
             //$pymtGrid = array([]);
             $allPaymentTypes =[];
             $PaymentRate = new TeacherPaymentRate();
@@ -212,24 +217,28 @@ class PaymentController extends AbstractActionController
             $data = $this->params()->fromPost();           
             $requestBody = $this->getRequest()->getContent();
 
-            $data = json_decode($requestBody, true);  
+            $data = json_decode($requestBody, true);            
             
             if(!$data['isUpdate'])
             {
 
                 $pymtRate = new TeacherPaymentRate();
                 $pymtRate->setDescription($data["title"]);
+                $pymtRate->setIsDefaultPayment($data["isDefaultPaymentGrid"]);
 
                 $this->entityManager->persist($pymtRate);
+                
 
+                $paymentGridId = $pymtRate->getId(); 
+            
                 $pymtGrid = $data["pymtGridDetails"];
-
                 foreach($pymtGrid as $key=>$value)
                 {
                     $grade = $this->entityManager->getRepository(AcademicRanck::class)->find($value["grade"]["id"]);
                     $pymtDetails = new AcademicRanckPaymentRates();
                     $pymtDetails->setAcademicRanck($grade);
-                    $pymtDetails->setAmount($value["amount"]);
+                    $pymtDetails->setAmountTheoritical($value["amountTheoritical"]);
+                    $pymtDetails->setAmountPractical($value["amountPractical"]);
                     $pymtDetails->setTeacherPaymentRate($pymtRate);
                     $this->entityManager->persist($pymtDetails);
 
@@ -239,11 +248,15 @@ class PaymentController extends AbstractActionController
             }
             else
             {
+                $paymentGridId = $data["id"];
                 $pymtRate = $this->entityManager->getRepository(TeacherPaymentRate::class)->find($data["id"]);
                 $pymtRate->setDescription($data["title"]);
+                $pymtRate->setIsDefaultPayment($data["isDefaultPaymentGrid"]);
                 
+               
                 $pymtGrid = $this->entityManager->getRepository(AcademicRanckPaymentRates::class)->findByTeacherPaymentRate($pymtRate);
                 
+                //Delete all the existing payment associated 
                 foreach($pymtGrid as $grid) $this->entityManager->remove($grid);
                 $this->entityManager->flush();
                 
@@ -253,13 +266,52 @@ class PaymentController extends AbstractActionController
                     $grade = $this->entityManager->getRepository(AcademicRanck::class)->find($value["grade"]["id"]); 
                     $pymtDetails = new AcademicRanckPaymentRates();
                     $pymtDetails->setAcademicRanck($grade);
-                    $pymtDetails->setAmount($value["amount"]);
+                    $pymtDetails->setAmountTheoritical($value["amountTheoritical"]);
+                    $pymtDetails->setAmountPractical($value["amountPractical"]);
                     $pymtDetails->setTeacherPaymentRate($pymtRate); 
                     $this->entityManager->persist($pymtDetails); 
-
-                }                
+    
+                }
+                
+                
                 
             }
+            
+            //Set de payment method as paymentGrid 
+            $paymentMethod = 0;
+            $amount = NULL;
+                        
+            
+            if(sizeof($data['subjects'])>0)
+            {
+
+                foreach($data['subjects'] as $sub)
+                {
+
+                    $subject= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->find($sub["id"]);
+
+                    $this->teacherManager->setVacationPaymentMethod($subject,$paymentGridId ,$paymentMethod,$amount);
+
+                }
+
+            }
+            if(sizeof($data['classes'])>0)
+            { 
+                $classes = $data['classes'];
+                foreach($classes as $classe)
+                {
+                    $semesters = $this->entityManager->getRepository(Semester::class)->findByAcademicYear($this->crtAcadYr); 
+                    foreach($semesters as $sem)
+                    { 
+;
+                        $coshs= $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(["classOfStudy"=>$classe,"semester"=>$sem]);
+                        foreach($coshs as $subject) 
+                            $this->teacherManager->setVacationPaymentMethod($subject,$paymentGridId ,$paymentMethod,$amount);
+ 
+                    }
+                }
+            }            
+
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
         
@@ -281,6 +333,46 @@ class PaymentController extends AbstractActionController
         }            
     }    
  
+    public function deletePymtGridAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {        
+        
+            $data = $this->params()->fromPost();           
+            $requestBody = $this->getRequest()->getContent();
+
+            $data = json_decode($requestBody, true);  
+
+                $pymtRate = $this->entityManager->getRepository(TeacherPaymentRate::class)->find($data["id"]);
+                
+                
+                $pymtGrid = $this->entityManager->getRepository(AcademicRanckPaymentRates::class)->findByTeacherPaymentRate($pymtRate);
+                
+                foreach($pymtGrid as $grid) $this->entityManager->remove($grid);
+                
+                $this->entityManager->remove($pymtRate);
+                $this->entityManager->flush();
+
+            $this->entityManager->getConnection()->commit();
+        
+
+            $view =  new JsonModel([
+
+                
+            ]);
+
+            $view->setTerminal(true);
+
+            return $view;
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+            
+        }            
+    }
     
     public function get($id)
     {  

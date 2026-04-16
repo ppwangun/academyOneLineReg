@@ -104,6 +104,7 @@ class GradeRangeController extends AbstractRestfulController
             $grade->setMaxsur100($data["max100"]);
             $grade->setGradeValue($data["value"]);
             $grade->setGradePoints($data["points"]);
+            $grade->setResultStatus($data["resultStatus"]);
             $grade->setGrade($this->entityManager->getRepository(Grade::class)->findOneById($data["grade_id"]));
             $this->entityManager->persist($grade);
             $this->entityManager->flush();
@@ -126,6 +127,45 @@ class GradeRangeController extends AbstractRestfulController
 
     }
 }
+
+    public function update($id,$data)
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {   $data = $data['grade'];
+            $msge =false;
+            $grade = $this->entityManager->getRepository(GradeValueRange::class)->find($id);
+            $grade->setMinsur20($data["min20"]);
+            $grade->setMaxsur20($data["max20"]);
+            $grade->setMinsur100($data["min100"]);
+            $grade->setMaxsur100($data["max100"]);
+            $grade->setGradeValue($data["value"]);
+            $grade->setGradePoints($data["points"]);
+            $grade->setResultStatus($data["resultStatus"]);
+
+       
+            $this->entityManager->flush($grade);
+            
+            $hydrator = new ReflectionHydrator();
+            $data = $hydrator->extract($grade);
+            
+            $msge=true;
+            
+            $this->entityManager->getConnection()->commit();
+            
+            return new JsonModel([
+                   $data
+            ]);        
+        }
+        catch(Exception $e)
+        {
+            $this->entityManager->getConnection()->rollBack();
+            throw $e;
+
+        }      
+    
+    }
+    
     public function delete($id)
     {
        

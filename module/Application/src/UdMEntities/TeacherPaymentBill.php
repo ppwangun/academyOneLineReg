@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TeacherPaymentBill
  *
- * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"})})
+ * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"})})
  * @ORM\Entity
  */
 class TeacherPaymentBill
@@ -78,6 +78,13 @@ class TeacherPaymentBill
     private $vacationDeduction;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="lecture_type", type="string", length=45, nullable=true, options={"default"="CM"})
+     */
+    private $lectureType = 'CM';
+
+    /**
      * @var float|null
      *
      * @ORM\Column(name="total_time_previously_billed", type="float", precision=10, scale=0, nullable=true)
@@ -99,6 +106,16 @@ class TeacherPaymentBill
     private $paymentDetails;
 
     /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
+
+    /**
      * @var \Contract
      *
      * @ORM\ManyToOne(targetEntity="Contract")
@@ -117,16 +134,6 @@ class TeacherPaymentBill
      * })
      */
     private $teacherPaymentBillSumary;
-
-    /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
 
 
 
@@ -333,6 +340,30 @@ class TeacherPaymentBill
     }
 
     /**
+     * Set lectureType.
+     *
+     * @param string|null $lectureType
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setLectureType($lectureType = null)
+    {
+        $this->lectureType = $lectureType;
+
+        return $this;
+    }
+
+    /**
+     * Get lectureType.
+     *
+     * @return string|null
+     */
+    public function getLectureType()
+    {
+        return $this->lectureType;
+    }
+
+    /**
      * Set totalTimePreviouslyBilled.
      *
      * @param float|null $totalTimePreviouslyBilled
@@ -405,6 +436,30 @@ class TeacherPaymentBill
     }
 
     /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
+    }
+
+    /**
      * Set contract.
      *
      * @param \Contract|null $contract
@@ -450,29 +505,5 @@ class TeacherPaymentBill
     public function getTeacherPaymentBillSumary()
     {
         return $this->teacherPaymentBillSumary;
-    }
-
-    /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return TeacherPaymentBill
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
     }
 }

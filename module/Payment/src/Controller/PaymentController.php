@@ -29,13 +29,15 @@ class PaymentController extends AbstractRestfulController
     private $entityManager;
     private $paymentManager;
     private $sessionContainer;
+    private $userManager;
     private $crtAcadYr ;
     
-    public function __construct($entityManager,$paymentManager,$sessionContainer) {
+    public function __construct($entityManager,$paymentManager,$sessionContainer,$userManager) {
         
         $this->entityManager = $entityManager; 
         $this->paymentManager = $paymentManager;
         $this->sessionContainer = $sessionContainer;
+        $this->userManager = $userManager;
         $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
@@ -94,7 +96,7 @@ class PaymentController extends AbstractRestfulController
         {   
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
-            if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
+            if ($this->userManager->userHasAdminPermission($user)) 
                    $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredPaymentsView::class)->findBy(["acadYrId"=>$this->crtAcadYr->getId()]);
             else{
                 $registeredStd = [];

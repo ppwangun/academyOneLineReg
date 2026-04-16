@@ -13,6 +13,7 @@ use Laminas\View\Model\ViewModel;
 use Laminas\Hydrator\ReflectionHydrator;
 use SchoolGlobalConfig\Form\AnneeAcadForm;
 
+
 use Application\Entity\Faculty;
 use Application\Entity\Department;
 use Application\Entity\FieldOfStudy;
@@ -21,6 +22,7 @@ use Application\Entity\Degree;
 use Application\Entity\TrainingCurriculum;
 use Application\Entity\AcademicYear;
 use Application\Entity\Semester;
+use Application\Entity\ExamSession;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\SemesterAssociatedToClass;
 use Application\Entity\ClassOfStudyHasSemester;
@@ -31,22 +33,24 @@ use Application\Entity\UnitRegistration;
 use Application\Entity\StudentSemRegistration;
 use Application\Entity\CurrentYearTeachingUnitView;
 use Application\Entity\OdooSettings;
+use Application\Entity\Taxes;
 use PhpOffice\PhpSpreadsheet;
 
 class SettingsController extends AbstractActionController
 {
     
     private $entityManager;
-    private $activeYear;
+    private $examSessionRepository;
     private $currentYear;
     
     const _ETUDIANT_EXCLU_ = 6;
     const _ETUDIANT_DIPLOME_ = 7;
 
 
-    public function __construct($entityManager) {
+    public function __construct($entityManager,$examSessionRepository) {
         
-        $this->entityManager = $entityManager;   
+        $this->entityManager = $entityManager;
+        $this->examSessionRepository = $examSessionRepository;
     }
     
     
@@ -66,7 +70,8 @@ class SettingsController extends AbstractActionController
             $data = $this->params()->fromQuery();
             $data = json_decode($data["settings"],true); 
         
-          
+            $data = $this->getRequest()->getContent(); 
+            $data = json_decode($data, true);            var_dump($data); exit;
             $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
            
             if(sizeof($odooSettings)<=0)
@@ -127,7 +132,8 @@ class SettingsController extends AbstractActionController
 
             $odooSettings = $this->entityManager->getRepository(OdooSettings::class)->findAll();
             $hydrator = new ReflectionHydrator();
-            $odooSettings = $hydrator->extract($odooSettings[0]);
+            if($odooSettings)
+                $odooSettings = $hydrator->extract($odooSettings[0]);
            
 
 
@@ -144,24 +150,41 @@ class SettingsController extends AbstractActionController
 
     
     //Collect degrees bases  on training curriculum
-    public function cyclebydegreeAction()
+    public function createTaxesOrWithholdingsAction()
     {
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-            $data = $this->params()->fromQuery(); 
-            $degree = $this->entityManager->getRepository(Degree::class)->findOneById($data['id']);
-            $cycles = $this->entityManager->getRepository(TrainingCurriculum::class)->findBy(array('degree'=>$degree));
-            foreach($cycles as $key=>$value)
+            $data = $this->getRequest()->getContent(); 
+            $data = json_decode($data,true);  var_dump($data); exit;
+            $data = $data["settings"];
+            $taxes = new Taxes();
+            $taxes->setDescription($data["description"]);
+            $taxes->setCode($data["code"]);
+            $taxes->setValue($data["rate"]);
+            $taxes->setRefundable($data["isRefundable"]);
+            
+            $this->entityManager->persist($taxes);
+            $this->entityManager->flush();
+            
+            //collect all the already created taxes
+            $taxes = $this->entityManager->getRepository(Taxes::class)->findAll();
+            foreach($taxes as $key=>$value)
             {
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($value);
 
-                $cycles[$key] = $data;
+                $taxes[$key] = $data;
             }
+            
+            
+            
+            
+
         $this->entityManager->getConnection()->commit();
         return new JsonModel([
-                $cycles
+            $taxes
+                
         ]);          
       }
       catch(Exception $e){
@@ -170,24 +193,30 @@ class SettingsController extends AbstractActionController
       }
         
     }
-    public function searchDptByFacultyAction()
+    
+    //Collect degrees bases  on training curriculum
+    public function allTaxesAndWithholdingsAction()
     {
       $this->entityManager->getConnection()->beginTransaction();
       try
       {
-            $data = $this->params()->fromQuery();            
-            $faculty = $this->entityManager->getRepository(Faculty::class)->find($data['fac_id']);
-            $dpts = $this->entityManager->getRepository(Department::class)->findBy(array('faculty'=>$faculty,'status'=>1),array("name"=>"ASC"));
-            foreach($dpts as $key=>$value)
+
+            
+            //collect all the already created taxes
+            $taxes = $this->entityManager->getRepository(Taxes::class)->findAll();
+            foreach($taxes as $key=>$value)
             {
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($value);
 
-                $dpts[$key] = $data;
+                $taxes[$key] = $data;
+                $taxes[$key]["refundable"] = (($data["refundable"]==1)?true:false);
             }
+
         $this->entityManager->getConnection()->commit();
         return new JsonModel([
-                $dpts
+            $taxes
+                
         ]);          
       }
       catch(Exception $e){
@@ -195,7 +224,113 @@ class SettingsController extends AbstractActionController
             throw $e; 
       }
         
-    }   
+    } 
+    //This function takes as parameters semester and sessions an maps semester to provides exam sessions
+    public function toggleSessionAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {    
+            $request = $this->getRequest();
+            $data = $request->getContent();
+            $data = json_decode($data,true);
+            
+           
+            if(isset($data["semester"])&&!is_null($data["semester"]))
+            {
+                  $semester = $this->entityManager->getRepository(Semester::class)->find($data["semester"]);
+
+                   //1rst remove all sessions associated to the semester before  
+                   $sessions = $this->examSessionRepository->getSessionsBySemester($semester);
+                   foreach($sessions as $session) $session->removeSemester($semester);
+                   $this->entityManager->flush();
+                   
+                   //mappind the new session to the semester
+                   foreach($data["semSessions"] as $sessionValue)
+                   {
+                       $session = $this->examSessionRepository->find($sessionValue); 
+                       $session->addSemester($semester);
+                       
+                   }
+                       
+                   
+                   
+            
+               
+               $this->entityManager->flush();
+               $this->entityManager->commit();
+               
+             
+            }
+
+            $view = new JsonModel([
+             ]);
+            // Disable layouts; `MvcEvent` will use this View Model instead
+            $view->setTerminal(true);
+
+            return $view;          
+      
+      }
+      catch(Exception $e){
+            $this->entityManager->getConnection()->rollBack();
+            throw $e; 
+      }
+        
+    }
+    
+    public function loadSessionsBySemAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {         
+            $request = $this->getRequest();
+            $data = $request->getContent(); 
+            $data = json_decode($data,true);
+            $sessions = [];
+           
+            $semester = $this->entityManager->getRepository(Semester::class)->find($data["semId"]);
+ 
+            $sessions = $this->examSessionRepository->getSessionsBySemester($semester); 
+        /*    $i=0;
+            foreach($sessions as $session):
+                $sessions[$i]= $session->getId(); $i++;
+            endforeach;*/
+            
+            foreach($sessions as $key=>$value)
+            {
+                $hydrator = new ReflectionHydrator();
+                $data = $hydrator->extract($value);
+
+                $sessions[$key] = $data;
+
+            }            
+            
+            
+            $this->entityManager->flush();
+
+            return new JsonModel([
+                $sessions
+            ]); 
+        }
+        catch(Exception $e){
+              $this->entityManager->getConnection()->rollBack();
+              throw $e; 
+        }        
+        
+    }     
+    
+    public function newExamSessionAction()
+    {
+        $view = new ViewModel([
+         ]);
+        // Disable layouts; `MvcEvent` will use this View Model instead
+        $view->setTerminal(true);
+
+        return $view;          
+      
+
+        
+    }    
     
     public function searchFilByDptAction()
     {

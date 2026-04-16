@@ -59,6 +59,13 @@ class TeacherPaymentBillSumary
      * @ORM\Column(name="payment_amount", type="float", precision=10, scale=0, nullable=true)
      */
     private $paymentAmount;
+    
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="payment_amount_ht", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $paymentAmountHt;    
 
     /**
      * @var bool|null
@@ -218,6 +225,30 @@ class TeacherPaymentBillSumary
     {
         return $this->paymentAmount;
     }
+    
+    /**
+     * Set paymentAmountHt.
+     *
+     * @param float|null $paymentAmountHt
+     *
+     * @return TeacherPaymentBillSumary
+     */
+    public function setPaymentAmountHt($paymentAmountHt = null)
+    {
+        $this->paymentAmountHt = $paymentAmountHt;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentAmountHt.
+     *
+     * @return float|null
+     */
+    public function getPaymentAmountHt()
+    {
+        return $this->paymentAmountHt;
+    }    
 
     /**
      * Set paymentStatus.

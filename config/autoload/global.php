@@ -36,6 +36,7 @@ return [
         ],        
     ],
     
+    
     // Session configuration.
     'session_config' => [
         // Session cookie will expire in 1 hour.

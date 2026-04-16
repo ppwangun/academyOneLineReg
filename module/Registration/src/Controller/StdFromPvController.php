@@ -23,11 +23,13 @@ class StdFromPvController extends AbstractRestfulController
 {
     private $entityManager;
     private $sessionContainer;
+    private $userManager;
     
-    public function __construct($entityManager,$sessionContainer) {
+    public function __construct($entityManager,$sessionContainer,$userManager) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer = $sessionContainer;
+        $this->userManager = $userManager;
     }
     
     public function get($id) {
@@ -61,42 +63,39 @@ class StdFromPvController extends AbstractRestfulController
     {
        $this->entityManager->getConnection()->beginTransaction();
         try
-        { 
+        {
             $userId = $this->sessionContainer->userId;
             $currentAcadYr = $this->sessionContainer->currentAcadYr;;
-            $user = $this->entityManager->getRepository(User::class)->find($userId );
-            if ($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
-                   $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
-            else{
-                $registeredStd = [];
-                //Find clases mananged by the current user
-                $userClasses = $this->entityManager->getRepository(UserManagesClassOfStudy::class)->findBy(Array("user"=>$user));
-                
-                if($userClasses)
-                {
-                    foreach($userClasses as $classe)
-                    {
-                        $registeredStd_1 = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe->getClassOfStudy()->getCode(),"acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
-                        $registeredStd = array_merge($registeredStd,$registeredStd_1);
-                        
-                    }
-                }                
+            $user = $this->sessionContainer->user;
+            $registeredStd = [];
+            $user= $this->entityManager->getRepository(User::class)->find($userId);
+            $classes = $user->getClasses();
+
+            
+            //check if user has any admin permission   
+            if ($this->userManager->userHasAdminPermission($user)){ 
+                       $registeredStd = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
+
             }
-            $i= 0;
+            else{
+
+                foreach($classes as $classe)
+                {
+                    $registeredStd_1 = $this->entityManager->getRepository(AllYearsRegisteredStudentView::class)->findBy(array("class"=>$classe->getCode(),"acadYrId"=>$currentAcadYr->getId()),array("nom"=>"ASC"));
+                    $registeredStd = array_merge($registeredStd,$registeredStd_1);
+                }
+            }
+      
+            
+      
             foreach($registeredStd as $key=>$value)
             {
-                $i++;
+                
                 $hydrator = new ReflectionHydrator();
                 $data = $hydrator->extract($value);
                 $registeredStd[$key] = $data;
             }
-            
-            for($i=0;$i<sizeof($registeredStd);$i++)
-            {
-               // $registeredStd[$i]['nom']= utf8_encode($registeredStd[$i]['nom']);
-                //$registeredStd[$i]['prenom']= utf8_encode($registeredStd[$i]['prenom']);
-                
-            }
+
             
            $this->entityManager->getConnection()->commit();
             $output = new JsonModel([

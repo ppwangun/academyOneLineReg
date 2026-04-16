@@ -16,6 +16,8 @@
         <?= $this->headLink()
             ->prependStylesheet($this->basePath('css/style.css'))
             //
+        ->prependStylesheet($this->basePath('bower_components/angular-ui-select/dist/select.min.css'))
+        ->prependStylesheet($this->basePath('bower_components/select2/dist/css/select2.min.css'))
         ->prependStylesheet($this->basePath('css/angular-toastr.min.css'))
         ->prependStylesheet($this->basePath('css/loading-bar.css'))
         ->prependStylesheet($this->basePath('css/sb-admin-2.css'))
@@ -35,6 +37,7 @@
         ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
         ->prependStylesheet($this->basePath('bower_components/angular-animate/angular-animate.min.css'))
         ->prependStylesheet($this->basePath('bower_components/angular-material/angular-material.min.css'))
+        
            // ->prependStylesheet($this->basePath('../vendor/onokumus/metismenu/dist/metisMenu.min.css'))
         
         
@@ -69,9 +72,12 @@
         
         ->prependFile($this->basePath('js/metisMenu/metisMenu.min.js'))
         ->prependFile($this->basePath('js/angular-toastr.min.js'))
-        
+        ->prependFile($this->basePath('bower_components/angular-sanitize/angular-sanitize.js'))
+        ->prependFile($this->basePath('bower_components/angular-ui-select/dist/select.js'))
+        ->prependFile($this->basePath('bower_components/select2/dist/js/select2.js'))
         ->prependFile($this->basePath('js/sb-admin-2.js'))
         ->prependFile($this->basePath('js/ui.utils.js'))
+        
         ->prependFile($this->basePath('bower_components/angular-material/angular-material.min.js'))
         ->prependFile($this->basePath('bower_components/angular-messages/angular-messages.min.js'))
         ->prependFile($this->basePath('bower_components/angular-animate/angular-animate.min.js'))
@@ -119,6 +125,7 @@
     <script src="js/app/exam/delib.component.js"></script>
     <script src="js/app/exam/deliberation.component.js"></script>
     <script src="js/app/exam/grade.component.js"></script> 
+    <script src="js/app/exam/eval.weight.component.js"></script> 
     <script src="js/app/exam/new.grade.component.js"></script>
     <script src="js/app/dashboard/dashboard.module.js"></script>
     <script src="js/app/dashboard/dashboard.component.js"></script>
@@ -526,6 +533,7 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('lecturer.grade', null)))?true:false?>">
                                     <a href="#!/paymentsgrid">Grilles de facturation frais de vacation </a>
                                 </li>  
+                               
                             </ul>                            
                         </li>
                         <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('view.exams', null)))?true:false?>">
@@ -560,6 +568,9 @@
                                 <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('view.scholarship.certificates', null)))?true:false?>">
                                     <a href="#!/scholarshipCertificates">Certificats de scolarité</a>
                                 </li>
+                                <li ng-show="<?=(($this->access('global.system.admin', ['user'=>$this->currentuser($this->identity())]))||($this->access('view.financial.statement', null)))?true:false?>">
+                                    <a href="#!/financialStatements">Etats financiers</a>
+                                </li>                                
                              </ul>
                             <!-- /.nav-second-level -->
                         </li>
@@ -624,6 +635,9 @@
                                 <li>
                                     <a href="#!/gradeconfig">Configuration des grades</a>
                                 </li>
+                                <li>
+                                    <a href="#!/evalWeightMgt">Gérer les poids des évaluations</a>
+                                </li>                                
                                 <li>
                                     <a href="#!/settings"><i class="fa fa-cog"></i>&nbsp;Paramètres</a>
                                  <!--   <ul class="nav nav-third-level">

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ClassOfStudyHasSemester
  *
- * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"})})
+ * @ORM\Table(name="class_of_study_has_semester", indexes={@ORM\Index(name="fk_class_of_study_has_semester_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_class_of_study_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_class_of_study_has_semester_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_class_of_study_has_semester_payment_teaching_assignment__idx", columns={"payment_teaching_assignment_method_id"}), @ORM\Index(name="fk_class_of_study_has_semester_teaching_unit1_idx", columns={"teaching_unit_id"})})
  * @ORM\Entity
  */
 class ClassOfStudyHasSemester
@@ -148,26 +148,6 @@ class ClassOfStudyHasSemester
     private $amountPerHr;
 
     /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
-
-    /**
-     * @var \Teacher
-     *
-     * @ORM\ManyToOne(targetEntity="Teacher")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
-     * })
-     */
-    private $teacher;
-
-    /**
      * @var \Semester
      *
      * @ORM\ManyToOne(targetEntity="Semester")
@@ -188,6 +168,16 @@ class ClassOfStudyHasSemester
     private $teachingUnit;
 
     /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -196,6 +186,26 @@ class ClassOfStudyHasSemester
      * })
      */
     private $subject;
+
+    /**
+     * @var \PaymentTeachingAssignmentMethod
+     *
+     * @ORM\ManyToOne(targetEntity="PaymentTeachingAssignmentMethod")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="payment_teaching_assignment_method_id", referencedColumnName="id")
+     * })
+     */
+    private $paymentTeachingAssignmentMethod;
+
+    /**
+     * @var \Teacher
+     *
+     * @ORM\ManyToOne(targetEntity="Teacher")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * })
+     */
+    private $teacher;
 
 
 
@@ -642,54 +652,6 @@ class ClassOfStudyHasSemester
     }
 
     /**
-     * Set classOfStudy.
-     *
-     * @param \ClassOfStudy|null $classOfStudy
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
-    {
-        $this->classOfStudy = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \ClassOfStudy|null
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
-    }
-
-    /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return ClassOfStudyHasSemester
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
-    }
-
-    /**
      * Set semester.
      *
      * @param \Semester|null $semester
@@ -738,6 +700,30 @@ class ClassOfStudyHasSemester
     }
 
     /**
+     * Set classOfStudy.
+     *
+     * @param \ClassOfStudy|null $classOfStudy
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    {
+        $this->classOfStudy = $classOfStudy;
+
+        return $this;
+    }
+
+    /**
+     * Get classOfStudy.
+     *
+     * @return \ClassOfStudy|null
+     */
+    public function getClassOfStudy()
+    {
+        return $this->classOfStudy;
+    }
+
+    /**
      * Set subject.
      *
      * @param \Subject|null $subject
@@ -759,5 +745,53 @@ class ClassOfStudyHasSemester
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    /**
+     * Set paymentTeachingAssignmentMethod.
+     *
+     * @param \PaymentTeachingAssignmentMethod|null $paymentTeachingAssignmentMethod
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setPaymentTeachingAssignmentMethod(\PaymentTeachingAssignmentMethod $paymentTeachingAssignmentMethod = null)
+    {
+        $this->paymentTeachingAssignmentMethod = $paymentTeachingAssignmentMethod;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentTeachingAssignmentMethod.
+     *
+     * @return \PaymentTeachingAssignmentMethod|null
+     */
+    public function getPaymentTeachingAssignmentMethod()
+    {
+        return $this->paymentTeachingAssignmentMethod;
+    }
+
+    /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return ClassOfStudyHasSemester
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }
 }

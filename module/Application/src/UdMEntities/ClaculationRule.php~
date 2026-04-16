@@ -1,0 +1,52 @@
+<?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ClaculationRule
+ *
+ * @ORM\Table(name="claculation_rule", indexes={@ORM\Index(name="fk_claculation_rule_class_of_study_has_semester1_idx", columns={"class_of_study_has_semester_id"}), @ORM\Index(name="fk_claculation_rule_claculation_rules_weight1_idx", columns={"claculation_rules_weight_id"})})
+ * @ORM\Entity
+ */
+class ClaculationRule
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="combination", type="string", length=45, nullable=true)
+     */
+    private $combination;
+
+    /**
+     * @var \ClaculationRulesWeight
+     *
+     * @ORM\ManyToOne(targetEntity="ClaculationRulesWeight")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="claculation_rules_weight_id", referencedColumnName="id")
+     * })
+     */
+    private $claculationRulesWeight;
+
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
+
+
+}

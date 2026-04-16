@@ -40,18 +40,20 @@
                                         <th>Type</th>
                                         <th>Classe</th>
                                         <th>Sem</th>
+                                        <th>Session</th>
                                         <th style="width:15%">Date</th>
                                         <th>Statut</th>
                                    </tr>
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="exam in $ctrl.exams " ng-dblclick="$ctrl.redirect(exam.id)" style="cursor: pointer;" >
-                                      <td ng-bind="exam.num"></td>
+                                      <td >{{$index+1}}</td>
                                       <td ng-bind="exam.code"></td>
                                       <td ng-bind="exam.subject"></td>
                                       <td ng-bind="exam.type"></td>
                                       <td ng-bind="exam.classe"></td>
                                       <td ng-bind="exam.semester"></td>
+                                      <td ng-bind="exam.session"></td>
                                       <td ng-bind="$ctrl.formatDate(exam.date) | date:'dd/MM/yyyy H:mm:ss'"></td>
                                       <td ng-bind="(exam.status===0)?'Evaluation annulée':(exam.status===1&&exam.isMarkRegistered!=1)?'Note en attente':(exam.isMarkRegistered===1&&exam.isMarkVlidated!=1)?'Note enrégistrée':(exam.isMarkValidated===1&&exam.isMarkConfirmed!=1)?'Note Validée':'Note confirmée' " ng-class="{ 'zf-bg-red': (exam.status===0),'zf-bg-warn': (exam.status===1&&exam.isMarkRegistered!=1),'zf-bg-green': (exam.isMarkRegistered===1&&exam.status!=0) }"></td>
                                     </tr>

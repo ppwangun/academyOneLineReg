@@ -1,4 +1,4 @@
-function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teachingUnitId, teachingUnitCode, teacherId,contractId,times) {
+function NewTeachingUnitProgressionController($scope,$sce, $mdDialog, $http, teachingUnitId, teachingUnitCode, teacherId,contractId,times) {
     $scope.teachingUnitId = teachingUnitId;
     $scope.teachingUnitCode = teachingUnitCode;
     $scope.contractId= contractId;
@@ -17,11 +17,12 @@ function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teaching
         start_time: new Date(),
         end_time: new Date(),
         description: null,
-        target: 'cm',
+        target: 'CM',
         teaching_unit_id: teachingUnitId,
         teacher_id: teacherId,
         contract_id: contractId
     }
+    
 
     $scope.saveProgression = function(progressionForm) { 
         if (!progressionForm.$valid) {
@@ -40,7 +41,7 @@ function NewTeachingUnitProgressionController($scope, $mdDialog, $http, teaching
         // startDate.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
         // endDate.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
-        if (startTime.getTime() > endTime.getTime()) {
+        if (startTime.getTime() >= endTime.getTime()) {
             alert('L\'heure de debut doit etre inferieure a celle de fin !');
             return;
         }

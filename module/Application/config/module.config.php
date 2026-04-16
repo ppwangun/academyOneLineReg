@@ -62,6 +62,17 @@ return [
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
         ],
     ],
+    
+    'service_manager' => [
+        'factories' => [
+            MyRepository\ExamSessionRepository::class => MyRepository\Factory\ExamSessionRepositoryFactory::class,
+        ],
+    ],
+
+
+    // ... other config
+    
+    
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,

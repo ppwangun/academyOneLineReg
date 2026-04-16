@@ -22,6 +22,16 @@ class DegreeHasCourseCategory
     private $id;
 
     /**
+     * @var \Degree
+     *
+     * @ORM\ManyToOne(targetEntity="Degree")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
+     * })
+     */
+    private $degree;
+
+    /**
      * @var \FieldOfStudy
      *
      * @ORM\ManyToOne(targetEntity="FieldOfStudy")
@@ -41,16 +51,6 @@ class DegreeHasCourseCategory
      */
     private $courseCategory;
 
-    /**
-     * @var \Degree
-     *
-     * @ORM\ManyToOne(targetEntity="Degree")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="degree_id", referencedColumnName="id")
-     * })
-     */
-    private $degree;
-
 
 
     /**
@@ -61,6 +61,30 @@ class DegreeHasCourseCategory
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set degree.
+     *
+     * @param \Degree|null $degree
+     *
+     * @return DegreeHasCourseCategory
+     */
+    public function setDegree(\Degree $degree = null)
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+
+    /**
+     * Get degree.
+     *
+     * @return \Degree|null
+     */
+    public function getDegree()
+    {
+        return $this->degree;
     }
 
     /**
@@ -109,29 +133,5 @@ class DegreeHasCourseCategory
     public function getCourseCategory()
     {
         return $this->courseCategory;
-    }
-
-    /**
-     * Set degree.
-     *
-     * @param \Degree|null $degree
-     *
-     * @return DegreeHasCourseCategory
-     */
-    public function setDegree(\Degree $degree = null)
-    {
-        $this->degree = $degree;
-
-        return $this;
-    }
-
-    /**
-     * Get degree.
-     *
-     * @return \Degree|null
-     */
-    public function getDegree()
-    {
-        return $this->degree;
     }
 }

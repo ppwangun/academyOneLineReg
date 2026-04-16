@@ -48,7 +48,7 @@ class TeachingUnit
      * @ORM\Column(name="isCompulsory", type="integer", nullable=true)
      */
     private $isCompulsory = '0'; 
-
+    
     /**
      * Get id
      *
@@ -153,5 +153,7 @@ class TeachingUnit
     public function getIsCompulsory()
     {
         return $this->isCompulsory;
-    }    
+    } 
+
+   
 }

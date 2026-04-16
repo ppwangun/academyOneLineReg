@@ -29,14 +29,18 @@ class AcademicRanckPaymentRates
     private $amount;
 
     /**
-     * @var \TeacherPaymentRate
+     * @var float|null
      *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentRate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_rate_id", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="amount_theoritical", type="float", precision=10, scale=0, nullable=true)
      */
-    private $teacherPaymentRate;
+    private $amountTheoritical;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_practical", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amountPractical;
 
     /**
      * @var \AcademicRanck
@@ -47,6 +51,16 @@ class AcademicRanckPaymentRates
      * })
      */
     private $academicRanck;
+
+    /**
+     * @var \TeacherPaymentRate
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentRate")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_rate_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentRate;
 
 
 
@@ -85,27 +99,51 @@ class AcademicRanckPaymentRates
     }
 
     /**
-     * Set teacherPaymentRate.
+     * Set amountTheoritical.
      *
-     * @param \TeacherPaymentRate|null $teacherPaymentRate
+     * @param float|null $amountTheoritical
      *
      * @return AcademicRanckPaymentRates
      */
-    public function setTeacherPaymentRate(\TeacherPaymentRate $teacherPaymentRate = null)
+    public function setAmountTheoritical($amountTheoritical = null)
     {
-        $this->teacherPaymentRate = $teacherPaymentRate;
+        $this->amountTheoritical = $amountTheoritical;
 
         return $this;
     }
 
     /**
-     * Get teacherPaymentRate.
+     * Get amountTheoritical.
      *
-     * @return \TeacherPaymentRate|null
+     * @return float|null
      */
-    public function getTeacherPaymentRate()
+    public function getAmountTheoritical()
     {
-        return $this->teacherPaymentRate;
+        return $this->amountTheoritical;
+    }
+
+    /**
+     * Set amountPractical.
+     *
+     * @param float|null $amountPractical
+     *
+     * @return AcademicRanckPaymentRates
+     */
+    public function setAmountPractical($amountPractical = null)
+    {
+        $this->amountPractical = $amountPractical;
+
+        return $this;
+    }
+
+    /**
+     * Get amountPractical.
+     *
+     * @return float|null
+     */
+    public function getAmountPractical()
+    {
+        return $this->amountPractical;
     }
 
     /**
@@ -130,5 +168,29 @@ class AcademicRanckPaymentRates
     public function getAcademicRanck()
     {
         return $this->academicRanck;
+    }
+
+    /**
+     * Set teacherPaymentRate.
+     *
+     * @param \TeacherPaymentRate|null $teacherPaymentRate
+     *
+     * @return AcademicRanckPaymentRates
+     */
+    public function setTeacherPaymentRate(\TeacherPaymentRate $teacherPaymentRate = null)
+    {
+        $this->teacherPaymentRate = $teacherPaymentRate;
+
+        return $this;
+    }
+
+    /**
+     * Get teacherPaymentRate.
+     *
+     * @return \TeacherPaymentRate|null
+     */
+    public function getTeacherPaymentRate()
+    {
+        return $this->teacherPaymentRate;
     }
 }

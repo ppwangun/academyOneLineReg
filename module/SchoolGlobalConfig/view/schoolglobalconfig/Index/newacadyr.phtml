@@ -109,10 +109,14 @@
 
                 <!--tabs widget-->
                 <div class="row" >
-                    <ul class="nav nav-tabs">
-                      <li class="active"><a href="#">Périodes de l'année académique</a></li>
+                    <uib-tabset>
+                        <uib-tab >
+                            <uib-tab-heading>
+                                <span>Périodes de l'année académique</span>
+                            </uib-tab-heading>
 
-                    </ul>
+
+                  
 
                                         <table class="table table-striped">
                                             <thead>
@@ -141,8 +145,101 @@
                                         </table>
                         <a class="btn btn-primary" ng-click="showSemester(sem)">Ajouter un semestre</a>
 
-                 </div>
+                </uib-tab>                
+                        <!--End tab-->
+                <!--tabs widget-->
+                
+                        <uib-tab >
+                            <uib-tab-heading>
+                                <span>Sessions d'évaluation</span>
+                            </uib-tab-heading>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-warning">
+                                                    <th>Type de session</th>
+                                                    <th>Code session</th>
+                                                    <th>Intitulé</th>
+
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="session in examSessions"  >
+                                                   <td ng-bind='session.sessionType==="RAT"?"Rattrapage":"Normale"'></td>
+                                                  <td ng-bind="session.sessionCode"></td>
+                                                  <td ng-bind="session.sessionName"></td>
+
+                                                  <td style="width:20%">
+                                                      <div class="btn-group" style="float:right">
+                                                      <button  type="button" ng-click="showManageSessions(session)" class="btn btn-default btn"><i class="fa fa-edit"></i></button>
+                                                      <button  type="button" ng-click="deleteExamSession(session)" class="btn btn-default btn" ><i class="fa fa-trash-o"></i></button></td></span>
+                                                  </div>
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                        <a class="btn btn-primary" ng-click="showManageSessions(session)">Ajouter une session d'évaluation</a>
+
+                        </uib-tab> 
                 <!--End tab-->
+                <!--tabs widget-->
+                        <uib-tab >
+                            <uib-tab-heading>
+                                <span>Associer les sessions aux semestres</span>
+                            </uib-tab-heading>
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="bg-warning">
+                                                    <th>Intitulé Semestre</th>
+                                                    <th>sessions</th>
+                                                 
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td>
+                                                        <div layout="row" layout-align="start" flex>
+                                                        <md-input-container flex="100">
+                                                            <label>Semestres</label>
+                                                                <md-select ng-model='selectedSem' >
+                                                                    <md-optgroup>
+                                                                        <md-option ng-repeat="sem in semesters" ng-value ='sem.id'
+                                                                                   
+                                                                                   ng-click='loadSessionsBySem(sem.id)'
+                                                                                   >
+                                                                           {{sem.name}}
+                                                                        </md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                        </md-input-container> 
+                                                        </div>
+                                                    </td>
+                                                  <td>
+                                                      <div layout="row" layout-align="start" flex>
+                                                        <md-input-container flex="100">
+                                                            <label>Sessions d'examen</label>
+      
+                                                                <md-select placeholder="Taxes/Retenues applicables" ng-model="selectedSessions" multiple >
+                                                                    <md-option ng-repeat="item in examSessions" ng-value="item.id" >
+                                                                        {{item.sessionName}}</md-option>
+                                                                </md-select>
+                                                        </md-input-container>
+                                                      </div>
+                                                  </td>
+                                                  <td >
+                                                  <button  type="button" ng-click="toggleSessionSelection(selectedSessions,selectedSem)" class="btn btn-default btn-xs btn-danger" ><i class="fa fa-refresh"></i></button>   
+                                                  </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                     
+
+                        </uib-tab>
+                    </uib-tabset>
+                <!--End tab-->                
             </div>  
         </div>
 

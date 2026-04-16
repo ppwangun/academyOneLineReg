@@ -69,6 +69,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     // list of `state` value/display objects
     $ctrl.selectedClasse= null;
     $ctrl.isUpdate = false;
+    $ctrl.isActivatedSemesterSelect = false;
     //Making sure UE Select element is active only after semester is selested
     $ctrl.isActivatedUeSelect = false;
     $ctrl.isActivatedMatiereSelect = false;
@@ -101,6 +102,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     $ctrl.degrees = [];
     $ctrl.semesters = [];
     $ctrl.examtypes = [];
+    $ctrl.examSessions = [];
     $scope.sem = null;
     $scope.searchClasse = null;
 
@@ -114,6 +116,9 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
    
     var id,ue_class_id,class_id;
    // $ctrl.selectedItemChange = selectedItemChange;
+   $scope.initialized = false;
+   
+
     
  //collecte and load all the available classes of study  
  $ctrl.init = function(){
@@ -121,26 +126,30 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     //Loading classes of study asynchronously
     $ctrl.query = function(classe)
     {
-       var  dataString = {id: classe},
-          config = {
-            params: dataString,
-            headers : {'Accept' : 'application/json; charset=utf-8'}
-            };
+        //$ctrl.selectedSem = null;
+        $ctrl.selectedExamSession = null;
+        var  dataString = {id: classe},
+        config = {
+          params: dataString,
+          headers : {'Accept' : 'application/json; charset=utf-8'}
+        };
     
-            return  $http.get('classes',config).then(function(response){
-                   return response.data[0];
-                });
+        return  $http.get('classes',config).then(function(response){
+            return response.data[0];
+        });
      };
      
-     $timeout(    
+    $timeout(    
     
-             $http.get('examtype').then(function(response){
-                 $ctrl.examtypes = response.data[0];
+        $http.get('examtype').then(function(response){
+        $ctrl.examtypes = response.data[0];
 
-         }),500); 
+    }),500); 
          
     //collectstudent exam id 
     exam_id =$routeParams.exam_id;
+    
+
     //check  weither we are performing an update of exam or not
     if(exam_id)
     {
@@ -148,153 +157,98 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
         $ctrl.isUpdate = true;
         $scope.showButtonGroup = true;
         
-
-
-            var data = {id: exam_id};
-            var config = {
+        var data = {id: exam_id};
+        var config = {
             params: data,
             headers : {'Accept' : 'application/json'}
-            };
-             $timeout(
+        };
+        
+        $timeout(
              //Collecting student credentials as well as all the payments associated with him        
              $http.get('exam',config).then(
              function successCallback(response){
                  
-                 $scope.isMarkRegistered = response.data[0].is_registered_mark;
-                 $scope.isMarkValidated = response.data[0].is_validated_mark;
-                 $scope.isMarkConfirmed = response.data[0].is_confirmed_mark;
+                $ctrl.selectedExam = response.data[0];
+                $ctrl.selectedExamType = response.data[0].type;
+                $ctrl.examCode = response.data[0].code;
+
+                 
+                $ctrl.selectedClasse = response.data[0].classOfStudyHasSemester.classOfStudy;
+                $ctrl.asignedSemToClasse($ctrl.selectedClasse.code);
+                $ctrl.selectedUe = response.data[0].classOfStudyHasSemester.teachingUnit;
+                
+                $ctrl.selectedSubject = response.data[0].classOfStudyHasSemester.subject;
+                if($ctrl.selectedSubject) $ctrl.isActivatedMatiereSelect = true;
+                if($ctrl.selectedUe == null) $ctrl.selectedUe = response.data[0].classOfStudyHasSemester.subject.teachingUnit;
+                $ctrl.selectedSem  = response.data[0].classOfStudyHasSemester.semester;
+                
+                $ctrl.asignedExamSession($ctrl.selectedSem.id)
+                $ctrl.selectedExamSession = response.data[0].examSession;  
+                if($ctrl.selectedExamSession) $ctrl.showExamSession = true;
+                $ctrl.markCalculationStatus = response.data[0].classOfStudyHasSemester.markCalculationStatus;
+ 
+
+                $scope.isMarkRegistered = response.data[0].isMarkRegistered;
+                $scope.isMarkValidated = response.data[0].isMarkValidated;
+                $scope.isMarkConfirmed = response.data[0].isMarkConfirmed;
                  
                  
-                        if(response.data[0].is_attendance_saved ===0)
-                        {
-                            $scope.isAttendanceButtonActive = true;
-                            $scope.isAnonymatButtonActive = false;
-                            $scope.isReportNoteButtonActive = false;
-                        }
-                        else if(response.data[0].is_anonymat_saved ===0){
-                            $scope.isAttendanceButtonActive = false;
-                            $scope.isAnonymatButtonActive = true;
-                            $scope.isReportNoteButtonActive = false;
-                        }
-                        else if((response.data[0].is_registered_mark ===1&&response.data[0].is_validated_mark ===1&&response.data[0].is_confirmed_mark ===1))
-                        {
-                            $scope.isAttendanceButtonActive = false;
-                            $scope.isAnonymatButtonActive = false;
-                            $scope.isReportNoteButtonActive = false;
-                            $scope.isDisabledCheckbox = true;
-                        }
-                        else{
-                            $scope.isReportNoteButtonActive = true;
-                            $scope.isAnonymatButtonActive = false;
-                            $scope.isAttendanceButtonActive = false;
-                            $scope.isDisabledCheckbox = true;
-                       }
+                if(response.data[0].isAttendanceSaved ===0)
+                {
+                    $scope.isAttendanceButtonActive = true;
+                    $scope.isAnonymatButtonActive = false;
+                    $scope.isReportNoteButtonActive = false;
+                }
+                else if(response.data[0].isAnonymatSaved ===0){
+                    $scope.isAttendanceButtonActive = false;
+                    $scope.isAnonymatButtonActive = true;
+                    $scope.isReportNoteButtonActive = false;
+                }
+                else if(($scope.isMarkRegistered ===1&& $scope.isMarkValidated ===1&& $scope.isMarkConfirmed ===1))
+                {
+                    $scope.isAttendanceButtonActive = false;
+                    $scope.isAnonymatButtonActive = false;
+                    $scope.isReportNoteButtonActive = false;
+                    $scope.isDisabledCheckbox = true;
+                }
+                else{
+                    $scope.isReportNoteButtonActive = true;
+                    $scope.isAnonymatButtonActive = false;
+                    $scope.isAttendanceButtonActive = false;
+                    $scope.isDisabledCheckbox = true;
+               }
 
-             
-                       
-                        //(response.data[0].is_attendance_saved ===1&&response.data[0].is_anonymat_saved ===1)?$scope.isAnonymatButtonActive = false:$scope.isAnonymatButtonActive = true;
-                        //(response.data[0].is_anonymat_saved===1&&response.data[0].is_registered_mark ===1&&response.data[0].is_validated_mark ===1&&response.data[0].is_confirmed_mark ===1)?$scope.isReportNoteButtonActive = false:$scope.isReportNoteButtonActive = true;
-                        $ctrl.examCode = response.data[0].exam_code;
-                        $ctrl.exam = response.data[0];
-                        var data = {id: response.data[0].classe_id};
+
+
+                    $ctrl.ues = [];
+                    $ctrl.subjects= [];
+
+                    var data = {id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.selectedSem.id}};
+                    var config = {
+                    params: data,
+                    headers : {'Accept' : 'application/json'}
+                    };
+                    //Loading selected class information for update
+                    $timeout(
+
+                    $http.get('teachingunit',config).then(
+
+                    function(response){
+                        $ctrl.ues=response.data[0];
+
+                    }),1000).then(function(){
                         var config = {
-                        params: data,
+                        params: {id:$ctrl.selectedUe.id,classe_id: $ctrl.selectedClasse.id},
                         headers : {'Accept' : 'application/json'}
-                        };
-                        $http.get('classes',config).then(
-                        function(resp){
-                            $ctrl.selectedClasse=resp.data[0];
+                        };   
 
-                            }).then(function(){
-                                $ctrl.asignedSemToClasse($ctrl.selectedClasse.code);
-                                
-      
-                        }).then(function(){
+                        $http.get('subjectbyue',config).then(function(response){
+                            $ctrl.subjects = response.data[0];
 
-                        var data = {id: response.data[0].sem_id};
-                        var config = {
-                        params: data,
-                        headers : {'Accept' : 'application/json'}
-                        };                        
-                        $http.get('semester',config).then(function(response){
-                             $ctrl.selectedSem = response.data[0]; 
-                             
-                              
-                        })}).then(function(){
-
-                        var data = {id: response.data[0].exam_type_code};
-                        var config = {
-                        params: data,
-                        headers : {'Accept' : 'application/json'}
-                        };                        
-                        $http.get('examtype',config).then(
-                        function(response){
-                             $ctrl.selectedExam = response.data[0];
-                                
-                        });}).then(function(){
-                                $ctrl.ues = [];
-                                $ctrl.subjects= [];
-                                $ctrl.selectedSubject = null;
-                                var data = {id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.exam.sem_id}};
-                                var config = {
-                                params: data,
-                                headers : {'Accept' : 'application/json'}
-                                };
-                                //Loading selected class information for update
-                                $timeout(
-
-                                $http.get('teachingunit',config).then(
-
-                                function(response){
-                                    $ctrl.ues=response.data[0];
-
-                                }),1000);
-
-                        }).then(function(){ 
-                        
-                        var data = {id: response.data[0].ue_id};
-                        var config = {
-                        params: data,
-                        headers : {'Accept' : 'application/json'}
-                        }; 
-                            $timeout(
-                            $http.get('teachingunit',config).then(
-                                function(response){
-                                    $ctrl.selectedUe = response.data[0]; 
-                                    $ctrl.isActivatedUeSelect = true; 
-                                    $ctrl.markCalculationStatus = $ctrl.selectedUe.mark_calculation_status; 
-      
-                        }),1000)}).then(function(){
-                                    var config = {
-                                    params: {id:response.data[0].ue_id,classe_id: $ctrl.selectedClasse.id},
-                                    headers : {'Accept' : 'application/json'}
-                                    };   
-
-                                    $http.get('subjectbyue',config).then(function(response){
-                                        $ctrl.subjects = response.data[0];
-                                        if($ctrl.subjects.length>0)
-                                        {
-                                            $ctrl.isActivatedMatiereSelect = true;
-                                            $ctrl.isMatiereRequired = true;
-                                        }
-                                    });
-                            }).then(function(){ 
-                        
-                        var data = {id: response.data[0].subject_id};
-                        var config = {
-                        params: data,
-                        headers : {'Accept' : 'application/json'}
-                        };                        
-                        $http.get('subject',config).then(
-                        function(response){
-                             $ctrl.selectedSubject = response.data[0];
-                             $ctrl.isActivatedMatiereSelect = true;
-                            // $ctrl.loadUE($ctrl.selectedClasse);
-                                
                         });
-                        }).then(function(){
+                       }).then(function(){
                             
-                        var data = {id: response.data[0].exam_code};
+                        var data = {id: $ctrl.selectedExam.code};
                         var config = {
                         params: data,
                         headers : {'Accept' : 'application/json'}
@@ -304,17 +258,17 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                         $ctrl.registeredStd = response.data[0];
                         if($scope.isMarkConfirmed===1)
                         {
-                                if($ctrl.registeredStd.length>0)
-                                { 
-                                    var i;
-                                    for(i=0;i<$ctrl.registeredStd.length;i++)
-                                    {
-                                      $ctrl.registeredStd[i].num=i+1;
-                                      $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].confirmedMark;
+                            if($ctrl.registeredStd.length>0)
+                            { 
+                                var i;
+                                for(i=0;i<$ctrl.registeredStd.length;i++)
+                                {
+                                  $ctrl.registeredStd[i].num=i+1;
+                                  $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].confirmedMark;
 
-                                    }
-                                    $scope.students = $ctrl.registeredStd;
                                 }
+
+                            }
                         }else if($scope.isMarkValidated===1)
                         {
                                 $scope.isNoteActive = true;
@@ -329,81 +283,24 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                                       $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].validatedMark;
 
                                     }
-                                    $scope.students = $ctrl.registeredStd;
+
                                 }   
                         }else if($scope.isMarkRegistered===1)
                         {
-                                $scope.isNoteActive = true;
-                                $scope.isNoteValidationButtonActive = true;
-                                //$scope.isDisabledCheckbox = false;
-                                if($ctrl.registeredStd.length>0)
-                                { 
-                                    var i;
-                                    for(i=0;i<$ctrl.registeredStd.length;i++)
-                                    {
-                                      $ctrl.registeredStd[i].num=i+1;
-                                      $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].registeredMark;
 
-                                    }
-                                    $scope.students = $ctrl.registeredStd;
-                                }                             
-                        } else if(!$scope.isAttendanceButtonActive&&!$scope.isAnonymatButtonActive){
-                                $scope.isNoteActive = true;
-                                $scope.isNoteButtonActive = true;
-                                $scope.isDisabledCheckbox = true;
-                                
-                                if($ctrl.registeredStd.length>0)
-                                { 
-                                    var i;
-                                    for(i=0;i<$ctrl.registeredStd.length;i++)
-                                    {
-                                      $ctrl.registeredStd[i].num=i+1;
-                                      $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].registeredMark;
+                            if($ctrl.registeredStd.length>0)
+                            { 
+                                var i;
+                                for(i=0;i<$ctrl.registeredStd.length;i++)
+                                {
+                                  $ctrl.registeredStd[i].num=i+1;
+                                  $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].registeredMark;
 
-                                    }
-                                    $scope.students = $ctrl.registeredStd;
                                 }
-                             
-                        }
-                        else if($scope.isAttendanceButtonActive)
-                        {
-                            $scope.isDisabledCheckbox = false;
-                                if($ctrl.registeredStd.length>0)
-                                { 
-                                    var i;
-                                    for(i=0;i<$ctrl.registeredStd.length;i++)
-                                    {
-                                      $ctrl.registeredStd[i].num=i+1;
-                                      $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].registeredMark;
-
-                                    }
-                                    $scope.students = $ctrl.registeredStd;
-                                }
-                            
-                        }
-                        else{
-                                $scope.isNoteActive = false;
-                                $scope.isNoteButtonActive = false; 
-                                $scope.isDisabledCheckbox = true;
-                                if($ctrl.registeredStd.length>0)
-                                { 
-                                    var i;
-                                    for(i=0;i<$ctrl.registeredStd.length;i++)
-                                    {
-                                      $ctrl.registeredStd[i].num=i+1;
-                                      $ctrl.registeredStd[i].note = $ctrl.registeredStd[i].registeredMark;
-
-                                    }
-                                    $scope.students = $ctrl.registeredStd;
-                                }
-                        }
-                                
-
-                            
-                                
-                        });                            
-                            
-                        }) ;
+                            }                             
+                        } 
+      
+                        })}) ;
              },
              function errorCallback(response){
 
@@ -413,31 +310,68 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
    
  };
  
- 
-$ctrl.activateUeSelect = $timeout(function(){
-   $ctrl.isActivatedUeSelect = true;
-   $ctrl.selectedUe = null;
-   $ctrl.selectedSubject = null;
-},100);
+    $scope.selectedItemChange = function(classe){ 
+        
+        if(classe==null)
+        {
+            $ctrl.selectedSem = null;
+            $ctrl.selectedExamSession = null;
 
-$ctrl.selectedItemChange = $timeout(function(classe){
-    $ctrl.sem = null;
-   $ctrl.selectedUe = null;
-   $ctrl.selectedSubject = null;
-},100);
+            $ctrl.sem = null;
+            $ctrl.selectedUe = null;
+            $ctrl.selectedSubject = null;
+        }
+
+        if(classe)       $ctrl.isActivatedSemesterSelect = true;
+        else $ctrl.isActivatedSemesterSelect = false;
+
+    }; 
+ 
+$ctrl.activateExamSesion = function(examType){
+    //$ctrl.selectedExamSession =null;
+    const examTypes = [{code:"CC"},{code:"CCTP"}]
+    $ctrl.showExamSession = true;
+    if(examTypes.find(e=>e.code===examType)) $ctrl.showExamSession = false;
+
+} 
+
+$ctrl.activateUeSelect = function(){
+  // $ctrl.isActivatedUeSelect = true;
+  // $ctrl.selectedUe = null;
+  // $ctrl.selectedSubject = null;
+};
+
+
     
 $ctrl.asignedSemToClasse = function(class_code){
     $ctrl.semesters = [];
+    $ctrl.selectedExamSession = null
     var data = {id: class_code};
     var config = {
     params: data,
     headers : {'Accept' : 'application/json'}
     };      
     $http.get('assignsemtoclass',config).then(function(response){
-        $ctrl.semesters = response.data[0];
+        $ctrl.semesters = response.data[0]; 
+        $ctrl.isActivatedUeSelect = true;
                 
     });
 };
+
+$ctrl.asignedExamSession =function(semId){
+    $ctrl.examSessions =[];
+    var config = {
+        params :  semId,
+        headers : {'Accept' : 'application/json'}
+    };
+    var data = {semId:semId}
+    $http.post('loadSessionsBySem',data,config).then(function successCallback(response){
+
+        $ctrl.examSessions = response.data[0]; 
+        
+
+    })    
+}
 
 $ctrl.cancelExam = function(ev)
 
@@ -511,12 +445,15 @@ $ctrl.updateExamRegistration = function(){
     
 };
 
- $ctrl.loadUE = function(classe,sem_id){
+ $ctrl.loadUE = function(classe,sem_id,session_id){
      
                 $ctrl.ues = [];
                 $ctrl.subjects= [];
-                $ctrl.selectedSubject = null;
-                var data = {id: {classe_id:classe.id,sem_id:sem_id}};
+                var class_id = -1;
+               // $ctrl.selectedSubject = null;
+                if(classe) class_id = classe.id
+                if(!sem_id) sem_id =-1
+                var data = {id: {classe_id:class_id,sem_id:sem_id}};
                 var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}
@@ -537,8 +474,13 @@ $ctrl.updateExamRegistration = function(){
  $ctrl.loadStd = function(){
                             $ctrl.isActivatedMatiereSelect = false;
                             $ctrl.isMatiereRequired = false;
-                            if($ctrl.selectedSubject) var data = {id: {ueId: $ctrl.selectedUe.id,subjectId: $ctrl.selectedSubject.id}};
-                            else var data = {id : {ueId: $ctrl.selectedUe.id}};
+                            var ue_id = -1;
+                            var class_id  = -1;
+                            var session_id = -1;
+                            
+                            if($ctrl.selectedUe) {ue_id = $ctrl.selectedUe.id; class_id = $ctrl.selectedUe.class_id; session_id=$ctrl.selectedExamSession.id }
+                            if($ctrl.selectedSubject) var data = {id: {ueId: ue_id,subjectId: $ctrl.selectedSubject.id,session_id:$ctrl.selectedExamSession.id}};
+                            else var data = {id : {ueId: ue_id,session_id:session_id}};
                             var i;
                             var config = {
                             params: data,
@@ -560,7 +502,7 @@ $ctrl.updateExamRegistration = function(){
                                 }
                             }).then(function(){
                                 
-                                    data = {id : $ctrl.selectedUe.id,classe_id: $ctrl.selectedUe.class_id};
+                                    data = {id : ue_id,classe_id: class_id };
                                     var config = {
                                     params: data,
                                     headers : {'Accept' : 'application/json'}
@@ -579,7 +521,13 @@ $ctrl.updateExamRegistration = function(){
                           
                         };
 
+    $ctrl.resetSubject = function(){
+         $ctrl.subjects = [];
+         $ctrl.registeredStd= [];
+         $ctrl.ues= [];
+         $ctrl.selectedUe = null;
 
+    }
 // this function creates  a new exam
   $ctrl.newExam = function(){
       
@@ -588,9 +536,11 @@ $ctrl.updateExamRegistration = function(){
       examParams.date = $ctrl.dateExam;
       examParams.classe = $ctrl.selectedClasse.id;
       examParams.semester = $ctrl.selectedSem.id;
-      examParams.examtype = $ctrl.selectedExam.code;
+      examParams.examtype = $ctrl.selectedExamType;
       examParams.ue_id = $ctrl.selectedUe.id;
       
+      if($ctrl.selectedExamSession)
+        examParams.examSession = $ctrl.selectedExamSession.id
       if($ctrl.selectedSubject)
         examParams.subject = $ctrl.selectedSubject.id;
       examParams.students = $ctrl.registeredStd;
@@ -717,6 +667,7 @@ $ctrl.updateExamRegistration = function(){
  //Dialog Controller
   function DialogController($scope, $mdDialog,readFileData,toastr) {
     var i;
+    $scope.bareme = 1;
     $scope.students = $ctrl.registeredStd;
     for(i=0;i<$ctrl.registeredStd.length;i++)
     {
@@ -736,7 +687,7 @@ $ctrl.updateExamRegistration = function(){
           $scope.isAnonymatButtonActive = true;
           $scope.isDisabledCheckbox = true;
           $scope.isAttendanceButtonActive = false;
-          $ctrl.registeredStd = $scope.students;
+          $ctrl.registeredStd 
           
             for(i=0;i<$ctrl.registeredStd.length;i++)
             {
@@ -771,7 +722,7 @@ $ctrl.updateExamRegistration = function(){
           $scope.isNoteActive = true;
           $scope.isReportNoteButtonActive= true;
           
-                    $ctrl.registeredStd = $scope.students;
+                    $ctrl.registeredStd 
           
             for(i=0;i<$ctrl.registeredStd.length;i++)
             {
@@ -800,7 +751,7 @@ $ctrl.updateExamRegistration = function(){
       }
       
       $scope.saveNotes = function(){
-            $ctrl.registeredStd = $scope.students;
+            
           
             for(i=0;i<$ctrl.registeredStd.length;i++)
             {
@@ -834,7 +785,7 @@ $ctrl.updateExamRegistration = function(){
       }
 
       $scope.validateNotes = function(){
-            $ctrl.registeredStd = $scope.students;
+            
           
             for(i=0;i<$ctrl.registeredStd.length;i++)
             {
@@ -867,7 +818,7 @@ $ctrl.updateExamRegistration = function(){
       }
 
       $scope.finaliseNotes = function(){
-            $ctrl.registeredStd = $scope.students;
+            
           
             for(i=0;i<$ctrl.registeredStd.length;i++)
             {

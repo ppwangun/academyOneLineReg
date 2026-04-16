@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserManagesClassOfStudy
  *
- * @ORM\Table(name="user_manages_class_of_study", indexes={@ORM\Index(name="fk_user_has_class_of_study_user1_idx", columns={"user_id"}), @ORM\Index(name="fk_user_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="user_manages_class_of_study", indexes={@ORM\Index(name="fk_user_has_class_of_study_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_user_has_class_of_study_user1_idx", columns={"user_id"})})
  * @ORM\Entity
  */
 class UserManagesClassOfStudy
@@ -22,16 +22,6 @@ class UserManagesClassOfStudy
     private $id;
 
     /**
-     * @var \User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     * })
-     */
-    private $user;
-
-    /**
      * @var \ClassOfStudy
      *
      * @ORM\ManyToOne(targetEntity="ClassOfStudy")
@@ -40,6 +30,16 @@ class UserManagesClassOfStudy
      * })
      */
     private $classOfStudy;
+
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * })
+     */
+    private $user;
 
 
 
@@ -51,30 +51,6 @@ class UserManagesClassOfStudy
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set user.
-     *
-     * @param \User|null $user
-     *
-     * @return UserManagesClassOfStudy
-     */
-    public function setUser(\User $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user.
-     *
-     * @return \User|null
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 
     /**
@@ -99,5 +75,29 @@ class UserManagesClassOfStudy
     public function getClassOfStudy()
     {
         return $this->classOfStudy;
+    }
+
+    /**
+     * Set user.
+     *
+     * @param \User|null $user
+     *
+     * @return UserManagesClassOfStudy
+     */
+    public function setUser(\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return \User|null
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

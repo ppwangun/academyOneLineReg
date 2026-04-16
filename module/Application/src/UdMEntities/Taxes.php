@@ -42,6 +42,13 @@ class Taxes
      */
     private $value;
 
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="refundable", type="boolean", nullable=true)
+     */
+    private $refundable;
+
 
 
     /**
@@ -124,5 +131,29 @@ class Taxes
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set refundable.
+     *
+     * @param bool|null $refundable
+     *
+     * @return Taxes
+     */
+    public function setRefundable($refundable = null)
+    {
+        $this->refundable = $refundable;
+
+        return $this;
+    }
+
+    /**
+     * Get refundable.
+     *
+     * @return bool|null
+     */
+    public function getRefundable()
+    {
+        return $this->refundable;
     }
 }

@@ -42,6 +42,7 @@ z-index: 120000}
                     </md-input-container> 
                     <i>format: matricule,num_anonymat,note</i>
                 </div>
+               
             </div>
             <div layout-gt-sm='column'>
             
@@ -83,7 +84,7 @@ z-index: 120000}
                             <td>
                                 <md-input-container class="md-block" flex-gt-sm flex="30">
                                  
-                                  <input name="note" ng-model="stud.mark" aria-label="Note" ng-disabled ='!isNoteActive||stud.attend === "A"' md-no-asterisk  type="number" step="0.0000001" >
+                                  <input name="note" ng-model="stud.mark * bareme" aria-label="Note" ng-disabled ='!isNoteActive||stud.attend === "A"' md-no-asterisk  type="number" step="0.0000001" >
                                       <div ng-messages="updateExamForm.note.$error">
                                             <div ng-message="required">le champ nom UE est obligatoire</div>
 
@@ -94,7 +95,47 @@ z-index: 120000}
                     </tbody>
                 </table>
                     
+                <md-input-container ng-show="isNoteButtonActive || isNoteValidationButtonActive || isNoteFinalisationButtonActive">
+                    <label>Choix le barême de notation {{bareme}}</label>
+                    <md-select name="barème" ng-model="bareme"   
+                                md-no-asterisk ng-required="isNoteButtonActive || isNoteValidationButtonActive || isNoteFinalisationButtonActive" >
 
+                        <md-option ng-disabled="true"><em>---Choix du Barème de notation---</em></md-option>
+                      <md-option  ng-value="10"  >
+                        /10
+                      </md-option>   
+                      <md-option  ng-value="5"  >
+                        /20
+                      </md-option>
+                      <md-option  ng-value="3.33"  >
+                        /30
+                      </md-option>
+                      <md-option  ng-value="2.5"  >
+                        /40
+                      </md-option> 
+                      <md-option  ng-value="2"  >
+                        /50
+                      </md-option>                        
+                      <md-option  ng-value="1.66"  >
+                        /60
+                      </md-option>
+                       <md-option  ng-value="1.43"  >
+                        /70
+                       </md-option>
+                      <md-option  ng-value="5"  >
+                        /80
+                      </md-option>  
+                      <md-option  ng-value="1.25"  >
+                        /90
+                      </md-option>  
+                      <md-option  ng-value="1"  >
+                        /100
+                      </md-option>                        
+                    </md-select>
+                    <div class="errors" ng-messages="examForm.semester.$error">
+                      <div ng-message="required">Champ obligatoire</div>
+                    </div>
+                </md-input-container> 
             <md-dialog-actions layout="row">
 
               <span flex></span>

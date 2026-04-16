@@ -11,6 +11,7 @@ namespace Teacher\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Teacher\Controller\PaymentController;
+use Teacher\Service\TeacherManager;
 
 /**
  * This is the factory for IndexController. Its purpose is to instantiate the
@@ -23,9 +24,11 @@ class PaymentControllerFactory implements FactoryInterface
     {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $sessionContainer = $container->get('LoggedInUser');
+        $teacherManager = $container->get(TeacherManager::class);
+               
         
         // Instantiate the controller and inject dependencies
-        return new PaymentController($entityManager,$sessionContainer);
+        return new PaymentController($entityManager,$teacherManager,$sessionContainer);
     }
 
 }

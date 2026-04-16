@@ -85,26 +85,6 @@ class Contract
     private $contractStatus;
 
     /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
-     * @var \TeachingUnit
-     *
-     * @ORM\ManyToOne(targetEntity="TeachingUnit")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
-     * })
-     */
-    private $teachingUnit;
-
-    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -133,6 +113,26 @@ class Contract
      * })
      */
     private $teacher;
+
+    /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
 
 
 
@@ -363,54 +363,6 @@ class Contract
     }
 
     /**
-     * Set semester.
-     *
-     * @param \Semester|null $semester
-     *
-     * @return Contract
-     */
-    public function setSemester(\Semester $semester = null)
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    /**
-     * Get semester.
-     *
-     * @return \Semester|null
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
-     * Set teachingUnit.
-     *
-     * @param \TeachingUnit|null $teachingUnit
-     *
-     * @return Contract
-     */
-    public function setTeachingUnit(\TeachingUnit $teachingUnit = null)
-    {
-        $this->teachingUnit = $teachingUnit;
-
-        return $this;
-    }
-
-    /**
-     * Get teachingUnit.
-     *
-     * @return \TeachingUnit|null
-     */
-    public function getTeachingUnit()
-    {
-        return $this->teachingUnit;
-    }
-
-    /**
      * Set subject.
      *
      * @param \Subject|null $subject
@@ -480,5 +432,53 @@ class Contract
     public function getTeacher()
     {
         return $this->teacher;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return Contract
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set teachingUnit.
+     *
+     * @param \TeachingUnit|null $teachingUnit
+     *
+     * @return Contract
+     */
+    public function setTeachingUnit(\TeachingUnit $teachingUnit = null)
+    {
+        $this->teachingUnit = $teachingUnit;
+
+        return $this;
+    }
+
+    /**
+     * Get teachingUnit.
+     *
+     * @return \TeachingUnit|null
+     */
+    public function getTeachingUnit()
+    {
+        return $this->teachingUnit;
     }
 }

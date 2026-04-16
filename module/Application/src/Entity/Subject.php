@@ -43,6 +43,8 @@ class Subject
      * @ORM\Column(name="poids", type="string", length=45, nullable=true)
      */
     private $poids;
+    
+  
 
     /**
      * @var TeachingUnit
@@ -53,8 +55,6 @@ class Subject
      * })
      */
     private $teachingUnit;
-
-
 
     /**
      * Get id
@@ -162,5 +162,5 @@ class Subject
         return $this->teachingUnit;
     }
 
-  
+ 
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "782be4611fdd756cdfb4d6fa7d0a643f",
+    "content-hash": "45ed543f99378810fbff4ba31393e85c",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -1949,6 +1949,59 @@
                 "source": "https://github.com/ICanBoogie/DateTime"
             },
             "time": "2022-06-23T18:41:23+00:00"
+        },
+        {
+            "name": "kwn/number-to-words",
+            "version": "2.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kwn/number-to-words.git",
+                "reference": "c4e0cea84574bc0077121ac6a2331c183d6d1cc0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/c4e0cea84574bc0077121ac6a2331c183d6d1cc0",
+                "reference": "c4e0cea84574bc0077121ac6a2331c183d6d1cc0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NumberToWords\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Wnuk",
+                    "email": "k.wnuk@ascetic.pl"
+                }
+            ],
+            "description": "Multi language standalone PHP number to words converter. Fully tested, open for extensions and new languages.",
+            "keywords": [
+                "currency",
+                "money",
+                "number",
+                "numbers",
+                "string",
+                "to",
+                "words"
+            ],
+            "support": {
+                "issues": "https://github.com/kwn/number-to-words/issues",
+                "source": "https://github.com/kwn/number-to-words/tree/2.12.0"
+            },
+            "time": "2025-07-01T20:49:04+00:00"
         },
         {
             "name": "laminas/laminas-authentication",
@@ -5347,6 +5400,58 @@
                 }
             ],
             "time": "2024-06-12T14:39:25+00:00"
+        },
+        {
+            "name": "neolinks/number-to-words",
+            "version": "v1.12.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neolinks/number-to-words.git",
+                "reference": "50244aef5bcdbcd7129e3c25c708a47114ecce0d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neolinks/number-to-words/zipball/50244aef5bcdbcd7129e3c25c708a47114ecce0d",
+                "reference": "50244aef5bcdbcd7129e3c25c708a47114ecce0d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5.6",
+                "squizlabs/php_codesniffer": "^3.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NumberToWords\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Wnuk",
+                    "email": "k.wnuk@ascetic.pl"
+                }
+            ],
+            "description": "Multi language standalone PHP number to words converter. Fully tested, open for extensions and new languages.",
+            "keywords": [
+                "currency",
+                "money",
+                "number",
+                "numbers",
+                "string",
+                "to",
+                "words"
+            ],
+            "support": {
+                "source": "https://github.com/neolinks/number-to-words/tree/v1.12.3"
+            },
+            "time": "2023-02-08T14:19:31+00:00"
         },
         {
             "name": "nikic/php-parser",

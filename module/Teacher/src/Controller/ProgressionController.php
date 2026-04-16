@@ -146,8 +146,7 @@ class ProgressionController extends AbstractRestfulController
                     }
                 }                
             }*/
-            
-            
+
             
             $contract =$this->entityManager->getRepository(Contract::class)->find($data['contract_id']); 
             $courseScheduled = null;

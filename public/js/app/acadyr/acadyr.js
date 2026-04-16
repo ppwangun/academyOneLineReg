@@ -33,6 +33,7 @@ angular.module('app.acadyr', ['ngRoute','ui.bootstrap'])
         $scope.semesters = [];
         $scope.isUpdate = false;
         
+        
         //object storing academic year detalis
         $scope.acadyr = {code: '', name: '', startingDate: '', endingDate: '',admissionStartingDate:'',
             admissionEndingDate: '',adminRegistrationStartingDate:'',adminRegistrationEndingDate: '',isDefault:false,status:0};
@@ -76,10 +77,21 @@ angular.module('app.acadyr', ['ngRoute','ui.bootstrap'])
                       $http.get('semesterbyacademicyear',config).then(function successCallback(response){
                         $scope.semesters = response.data[0];  
                         angular.forEach($scope.semesters, function(value,key){
-                            value.startingDate = value.startingDate.date;
-                            value.endingDate = value.endingDate.date;
+                            if(value.startingDate)
+                                value.startingDate = value.startingDate.date;
+                            if(value.endingDate)
+                                value.endingDate = value.endingDate.date;
                         });
     
+                      },
+              function errorCallback(response){
+                    toastr.error('Problème survenu lors du chargement des informations relatives aux semestres', 'Erreur');
+              })
+                      ).then(
+                      $http.get('examSession',config).then(function successCallback(response){
+                        $scope.examSessions = response.data[0];   console.log( $scope.examSessions)
+
+
                       },
               function errorCallback(response){
                     toastr.error('Problème survenu lors du chargement des informations relatives aux semestres', 'Erreur');
@@ -373,25 +385,156 @@ angular.module('app.acadyr', ['ngRoute','ui.bootstrap'])
           //$ctrl.status = 'You cancelled the dialog.';
         });        
     };
+    
+ /*--------------------------------------------------------------------------
+     *--------------------------- updating curriculum---------------------------
+     *----------------------------------------------------------------------- */
+        $scope.deleteExamSession = function(examSession,ev)
+        {
+            var data = {id: examSession.id}; 
+            var config = {
+            params: data,
+            headers : {'Accept' : 'application/json'}
+            };
+
+      // Preparing the confirm windows
+            var confirm = $mdDialog.confirm()
+                  .title('Voulez vous vraiment supprimer cette session d\'examen?')
+                  .textContent('Toutes les données associées à cette information seront perdues')
+                   // .ariaLabel('Lucky day')
+                  .targetEvent(ev)
+                  .ok('Supprimer')
+                  .cancel('Annuler');
+      //open de confirm window
+          $mdDialog.show(confirm).then(function() {
+              //in case delete is pressee excute  the delete backend 
+              $http.delete('examSession',config).then(
+                function successCallback(response){
+                    //check the index of the current object in the array
+                    var index = $scope.examSessions.findIndex(x => x.id === examSession.id)
+                    //remove the current object from the array
+
+                    $scope.examSessions.splice(index,1);
+                    toastr.success("Operation effectuée avec succès");
+
+               },
+              function errorCallback(response){
+                  toastr.error("Une erreur inattendue s'est produite");
+                  });
+          }, function() {
+           // $scope.status = 'You decided to keep your debt.';
+          });
+
+        };   
+        
+    $scope.selectedSessions = []; 
+    $scope.selectedSem = -1;
+    
+    $scope.loadSessionsBySem = function(semId)
+    {
+        var config = {
+            params :  semId,
+            headers : {'Accept' : 'application/json'}
+        };
+        var data = {semId:semId}
+        $http.post('loadSessionsBySem',data,config).then(function successCallback(response){
+
+            $scope.selectedSessions = response.data[0]; 
+            
+        })       
+    }
+    
+    $scope.setSelectedSessions = function(semId){
+        $scope.selectedSessions = $scope.loadSessionsBySem(semId)
+    }
+
+     
+
+    $scope.toggleSessionSelection = function(session,sem){  
+                    var config = {
+                params :  {semSessions:session,semester: sem},
+                headers : {'Accept' : 'application/json'}
+            };
+            var data = {semSessions:session,semester: sem}
+            $http.post('toggleSession',data,config).then(function successCallback(response){
+             
+               
+                toastr.success("Opération effectuée avec succès")
+                    
+           })
+        }
+    
+    $scope.showManageSessions = function(examSession,ev){
+        
+
+        if(examSession)
+            $scope.isUpdate= true;
+        else $scope.isUpdate= false;
+        
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'js/my_js/globalconfig/examsession.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          locals : {acadYrId : id,examSession:examSession}
+        })
+        .then(function(answer) {
+          
+          //$ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          //$ctrl.status = 'You cancelled the dialog.';
+        });  
+        
+    };    
     //Dialog Controller
-  function DialogController($scope, $mdDialog) {
-
-
- 
-
+  function DialogController($scope, $mdDialog,toastr,acadYrId,examSession) {console.log(examSession)
+      if(!examSession) $scope.examSession = {};
+      else  $scope.examSession = examSession; 
       
+      $scope.examSession.acadYrId = acadYrId
+        $scope.addExamSession = function(examSession){
 
+            $http.post('examSession',examSession).then(function successCallback(response){
+             
+                console.log(examSession)
+                toastr.success("Opération effectuée avec succès")
+                $mdDialog.cancel();    
+            })
+        }
+        
+        $scope.updateExamSession = function(examSession){
+            var config = {
+                params :  examSession,
+                headers : {'Accept' : 'application/json'}
+            };
+
+            $http.put('examSession',examSession,config).then(function successCallback(response){
+             
+                console.log(examSession)
+                toastr.success("Opération effectuée avec succès")
+                $mdDialog.cancel();    
+            })
+        } 
+        
+        
+        
+
+          $scope.cancel = function() {
+              $scope.sem = {code:'',name:'',startingDate:'',endingDate:'',acad_id:''};
+          $mdDialog.cancel();
+        };
+
+        $scope.answer = function(answer) {
+
+          $mdDialog.hide(answer);
+        };
   }
-  
-      $scope.cancel = function() {
-          $scope.sem = {code:'',name:'',startingDate:'',endingDate:'',acad_id:''};
-      $mdDialog.cancel();
-    };
-
-    $scope.answer = function(answer) {
-
-      $mdDialog.hide(answer);
-    };  
    
  
         

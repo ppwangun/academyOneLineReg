@@ -123,6 +123,7 @@ class ComposerStaticInit46b453efa17ab5fc9d6af1542e744de3
         ),
         'N' => 
         array (
+            'NumberToWords\\' => 14,
             'Njine\\Odoo\\' => 11,
         ),
         'M' => 
@@ -420,6 +421,11 @@ class ComposerStaticInit46b453efa17ab5fc9d6af1542e744de3
         'Patrickmaken\\AvlyText\\' => 
         array (
             0 => __DIR__ . '/..' . '/patrickmaken/avlytext-client/src',
+        ),
+        'NumberToWords\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/neolinks/number-to-words/src',
+            1 => __DIR__ . '/..' . '/kwn/number-to-words/src',
         ),
         'Njine\\Odoo\\' => 
         array (

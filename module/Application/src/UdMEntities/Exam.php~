@@ -120,16 +120,6 @@ class Exam
     private $isCatchUpExamPerformed = '0';
 
     /**
-     * @var \ClassOfStudyHasSemester
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudyHasSemester;
-
-    /**
      * @var \ExamSession
      *
      * @ORM\ManyToOne(targetEntity="ExamSession")
@@ -138,6 +128,16 @@ class Exam
      * })
      */
     private $examSession;
+
+    /**
+     * @var \ClassOfStudyHasSemester
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_has_semester_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudyHasSemester;
 
 
 }

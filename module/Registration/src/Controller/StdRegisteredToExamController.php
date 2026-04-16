@@ -99,7 +99,7 @@ class StdRegisteredToExamController extends AbstractRestfulController
             
             //$output = json_encode($output,$depth=1000000); 
             $output = new JsonModel([
-                    $output
+                    $registeredStd
             ]);
            
             return $output;       }

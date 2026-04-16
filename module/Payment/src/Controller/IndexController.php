@@ -91,6 +91,19 @@ class IndexController extends AbstractActionController
         return $view;            
 
     }  
+    
+    public function financialStatementsAction()
+    {
+
+          $view = new ViewModel([
+             
+         ]);
+        // Disable layouts; `MvcEvent` will use this View Model instead
+        $view->setTerminal(true);
+
+        return $view;            
+
+    }    
 
     public function savePymtTransactionAction()
     {
@@ -283,6 +296,85 @@ class IndexController extends AbstractActionController
 
         }
     }
+    
+    public function importStdFeesAction()
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try
+        {     
+
+                /* Getting file name */
+               $filename = $_FILES['file']['name'];
+               /* Location */
+               $location = './public/upload/';
+
+               $csv_mimetypes = array(
+                   'text/csv',
+                   'application/csv',
+                   'text/comma-separated-values',
+                   'application/excel',
+                   'application/vnd.ms-excel',
+                   'application/vnd.msexcel',
+                );
+            // Check if fill type is allowed  
+              if(!in_array($_FILES['file']['type'],$csv_mimetypes))
+              {
+                 $result = false;
+
+                  $view = new JsonModel([
+                    $result
+                  ]);
+                  return $view; 
+              }
+
+                /* Upload file */
+                move_uploaded_file($_FILES['file']['tmp_name'],$location.$filename);
+
+
+                $delimiter = ';';
+                $file = new \SplFileObject($location.$filename);
+                $reader = new CsvReader($file,$delimiter);
+                // Tell the reader that the first row in the CSV file contains column headers
+                $reader->setHeaderRowNumber(0);
+                $workflow = new Workflow($reader);
+
+                // Create a writer: you need Doctrine’s EntityManager.
+                $doctrineWriter = new DoctrineWriter($this->entityManager, Student::class);
+                $doctrineWriter->disableTruncate();
+                $workflow->addWriter($doctrineWriter,['matricule']);
+
+            //set status to 0
+            //Student is currently in draft mode
+            $status = 0;
+            foreach ($reader as $row) {
+
+                $this->paymentManager->importStdFees($row);
+
+            }
+
+
+            $this->entityManager->getConnection()->commit();
+
+
+            $arr = array("name"=>$filename);
+            $result = true;
+
+              $view = new JsonModel([
+                  $result
+             ]);
+
+    // Disable layouts; `MvcEvent` will use this View Model instead
+           // $view->setTerminal(true);
+
+            return $view;      
+        }
+        catch(Exception $e)
+        {
+           $this->entityManager->getConnection()->rollBack();
+            throw $e;
+
+        }
+    }    
     
     public function importPaymentsAction()
     {

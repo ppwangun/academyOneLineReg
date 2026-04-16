@@ -67,10 +67,10 @@ class Semester extends \Application\Entity\Semester implements \Doctrine\ORM\Pro
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'startingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'endingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'ranking', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'academicYear'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'startingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'endingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'ranking', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'academicYear', 'examSessions'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'startingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'endingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'ranking', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'academicYear'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'startingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'endingDate', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'status', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'ranking', '' . "\0" . 'Application\\Entity\\Semester' . "\0" . 'academicYear', 'examSessions'];
     }
 
     /**
@@ -177,6 +177,28 @@ class Semester extends \Application\Entity\Semester implements \Doctrine\ORM\Pro
     }
 
     
+    /**
+     * {@inheritDoc}
+     */
+    public function addExamSession(\Application\Entity\ExamSession $examSession)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addExamSession', [$examSession]);
+
+        return parent::addExamSession($examSession);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeExamSession(\Application\Entity\ExamSession $examSession)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'removeExamSession', [$examSession]);
+
+        return parent::removeExamSession($examSession);
+    }
+
     /**
      * {@inheritDoc}
      */

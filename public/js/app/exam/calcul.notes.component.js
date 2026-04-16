@@ -24,7 +24,7 @@ function calculnotesCtrl($timeout,$http,$scope, toastr,$mdDialog){
 
 
     $ctrl.ues = null;
-
+    $ctrl.typePV='SESSION';
     $ctrl.isMatiereRequired = false;
     $ctrl.classes = []; 
     $ctrl.dateExam = new Date();
@@ -44,6 +44,8 @@ function calculnotesCtrl($timeout,$http,$scope, toastr,$mdDialog){
     $ctrl.markCalculationStatus = 0;
     $ctrl.isModularComputation = 0;
     $ctrl.isModuleComputation = 0;
+    $ctrl.report  = []
+   // $ctrl.selectedExamSession = "null";
    
     var id,ue_class_id;
    // $ctrl.selectedItemChange = selectedItemChange;
@@ -53,6 +55,21 @@ $ctrl.formatDate = function(date){
   var dateOut = new Date(date);
   return dateOut;
 };
+
+$ctrl.asignedExamSession =function(semId){
+    $ctrl.examSessions =[];
+    var config = {
+        params :  semId,
+        headers : {'Accept' : 'application/json'}
+    };
+    var data = {semId:semId}
+    $http.post('loadSessionsBySem',data,config).then(function successCallback(response){
+
+        $ctrl.examSessions = response.data[0]; 
+        
+
+    })    
+}
     
  //collecte and load all the available classes of study  
  $ctrl.init = function(){
@@ -99,10 +116,16 @@ $ctrl.activateSubjectSelect = function(){
 
 };
 
+$ctrl.isExamSessionRequired = ($ctrl.typePV==='SESSION'?true:false);
+
+
 $ctrl.selectedItemChange = function(classe){
-    $ctrl.sem = null;
-   $ctrl.selectedUe = null;
-   $ctrl.selectedSem = null;
+
+       $ctrl.sem = null;
+       $ctrl.selectedUe = null;
+       $ctrl.selectedSem = null;
+       $ctrl.selectedExamSession = undefined;
+
 }
     
 $ctrl.asignedSemToClasse = function(class_code){
@@ -162,6 +185,8 @@ $ctrl.asignedSemToClasse = function(class_code){
  $ctrl.loadExams = function(ueId,subjectID){
       
         var i;
+        if($ctrl.selectedClasse)
+        {
         var data = { id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.selectedSem.id,ue_id: ueId,subject_id:subjectID}};
         var config = {
         params: data,
@@ -180,13 +205,16 @@ $ctrl.asignedSemToClasse = function(class_code){
             $ctrl.isActivatedSubjectSelect = true;
             $ctrl.isMatiereRequired = true;            
         });
+        }
    };
 
 //Load exam statues of all subject from the module
  $ctrl.loadExamsPerModuleStatus = function(ueId){
       
         var i;
-        var data = { id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.selectedSem.id,ue_id: ueId,isModular:1}};
+        if($ctrl.selectedClasse)
+        {
+            var data = { id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.selectedSem.id,ue_id: ueId,isModular:1}};
         var config = {
         params: data,
         headers : {'Accept' : 'application/json'}
@@ -201,17 +229,18 @@ $ctrl.asignedSemToClasse = function(class_code){
               
             }
         });
+    }
    };
    
  //Looad all student who are registered to the subject
  //Load all subjects associated withe the UE as well
- $ctrl.loadStd = function(selectedUeId,selectedClasseId){
+ $ctrl.loadStd = function(selectedUeId,selectedClasseId,selectedSeesioinId){
         $ctrl.isActivatedMatiereSelect = false;
         $ctrl.isMatiereRequired = false;
         $ctrl.isActivatedSubjectSelect = false;
         //var id = {id: selectedUeId,sem_id:$ctrl.selectedSem.id};
 
-        var data = {id: selectedUeId};
+        var data = {id: selectedUeId,session_id:selectedSeesioinId};
         var i;
         var config = {
         params: data,
@@ -250,13 +279,13 @@ $ctrl.asignedSemToClasse = function(class_code){
 
  //Looad all student who are registered to the subject
  //Load all subjects associated withe the UE as well
- $ctrl.loadStdReg = function(selectedUeId){
+ $ctrl.loadStdReg = function(selectedUeId,selectedSessionId){
         $ctrl.isActivatedMatiereSelect = false;
         $ctrl.isMatiereRequired = false;
         $ctrl.isActivatedSubjectSelect = false;
         //var id = {id: selectedUeId,sem_id:$ctrl.selectedSem.id};
 
-        var data = {id: {ueId:selectedUeId,subjectId:$ctrl.selectedSubject.id}};
+        var data = {id: {ueId:selectedUeId,subjectId:$ctrl.selectedSubject.id,session_id:selectedSessionId}};
         var i;
         var config = {
         params: data,
@@ -273,12 +302,64 @@ $ctrl.asignedSemToClasse = function(class_code){
                 }
             }
         })};
+    
+    $ctrl.resetSubject = function(){
+        /* $ctrl.subjects = [];
+         $ctrl.registeredStd= [];
+         $ctrl.ues= [];
+         $ctrl.selectedUe = null;*/
+
+    }    
         
+var gneratePvInDiv = function(ev,data){
+    
+        var data = {id: $ctrl.selectedUe.id};
+        var i;
+        var config = {
+        params: data,
+        headers : {'Accept' : 'application/json'}
+        };
+
+          $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'printpvindiv/'+$ctrl.selectedUe.id+'/'+$ctrl.selectedClasse.id+'/'+$ctrl.selectedSem.id,
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true,
+          locals: {studentInfo: data} // Only for -xs, -sm breakpoints.
+        })
+        .then(function(answer) {
+          
+          $ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $ctrl.status = 'You cancelled the dialog.';
+        }); 
         
+         //Dialog Controller
+        function DialogController($scope, $mdDialog,readFileData,studentInfo) {
+            
+        $scope.report = studentInfo,    
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        $scope.answer = function(answer) {
+          $mdDialog.hide(answer);
+        };   
+
+        };
+    
+};
+
 $ctrl.calculNotes = function(ev){
     if($ctrl.selectedSubject)
-        var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id, ue_id:$ctrl.selectedUe.id,subject_id:$ctrl.selectedSubject.id,isMarkAggregation: 1};
-    else    var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id, ue_id:$ctrl.selectedUe.id};
+        var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id,subject_id:$ctrl.selectedSubject.id,isMarkAggregation: 1};
+    else    var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id};
     $timeout(function(){
         $http.post('calculmp',data).then(function(response){
             
@@ -297,6 +378,21 @@ $ctrl.calculNotes = function(ev){
                 
                 return;
             }
+            else if(response.data[0] === "ERROR_NO_RULE_DEFINE")
+            {
+                    $mdDialog.show(
+                    $mdDialog.alert()
+                      .parent(angular.element(document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(true)
+                      .title('Erreur lors du calcul des notes')
+                      .textContent("veuillez définir les poids de chaque type d'evaluation")
+                      .ariaLabel('Alert Dialog Demo')
+                      .ok('Fermer!')
+                      .targetEvent(ev)
+                  );
+                
+                return;
+            }            
             else if(response.data[0] === "ERROR_PED_REGISTRATION")
             {
                     $mdDialog.show(
@@ -313,18 +409,13 @@ $ctrl.calculNotes = function(ev){
                 return;
             }            
             toastr.success("Opération effectuée avec succès");
-            $ctrl.registeredStd = response.data[0];
-            if($ctrl.registeredStd.length>0)
-            {
-                for(var i=0;i<$ctrl.registeredStd.length;i++)
-                {
-                  $ctrl.registeredStd[i].num=i+1;
-                  $ctrl.registeredStd[i].note = 0;
-                }
-                $ctrl.isActivatedMatiereSelect = true;
-                $ctrl.isActivatedSubjectSelect = true;
-                $ctrl.isMatiereRequired = true;                
-            }            
+            $ctrl.report = response.data[0];
+            gneratePvInDiv(response.data[0]);
+
+            //    $ctrl.isActivatedMatiereSelect = true;
+            //    $ctrl.isActivatedSubjectSelect = true;
+            //    $ctrl.isMatiereRequired = true;                
+           
         })
     },100);
     
@@ -400,49 +491,7 @@ var data = {id: coshsID};
     });        
 }
 
-$ctrl.printNotes = function(ev){
-    
-        var data = {id: $ctrl.selectedUe.id};
-        var i;
-        var config = {
-        params: data,
-        headers : {'Accept' : 'application/json'}
-        };
 
-          $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'printpvindiv/'+$ctrl.selectedUe.id+'/'+$ctrl.selectedClasse.id+'/'+$ctrl.selectedSem.id,
-          parent: angular.element(document.body),
-         // parent: angular.element(document.querySelector('#component-tpl')),
-          scope: $scope,
-          preserveScope: true,
-          autoWrap: false,
-          targetEvent: ev,
-          clickOutsideToClose:false,
-          fullscreen: true // Only for -xs, -sm breakpoints.
-        })
-        .then(function(answer) {
-          
-          $ctrl.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          $ctrl.status = 'You cancelled the dialog.';
-        }); 
-        
-         //Dialog Controller
-        function DialogController($scope, $mdDialog,readFileData) {
-            
-            
-        $scope.cancel = function() {
-            $mdDialog.cancel();
-        };
-
-        $scope.answer = function(answer) {
-          $mdDialog.hide(answer);
-        };   
-
-        };
-    
-};
 
 $ctrl.printNotesFailures = function(ev){
     

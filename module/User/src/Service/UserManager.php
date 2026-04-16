@@ -255,4 +255,18 @@ class UserManager
 
         return true;
     }
+    
+    public function userHasAdminPermission($user)
+    {
+            foreach($user->getRoles() as $role)
+            {
+                $flag = false;
+                $permissions = $role->getPermissions();
+                foreach($permissions as $perm)
+                    if ($perm->getName()=='global.system.admin' || $perm->getName()=='all.classes.view') 
+                        $flag = true;
+            }
+            
+        return $flag;
+    }
 }

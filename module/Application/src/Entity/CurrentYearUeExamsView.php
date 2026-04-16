@@ -73,6 +73,13 @@ class CurrentYearUeExamsView
     * @ORM\Column(name="sem", type="string", nullable=true)
     */
     private $semester;
+    
+    /**
+    * @var string
+    *
+    * @ORM\Column(name="session", type="string", nullable=true)
+    */
+    private $session;    
 
     /**
     * @var integer

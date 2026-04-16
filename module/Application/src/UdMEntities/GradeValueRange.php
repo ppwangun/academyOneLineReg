@@ -64,6 +64,13 @@ class GradeValueRange
     private $gradePoints;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="result_status", type="string", length=45, nullable=true, options={"default"="FAILED"})
+     */
+    private $resultStatus = 'FAILED';
+
+    /**
      * @var \Grade
      *
      * @ORM\ManyToOne(targetEntity="Grade")
@@ -227,6 +234,30 @@ class GradeValueRange
     public function getGradePoints()
     {
         return $this->gradePoints;
+    }
+
+    /**
+     * Set resultStatus.
+     *
+     * @param string|null $resultStatus
+     *
+     * @return GradeValueRange
+     */
+    public function setResultStatus($resultStatus = null)
+    {
+        $this->resultStatus = $resultStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get resultStatus.
+     *
+     * @return string|null
+     */
+    public function getResultStatus()
+    {
+        return $this->resultStatus;
     }
 
     /**

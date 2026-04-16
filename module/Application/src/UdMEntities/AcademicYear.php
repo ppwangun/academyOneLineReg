@@ -133,20 +133,6 @@ class AcademicYear
      */
     private $totalsmssent;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="ClassOfStudy", mappedBy="academicYear")
-     */
-    private $classOfStudy = array();
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->classOfStudy = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
 
     /**
@@ -541,41 +527,5 @@ class AcademicYear
     public function getTotalsmssent()
     {
         return $this->totalsmssent;
-    }
-
-    /**
-     * Add classOfStudy.
-     *
-     * @param \ClassOfStudy $classOfStudy
-     *
-     * @return AcademicYear
-     */
-    public function addClassOfStudy(\ClassOfStudy $classOfStudy)
-    {
-        $this->classOfStudy[] = $classOfStudy;
-
-        return $this;
-    }
-
-    /**
-     * Remove classOfStudy.
-     *
-     * @param \ClassOfStudy $classOfStudy
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeClassOfStudy(\ClassOfStudy $classOfStudy)
-    {
-        return $this->classOfStudy->removeElement($classOfStudy);
-    }
-
-    /**
-     * Get classOfStudy.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getClassOfStudy()
-    {
-        return $this->classOfStudy;
     }
 }

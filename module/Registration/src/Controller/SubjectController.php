@@ -23,11 +23,13 @@ class SubjectController extends AbstractRestfulController
 {
     private $entityManager;
     private $sessionContainer;
+    private $crtAcadYr;
     
     public function __construct($entityManager,$sessionContainer) {
         
         $this->entityManager = $entityManager; 
         $this->sessionContainer= $sessionContainer;
+        $this->crtAcadYr = $sessionContainer->currentAcadYr;
     }
     
     public function get($id) {
@@ -38,7 +40,7 @@ class SubjectController extends AbstractRestfulController
             //retrive the current loggedIn User
             $userId = $this->sessionContainer->userId;
             $user = $this->entityManager->getRepository(User::class)->find($userId );
-            $acadyrId = $this->sessionContainer->currentAcadYr->getId() ;
+            $acadyrId = $this->crtAcadYr->getId() ;
            
             //check first the user has global permission or specific permission to access exams informations
             if($this->access('all.classes.view',['user'=>$user])||$this->access('global.system.admin',['user'=>$user])) 
@@ -97,7 +99,7 @@ class SubjectController extends AbstractRestfulController
        $this->entityManager->getConnection()->beginTransaction();
         try
         {   
-            $subjects= $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findAll();
+            $subjects= $this->entityManager->getRepository(CurrentYearTeachingUnitView::class)->findByAcadYrId($this->crtAcadYr->getId());
             $i= 0;
             foreach($subjects as $key=>$value)
             {

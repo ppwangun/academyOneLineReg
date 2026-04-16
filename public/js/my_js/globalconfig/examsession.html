@@ -1,0 +1,81 @@
+<style> 
+.md-datepicker-calendar-pane{
+z-index: 120000}
+
+.md-select-menu-container {z-index: 120000;}
+</style>
+
+
+<md-dialog  style="    max-width: 60%;
+    max-height: 60%;
+    width: 60%;
+    height: 60%;
+    border-radius: 0;" aria-label="Ajouter une faculté">
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Ajouter un semestre</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content" >
+           <form ng-cloak name="semForm">
+
+
+    <div layout-gt-sm layout-gt-xs layout-xs='row' >
+        <md-input-container class="md-block" flex-gt-sm>
+            <label for="examSessionType">Type de session</label>
+            <md-select ng-model="examSession.sessionType" id="teacher_type" name="teacher_type" required>
+                <md-option value="RAT">
+                    Rattrapage
+                </md-option>
+                <md-option value="NORM">
+                    Normale
+                </md-option>
+  
+
+            </md-select>
+            <div ng-messages="semForm.examSessionType.$error" multiple md-auto-hide="true">
+                <div ng-message="required">Le type de session est obligatoire</div>
+            </div>
+        </md-input-container>        
+        <md-input-container class="md-block" flex-gt-sm >
+
+            <label>Code</label>
+            <input type="text"  name="code" ng-model="examSession.sessionCode" ng-required="true" md-no-asterisk /> 
+            <div ng-messages="semForm.code.$error">
+                    <div ng-message="required">le champ code est obligatoire</div>
+            </div> 
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm >
+            <label>Intitulé</label>
+            <input type="text"  name="name" ng-model="examSession.sessionName" ng-required="true" md-no-asterisk  /> 
+            <div ng-messages="semForm.name.$error">
+                    <div ng-message="required">le champ nom est obligatoire</div>
+            </div>
+        </md-input-container>
+    </div>
+
+
+    <md-dialog-actions layout="row">
+
+      <span flex></span>
+      <md-button ng-click="cancel()">
+       Annuler
+      </md-button>
+      <md-button ng-hide="isUpdate" class="md-warn" ng-click="addExamSession(examSession)" ng-disabled="semForm.$invalid">
+        Ajouter
+      </md-button>
+            <md-button ng-show="isUpdate" class="md-warn" ng-click="updateExamSession(examSession)" ng-disabled="semForm.$invalid">
+        Modifier
+      </md-button>
+    </md-dialog-actions>
+  </form>
+      </div>
+              </md-dialog-content>
+</md-dialog>

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserRole
  *
- * @ORM\Table(name="user_role", indexes={@ORM\Index(name="fk_user_role_user1_idx", columns={"user_id"}), @ORM\Index(name="fk_user_role_role1_idx", columns={"role_id"})})
+ * @ORM\Table(name="user_role", indexes={@ORM\Index(name="fk_user_role_role1_idx", columns={"role_id"}), @ORM\Index(name="fk_user_role_user1_idx", columns={"user_id"})})
  * @ORM\Entity
  */
 class UserRole
@@ -22,16 +22,6 @@ class UserRole
     private $id;
 
     /**
-     * @var \Role
-     *
-     * @ORM\ManyToOne(targetEntity="Role")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
-     * })
-     */
-    private $role;
-
-    /**
      * @var \User
      *
      * @ORM\ManyToOne(targetEntity="User")
@@ -40,6 +30,16 @@ class UserRole
      * })
      */
     private $user;
+
+    /**
+     * @var \Role
+     *
+     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="role_id", referencedColumnName="id")
+     * })
+     */
+    private $role;
 
 
 
@@ -51,30 +51,6 @@ class UserRole
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set role.
-     *
-     * @param \Role|null $role
-     *
-     * @return UserRole
-     */
-    public function setRole(\Role $role = null)
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * Get role.
-     *
-     * @return \Role|null
-     */
-    public function getRole()
-    {
-        return $this->role;
     }
 
     /**
@@ -99,5 +75,29 @@ class UserRole
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set role.
+     *
+     * @param \Role|null $role
+     *
+     * @return UserRole
+     */
+    public function setRole(\Role $role = null)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role.
+     *
+     * @return \Role|null
+     */
+    public function getRole()
+    {
+        return $this->role;
     }
 }

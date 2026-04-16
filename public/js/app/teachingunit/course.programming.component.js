@@ -7,8 +7,9 @@ angular.module('teachingunit')
         }).component('classroom',{
             controller: programmingCtrl,
             templateUrl: 'classroom',
-        });
-function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr){
+        })
+
+function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarConfig,toastr,$filter){
     var $ctrl = this;
     
    /* $ctrl.times = [{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
@@ -16,6 +17,9 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
     {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
     {id:20,time:"17:30:00",name:"17h30"}]*/
+
+
+$scope.selectedItems = null;
     
     $ctrl.times = [{id:0,time:"07:30:00-09:30:00",name:"7h30-9h30"},{id:1,time:"10:00:00-12:00:00",name:"10h00-12h00"},
     {id:2,time:"13:00:00-15:00:00",name:"13h00-15h00"},
@@ -26,6 +30,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     $ctrl.startingTime = null;
     $ctrl.endingTime = null;
     $ctrl.timeFrame = null;
+    $ctrl.classroom = null;
 
     $ctrl.schedlingUpdate = false;
     $ctrl.isActivatedUeSelect = false;
@@ -108,13 +113,13 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
                    $ctrl.startingTime = $ctrl.startingTime[0];
                    $ctrl.endingTime = $ctrl.times.filter(function(item) { return item.time === response.data[0].endingTime; }); 
                    $ctrl.endingTime = $ctrl.endingTime[0]; 
-                   $ctrl.timeFrame = $ctrl.times.filter(function(item) { return item.time === response.data[0].timeFrame; }); console.log($ctrl.timeFrame)
+                   $ctrl.timeFrame = $ctrl.times.filter(function(item) { return item.time === response.data[0].timeFrame; }); 
                    $ctrl.timeFrame = $ctrl.timeFrame[0]
                    $ctrl.date = response.data[0].dateScheduled.date;
                    
                    $ctrl.selectedSem = response.data[0].semester;
                    $ctrl.classroom = response.data[0].classroom;
-                console.log($ctrl.classroom)
+                
                    
                    //**************************************************
                     $ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id)
@@ -207,8 +212,13 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
         
       }
     };    
+$scope.handleSelection = function(item,select)
+{
+    if(!item.isLeaf || item.level !=2) select.selected = undefined;
+}
 
  $ctrl.init = function(){
+   
 
     //Loading classes of study asynchronously
     $ctrl.query = function(classe)
@@ -317,6 +327,16 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     if($ctrl.selectedClasse)
     {
         var data = {id: $ctrl.selectedClasse.id};
+        $scope.flattenTree = function(data, level = 0) {
+          let result = [];
+          data.forEach(node => {
+            result.push({ name: node.name, level, isLeaf: node.isLeaf || false });
+            if (node.children) {
+              result = result.concat($scope.flattenTree(node.children, level + 1));
+          }; 
+        }); return result};
+
+       
         var config = {
         params: data,
         headers : {'Accept' : 'application/json'}
@@ -324,6 +344,7 @@ function programmingCtrl($timeout,$http,$location,$mdDialog,$scope,uiCalendarCon
     
                         $http.get('getClassroomsAssignedToClass',config).then(function(response){
                         $ctrl.classrooms = response.data[0];
+                        $scope.flattenedItems = $scope.flattenTree($ctrl.classrooms); 
                     })
                 }
 
@@ -671,7 +692,7 @@ $ctrl.loadForValidation = function(ev)
     $ctrl.dataToSchedule.slectedSem = $ctrl.selectedSem;
     $ctrl.dataToSchedule.slectedClasse = $ctrl.selectedClasse;
     $ctrl.dataToSchedule.slectedSuject= $ctrl.selectedSublect;
-    $ctrl.dataToSchedule.classroom= $ctrl.classroom;
+    $ctrl.dataToSchedule.classroom= $ctrl.classroom.id;
     $ctrl.dataToSchedule.scheduleType = $ctrl.scheduleType;   
     
     $ctrl.courseSchedulingDialog = function(timeFrames,ev){

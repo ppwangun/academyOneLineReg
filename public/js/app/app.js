@@ -5,6 +5,7 @@ angular.module('myApp', [
   'ngMaterial',
   'ngMessages',
   'ngRoute',
+  'ngSanitize',
   'toastr',
   'angular-loading-bar',
   'dashboard',
@@ -27,7 +28,9 @@ angular.module('myApp', [
   'datatables',
   'datatables.buttons',
   'datatables.fixedheader',
-  'ui.calendar', 
+  'ui.calendar',
+  'ui.select',
+  
 
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
@@ -160,6 +163,9 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
           .when('/scholarshipCertificates',{
               templateUrl: 'scholarshipCertificates'
           }) 
+          .when('/financialStatements',{
+              templateUrl: 'financialStatements'
+          })           
           .when('/studentCards',{
               templateUrl: 'studentCards'
           })          
@@ -177,6 +183,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
           .when('/moratorium', {
               template: '<moratorium-list></moratorium-list>'
               
+          }).when('/examSessions',{
+              template: '<exam-Sessions></exam-Sessions>'
           }).when('/newmoratorium',{
               template: '<new-moratorium></new-moratorium>'
           }).when('/examlist',{
@@ -196,6 +204,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
               template: '<new-grade></new-grade>'
           }).when('/newgrade/:id',{
               template: '<new-grade></new-grade>'
+          }).when('/evalWeightMgt',{
+              template: '<eval-weight-mgt></eval-weight-mgt>'
           }).when('/settings',{
               template: '<settings></settings>'
           }).when('/deliberation',{

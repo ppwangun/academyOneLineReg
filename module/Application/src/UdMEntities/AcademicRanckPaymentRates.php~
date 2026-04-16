@@ -29,14 +29,18 @@ class AcademicRanckPaymentRates
     private $amount;
 
     /**
-     * @var \TeacherPaymentRate
+     * @var float|null
      *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentRate")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_rate_id", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="amount_theoritical", type="float", precision=10, scale=0, nullable=true)
      */
-    private $teacherPaymentRate;
+    private $amountTheoritical;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="amount_practical", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $amountPractical;
 
     /**
      * @var \AcademicRanck
@@ -47,6 +51,16 @@ class AcademicRanckPaymentRates
      * })
      */
     private $academicRanck;
+
+    /**
+     * @var \TeacherPaymentRate
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentRate")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_rate_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentRate;
 
 
 }

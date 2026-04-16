@@ -13,8 +13,8 @@ use Application\Entity\Grade;
  */
 class GradeValueRange
 {
-    /**
-     * @var integer
+   /**
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -23,46 +23,53 @@ class GradeValueRange
     private $id;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="minsur20", type="float", precision=10, scale=0, nullable=true)
      */
     private $minsur20;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="maxsur20", type="float", precision=10, scale=0, nullable=true)
      */
     private $maxsur20;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="minsur100", type="float", precision=10, scale=0, nullable=true)
      */
     private $minsur100;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="maxsur100", type="float", precision=10, scale=0, nullable=true)
      */
     private $maxsur100;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="grade_value", type="string", length=45, nullable=true)
      */
     private $gradeValue;
 
     /**
-     * @var float
+     * @var float|null
      *
      * @ORM\Column(name="grade_points", type="float", precision=10, scale=0, nullable=true)
      */
     private $gradePoints;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="result_status", type="string", length=45, nullable=true)
+     */
+    private $resultStatus;
 
     /**
      * @var Grade
@@ -77,9 +84,9 @@ class GradeValueRange
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -87,13 +94,13 @@ class GradeValueRange
     }
 
     /**
-     * Set minsur20
+     * Set minsur20.
      *
-     * @param float $minsur20
+     * @param float|null $minsur20
      *
      * @return GradeValueRange
      */
-    public function setMinsur20($minsur20)
+    public function setMinsur20($minsur20 = null)
     {
         $this->minsur20 = $minsur20;
 
@@ -101,9 +108,9 @@ class GradeValueRange
     }
 
     /**
-     * Get minsur20
+     * Get minsur20.
      *
-     * @return float
+     * @return float|null
      */
     public function getMinsur20()
     {
@@ -111,13 +118,13 @@ class GradeValueRange
     }
 
     /**
-     * Set maxsur20
+     * Set maxsur20.
      *
-     * @param float $maxsur20
+     * @param float|null $maxsur20
      *
      * @return GradeValueRange
      */
-    public function setMaxsur20($maxsur20)
+    public function setMaxsur20($maxsur20 = null)
     {
         $this->maxsur20 = $maxsur20;
 
@@ -125,9 +132,9 @@ class GradeValueRange
     }
 
     /**
-     * Get maxsur20
+     * Get maxsur20.
      *
-     * @return float
+     * @return float|null
      */
     public function getMaxsur20()
     {
@@ -135,13 +142,13 @@ class GradeValueRange
     }
 
     /**
-     * Set minsur100
+     * Set minsur100.
      *
-     * @param float $minsur100
+     * @param float|null $minsur100
      *
      * @return GradeValueRange
      */
-    public function setMinsur100($minsur100)
+    public function setMinsur100($minsur100 = null)
     {
         $this->minsur100 = $minsur100;
 
@@ -149,9 +156,9 @@ class GradeValueRange
     }
 
     /**
-     * Get minsur100
+     * Get minsur100.
      *
-     * @return float
+     * @return float|null
      */
     public function getMinsur100()
     {
@@ -159,13 +166,13 @@ class GradeValueRange
     }
 
     /**
-     * Set maxsur100
+     * Set maxsur100.
      *
-     * @param float $maxsur100
+     * @param float|null $maxsur100
      *
      * @return GradeValueRange
      */
-    public function setMaxsur100($maxsur100)
+    public function setMaxsur100($maxsur100 = null)
     {
         $this->maxsur100 = $maxsur100;
 
@@ -173,9 +180,9 @@ class GradeValueRange
     }
 
     /**
-     * Get maxsur100
+     * Get maxsur100.
      *
-     * @return float
+     * @return float|null
      */
     public function getMaxsur100()
     {
@@ -183,13 +190,13 @@ class GradeValueRange
     }
 
     /**
-     * Set gradeValue
+     * Set gradeValue.
      *
-     * @param string $gradeValue
+     * @param string|null $gradeValue
      *
      * @return GradeValueRange
      */
-    public function setGradeValue($gradeValue)
+    public function setGradeValue($gradeValue = null)
     {
         $this->gradeValue = $gradeValue;
 
@@ -197,9 +204,9 @@ class GradeValueRange
     }
 
     /**
-     * Get gradeValue
+     * Get gradeValue.
      *
-     * @return string
+     * @return string|null
      */
     public function getGradeValue()
     {
@@ -207,13 +214,13 @@ class GradeValueRange
     }
 
     /**
-     * Set gradePoints
+     * Set gradePoints.
      *
-     * @param float $gradePoints
+     * @param float|null $gradePoints
      *
      * @return GradeValueRange
      */
-    public function setGradePoints($gradePoints)
+    public function setGradePoints($gradePoints = null)
     {
         $this->gradePoints = $gradePoints;
 
@@ -221,9 +228,9 @@ class GradeValueRange
     }
 
     /**
-     * Get gradePoints
+     * Get gradePoints.
      *
-     * @return float
+     * @return float|null
      */
     public function getGradePoints()
     {
@@ -231,9 +238,33 @@ class GradeValueRange
     }
 
     /**
-     * Set grade
+     * Set resultStatus.
      *
-     * @param Grade $grade
+     * @param string|null $resultStatus
+     *
+     * @return GradeValueRange
+     */
+    public function setResultStatus($resultStatus = null)
+    {
+        $this->resultStatus = $resultStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get resultStatus.
+     *
+     * @return string|null
+     */
+    public function getResultStatus()
+    {
+        return $this->resultStatus;
+    }
+
+    /**
+     * Set grade.
+     *
+     * @param Grade|null $grade
      *
      * @return GradeValueRange
      */
@@ -245,9 +276,9 @@ class GradeValueRange
     }
 
     /**
-     * Get grade
+     * Get grade.
      *
-     * @return Grade
+     * @return Grade|null
      */
     public function getGrade()
     {

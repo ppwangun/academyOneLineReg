@@ -169,7 +169,32 @@ $scope.savePymtTransaction= function(std){
         });        
     }; 
     
-    
+ /*--------------------------------------------------------------------------
+     *---------------------------Loading files ---------------------------------
+     *----------------------------------------------------------------------- */
+    $ctrl.loadStdFees = function(ev){
+        $scope.isUpdate= true;
+       
+       
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'js/app/payment/uploadStdFees.html',
+          parent: angular.element(document.body),
+         // parent: angular.element(document.querySelector('#component-tpl')),
+          scope: $scope,
+          preserveScope: true,
+          autoWrap: false,
+          targetEvent: ev,
+          clickOutsideToClose:false,
+          fullscreen: true // Only for -xs, -sm breakpoints.
+        })
+        .then(function(answer) {
+          
+          $ctrl.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $ctrl.status = 'You cancelled the dialog.';
+        });        
+    };    
     /*--------------------------------------------------------------------------
      *---------------------------Loading subjects-------------------------------
      *----------------------------------------------------------------------- */
@@ -301,6 +326,32 @@ $scope.uploadStdPayments = function(){
         toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
     });
  }; 
+ 
+ 
+ $scope.uploadStdFees = function(){
+ 
+    var fd = new FormData();
+    var files = document.getElementById('file').files[0];
+    fd.append('file',files);
+
+    // AJAX request
+    $http({
+     method: 'post',
+     url: 'importStdFees',
+     data: fd,
+     headers: {'Content-Type': undefined},
+    }).then(function successCallback(response) { 
+      // Store response data
+      $scope.response = response.data[0];
+      response.data[0]?toastr.success('Import effectué avec succès'):toastr.error('Type de fichier incorrect', 'Erreur');
+      response.data[0]?$mdDialog.cancel():toastr.error('Erreur pendant le processus d\'importation', 'Erreur');
+      
+    } ,function errorCallback(){
+        toastr.error('Problème survenu lors de l\'import du fichier', 'Erreur');
+    });
+ }; 
+ 
+ 
  }
  
      /*--------------------------------------------------------------------------

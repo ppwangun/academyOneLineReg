@@ -42,5 +42,12 @@ class Taxes
      */
     private $value;
 
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="refundable", type="boolean", nullable=true)
+     */
+    private $refundable;
+
 
 }

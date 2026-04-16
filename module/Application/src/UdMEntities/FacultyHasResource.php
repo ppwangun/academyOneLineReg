@@ -22,16 +22,6 @@ class FacultyHasResource
     private $id;
 
     /**
-     * @var \Faculty
-     *
-     * @ORM\ManyToOne(targetEntity="Faculty")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
-     * })
-     */
-    private $faculty;
-
-    /**
      * @var \Resource
      *
      * @ORM\ManyToOne(targetEntity="Resource")
@@ -40,6 +30,16 @@ class FacultyHasResource
      * })
      */
     private $resource;
+
+    /**
+     * @var \Faculty
+     *
+     * @ORM\ManyToOne(targetEntity="Faculty")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="faculty_id", referencedColumnName="id")
+     * })
+     */
+    private $faculty;
 
 
 
@@ -51,30 +51,6 @@ class FacultyHasResource
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set faculty.
-     *
-     * @param \Faculty|null $faculty
-     *
-     * @return FacultyHasResource
-     */
-    public function setFaculty(\Faculty $faculty = null)
-    {
-        $this->faculty = $faculty;
-
-        return $this;
-    }
-
-    /**
-     * Get faculty.
-     *
-     * @return \Faculty|null
-     */
-    public function getFaculty()
-    {
-        return $this->faculty;
     }
 
     /**
@@ -99,5 +75,29 @@ class FacultyHasResource
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * Set faculty.
+     *
+     * @param \Faculty|null $faculty
+     *
+     * @return FacultyHasResource
+     */
+    public function setFaculty(\Faculty $faculty = null)
+    {
+        $this->faculty = $faculty;
+
+        return $this;
+    }
+
+    /**
+     * Get faculty.
+     *
+     * @return \Faculty|null
+     */
+    public function getFaculty()
+    {
+        return $this->faculty;
     }
 }

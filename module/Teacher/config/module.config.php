@@ -94,7 +94,17 @@ return [
                         'action'        => 'printBill',
                     ],
                 ],
-            ],   
+            ],
+            'cancelTeacherBill' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/cancelTeacherBill',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'        => 'cancelTeacherBill',
+                    ],
+                ],
+            ],            
             'printWorkloadFollowUp' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -283,7 +293,17 @@ return [
                         'action'=>'classroom'
                     ],
                 ],
-            ],             
+            ],  
+            'allClassrooms' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/allClassrooms[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\ResourceController::class,
+                        'action'=>'allClassrooms'
+                    ],
+                ],
+            ],            
             'programmingtpl' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -357,7 +377,7 @@ return [
             'loadTeacherBill' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/loadTeacherBill[/:teacherID][/:isBulkBilling]',
+                    'route'    => '/loadTeacherBill[/:teacherID][/:isBulkBilling][/:xportAmount][/:xportnbStay][/:isXportSupportingDocsAvailable]',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
                         'action'=>'loadTeacherBill'
@@ -415,6 +435,16 @@ return [
                     ],
                 ],
             ], 
+            'deletePymtGrid' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/deletePymtGrid[/:data]',
+                    'defaults' => [
+                        'controller' => Controller\PaymentController::class,
+                        'action'=>'deletePymtGrid'
+                    ],
+                ],
+            ],            
             'allPaymentTypes' => [
                 'type'    => Segment::class,
                 'options' => [
@@ -456,6 +486,11 @@ return [
             Controller\ResourceController::class => Controller\Factory\ResourceControllerFactory::class,
             Controller\ProgressionController::class => Controller\Factory\ProgressionControllerFactory::class,
             Controller\PaymentController::class => Controller\Factory\PaymentControllerFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+        Service\TeacherManager::class =>Service\Factory\TeacherManagerFactory::class,
         ],
     ],
     'view_manager' => [

@@ -54,6 +54,7 @@ return array(
     'Payment\\' => array($baseDir . '/module/Payment/src'),
     'Patrickmaken\\Web2Sms\\' => array($vendorDir . '/patrickmaken/web2sms-client/src'),
     'Patrickmaken\\AvlyText\\' => array($vendorDir . '/patrickmaken/avlytext-client/src'),
+    'NumberToWords\\' => array($vendorDir . '/neolinks/number-to-words/src', $vendorDir . '/kwn/number-to-words/src'),
     'Njine\\Odoo\\' => array($vendorDir . '/njine/odoo/src'),
     'Mpdf\\PsrLogAwareTrait\\' => array($vendorDir . '/mpdf/psr-log-aware-trait/src'),
     'Mpdf\\PsrHttpMessageShim\\' => array($vendorDir . '/mpdf/psr-http-message-shim/src'),

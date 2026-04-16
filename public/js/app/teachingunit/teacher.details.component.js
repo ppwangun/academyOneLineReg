@@ -111,6 +111,8 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     $ctrl.searchTeacher = "";
     $ctrl.selectedTeacher = null;
     $scope.tableBillsShow = 0;
+    $ctrl.nbStays = [{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9},{id:10}];
+    $ctrl.xport = {"amount":"","nbStay":0,"isXportSupportingDocsAvailable":0};
     
    $ctrl.billNumRef = null;
    $ctrl.isBulkBilling = false;
@@ -127,6 +129,8 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
      $http.get('teacherAssignedSubjects').then(function(response){
          $ctrl.ue = response.data[0];
      }),500);
+     
+     
      
     //Loading classes of study asynchronously
     $ctrl.query = function(classe)
@@ -222,6 +226,37 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
             
         });        
     }
+    
+    $ctrl.deleteBill = function(id,ev){
+        var data = {id: id}
+        
+        // Preparing the confirm windows
+          var confirm = $mdDialog.confirm()
+                .title('Voulez vous vraiment supprimer cette facture?')
+                .textContent('Toutes les données associées à cette facture seront perdues')
+                 // .ariaLabel('Lucky day')
+                .targetEvent(ev)
+                .ok('Supprimer')
+                .cancel('Annuler');
+        //open de confirm window
+        $mdDialog.show(confirm).then(function() {
+            //in case delete is pressee excute  the delete backend 
+            $http.post('cancelTeacherBill',data).then(
+              function successCallback(response){
+                  //check the index of the current object in the array
+                  var index = $scope.bills.findIndex(x => x.id === data.id)
+                  //remove the current object from the array
+                 
+                  $scope.bills.splice(index,1);
+                  toastr.success("Operation effectuée avec succès");
+console.log($scope.bills)
+             },
+            function errorCallback(response){
+                toastr.error("Une erreur inattendue s'est produite");
+                });
+        });        
+
+    }
 
   $ctrl.loadBills = function(selectectedTeacher,isBulkBilling)
   {
@@ -235,7 +270,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     };      
       
     $http.get('searchBill',config).then(function(response){
-        $ctrl.bills = response.data[0];
+        $scope.bills = response.data[0];
         $scope.tableBillsShow = 1
        
     });    
@@ -248,18 +283,17 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
       if(!isBulkBilling) teacherId = selectectedTeacher.id 
       
     var data = {teacherID: teacherId,isBulkBilling:isBulkBilling?1:0};
+    
     var config = {
     params: data,
     headers : {'Accept' : 'application/json'}
     };      
     $http.get('loadTeacherBill',config).then(function(response){
         var resp = response;
-        console.log(resp)
+        
         if(resp.data.info.resultat==="echec") toastr.error("Une erreur inattendue s'est produite");
         else
         {
-        
-
             var errorValue = response.data[0].error;
             
             if(errorValue===0)
@@ -289,7 +323,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     $scope.loadTeachers = function () {
         $scope.hasLoadedTeachers = null;
         $http.get(`teachers`).then(function (response) {
-            console.log(response)
+            
             $scope.teachers = response.data[0];
             $scope.hasLoadedTeachers = true;
         }, function (error) {
@@ -318,7 +352,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
         }, function (error) {
             console.error(error);
             $scope.hasLoadedCurrentTeacher = false;
-        });
+        })
     }
     
     $ctrl.printBill = function (ev) {
@@ -470,11 +504,23 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
     $scope.onViewDocument = function () {
         console.log("Viewing document")
     }
-    $scope.progtimes =[{id:0,time:"07:30:00",name:"7h30"},{id:1,time:"08:00:00",name:"8h00"},{id:2,time:"08:30:00",name:"8h30"},{id:3,time:"09:00:00",name:"9h00"},{id:4,time:"09:30:00",name:"9h30"},
-    {id:5,time:"10:00:00",name:"10h00"},{id:6,time:"10:30:00",name:"10h30"},{id:7,time:"11:00:00",name:"11h00"},{id:8,time:"11:30:00",name:"11h30"},{id:9,time:"12:00:00",name:"12h00"},
-    {id:10,time:"12:30:00",name:"12h30"},{id:11,time:"13:00:00",name:"13h00"},{id:12,time:"13:30:00",name:"13h30"},{id:13,time:"14:00:00",name:"14h00"},{id:14,time:"14:30:00",name:"14h30"},
-    {id:15,time:"15:00:00",name:"15h00"},{id:16,time:"15:30:00",name:"15h30"},{id:17,time:"16:00:00",name:"16h00"},{id:18,time:"16:30:00",name:"16h30"},{id:19,time:"17:00:00",name:"17h00"},
-    {id:20,time:"17:30:00",name:"17h30"}]
+    $scope.progtimes =[
+    {time:"07:15:00",name:"7h15"},{time:"07:30:00",name:"7h30"},{time:"07:45:00",name:"7h45"},{time:"08:00:00",name:"8h00"},
+    {time:"08:15:00",name:"8h15"},{time:"08:30:00",name:"8h30"},{time:"08:45:00",name:"8h45"},{time:"09:00:00",name:"9h00"},
+    {time:"09:15:00",name:"9h15"},{time:"09:30:00",name:"9h30"},{time:"09:45:00",name:"9h45"}, {time:"10:00:00",name:"10h00"},
+    {time:"10:15:00",name:"10h15"},{time:"10:30:00",name:"10h30"},{time:"10:45:00",name:"10h45"},{time:"11:00:00",name:"11h00"},
+    {time:"11:15:00",name:"11h15"},{time:"11:30:00",name:"11h30"},{time:"11:45:00",name:"11h45"},{time:"12:00:00",name:"12h00"},
+    {time:"12:15:00",name:"12h15"},{time:"12:30:00",name:"12h30"},{time:"12:45:00",name:"12h45"},{time:"13:00:00",name:"13h00"},
+    {time:"13:15:00",name:"13h15"},{time:"13:30:00",name:"13h30"}, {time:"13:45:00",name:"13h45"},{time:"14:00:00",name:"14h00"},
+    {time:"14:15:00",name:"14h15"},{time:"14:30:00",name:"14h30"},{time:"14:45:00",name:"14h45"}, {time:"15:00:00",name:"15h00"},
+    {time:"15:15:00",name:"15h15"},{time:"15:30:00",name:"15h30"},{time:"15:45:00",name:"15h45"},{time:"16:00:00",name:"16h00"},
+    {time:"16:15:00",name:"16h15"},{time:"16:30:00",name:"16h30"},{time:"16:45:00",name:"16h45"},{time:"17:00:00",name:"17h00"},
+    {time:"17:15:00",name:"17h15"},{time:"17:30:00",name:"17h30"},{time:"17:45:00",name:"17h45"},{time:"18:00:00",name:"18h00"},
+    {time:"18:15:00",name:"18h15"},{time:"18:30:00",name:"18h30"},{time:"18:45:00",name:"18h45"},{time:"19:00:00",name:"19h00"},
+    {time:"19:15:00",name:"19h15"},{time:"19:30:00",name:"19h30"},{time:"19:45:00",name:"19h45"},{time:"20:00:00",name:"20h00"},
+    {time:"20:15:00",name:"20h15"},{time:"20:30:00",name:"20h30"}, {time:"20:45:00",name:"20h45"},{time:"21:00:00",name:"21h00"},
+    {time:"21:15:00",name:"21h15"},{time:"21:30:00",name:"21h30"},{time:"21:45:00",name:"21h45"},{time:"22:00:00",name:"22h00"},
+    {time:"22:15:00",name:"22h15"},{time:"22:30:00",name:"22h30"}, {time:"22:45:00",name:"22h45"},]
 
 
     $scope.openNewProgressionDialog = function (ev) {
@@ -565,7 +611,7 @@ function teacherListController($scope, $mdDialog, $http, $timeout,DTOptionsBuild
      isBulkBilling = isBulkBilling?1:0
     $mdDialog.show({
           controller: DialogController,
-          templateUrl: 'loadTeacherBill/'+teacherId+'/'+isBulkBilling,
+          templateUrl: 'loadTeacherBill/'+teacherId+'/'+isBulkBilling+"/"+$ctrl.xport.amount+"/"+$ctrl.xport.nbStay+"/"+$ctrl.xport.isXportSupportingDocsAvailable,
           parent: angular.element(document.body),
          // parent: angular.element(document.querySelector('#component-tpl')),
           scope: $scope,

@@ -7,6 +7,7 @@ use Laminas\ServiceManager\Factory\InvokableFactory;
 
 
 return [
+    
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
@@ -14,6 +15,7 @@ return [
             Controller\SettingsController::class => Controller\Factory\SettingsControllerFactory::class,
             Controller\AcadYearController::class => Controller\Factory\AcadYearControllerFactory::class,
             Controller\SemesterController::class => Controller\Factory\SemesterControllerFactory::class,
+            Controller\ExamSessionController::class => Controller\Factory\ExamSessionControllerFactory::class,
             Controller\FacultyController::class => Controller\Factory\FacultyControllerFactory::class,
             Controller\SchoolController::class => Controller\Factory\SchoolControllerFactory::class,
             Controller\DepartmentController::class => Controller\Factory\DepartmentControllerFactory::class,
@@ -127,6 +129,15 @@ return [
                     ],
                 ],
             ],
+            'examSession' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/examSession[/:toggleSession][/:id]',
+                    'defaults' => [
+                        'controller' => Controller\ExamSessionController::class,
+                    ],
+                ],
+            ],            
             'facultytpl' => [
                 'type'    => Literal::class,
                 'options' => [
@@ -733,7 +744,57 @@ return [
                         'action'        => 'getOdooSettings',
                     ],
                 ],
-            ],             
+            ],   
+            'createTaxesOrWithholdings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/createTaxesOrWithholdings',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'createTaxesOrWithholdings',
+                    ],
+                ],
+            ], 
+            'toggleSession' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/toggleSession',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'toggleSession',
+                    ],
+                ],
+            ], 
+            'loadSessionsBySem' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/loadSessionsBySem',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'loadSessionsBySem',
+                    ],
+                ],
+            ],            
+            'newExamSession' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/newExamSession',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'newExamSession',
+                    ],
+                ],
+            ],            
+            'allTaxesAndWithholdings' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/allTaxesAndWithholdings',
+                    'defaults' => [
+                        'controller' => Controller\SettingsController::class,
+                        'action'        => 'allTaxesAndWithholdings',
+                    ],
+                ],
+            ],            
         ],
     ],
     'view_manager' => [
@@ -763,6 +824,7 @@ return [
             'school-global-config/index/newteachingunitpl' => __DIR__.'/../view/schoolglobalconfig/Index/newteachingunitpl.phtml',
             'school-global-config/index/dashboard' => __DIR__ .'/../view/schoolglobalconfig/Index/dashboard.phtml',
             'school-global-config/settings/settings' => __DIR__ .'/../view/schoolglobalconfig/Settings/settings.phtml',
+            'school-global-config/settings/exam-sessions-list' => __DIR__ .'/../view/schoolglobalconfig/Settings/exam-sessions-list.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',

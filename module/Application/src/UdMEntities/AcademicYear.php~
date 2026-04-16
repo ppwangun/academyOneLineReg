@@ -133,19 +133,5 @@ class AcademicYear
      */
     private $totalsmssent;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="ClassOfStudy", mappedBy="academicYear")
-     */
-    private $classOfStudy = array();
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->classOfStudy = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
 }

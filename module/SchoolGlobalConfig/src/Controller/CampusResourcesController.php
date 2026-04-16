@@ -16,6 +16,7 @@ use Application\Entity\Faculty;
 use Application\Entity\FacultyHasResource;
 use Application\Entity\ClassOfStudy;
 use Application\Entity\FieldOfStudy;
+use Application\Entity\ResourceCategory;
 
 
 
@@ -319,16 +320,21 @@ class CampusResourcesController extends AbstractActionController
                 { 
                     $hydrator = new ReflectionHydrator(); 
                     $data = $hydrator->extract($class);
+                    $data['campus'] = "";
 
                     $classrooms[$i] = $data; $i++;
                 }
             }            
             
+    $categories = $this->entityManager->getRepository(ResourceCategory::class)->findBy([],["id"=>"ASC"]);
+    $tree = $this->buildTree($categories);
+    
+         
 
             
             return new JsonModel([
                // $this->getFaculty($data["school_id"])
-                $classrooms
+                $tree
                 ]);           
             
             $this->entityManager->getConnection()->comit();
@@ -385,7 +391,35 @@ class CampusResourcesController extends AbstractActionController
         }
         
         
-    }      
+    } 
+    
+public function buildTree(array $elements, $parentId = null, $level=0): array {
+    $branch = [];
+    
+
+    foreach ($elements as $element)
+    { 
+    
+        $elementParent = $element->getParent();
+        $elementParentId = $elementParent ? $elementParent->getId() : null;
+      
+        if ($elementParentId ===$parentId) {
+            $children =$this->buildTree($elements,$element->getId(),$level+1);
+            $branch[] = [
+                'id' =>$element->getId(),
+                'name' => $element->getName(),
+                'children' =>$children,
+                'isLeaf' => empty($children),
+                'level' => $level
+            ];
+        }
+    }
+        
+
+        return $branch;
+
+        
+}    
 
     
 }

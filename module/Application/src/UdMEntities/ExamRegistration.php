@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ExamRegistration
  *
- * @ORM\Table(name="exam_registration", indexes={@ORM\Index(name="fk_exam_registration_exam1_idx", columns={"exam_id"}), @ORM\Index(name="fk_exam_registration_student1_idx", columns={"student_id"})})
+ * @ORM\Table(name="exam_registration", indexes={@ORM\Index(name="fk_exam_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_exam_registration_exam1_idx", columns={"exam_id"})})
  * @ORM\Entity
  */
 class ExamRegistration
@@ -64,6 +64,16 @@ class ExamRegistration
     private $ismarkfromcatchupexam = '0';
 
     /**
+     * @var \Exam
+     *
+     * @ORM\ManyToOne(targetEntity="Exam")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
+     * })
+     */
+    private $exam;
+
+    /**
      * @var \Student
      *
      * @ORM\Id
@@ -74,16 +84,6 @@ class ExamRegistration
      * })
      */
     private $student;
-
-    /**
-     * @var \Exam
-     *
-     * @ORM\ManyToOne(targetEntity="Exam")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
-     * })
-     */
-    private $exam;
 
 
 
@@ -256,30 +256,6 @@ class ExamRegistration
     }
 
     /**
-     * Set student.
-     *
-     * @param \Student $student
-     *
-     * @return ExamRegistration
-     */
-    public function setStudent(\Student $student)
-    {
-        $this->student = $student;
-
-        return $this;
-    }
-
-    /**
-     * Get student.
-     *
-     * @return \Student
-     */
-    public function getStudent()
-    {
-        return $this->student;
-    }
-
-    /**
      * Set exam.
      *
      * @param \Exam|null $exam
@@ -301,5 +277,29 @@ class ExamRegistration
     public function getExam()
     {
         return $this->exam;
+    }
+
+    /**
+     * Set student.
+     *
+     * @param \Student $student
+     *
+     * @return ExamRegistration
+     */
+    public function setStudent(\Student $student)
+    {
+        $this->student = $student;
+
+        return $this;
+    }
+
+    /**
+     * Get student.
+     *
+     * @return \Student
+     */
+    public function getStudent()
+    {
+        return $this->student;
     }
 }

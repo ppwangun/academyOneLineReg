@@ -12,6 +12,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Registration\Controller\StdAdmissionController;
 use Registration\Service\StudentManager;
+use User\Service\UserManager;
 
 /**
  * This is the factory for IndexController. Its purpose is to instantiate the
@@ -25,8 +26,9 @@ class StdAdmissionControllerFactory implements FactoryInterface
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $sessionContainer = $container->get('LoggedInUser');
         $studentManager = new StudentManager($entityManager);
+        $userManager = $container->get(UserManager::class);
         
         // Instantiate the controller and inject dependencies
-        return new StdAdmissionController($entityManager,$studentManager,$sessionContainer);
+        return new StdAdmissionController($entityManager,$studentManager,$sessionContainer,$userManager);
     }
 }

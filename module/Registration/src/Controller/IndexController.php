@@ -248,7 +248,7 @@ class IndexController extends AbstractActionController
             {  
                     $classes ="(".$classes.")";
                     $conn = $this->entityManager->getConnection();
-                    if($data['classeId'] != -1)
+                    if($data['classeId'] != -1)  
                     $sql = '
                         SELECT s.id,s.matricule,s.nom,s.prenom,c.code
                         FROM student s
@@ -257,8 +257,7 @@ class IndexController extends AbstractActionController
                         ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
                         WHERE a.academic_year_id = :acadYrId 
                         AND s.matricule like :matricule 
-                        AND c.id = :classe 
-                        AND a.status=1;
+                        AND c.id = :classe;
                         ';
                     else
                     $sql = '
@@ -268,9 +267,7 @@ class IndexController extends AbstractActionController
                         INNER JOIN class_of_study c
                         ON ((s.id = a.student_id)AND (a.class_of_study_id = c.id ))
                         WHERE a.academic_year_id = :acadYrId 
-                        AND s.matricule like :matricule 
-
-                        AND a.status=1;
+                        AND s.matricule like :matricule; 
                         ';                        
 
                     $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
@@ -309,7 +306,7 @@ class IndexController extends AbstractActionController
                         WHERE a.academic_year_id = :acadYrId 
                         AND s.matricule like :matricule
                         AND a.class_of_study_id IN '.$classes.'
-                        AND a.status=1;
+                       ;
                         ';
 
                     $stmt = $conn->executeQuery($sql,array('acadYrId' => trim($data['acadYrId']),
@@ -495,6 +492,7 @@ class IndexController extends AbstractActionController
             $totalCreditsPerYear = $this->totalCreditsPerYear($classe,$acadYr);
             
             $grades = [];
+            $student = [];
         
             $studyLevel = $classe->getStudyLevel();
             $sem_rank = $sem->getRanking();
@@ -732,8 +730,8 @@ class IndexController extends AbstractActionController
                                 
                                 if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr)){  
                                 $stdAdminRegistration->setDecision("AJR");}
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
-                                   $stdAdminRegistration->setDecision("ADM");
+                                //elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
+                                //   $stdAdminRegistration->setDecision("ADM");
                                 //elseif(($ratioFailed <= 0.5))
                                     //$stdAdminRegistration->setDecision("ADM");                                
                                 elseif($ratio < 0.5)
@@ -744,11 +742,11 @@ class IndexController extends AbstractActionController
                                 //check backlog if tere is a single backlog the failed
                                 if(!$this->isCompulsorySubjectCleared($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");
-                                elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
-                                   $stdAdminRegistration->setDecision("ADM");
+                               // elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
+                                //   $stdAdminRegistration->setDecision("ADM");
                                 //check backlog if there is a single backlog the failed
-                               // elseif($this->isBacklogAvailable($std,$classe))
-                                //    $stdAdminRegistration->setDecision("AJR");                                
+                                elseif($this->isBacklogAvailable($std,$classe))
+                                    $stdAdminRegistration->setDecision("AJR");                                
                                 elseif($total_credits_cycle-$total_credits_valides_cycle>30)
                                         $stdAdminRegistration->setDecision("AJR");                               
                                // elseif($ratioFailed <= 0.5)

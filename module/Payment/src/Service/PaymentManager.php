@@ -231,6 +231,37 @@ class PaymentManager {
       
    }
    
+   public function importStdFees($data)
+   {
+       $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($data["matricule"]);
+       //Check 
+       if($student)
+       {
+            $std = $this->entityManager->getRepository(Student::class)->findOneByMatricule($student->getId());
+            $academicYear = $this->entityManager->getRepository(AcademicYear::class)->findOneByOnlineRegistrationDefaultYear(1);
+            $adminRegistration = $this->entityManager->getRepository(AdminRegistration::class)->findOneBy(array("student"=>$std,"academicYear"=>$academicYear));
+            if($adminRegistration)
+            {
+                 $currentDate  = date_create(date('Y-m-d H:i:s'));
+                //check if balance was already registered
+                $payment = $this->entityManager->getRepository(Payment::class)->findOneBy(array("adminRegistration"=>$adminRegistration,"academicYear"=>$academicYear,"fromBalance"=>1));
+                if($payment)
+                {
+                    //$payment->setAmount($data["encaissement"]);
+                    //$payment->setDateTransaction($currentDate);
+                    //$payment->setFromBalance(1);
+                    $adminRegistration->setFeesDotation($data["montant"]);
+                   // $adminRegistration->setFeesBalanceFromPreviousYear($data["impaye"]);                    
+                }
+
+                
+                $this->entityManager->flush(); 
+            }
+       }
+
+      
+   }   
+   
    public function importPayments($data)
    {
        $student = $this->entityManager->getRepository(RegisteredStudentForActiveRegistrationYearView::class)->find($data["matricule"]);

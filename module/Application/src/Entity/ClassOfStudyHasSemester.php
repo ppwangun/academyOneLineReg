@@ -12,6 +12,7 @@ use Application\Entity\ClassOfStudy;
 use Application\Entity\Semester;
 use Application\Entity\Contract;
 use Application\Entity\Teacher;
+use Application\Entity\PaymentTeachingAssignmentMethod;
 
 /**
  * ClassOfStudyHasSemester
@@ -192,7 +193,15 @@ class ClassOfStudyHasSemester
      */
     private $teachingUnit;
 
-
+    /**
+     * @var PaymentTeachingAssignmentMethod
+     *
+     * @ORM\ManyToOne(targetEntity="PaymentTeachingAssignmentMethod")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="payment_teaching_assignment_method_id", referencedColumnName="id")
+     * })
+     */
+    private $paymentTeachingAssignment;
 
     /**
      * Get id.
@@ -707,4 +716,29 @@ class ClassOfStudyHasSemester
     {
         return $this->teachingUnit;
     }
+
+    /**
+     * Set paymentTeachingAssignment.
+     *
+     * @param PaymentTeachingAssignmentMethod|null $paymentTeachingAssignment
+     *
+     * @return TeachingUnit
+     */
+    public function setPaymentTeachingAssignment(PaymentTeachingAssignmentMethod $paymentTeachingAssignment = null)
+    {
+        $this->paymentTeachingAssignment = $paymentTeachingAssignment;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentTeachingAssignment.
+     *
+     * @return PaymentTeachingAssignmentMethod|null
+     */
+    public function getPaymentTeachingAssignment()
+    {
+        return $this->paymentTeachingAssignment;
+    }    
+    
 }

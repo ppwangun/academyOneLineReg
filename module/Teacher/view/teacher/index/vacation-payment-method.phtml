@@ -34,7 +34,7 @@ li.active a.ng-binding {
             <div class = "col-xs-6">
                 
               
-                <md-checkbox  ng-model="$ctrl.applyByTrainingType" ng-disabled=""  ng-click ='' aria-label="Checkbox Indeterminate" ng-
+                <md-checkbox  ng-model="$ctrl.applyByTrainingType" ng-disabled=""  ng-click ='$ctrl.switchCriteria()' aria-label="Checkbox Indeterminate" ng-
                                
                     ng-true-value="1"
                     ng-false-value="0"             
@@ -98,14 +98,34 @@ li.active a.ng-binding {
                         </div>
                     </md-input-container> 
                     
-                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' require ='$ctrl.paymentMethod===1' style="margin-top: 30px">
-                        <label>Coût horaire:</label>
-                        <input name="amount" ng-model="$ctrl.amount" ng-required='$ctrl.paymentMethod===1' />
-                            <div ng-messages="paymentMethodForm.amount.$error">
-                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
-                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire CM:</label>
+                        <input name="amountT" ng-model="$ctrl.amountTheoritical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amountT.$error">
+                                <div ng-message="required">le champ montant horaire obligatoire</div>
+
                             </div> 
                     </md-input-container>
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire TD/TP:</label>
+                        <input name="amountp" ng-model="$ctrl.amountPractical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amountP.$error">
+                                <div ng-message="required">le champ montant horaire est obligatoire</div>
+                            </div> 
+                    </md-input-container> 
+                    
+                    <md-input-container style="margin-top: 30px" ng-show='$ctrl.paymentMethod===0'>
+                        <label>Choix d'une grille de paiment:</label>
+
+                        <md-select name="paymentGrid"  ng-model="$ctrl.paymentGrid"     ng-required='$ctrl.paymentMethod===0'>
+                            <md-option  ng-disabled="true"><em>---Choix de la grille de paiement---</em></md-option>
+                            <md-option    ng-repeat="pymt in allPaymentTypes" ng-value='pymt.id'> {{pymt.description}}</md-option>                        
+                        </md-select>
+                        <div class="errors" ng-messages="paymentMethodForm.paymentMethod.$error">
+                            <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container>                      
 
                 </div>                 
            
@@ -167,13 +187,33 @@ li.active a.ng-binding {
                     </md-input-container> 
                     
                     <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
-                        <label>Coût horaire:</label>
-                        <input name="amount" ng-model="$ctrl.amount" ng-required='$ctrl.paymentMethod===1' />
-                            <div ng-messages="paymentMethodForm2.amount.$error">
-                                <div ng-message="required">le champ code de spécialité est obligatoire</div>
-                                <div ng-message="minlength">le code doit avoir au moins 2 caractères</div>
+                        <label>Coût horaire CM:</label>
+                        <input name="amountT" ng-model="$ctrl.amountTheoritical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amountT.$error">
+                                <div ng-message="required">le champ montant horaire est obligatoire</div>
                             </div> 
                     </md-input-container>
+                    
+                    <md-input-container class="md-block" flex-gt-sm ng-show='$ctrl.paymentMethod===1' style="margin-top: 30px">
+                        <label>Coût horaire TD/TP:</label>
+                        <input name="amountp" ng-model="$ctrl.amountPractical" ng-required='$ctrl.paymentMethod===1' />
+                            <div ng-messages="paymentMethodForm2.amountp.$error">
+                                <div ng-message="required">le champ montant horaire est obligatoire</div>
+                                
+                            </div> 
+                    </md-input-container> 
+                    
+                    <md-input-container style="margin-top: 30px" ng-show='$ctrl.paymentMethod===0'>
+                        <label>Choix d'une grille de paiment:</label>
+
+                        <md-select name="paymentGrid"  ng-model="$ctrl.paymentGrid"     ng-required='$ctrl.paymentMethod===0'>
+                            <md-option  ng-disabled="true"><em>---Choix de la grille de paiement---</em></md-option>
+                            <md-option    ng-repeat="pymt in allPaymentTypes" ng-value='pymt.id'> {{pymt.description}}</md-option>                        
+                        </md-select>
+                        <div class="errors" ng-messages="paymentMethodForm.paymentMethod.$error">
+                            <div ng-message="required">Champ obligatoire</div>
+                        </div>
+                    </md-input-container>                     
 
                 </div>                 
          
