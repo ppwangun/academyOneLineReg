@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ExamRegistration
  *
- * @ORM\Table(name="exam_registration", indexes={@ORM\Index(name="fk_exam_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_exam_registration_exam1_idx", columns={"exam_id"})})
+ * @ORM\Table(name="exam_registration", indexes={@ORM\Index(name="fk_exam_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_exam_registration_exam_session1_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_exam_registration_exam1_idx", columns={"exam_id"})})
  * @ORM\Entity
  */
 class ExamRegistration
@@ -64,16 +64,6 @@ class ExamRegistration
     private $ismarkfromcatchupexam = '0';
 
     /**
-     * @var \Exam
-     *
-     * @ORM\ManyToOne(targetEntity="Exam")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
-     * })
-     */
-    private $exam;
-
-    /**
      * @var \Student
      *
      * @ORM\Id
@@ -84,6 +74,26 @@ class ExamRegistration
      * })
      */
     private $student;
+
+    /**
+     * @var \Exam
+     *
+     * @ORM\ManyToOne(targetEntity="Exam")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_id", referencedColumnName="id")
+     * })
+     */
+    private $exam;
+
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;
 
 
 }

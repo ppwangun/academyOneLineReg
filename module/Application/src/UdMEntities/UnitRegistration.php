@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UnitRegistration
  *
- * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_admin_registration1_idx", columns={"admin_registration_id"}), @ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_unit_registration_exam_session2_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_unit_registration_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"})})
+ * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_exam_session2_idx", columns={"exam_session_id"}), @ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_unit_registration_subject1_idx", columns={"subject_id"}), @ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_unit_registration_admin_registration1_idx", columns={"admin_registration_id"}), @ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"})})
  * @ORM\Entity
  */
 class UnitRegistration
@@ -735,30 +735,6 @@ class UnitRegistration
     }
 
     /**
-     * Set semester.
-     *
-     * @param \Semester|null $semester
-     *
-     * @return UnitRegistration
-     */
-    public function setSemester(\Semester $semester = null)
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    /**
-     * Get semester.
-     *
-     * @return \Semester|null
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
      * Set adminRegistration.
      *
      * @param \AdminRegistration|null $adminRegistration
@@ -852,5 +828,29 @@ class UnitRegistration
     public function getTeachingUnit()
     {
         return $this->teachingUnit;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return UnitRegistration
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
     }
 }

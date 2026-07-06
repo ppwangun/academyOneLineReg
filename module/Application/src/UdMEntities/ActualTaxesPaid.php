@@ -50,16 +50,6 @@ class ActualTaxesPaid
     private $refundable;
 
     /**
-     * @var \TeacherPaymentBillSumary
-     *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentBillSumary")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_bill_sumary_id", referencedColumnName="id")
-     * })
-     */
-    private $teacherPaymentBillSumary;
-
-    /**
      * @var \TeacherAssociatedTaxes
      *
      * @ORM\ManyToOne(targetEntity="TeacherAssociatedTaxes")
@@ -68,6 +58,16 @@ class ActualTaxesPaid
      * })
      */
     private $teacherAssociatedTaxes;
+
+    /**
+     * @var \TeacherPaymentBillSumary
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBillSumary")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_sumary_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBillSumary;
 
 
 

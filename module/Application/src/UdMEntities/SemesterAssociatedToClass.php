@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SemesterAssociatedToClass
  *
- * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"})})
+ * @ORM\Table(name="semester_associated_to_class", indexes={@ORM\Index(name="fk_semester_associated_to_class_class_of_study1_idx", columns={"class_of_study_id"}), @ORM\Index(name="fk_semester_associated_to_class_academic_year1_idx", columns={"academic_year_id"}), @ORM\Index(name="fk_semester_associated_to_class_exam_type1_idx", columns={"exam_type_id"}), @ORM\Index(name="fk_semester_associated_to_class_semester1_idx", columns={"semester_id"})})
  * @ORM\Entity
  */
 class SemesterAssociatedToClass
@@ -43,14 +43,14 @@ class SemesterAssociatedToClass
     private $transcriptreferencegenerationstatus = '0';
 
     /**
-     * @var \ClassOfStudy
+     * @var \AcademicYear
      *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\ManyToOne(targetEntity="AcademicYear")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
      * })
      */
-    private $classOfStudy;
+    private $academicYear;
 
     /**
      * @var \Semester
@@ -63,14 +63,24 @@ class SemesterAssociatedToClass
     private $semester;
 
     /**
-     * @var \AcademicYear
+     * @var \ClassOfStudy
      *
-     * @ORM\ManyToOne(targetEntity="AcademicYear")
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
      * })
      */
-    private $academicYear;
+    private $classOfStudy;
+
+    /**
+     * @var \ExamType
+     *
+     * @ORM\ManyToOne(targetEntity="ExamType")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_type_id", referencedColumnName="id")
+     * })
+     */
+    private $examType;
 
 
 
@@ -157,27 +167,27 @@ class SemesterAssociatedToClass
     }
 
     /**
-     * Set classOfStudy.
+     * Set academicYear.
      *
-     * @param \ClassOfStudy|null $classOfStudy
+     * @param \AcademicYear|null $academicYear
      *
      * @return SemesterAssociatedToClass
      */
-    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
+    public function setAcademicYear(\AcademicYear $academicYear = null)
     {
-        $this->classOfStudy = $classOfStudy;
+        $this->academicYear = $academicYear;
 
         return $this;
     }
 
     /**
-     * Get classOfStudy.
+     * Get academicYear.
      *
-     * @return \ClassOfStudy|null
+     * @return \AcademicYear|null
      */
-    public function getClassOfStudy()
+    public function getAcademicYear()
     {
-        return $this->classOfStudy;
+        return $this->academicYear;
     }
 
     /**
@@ -205,26 +215,50 @@ class SemesterAssociatedToClass
     }
 
     /**
-     * Set academicYear.
+     * Set classOfStudy.
      *
-     * @param \AcademicYear|null $academicYear
+     * @param \ClassOfStudy|null $classOfStudy
      *
      * @return SemesterAssociatedToClass
      */
-    public function setAcademicYear(\AcademicYear $academicYear = null)
+    public function setClassOfStudy(\ClassOfStudy $classOfStudy = null)
     {
-        $this->academicYear = $academicYear;
+        $this->classOfStudy = $classOfStudy;
 
         return $this;
     }
 
     /**
-     * Get academicYear.
+     * Get classOfStudy.
      *
-     * @return \AcademicYear|null
+     * @return \ClassOfStudy|null
      */
-    public function getAcademicYear()
+    public function getClassOfStudy()
     {
-        return $this->academicYear;
+        return $this->classOfStudy;
+    }
+
+    /**
+     * Set examType.
+     *
+     * @param \ExamType|null $examType
+     *
+     * @return SemesterAssociatedToClass
+     */
+    public function setExamType(\ExamType $examType = null)
+    {
+        $this->examType = $examType;
+
+        return $this;
+    }
+
+    /**
+     * Get examType.
+     *
+     * @return \ExamType|null
+     */
+    public function getExamType()
+    {
+        return $this->examType;
     }
 }

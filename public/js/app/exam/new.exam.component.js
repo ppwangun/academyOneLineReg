@@ -38,7 +38,7 @@ angular.module('exam')
 
             for (var i = 0; i < record.length; i++) {
                 var data = record[i].split(',');
-                if (data.length == headers.length) {
+                if (data.length === headers.length) {
                     var tarr = [];
                     for (var j = 0; j < headers.length; j++) {
                         tarr.push(data[j]);
@@ -103,6 +103,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     $ctrl.semesters = [];
     $ctrl.examtypes = [];
     $ctrl.examSessions = [];
+    $ctrl.selectedExamSession = null;
     $scope.sem = null;
     $scope.searchClasse = null;
 
@@ -149,7 +150,16 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
     //collectstudent exam id 
     exam_id =$routeParams.exam_id;
     
+    $ctrl.resetSubject = function(){
+        if(!exam_id)
+        {
+            $ctrl.subjects = [];
+            $ctrl.registeredStd= [];
+            $ctrl.ues= [];
+            $ctrl.selectedUe = null;
+       }
 
+    }
     //check  weither we are performing an update of exam or not
     if(exam_id)
     {
@@ -179,7 +189,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                 
                 $ctrl.selectedSubject = response.data[0].classOfStudyHasSemester.subject;
                 if($ctrl.selectedSubject) $ctrl.isActivatedMatiereSelect = true;
-                if($ctrl.selectedUe == null) $ctrl.selectedUe = response.data[0].classOfStudyHasSemester.subject.teachingUnit;
+                if($ctrl.selectedUe === null) $ctrl.selectedUe = response.data[0].classOfStudyHasSemester.subject.teachingUnit;
                 $ctrl.selectedSem  = response.data[0].classOfStudyHasSemester.semester;
                 
                 $ctrl.asignedExamSession($ctrl.selectedSem.id)
@@ -220,8 +230,8 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
 
 
 
-                    $ctrl.ues = [];
-                    $ctrl.subjects= [];
+                   // $ctrl.ues = [];
+                   // $ctrl.subjects= [];
 
                     var data = {id: {classe_id:$ctrl.selectedClasse.id,sem_id:$ctrl.selectedSem.id}};
                     var config = {
@@ -236,17 +246,17 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
                     function(response){
                         $ctrl.ues=response.data[0];
 
-                    }),1000).then(function(){
+                    }).then(function(){
                         var config = {
                         params: {id:$ctrl.selectedUe.id,classe_id: $ctrl.selectedClasse.id},
                         headers : {'Accept' : 'application/json'}
                         };   
-
+                
                         $http.get('subjectbyue',config).then(function(response){
-                            $ctrl.subjects = response.data[0];
+                            $ctrl.subjects = response.data[0]; 
 
                         });
-                       }).then(function(){
+                       }),5000).then(function(){
                             
                         var data = {id: $ctrl.selectedExam.code};
                         var config = {
@@ -304,7 +314,7 @@ function newexamCtrl($timeout,$http,$location,$mdDialog,$routeParams,$scope,toas
              },
              function errorCallback(response){
 
-             }),1000);
+             }),10000);
         
     }
    
@@ -445,9 +455,14 @@ $ctrl.updateExamRegistration = function(){
     
 };
 
+$ctrl.setTsubjectToNull = function(){
+    $ctrl.selectedSubject = null;
+}
+
  $ctrl.loadUE = function(classe,sem_id,session_id){
      
                 $ctrl.ues = [];
+                
                 $ctrl.subjects= [];
                 var class_id = -1;
                // $ctrl.selectedSubject = null;
@@ -474,12 +489,12 @@ $ctrl.updateExamRegistration = function(){
  $ctrl.loadStd = function(){
                             $ctrl.isActivatedMatiereSelect = false;
                             $ctrl.isMatiereRequired = false;
-                            var ue_id = -1;
-                            var class_id  = -1;
-                            var session_id = -1;
+                            var ue_id; ($ctrl.selectedUe)?ue_id=$ctrl.selectedUe.id :ue_id=-1;
+                            var class_id; ($ctrl.selectedClasse)?class_id=$ctrl.selectedClasse.id :class_id=-1;
+                            var session_id; ($ctrl.selectedExamSession)?session_id=$ctrl.selectedExamSession.id :session_id=-1;
                             
-                            if($ctrl.selectedUe) {ue_id = $ctrl.selectedUe.id; class_id = $ctrl.selectedUe.class_id; session_id=$ctrl.selectedExamSession.id }
-                            if($ctrl.selectedSubject) var data = {id: {ueId: ue_id,subjectId: $ctrl.selectedSubject.id,session_id:$ctrl.selectedExamSession.id}};
+                            if($ctrl.selectedUe &&  $ctrl.selectedExamSession) {ue_id = $ctrl.selectedUe.id; class_id = $ctrl.selectedUe.class_id; session_id=$ctrl.selectedExamSession.id }
+                            if($ctrl.selectedSubject && $ctrl.selectedExamSession) var data = {id: {ueId: ue_id,subjectId: $ctrl.selectedSubject.id,session_id:$ctrl.selectedExamSession.id}};
                             else var data = {id : {ueId: ue_id,session_id:session_id}};
                             var i;
                             var config = {
@@ -507,7 +522,7 @@ $ctrl.updateExamRegistration = function(){
                                     params: data,
                                     headers : {'Accept' : 'application/json'}
                                     };   
-                                    if($ctrl.subjects<=0)
+                                    if($ctrl.subjects.length<=0)
                                     $http.get('subjectbyue',config).then(function(response){
                                         
                                         
@@ -521,13 +536,7 @@ $ctrl.updateExamRegistration = function(){
                           
                         };
 
-    $ctrl.resetSubject = function(){
-         $ctrl.subjects = [];
-         $ctrl.registeredStd= [];
-         $ctrl.ues= [];
-         $ctrl.selectedUe = null;
 
-    }
 // this function creates  a new exam
   $ctrl.newExam = function(){
       

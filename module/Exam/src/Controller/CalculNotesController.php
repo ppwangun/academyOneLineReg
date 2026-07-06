@@ -34,6 +34,7 @@ use Application\Entity\AllYearsSubjectRegistrationView;
 use Application\Entity\UnitReportPerExamType;
 use Application\Entity\UnitReportPerSession;
 use Application\Entity\ExamSession;
+use Application\MyRepository\SubjectRepository;
 
 
 class CalculNotesController extends AbstractRestfulController
@@ -42,12 +43,14 @@ class CalculNotesController extends AbstractRestfulController
     private $examManager;
     private $sessionContainer;
     private $crtAcadYr;
+    private $subjectRepository;
     
-    public function __construct($entityManager,$examManager,$sessionContainer) {
+    public function __construct($entityManager,$examManager,$sessionContainer,$subjectRepository) {
         
         $this->entityManager = $entityManager;  
         $this->examManager = $examManager; 
         $this->crtAcadYr = $sessionContainer->currentAcadYr;
+        $this->subjectRepository = $subjectRepository;
     }
 
     public function get($id)
@@ -116,18 +119,18 @@ class CalculNotesController extends AbstractRestfulController
     {
         try
         { 
-            $this->entityManager->getConnection()->beginTransaction();
+            //$this->entityManager->getConnection()->beginTransaction();
             //Retrieve all exams performed for the geiving course
             $classe= $this->entityManager->getRepository(ClassOfStudy::class)->find($data["class_id"]);
             $semester = $this->entityManager->getRepository(Semester::class)->find($data["sem_id"]);
             $examSession = $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
             $ue = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ue_id"]);
             
-            
-            
+
             if(isset($data["isMarkAggregation"])&&!isset($data["subject_id"]))
             {
-                $stdMarks = $this->examManager->markAggregation($ue,$classe,$semester,$this->crtAcadYr->getId());
+              
+                $stdMarks = $this->examManager->markAggregation($ue,$classe,$semester,$examSession,$this->crtAcadYr->getId());
                 /*foreach($stdMarks as $key=>$value)
                 {
                     $hydrator = new ReflectionHydrator();
@@ -136,6 +139,7 @@ class CalculNotesController extends AbstractRestfulController
 
                 }*/
                 //Sorting the $std array according to the key "nom"
+       
                 $tmp = Array();
                 foreach($stdMarks as &$ma)
                     $tmp[] = &$ma["Nom"];
@@ -150,10 +154,11 @@ class CalculNotesController extends AbstractRestfulController
             if(!isset($data["subject_id"]))
             {
                 $subject = [null," "]; 
-                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("subjectId"=>$data["ue_id"],"classe"=>$classe->getCode(),"status"=>1,"acadYrId"=>$this->crtAcadYr->getId()));
+                $ueExams = $this->entityManager->getRepository(CurrentYearUeExamsView::class)->findBy(array("sessionId"=>$data["session_id"],"subjectId"=>$data["ue_id"],"classe"=>$classe->getCode(),"status"=>1,"acadYrId"=>$this->crtAcadYr->getId()));
                 $subjects = $this->examManager->getSubjectFromUe($data["ue_id"],$data["sem_id"],$data["class_id"],$this->crtAcadYr);
                 $subjectExams = $this->getSubjectExams($subjects);
                 $ueExams = array_merge($ueExams , $subjectExams );
+                $subject =null;
                 
             }
             else 
@@ -161,7 +166,7 @@ class CalculNotesController extends AbstractRestfulController
                 $subject = $this->entityManager->getRepository(Subject::class)->findOneById($data["subject_id"]);
                 $ueExams = $this->entityManager->getRepository(CurrentYearSubjectExamsView::class)->findBy(array("subjectId"=>$data["subject_id"],"classe"=>$classe->getCode(),"acadYrId"=>$this->crtAcadYr->getId(),"status"=>1));
             }
-            
+          
             $coshs = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(array("teachingUnit"=>$ue,"classOfStudy"=>$classe,"status"=>1,"semester"=>$semester));
 
             $subjectId = $data["subject_id"]??null;
@@ -233,19 +238,20 @@ class CalculNotesController extends AbstractRestfulController
             ->from('Application\Entity\UnitRegistration','ur')
             ->leftjoin('ur.student','std')
             ->leftjoin('ur.teachingUnit','ue')
-            ->leftjoin('ur.subject','sub')
             ->leftjoin('ur.semester','sem')
+           // ->leftjoin('ur.examSession','session')
             ->where('ur.teachingUnit = :ue')
-            //->andwhere('ur.subject = :subject')
+            
             ->andwhere($exp->orX(
                 $exp->isNull('ur.subject')
                 ) )                  
             ->andwhere('ur.semester = :semester')
+            //->andwhere('ur.examSession = :session')
             ->setParameter('ue',$data["ue_id"])
-            //->setParameter('subject',$subjectId)
+            //->setParameter('session',$data["session_id"])
             ->setParameter('semester',$data["sem_id"])
             ->getQuery()
-            ->getArrayResult();
+        ->getArrayResult();
             
             if(!is_null($subjectId))
             {
@@ -255,151 +261,27 @@ class CalculNotesController extends AbstractRestfulController
                 ->leftjoin('ur.teachingUnit','ue')
                 ->leftjoin('ur.subject','sub')
                 ->leftjoin('ur.semester','sem')
+               // ->leftjoin('ur.examSession','session')
                 //->where('ur.teachingUnit = :ue')
                 ->andwhere('ur.subject = :subject')
                 ->andwhere('ur.semester = :semester')
+                //->andwhere('ur.examSession = :session')
                 //->setParameter('ue',$data["ue_id"])
                 ->setParameter('subject',$subjectId)
                 ->setParameter('semester',$data["sem_id"])
+                //->setParameter('session',$data["session_id"])
                 ->getQuery()
                 ->getArrayResult();                
             }
             
-            $report = [];
+            $report = $this->calculNote($evaluations,$students,$examSession,$classe,$ue,$subject,$coshs,$semester);
             
-            $students= array_map(fn($e)=>$e['student'],$students);
-            $studentsInExam = array_map(fn($e)=>$e['student']["matricule"],$evaluations);
-           
-            //check student that are registered to evaluation are registered to subject
-            foreach($studentsInExam  as $std):
-                //$this->checkStudentInExam ($std, $students);
-                if(!$this->checkStudentInExam ($std, $students)) return new JsonModel([ "ERROR_PED_REGISTRATION"  ]);
-            endforeach;
-             
-            $sequence = 0;
-      
-            foreach($students as $key=>$value)
-            {
-                $stdEvals = array_filter($evaluations,fn($e)=>$e['student']['id']===$value['id']);
-                $studentId = $value['id'];
-                
-                $grouped = [];
-                foreach($stdEvals as $eval)
-                {
-                    $grouped[$eval['exam']['type']][] = $eval['registeredMark'];
-                }
-                $std = $this->entityManager->getRepository(Student::class)->find($studentId);
-                $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester,"student"=>$std ));
-                // Average per type
-                $typeAverages = [];
-                foreach ($grouped as $type => $values) {
-                    $typeAverages[$type] = round(array_sum($values) / count($values),2);
-                    $examT = $this->entityManager->getRepository(ExamType::class)->findOneByCode($type);
-                    $stdReporPerExamType = $this->entityManager->getRepository(UnitReportPerExamType::class)->findOneBy(array("unitRegistration"=>$stdRegisteredToSubject,"examType"=>$examT,"examSession"=>$examSession));
-                    $flag = 0;
-                    if(is_null($stdReporPerExamType))
-                    {
-                        $flag = 1;
-                        $stdReporPerExamType = new UnitReportPerExamType();
-                    }
-                    
-                    $stdReporPerExamType->setNote(round(array_sum($values) / count($values),2));
-                    $stdReporPerExamType->setUnitRegistration($stdRegisteredToSubject);
-                    $stdReporPerExamType->setExamType($examT);
-                    $stdReporPerExamType->setExamSession($examSession);
-                    
-                    if($flag)
-                        $this->entityManager->persist($stdReporPerExamType);
-                    
-                }  
-                
-                // Detect combination
-                $combination = array_keys($typeAverages);
-                sort($combination);
-                $key = implode('+', $combination);
-
-                // Find rule
-                //if rule is not difine directly to the subject, find the default rule;
-                $weightRules = [];
-                $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("classOfStudyHasSemester"=>$coshs,'combination'=>$key));
-                if($rule);
-                else 
-                    $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("isDefault"=>1,'combination'=>$key));
-                
-                if($rule)
-                    $weightRules = $this->entityManager->createQueryBuilder()->select('rw','e')
-                        ->from('Application\Entity\CalculationRulesWeight','rw')
-                        ->leftjoin('rw.calculationRule','r')
-                        ->leftjoin('rw.examType','e')
-                        ->where('rw.calculationRule = :ruleId')
-                        ->setParameter('ruleId',$rule->getId())
-                        ->getQuery()
-                        ->getArrayResult();
-                else
-                    return new JsonModel([ "ERROR_NO_RULE_DEFINE"  ]);
-
-                
-                $report[$sequence]["Nom"] = $std->getNom()." ".$std->getPrenom();
-                $report[$sequence]["Matricule"] = $std->getMatricule();
-                
-                $total =0;
-                $totalWeight = null;
-                $coef =1;
-               // var_dump($weightRules); exit;
-                foreach($typeAverages as $key=>$value)
-                {   
-                    $report[$sequence][$key]=$value;
-                    foreach($weightRules as $weight)
-                        if($weight['examType']['code'] === $key)
-                        {   
-                            if (in_array($key,["CC","EXAM"])) $coef = 5;
-                            
-                                $total +=  $value*$weight['ruleweightvalue'];
-                                $totalWeight += $weight['ruleweightvalue'];
-                        }
-                }
-                
-                
-                $note = $totalWeight ? round($total/$totalWeight,2, PHP_ROUND_HALF_UP) : null;
-                $note = $note*$coef;
-                
-
-                $report[$sequence]["Note Finale"]=['note'=>$note,'isFromDeliberation'=>$stdRegisteredToSubject->getIsFromDeliberation()];
-                $report[$sequence]["Grade"]=$this->computeGradeSur100($classe, $note);
-                $report[$sequence]["Points"]=$this->computePointsSur100($classe, $note);
-                $report[$sequence]["Statut"]=$this->resultStatus($classe, $note);
-
-                $stdRegisteredToSubject->setNoteFinal($note);
-                $stdRegisteredToSubject->setGrade($this->computeGradeSur100($classe, $note));
-                $stdRegisteredToSubject->setPoints($this->computePointsSur100($classe, $note));
-                $stdRegisteredToSubject->setStudentUnitResult($this->resultStatus($classe, $note));
-                $stdRegisteredToSubject->setExamSession($examSession);
-
-                $sessionReport = $this->entityManager->getRepository(UnitReportPerSession::class)->findOneBy(array("unitRegistration"=>$stdRegisteredToSubject,"examSession"=>$examSession));
-                $flag = 0;
-                if(is_null($sessionReport))
-                {
-                    $flag = 1;
-                    $sessionReport = new UnitReportPerSession();
-                }
-                $sessionReport->setNote($note);
-                $sessionReport->setGrade($this->computeGradeSur100($classe, $note));
-                $sessionReport->setPoints($this->computePointsSur100($classe, $note));
-                $sessionReport->setExamSession($examSession);
-                $sessionReport->setResultStatus($this->resultStatus($classe, $note));
-                $sessionReport->setUnitRegistration($stdRegisteredToSubject);
-                
-                if($flag)
-                    $this->entityManager->persist($sessionReport);
-                
-                
-                $sequence ++;
-            }
-
+            if($report == "ERROR_NO_RULE_DEFINE") return new JsonModel([ "ERROR_NO_RULE_DEFINE" ]);
+            if($report == "ERROR_PED_REGISTRATION" ) return new JsonModel([ "ERROR_PED_REGISTRATION"  ]);
 
             
-            $this->entityManager->flush();
-            $this->entityManager->getConnection()->commit();
+
+
 
             array_multisort(array_column($report, 'Nom'), SORT_ASC, $report);
             
@@ -414,7 +296,7 @@ class CalculNotesController extends AbstractRestfulController
         catch (Exception $ex) {
             
             $this->entityManager->getConnection()->rollBack();
-            throw $e;
+            throw $ex;
 
         }
     }
@@ -437,6 +319,7 @@ class CalculNotesController extends AbstractRestfulController
    //for each exam types, it calculates it calculates the mean value of marks for each student and report it to course registration table (unit_registration)
    private function checkStudentInExam($student,$evaluation)
    { 
+       
         $evaluation = array_map(fn($e)=>$e["matricule"],$evaluation);  
         
         if (in_array($student,$evaluation)) return true ;
@@ -784,6 +667,166 @@ class CalculNotesController extends AbstractRestfulController
         }
         
         return;
+   }
+   
+   private function calculNote($evaluations,$students,$examSession,$classe,$ue,$subject,$coshs,$semester)
+   {
+       $this->entityManager->getConnection()->beginTransaction();
+       $report = [];
+            $students= array_map(fn($e)=>$e['student'],$students);
+            $students= array_values(array_column($students, null, 'matricule')); 
+     
+            if($examSession->getSessionType()=='RAT')
+                $studentsInExam = array_filter($evaluations,fn($e)=>$e['exam']['type']!= "CC");
+            else $studentsInExam = $evaluations;
+    
+            $studentsInExam = array_map(fn($e)=>$e['student'],$studentsInExam);
+            $studentsInExam = array_values(array_column($studentsInExam, null, 'matricule')); 
+         
+            //check student that are registered to evaluation are registered to subject
+            foreach($studentsInExam  as $std):
+                //$this->checkStudentInExam ($std, $students);
+                
+                if(!$this->checkStudentInExam ($std['matricule'], $students)) return "ERROR_PED_REGISTRATION"; 
+            endforeach;
+             
+            $sequence = 0;
+    
+            foreach($studentsInExam as $key=>$value)
+            {
+                $stdEvals = array_filter($evaluations,fn($e)=>$e['student']['id']===$value['id']); 
+                $studentId = $value['id'];
+                
+                $grouped = [];
+                foreach($stdEvals as $eval)
+                {
+                    $exam = $this->entityManager->getRepository(Exam::class)->find($eval['exam']['id']);
+                    $examR = $this->entityManager->getRepository(ExamRegistration::class)->find($eval['id']);
+                    $grouped[$eval['exam']['type']][] = $this->getMark($exam, $examR);
+                } 
+                $std = $this->entityManager->getRepository(Student::class)->find($studentId);
+                $stdRegisteredToSubject = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("teachingUnit"=>$ue,"subject"=>$subject,"semester"=>$semester,"student"=>$std ));
+               
+                $sessionReport = $this->entityManager->getRepository(UnitReportPerSession::class)->findOneBy(array("unitRegistration"=>$stdRegisteredToSubject,"examSession"=>$examSession));
+                $flag = 0;
+                if(is_null($sessionReport))
+                {
+                    $flag = 1;
+                    $sessionReport = new UnitReportPerSession();
+                }  
+                    $sessionReport->setUnitRegistration($stdRegisteredToSubject);
+                    $sessionReport->setExamSession($examSession);
+                    
+                
+                if($flag)
+                    $this->entityManager->persist($sessionReport);                
+
+                // Average per type
+                $typeAverages = [];
+                foreach ($grouped as $type => $values) {
+                    $typeAverages[$type] = round(array_sum($values) / count($values),2);
+                    $examT = $this->entityManager->getRepository(ExamType::class)->findOneByCode($type);
+                    $stdReporPerExamType = $this->entityManager->getRepository(UnitReportPerExamType::class)->findOneBy(array("unitReportPerSession"=>$sessionReport,"examType"=>$examT));
+                    $flag = 0;
+                    if(is_null($stdReporPerExamType))
+                    {
+                        $flag = 1;
+                        $stdReporPerExamType = new UnitReportPerExamType();
+                    }
+                    
+                    $stdReporPerExamType->setNote(round(array_sum($values) / count($values),2));
+                   
+                    $stdReporPerExamType->setExamType($examT);                    
+                    $stdReporPerExamType->setTeachingUnit($ue);                   
+                    $stdReporPerExamType->setSubject($subject);
+
+                    $stdReporPerExamType->setUnitReportPerSession($sessionReport);
+                    
+                    if($flag)
+                        $this->entityManager->persist($stdReporPerExamType);
+                    
+                }  
+                
+                // Detect combination
+                $combination = array_keys($typeAverages);
+                sort($combination);
+                $key = implode('+', $combination);
+               
+                // Find rule
+                //if rule is not difine directly to the subject, find the default rule;
+                $weightRules = [];
+                $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("classOfStudyHasSemester"=>$coshs,'combination'=>$key));
+                if(!$rule)
+                    $rule = $this->entityManager->getRepository(CalculationRule::class)->findOneBy(array("isDefault"=>1,'combination'=>$key));
+                
+                if($rule)
+                    $weightRules = $this->entityManager->createQueryBuilder()->select('rw','e')
+                        ->from('Application\Entity\CalculationRulesWeight','rw')
+                        ->leftjoin('rw.calculationRule','r')
+                        ->leftjoin('rw.examType','e')
+                        ->where('rw.calculationRule = :ruleId')
+                        ->setParameter('ruleId',$rule->getId())
+                        ->getQuery()
+                        ->getArrayResult();
+                else 
+                    return "ERROR_NO_RULE_DEFINE" ;
+
+                
+                $report[$sequence]["Nom"] = $std->getNom()." ".$std->getPrenom();
+                $report[$sequence]["Matricule"] = $std->getMatricule();
+                
+                $total =0;
+                $totalWeight = null;
+                $coef =1;
+               // var_dump($weightRules); exit;
+                foreach($typeAverages as $key=>$value)
+                {   
+                    $report[$sequence][$key]=$value;
+                    foreach($weightRules as $weight)
+                        if($weight['examType']['code'] === $key)
+                        {   
+                            if (in_array($key,["CC","EXAM"])) $coef = 5;
+                            
+                                $total +=  $value*$weight['ruleweightvalue'];
+                                $totalWeight += $weight['ruleweightvalue'];
+                        }
+                }
+                
+                
+                $note = $totalWeight ? round($total/$totalWeight,2, PHP_ROUND_HALF_UP) : null;
+                $note = $note*$coef;
+                
+
+                $report[$sequence]["Note Finale"]=['note'=>$note,'isFromDeliberation'=>$stdRegisteredToSubject->getIsFromDeliberation()];
+                $report[$sequence]["Grade"]=$this->computeGradeSur100($classe, $note);
+                $report[$sequence]["Points"]=$this->computePointsSur100($classe, $note);
+                $report[$sequence]["Statut"]=$this->resultStatus($classe, $note);
+
+                $stdRegisteredToSubject->setNoteFinal($note);
+                $stdRegisteredToSubject->setGrade($this->computeGradeSur100($classe, $note));
+                $stdRegisteredToSubject->setPoints($this->computePointsSur100($classe, $note));
+                $stdRegisteredToSubject->setStudentUnitResult($this->resultStatus($classe, $note));
+                $stdRegisteredToSubject->setExamSession($examSession);
+
+
+                $sessionReport->setNote($note);
+                $sessionReport->setGrade($this->computeGradeSur100($classe, $note));
+                $sessionReport->setPoints($this->computePointsSur100($classe, $note));
+                
+                $sessionReport->setResultStatus($this->resultStatus($classe, $note));
+
+                
+                
+                
+                
+                $sequence ++;
+                $this->entityManager->flush();
+            }
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+            
+            return $report;
+            
    }
     
 }

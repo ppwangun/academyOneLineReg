@@ -85,6 +85,26 @@ class Contract
     private $contractStatus;
 
     /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \TeachingUnit
+     *
+     * @ORM\ManyToOne(targetEntity="TeachingUnit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
+     * })
+     */
+    private $teachingUnit;
+
+    /**
      * @var \Subject
      *
      * @ORM\ManyToOne(targetEntity="Subject")
@@ -113,26 +133,6 @@ class Contract
      * })
      */
     private $teacher;
-
-    /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
-     * @var \TeachingUnit
-     *
-     * @ORM\ManyToOne(targetEntity="TeachingUnit")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teaching_unit_id", referencedColumnName="id")
-     * })
-     */
-    private $teachingUnit;
 
 
 

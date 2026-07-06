@@ -97,25 +97,27 @@ class StdRegisteredToSubjectController extends AbstractRestfulController
             // retrieve the sutdent based on the UE code 
             //$sem = $this->entityManager->getRepository(Semester::class)->find($data["sem_id"]);
             //Only student that have completed registration process with status equal to 1
-
+            if(!isset($data['session_id'])) $data['session_id'] = -1;
             if(!isset($data["subjectId"])) 
-             $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data,"acadYrId"=>$acadYrId,"idSubject"=>[null," "]),array("nom"=>"ASC")); 
+                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>[null," "]),array("nom"=>"ASC")); 
             else
                 $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>$data["subjectId"]),array("nom"=>"ASC"));
             //$std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
             
-            if(isset($data["session_id"]))
-                $examSession= $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
-            
-            if(isset($data["session_id"])&&isset($data["subjectId"]))
+            if($data["session_id"]!=-1)
             {
                 $examSession= $this->entityManager->getRepository(ExamSession::class)->find($data["session_id"]);
-                if($examSession->getSessionType()=='RAT')
-                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data,"acadYrId"=>$acadYrId,"idSubject"=>[null," "],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));    
-            }
-            elseif(isset($data["session_id"]))
-            {   if($examSession->getSessionType()=='RAT')
-                $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>[null," "],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));
+            
+                if(isset($data["subjectId"]))
+                {
+
+                    if($examSession->getSessionType()=='RAT')
+                        $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>$data["subjectId"],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));    
+                }
+                else
+                {   if($examSession->getSessionType()=='RAT')
+                        $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$data["ueId"],"acadYrId"=>$acadYrId,"idSubject"=>[null," "],"resultStatus"=>["FAILED","RESIT","ABSENT"]),array("nom"=>"ASC"));
+                }
             }
            
             foreach($std as $key=>$value)

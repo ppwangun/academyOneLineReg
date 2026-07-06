@@ -23,6 +23,8 @@ use Application\Entity\UnitRegistration;
 use Application\Entity\Semester;
 use Application\Entity\ClassOfStudyHasSemester;
 use Application\Entity\AllYearsSubjectRegistrationView;
+use Application\Entity\UnitReportPerSession;
+use Application\Entity\UnitReportPerExamType;
 
 
 class SubjectRegistrationController extends AbstractRestfulController
@@ -127,7 +129,7 @@ class SubjectRegistrationController extends AbstractRestfulController
                     $subjects = $this->entityManager->getRepository(Subject::class)->findBy(array("teachingUnit"=>$teachingUnit));
                     //check if the subject is already registered for the student
                     $isRegistered = $this->entityManager->getRepository(UnitRegistration::class)->findOneBy(array("student"=>$student,"teachingUnit"=>$teachingUnit,"subject"=>[NULL," "],"semester"=>$semester));
-
+                    $isRegisteredTosession = $this->entityManager->getRepository(UnitReportPerSession::class)->findOneBy(array("unitRegistration"=>$student,"teachingUnit"=>$teachingUnit,"subject"=>[NULL," "],"semester"=>$semester));
                     if(!$isRegistered  )
                     {
 

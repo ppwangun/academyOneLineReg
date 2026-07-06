@@ -83,7 +83,7 @@ class AssignSemesterToClassController extends AbstractRestfulController
         $this->entityManager->getConnection()->beginTransaction();
         try
         { 
-            
+           
             $semester = $this->entityManager->getRepository(Semester::class)->findOneById($data["sem_id"]);
             $class = $this->entityManager->getRepository(ClassOfStudy::class)->findOneByCode($data["class_id"]);
             $acadYr = $semester->getAcademicYear();

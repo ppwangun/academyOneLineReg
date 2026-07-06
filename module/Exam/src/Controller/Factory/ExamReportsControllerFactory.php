@@ -25,8 +25,9 @@ class ExamReportsControllerFactory implements FactoryInterface
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $examManager = $container->get(ExamManager::class);
         $sessionContainer = $container->get('LoggedInUser');
+        $subjectRepository = $container->get(\Application\MyRepository\SubjectRepository::class);
         
         // Instantiate the controller and inject dependencies
-        return new ExamReportsController($entityManager,$examManager,$sessionContainer);
+        return new ExamReportsController($entityManager,$examManager,$sessionContainer,$subjectRepository);
     }
 }

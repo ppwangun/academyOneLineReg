@@ -50,16 +50,6 @@ class UnitReportPerSession
     private $resultStatus = 'FAILED';
 
     /**
-     * @var \ExamSession
-     *
-     * @ORM\ManyToOne(targetEntity="ExamSession")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
-     * })
-     */
-    private $examSession;
-
-    /**
      * @var \UnitRegistration
      *
      * @ORM\ManyToOne(targetEntity="UnitRegistration")
@@ -68,6 +58,16 @@ class UnitReportPerSession
      * })
      */
     private $unitRegistration;
+
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;
 
 
 }

@@ -54,30 +54,6 @@ class TeacherAssociatedTaxes
     }
 
     /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return TeacherAssociatedTaxes
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
-    }
-
-    /**
      * Set taxes.
      *
      * @param \Taxes|null $taxes
@@ -99,5 +75,29 @@ class TeacherAssociatedTaxes
     public function getTaxes()
     {
         return $this->taxes;
+    }
+
+    /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return TeacherAssociatedTaxes
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }
 }

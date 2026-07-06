@@ -71,6 +71,16 @@ class ContractFollowUp
     private $paymentStatus = '0';
 
     /**
+     * @var \TeacherPaymentBill
+     *
+     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
+     * })
+     */
+    private $teacherPaymentBill;
+
+    /**
      * @var \ClassOfStudyHasSemester
      *
      * @ORM\ManyToOne(targetEntity="ClassOfStudyHasSemester")
@@ -89,16 +99,6 @@ class ContractFollowUp
      * })
      */
     private $contract;
-
-    /**
-     * @var \TeacherPaymentBill
-     *
-     * @ORM\ManyToOne(targetEntity="TeacherPaymentBill")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="teacher_payment_bill_id", referencedColumnName="id")
-     * })
-     */
-    private $teacherPaymentBill;
 
 
 

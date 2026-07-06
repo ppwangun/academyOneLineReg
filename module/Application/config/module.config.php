@@ -66,6 +66,7 @@ return [
     'service_manager' => [
         'factories' => [
             MyRepository\ExamSessionRepository::class => MyRepository\Factory\ExamSessionRepositoryFactory::class,
+            MyRepository\SubjectRepository::class => MyRepository\Factory\SubjectRepositoryFactory::class,
         ],
     ],
 

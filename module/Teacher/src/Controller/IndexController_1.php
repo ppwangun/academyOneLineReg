@@ -1909,13 +1909,13 @@ public function getScheduledCourseAction()
         try
         { 
             $this->entityManager->getConnection()->beginTransaction();
-            
+        
             $fromDate= $this->params()->fromRoute('fromDate', -1); 
             $toDate = $this->params()->fromRoute('toDate', -1); 
             $classe = $this->params()->fromRoute('classe', -1); 
 
             $classOfStudy= $this->entityManager->getRepository(ClassOfStudy::class)->find($classe);
-           
+          
             $days = [1=>'Lundy', 2=>'Mardi', 3=>'Mercredi', 4=>'Jeudi', 5=>'Vendredi',6=>'Samedi'];            
             $slots = [
               ['07:30', '09:30'],

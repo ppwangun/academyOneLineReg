@@ -3,6 +3,7 @@ namespace Exam;
 
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Laminas\Router\Http\Method;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
@@ -373,13 +374,23 @@ return [
             'printpvindiv' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/printpvindiv[/:id][/:classID][/:semID]',
+                    'route'    => '/printpvindiv[/:isAggregatePv][/:id][/:subjectId][/:classID][/:semID][/:examSessionID][/:isModularComputation][/:data]',
                     'defaults' => [
                         'controller' => Controller\ExamReportsController::class,
                         'action'     => 'printpvindiv'
                        
                     ],
                 ],
+    // Optional: Restrict to POST only
+                'may_terminate' => true,
+                'child_routes' => [
+                    'methods' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'post',
+                        ],
+                    ],
+                ],                
             ],
             'printpvfailures' => [
                 'type'    => Segment::class,
@@ -490,6 +501,17 @@ return [
                     ],
                 ],
             ], 
+            'getRules' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/getRules[/:classe_code][/:sem_id][/:acadYrId][/:duplicata][/:stdId]',
+                    'defaults' => [
+                        'controller' => Controller\EvalWeightController::class,
+                        'action'     => 'getRules'
+                       
+                    ],
+                ],
+            ],            
             'addRule' => [
                 'type'    => Segment::class,
                 'options' => [

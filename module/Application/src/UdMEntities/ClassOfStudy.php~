@@ -71,6 +71,16 @@ class ClassOfStudy
     private $isEndDegreeTraining = '0';
 
     /**
+     * @var \Deliberation
+     *
+     * @ORM\ManyToOne(targetEntity="Deliberation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="deliberation_id", referencedColumnName="id")
+     * })
+     */
+    private $deliberation;
+
+    /**
      * @var \TrainingCurriculum
      *
      * @ORM\ManyToOne(targetEntity="TrainingCurriculum")
@@ -109,16 +119,6 @@ class ClassOfStudy
      * })
      */
     private $grade;
-
-    /**
-     * @var \Deliberation
-     *
-     * @ORM\ManyToOne(targetEntity="Deliberation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="deliberation_id", referencedColumnName="id")
-     * })
-     */
-    private $deliberation;
 
 
 }

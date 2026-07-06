@@ -5,7 +5,7 @@
         ->prependFile($this->basePath('js/calendar/fullcalendar/dist/gcal.js'))
         ->prependFile($this->basePath('js/calendar/fullcalendar/dist/fullcalendar.min.js'))
         ->prependFile($this->basePath('js/calendar/angular-ui-calendar/src/calendar.js'))
-       // ->prependFile($this->basePath('js/calendar/angular/angular.min.js'))
+        ->prependFile($this->basePath('js/calendar/angular/angular.min.js'))
          ->prependFile($this->basePath('js/calendar/moment/min/moment.min.js'))
         ->prependFile($this->basePath('js/calendar/jquery/dist/jquery.min.js'))
         ?>
@@ -147,27 +147,16 @@ z-index: 120000}
 
         <div layout-gt-sm='row' flex="100" style="margin-top:15px;">
         <md-input-container flex="100">
-            <label>Salles de cours {{$ctrl.classroom}}</label>
-<select ng-model="selectedChoice">
-    <optgroup ng-repeat="group in flattenedItems" label="{{group.name}}">
-        <option ng-repeat="choice in group.choices" value="{{choice.id}}">
-            {{choice.name}}
-        </option>
-    </optgroup>
-</select>            
-            
-            
-            <ui-select name="classroom"  ng-model="$ctrl.classroom" theme="bootstrap" style="width: 230px;" on-select="handleSelection($select.selected,$select)" ng-required="true">
-              <ui-select-match placeholder="Sélectionner...">{{$select.selected.name}}</ui-select-match>
-              <ui-select-choices repeat="item in flattenedItems | filter: $select.search" ng-value="$select.selected">
-                <div ng-style="{'padding-left': (item.level * 15) + 'px'}"
-                     ng-class="{'text-muted': !item.isLeaf || item.level != 2}"
-                     >
-                  {{item.name}}
-                </div>
-              </ui-select-choices>
-            </ui-select>
-            <div class="errors" ng-messages="examForm.classroom.$error">
+            <label>Salles de cours</label>
+            <md-select  name="classroom"  ng-model="$ctrl.classroom" ng-model-options="{trackBy: '$value.id'}"
+                         ng-required="true"
+                       md-no-asterisk>
+              <md-option ng-disabled="true"><em>---Salle de cours---</em></md-option>
+
+                    <md-option  ng-value="classroom" ng-repeat="classroom in $ctrl.classrooms" > {{classroom
+                                .name}} </md-option>
+            </md-select>
+            <div class="errors" ng-messages="examForm.endingTime.$error">
               <div ng-message="required">Champ obligatoire</div>
             </div>
         </md-input-container>  

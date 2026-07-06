@@ -88,7 +88,7 @@ class ExamSession
     }
 
     /**
-     * @param User $user
+     * @param Semester $semester
      */
     public function removeSemester(Semester $semester)
     {

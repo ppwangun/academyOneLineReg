@@ -2,45 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/TeacherAssociatedTaxes.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/MyRepository/ExamSessionRepository.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/Resource.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/User/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/department/department.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/newteachertpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/CampusResourcesController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/usersandgroups/settings.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/TeachingunitController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/Semester.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/view/layout/layout2.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/User/src/Service/UserManager.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Module.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/teachingunit/course.programming.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/acadyr/acadyr.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/programmingtpl.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Module.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/SettingsController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/ExamSession.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/SemesterController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/view/exam/exam-reports/print-transcripts.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/generate-bill.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/src/Controller/Factory/SettingsControllerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/app/exam/calcul.notes.component.js</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/src/Controller/ResourceController.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/load-teacher-bill.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/view/schoolglobalconfig/Settings/settings.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Exam/src/Service/ExamManager.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/public/js/my_js/globalconfig/examsession.html</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Teacher/view/teacher/index/teacher-list.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/MyRepository/Factory/ExamSessionRepositoryFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/User/src/Service/Factory/UserManagerFactory.php</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/SchoolGlobalConfig/view/schoolglobalconfig/Index/newacadyr.phtml</file>
-            <file>file:/C:/xampp/htdocs/wacademy/module/Application/src/Entity/MyRepository.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

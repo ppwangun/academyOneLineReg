@@ -8,13 +8,16 @@ use Application\Entity\Semester;
 use Application\Entity\TeachingUnit;
 use Application\Entity\Subject;
 use Application\Entity\ExamSession;
+use Application\Entity\UnitReportPerSession;
+use Application\MyRepository\SubjectRepository;
 
 /**
  * UnitRegistration
  *
  * @ORM\Table(name="unit_registration", indexes={@ORM\Index(name="fk_unit_registration_teaching_unit1_idx", columns={"teaching_unit_id"}), @ORM\Index(name="fk_unit_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_unit_registration_semester1_idx", columns={"semester_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Application\MyRepository\SubjectRepository")
  */
+
 class UnitRegistration
 {
     /**
@@ -214,6 +217,13 @@ class UnitRegistration
      * })
      */
     private $subject;
+    
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="UnitReportPerSession", mappedBy="unitRegistration")
+     * 
+     */
+    private $unitReportPerSession;    
 
     /**
      * Get id

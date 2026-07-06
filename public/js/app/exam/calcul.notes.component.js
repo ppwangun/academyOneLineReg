@@ -21,6 +21,7 @@ function calculnotesCtrl($timeout,$http,$scope, toastr,$mdDialog){
     $ctrl.isActivatedUeSelect = false;
     $ctrl.isActivatedSubjectSelect = false;
     $ctrl.isActivatedMatiereSelect = false;
+    $ctrl.generatePvConsolide = 0;
 
 
     $ctrl.ues = null;
@@ -102,7 +103,13 @@ $ctrl.asignedExamSession =function(semId){
  
    
  };
- 
+    $ctrl.resetSubject = function(){
+         $ctrl.subjects = [];
+         $ctrl.registeredStd= [];
+         $ctrl.ues= [];
+         $ctrl.selectedUe = null;
+
+    }   
  
 $ctrl.activateUeSelect = function(){
    $ctrl.isActivatedUeSelect = true;
@@ -123,6 +130,7 @@ $ctrl.selectedItemChange = function(classe){
 
        $ctrl.sem = null;
        $ctrl.selectedUe = null;
+       $ctrl.selectedSubject = null;
        $ctrl.selectedSem = null;
        $ctrl.selectedExamSession = undefined;
 
@@ -210,7 +218,7 @@ $ctrl.asignedSemToClasse = function(class_code){
 
 //Load exam statues of all subject from the module
  $ctrl.loadExamsPerModuleStatus = function(ueId){
-      
+     
         var i;
         if($ctrl.selectedClasse)
         {
@@ -234,29 +242,12 @@ $ctrl.asignedSemToClasse = function(class_code){
    
  //Looad all student who are registered to the subject
  //Load all subjects associated withe the UE as well
- $ctrl.loadStd = function(selectedUeId,selectedClasseId,selectedSeesioinId){
+ $ctrl.loadSubjects = function(selectedUeId,selectedClasseId){
         $ctrl.isActivatedMatiereSelect = false;
         $ctrl.isMatiereRequired = false;
         $ctrl.isActivatedSubjectSelect = false;
         //var id = {id: selectedUeId,sem_id:$ctrl.selectedSem.id};
 
-        var data = {id: selectedUeId,session_id:selectedSeesioinId};
-        var i;
-        var config = {
-        params: data,
-        headers : {'Accept' : 'application/json'}
-        };
-        $http.get('stdregisteredtosubject',config).then(function(response){
-            $ctrl.registeredStd = response.data[0];
-            if($ctrl.registeredStd.length>0)
-            {
-                for(i=0;i<$ctrl.registeredStd.length;i++)
-                {
-                  $ctrl.registeredStd[i].num=i+1;
-                  $ctrl.registeredStd[i].note = 0;
-                }
-            }
-        }).then(function(){
             var data = {id: selectedUeId,classe_id:selectedClasseId};
                 var config = {
                 params: data,
@@ -273,7 +264,7 @@ $ctrl.asignedSemToClasse = function(class_code){
                         
                     }
                 });
-        });
+        
 
         };
 
@@ -303,17 +294,14 @@ $ctrl.asignedSemToClasse = function(class_code){
             }
         })};
     
-    $ctrl.resetSubject = function(){
-        /* $ctrl.subjects = [];
-         $ctrl.registeredStd= [];
-         $ctrl.ues= [];
-         $ctrl.selectedUe = null;*/
-
-    }    
+  
         
-var gneratePvInDiv = function(ev,data){
+var gneratePvInDiv = function(data,isAggregatePV,ev){
     
-        var data = {id: $ctrl.selectedUe.id};
+        //var data = {id: $ctrl.selectedUe.id};
+        var subjectId= -1
+        if($ctrl.selectedSubject) subjectId = $ctrl.selectedSubject.id; 
+
         var i;
         var config = {
         params: data,
@@ -322,7 +310,7 @@ var gneratePvInDiv = function(ev,data){
 
           $mdDialog.show({
           controller: DialogController,
-          templateUrl: 'printpvindiv/'+$ctrl.selectedUe.id+'/'+$ctrl.selectedClasse.id+'/'+$ctrl.selectedSem.id,
+          templateUrl: 'printpvindiv/'+isAggregatePV+'/'+$ctrl.selectedUe.id+'/'+subjectId+'/'+$ctrl.selectedClasse.id+'/'+$ctrl.selectedSem.id+'/'+$ctrl.selectedExamSession.id+'/'+$ctrl.isModularComputation,
           parent: angular.element(document.body),
          // parent: angular.element(document.querySelector('#component-tpl')),
           scope: $scope,
@@ -356,10 +344,11 @@ var gneratePvInDiv = function(ev,data){
     
 };
 
-$ctrl.calculNotes = function(ev){
+$ctrl.calculNotes = function(isAggregatePV,ev){
     if($ctrl.selectedSubject)
-        var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id,subject_id:$ctrl.selectedSubject.id,isMarkAggregation: 1};
-    else    var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id};
+        var data = {isAggregatePV:isAggregatePV,class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id,subject_id:$ctrl.selectedSubject.id,isMarkAggregation: 1};
+    else    var data = {isAggregatePV:isAggregatePV,class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id,session_id: $ctrl.selectedExamSession.id, ue_id:$ctrl.selectedUe.id};
+    
     $timeout(function(){
         $http.post('calculmp',data).then(function(response){
             
@@ -409,8 +398,8 @@ $ctrl.calculNotes = function(ev){
                 return;
             }            
             toastr.success("Opération effectuée avec succès");
-            $ctrl.report = response.data[0];
-            gneratePvInDiv(response.data[0]);
+            $ctrl.report = response.data[0]; 
+            gneratePvInDiv(JSON.stringify(response.data[0]),isAggregatePV);
 
             //    $ctrl.isActivatedMatiereSelect = true;
             //    $ctrl.isActivatedSubjectSelect = true;
@@ -423,8 +412,8 @@ $ctrl.calculNotes = function(ev){
 
 $ctrl.moduleMarkAggregation = function(ev){
 
-$ctrl.isModuleComputation = 1
-    var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id, ue_id:$ctrl.selectedUe.id,isMarkAggregation: 1};
+$ctrl.isModuleComputation = 1;
+    var data = {class_id:$ctrl.selectedClasse.id, sem_id:$ctrl.selectedSem.id, ue_id:$ctrl.selectedUe.id,isMarkAggregation: 1,session_id: $ctrl.selectedExamSession.id};
     $timeout(function(){
         $http.post('calculmp',data).then(function(response){
             

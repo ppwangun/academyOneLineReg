@@ -43,6 +43,16 @@ class AdmissionBatch
     private $admissionDate;
 
     /**
+     * @var \AdminRegistration
+     *
+     * @ORM\ManyToOne(targetEntity="AdminRegistration")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
+     * })
+     */
+    private $adminRegistration;
+
+    /**
      * @var \Admission
      *
      * @ORM\ManyToOne(targetEntity="Admission")
@@ -61,16 +71,6 @@ class AdmissionBatch
      * })
      */
     private $student;
-
-    /**
-     * @var \AdminRegistration
-     *
-     * @ORM\ManyToOne(targetEntity="AdminRegistration")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="admin_registration_id", referencedColumnName="id")
-     * })
-     */
-    private $adminRegistration;
 
 
 }

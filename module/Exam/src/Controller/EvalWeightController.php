@@ -42,6 +42,19 @@ class EvalWeightController extends AbstractRestfulController
 
     } 
     
+    public function getRulesAction()
+    {
+
+          $view = new JsonModel([
+             "rules"=>$this->listAllRules()
+         ]);
+        // Disable layouts; `MvcEvent` will use this View Model instead
+        $view->setTerminal(true);
+
+        return $view;            
+
+    }    
+    
     
     public function addRuleAction()
     {
@@ -52,7 +65,7 @@ class EvalWeightController extends AbstractRestfulController
             $data = $request->getContent(); 
             $data = json_decode($data,true); 
             
-            
+          
             $rule = new CalculationRule();
             $rule->setCombination($data["ruleName"]);
             $rule->setIsDefault(1);
@@ -82,7 +95,7 @@ class EvalWeightController extends AbstractRestfulController
             $this->entityManager->persist($rule);
             $this->entityManager->flush();
 
-           // $this->entityManager->commit();
+            $this->entityManager->commit();
  
             $output = new JsonModel(
                     $this->listAllRules()

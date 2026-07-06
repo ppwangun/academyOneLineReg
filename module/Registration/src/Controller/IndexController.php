@@ -745,7 +745,7 @@ class IndexController extends AbstractActionController
                                // elseif(($datastring["isSpecialDelibAllow"]==1)&&($this->isSpecialDelibAllow($std,$classe,$datastring["nbreUeDelibSpecial"],$acadYr,$grades)))
                                 //   $stdAdminRegistration->setDecision("ADM");
                                 //check backlog if there is a single backlog the failed
-                                elseif($this->isBacklogAvailable($std,$classe))
+                                elseif($this->isBacklogAvailable($std,$classe,$grades,$acadYr))
                                     $stdAdminRegistration->setDecision("AJR");                                
                                 elseif($total_credits_cycle-$total_credits_valides_cycle>30)
                                         $stdAdminRegistration->setDecision("AJR");                               

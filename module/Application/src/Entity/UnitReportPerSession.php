@@ -3,6 +3,7 @@ namespace Application\Entity;
 
 use Application\Entity\UnitRegistration;
 use Application\Entity\ExamSession;
+use Application\Entity\UnitReportPerExamType;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -71,6 +72,13 @@ class UnitReportPerSession
      * })
      */
     private $examSession;
+    
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="UnitReportPerExamType", mappedBy="unitReportPerSession")
+     * 
+     */
+    private $unitReportPerExamType;    
 
 
 

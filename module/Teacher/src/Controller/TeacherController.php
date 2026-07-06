@@ -63,7 +63,7 @@ class TeacherController extends AbstractRestfulController
             foreach($teacherTaxes as $key=>$value)
                   $taxes[$key] = $value->getTaxes()->getId();
 
-                       
+                     
             if($documents)
                 foreach($documents as $key=>$value)
                 {
@@ -85,7 +85,7 @@ class TeacherController extends AbstractRestfulController
                 $data = $hydrator->extract($teacher); 
                 $teacher = $data;
                 $teacher["names"]=$data["name"];
-              
+                
                 $country = $this->entityManager->getRepository(Countries::class)->findOneByName($data["livingCountry"]);
                 $nationality = $this->entityManager->getRepository(Countries::class)->findOneByName($data["nationality"]); 
                 $city = $this->entityManager->getRepository(Cities::class)->findOneByName($data["livingCity"]);

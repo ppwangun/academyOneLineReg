@@ -43,6 +43,13 @@ use Application\Entity\AllYearsRegisteredStudentView;
 
 
 
+
+
+
+use Student\Service\StudentManager;
+
+
+
 class ExamReportsController extends AbstractActionController
 {
     private $entityManager;
@@ -50,12 +57,10 @@ class ExamReportsController extends AbstractActionController
     private $backlogs;
     private $cptSubjects;
     private  $crtAcdYr;
-    private $subjectRepository;
-    public function __construct($entityManager,$examManager,$sessionContainer,$subjectRepository) {
+    public function __construct($entityManager,$examManager,$sessionContainer) {
         $this->entityManager = $entityManager;
         $this->examManager = $examManager;
         $this->crtAcdYr = $sessionContainer->currentAcadYr;
-        $this->subjectRepository = $subjectRepository;
     }
 
     public function indexAction()
@@ -70,61 +75,14 @@ class ExamReportsController extends AbstractActionController
         try
         { 
             $data = $this->params()->fromRoute(); 
-            $isAggreagatePv = $data['isAggregatePv'];
             $id = $data["id"];
-            $subjectId = $data["subjectId"]; 
-            if($data["subjectId"] == -1){ $subjectId  = NULL;} 
             $semID = $data["semID"];
             $classeID = $data["classID"];
             $examSessionID = $data["examSessionID"];
             $isModularComputation = $data["isModularComputation"];
-            $classe =  $this->entityManager->getRepository(ClassOfStudy::class)->find($classeID);
-            $data['ue_id'] = $id;
-            $data['sem_id'] = $semID;
-            $data['session_id'] = $examSessionID;
-            $data['subject_id'] = $subjectId;
             
-           if($isModularComputation)
-           {
-            $stdData = $this->subjectRepository->getRegistrationsBySubject($data);
-                        
-           }
-           else{
-               $stdData = $this->subjectRepository->getRegistrationsByModule($data);
-               
-           }
-           if($isAggreagatePv) $stdData = $this->subjectRepository->getRegistrationsByModule($data);
-           /* $studts= $this->entityManager->createQueryBuilder();
-                $exp = $studts->expr();            
-             $students = $studts->select('urpet','et','urps','ur','std','ue','sub')
-            ->from('Application\Entity\UnitReportPerExamType','urpet')
-             ->leftJoin('urpet.unitReportPerSession','urps')
-            ->leftJoin('urpet.examType','et')
-            ->leftjoin('urps.unitRegistration','ur')
-            ->leftjoin('ur.student','std')
-            ->leftjoin('ur.teachingUnit','ue')
-            ->leftjoin('ur.subject','sub')        
-            ->leftjoin('ur.semester','sem')
-            ->where('ur.teachingUnit = :ue')
-            //->andwhere('ur.subject = :subject')         
-            ->andwhere($exp->orX(
-                $exp->isNull('ur.subject')
-                ) )                 
-            ->andwhere('ur.semester = :semester')
-            ->andwhere('urps.examSession = :session')
-           // ->andwhere('urpet.examSession = :session')
-            ->setParameter('ue',$data["id"])
-            //->setParameter('subject',$subjectId)
-            ->setParameter('session',$data["examSessionID"])
-            ->setParameter('semester',$data["semID"])
-            ->getQuery()
-            ->getArrayResult(); 
-            var_dump($students); exit;*/
-            $students = $this->parseStdInfo($stdData,$isModularComputation);
-            $subjects = $this->parseSubject($students);
-            $rows = $this->parseSubjectValue($students);
- 
-        /*   
+            $ue = null;
+            $classe =  $this->entityManager->getRepository(ClassOfStudy::class)->find($classeID);
                        
             // retrieve the sutdent ID based on the student ID 
             $std = $this->entityManager->getRepository(AllYearsSubjectRegistrationView::class)->findBy(array("idUe"=>$id,"status"=>1,"idSubject"=>[NULL," "],"acadYrId"=>$this->crtAcdYr->getId()),array("nom"=>"ASC")); 
@@ -148,13 +106,11 @@ class ExamReportsController extends AbstractActionController
 
                 $ue =  $this->entityManager->getRepository(TeachingUnit::class)->find($id);
             }
-         * */
-         
             $acadYr =  $this->crtAcdYr;; 
              
 
             $sem =  $this->entityManager->getRepository(Semester::class)->find($semID);
-           // $subjects = $this->examManager->getSubjectFromUe($id,$sem->getId(),$classe->getId(),$this->crtAcdYr->getId());
+            $subjects = $this->examManager->getSubjectFromUe($id,$sem->getId(),$classe->getId(),$this->crtAcdYr->getId());
 
             $semestre = $sem->getCode();
             
@@ -175,29 +131,28 @@ class ExamReportsController extends AbstractActionController
             $exams = $this->examManager->getExamWithMarkRegistered($id,$semID,$classeID,$this->crtAcdYr->getId());
             
             //compute statistics
-            //$totalStudent = sizeof($std);
-            //$totalFailure = sizeof($std1);
-            $totalStudent  = 1;
-            $totalFailure = 0;
+            $totalStudent = sizeof($std);
+            $totalFailure = sizeof($std1);
             
+            $this->entityManager->getConnection()->commit();
             
            $brandInfo = "Report generated with UdMAcademy By W-TECH(" . date("d-m-Y H:i") .")";
             $view = new ViewModel([
                 'school'=>$school->getName(),
                 'logo'=>$school->getLogo(),
                 'brandInfo'=>$brandInfo,
-                'subjects'=>$subjects,
-                'students'=>$rows,
+                'students'=>$std,
                 'acadYr'=>$acadYr,
                 'semestre'=>$semestre,
                 'classe'=>$classe->getCode(),
                 'diplome'=>$diplome,
                 'filiere'=>$filiere,
                 'faculty'=>$faculty,
+                'subjects'=>$subjects,
                 'exams'=>$exams,
                 'totalStudent'=>$totalStudent,
                 'totalFailure'=>$totalFailure,
-               // 'credits'=>$credits,
+                'credits'=>$credits,
                 'cycle_level'=>$classe->getCycle()->getCycleLevel()
             ]);
             // Disable layouts; `MvcEvent` will use this View Model instead
@@ -235,9 +190,6 @@ class ExamReportsController extends AbstractActionController
             $std1 = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$id,"status"=>1,"idSubject"=>[NULL," "]),array("nom"=>"ASC"));
             $std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$id,"status"=>1,"idSubject"=>[NULL," "],"grade"=>$grode_of_failures),array("nom"=>"ASC")); 
            // $std_registered_subjects = $this->entityManager->getRepository(SubjectRegistrationView::class)->findByStudentId($std->getStudentId());
-            
-
-             
             if($std)
             {
                 foreach($std as $key=>$value)
@@ -1874,103 +1826,5 @@ public function printTranscriptsAction()
            return $examR->getValidatedMark();
        if($exam->getIsMarkConfirmed()==1)
            return $examR->getConfirmedMark();       
-   }  
-   
-   private function parseStdInfo($stds,$isModularComputation)
-   {
-        $students = [];        
-        $index = 0;       
-        foreach ($stds as $std)
-        {
-
-            foreach($std["unitReportPerSession"] as $stdSessionSumary)
-            {
-
-                foreach($stdSessionSumary["unitReportPerExamType"] as $stdExamTypeSummary)
-                {
-                    $students[$index]["student_id"] = $std["student"]["matricule"];  
-                    $students[$index]["student_name"] = $std["student"]["nom"];
-                    $students[$index]["student_name"] .= " ".$std["student"]["prenom"]; 
-                    if(isset($stdExamTypeSummary["subject"]))
-                    {
-                        $students[$index]["subject_id"] = $stdExamTypeSummary["subject"]["id"];
-                        $students[$index]["subject_name"] = $stdExamTypeSummary["subject"]["subjectCode"];
-                    } 
-                    else {
-                        $students[$index]["subject_id"] = $stdExamTypeSummary["teachingUnit"]["id"];
-                        $students[$index]["subject_name"] = $stdExamTypeSummary["teachingUnit"]["code"];                        
-                    }
-                    $students[$index]["type"] = $stdExamTypeSummary["examType"]["code"];
-                    $students[$index]["avg_value"] = $stdExamTypeSummary["note"];
-                    
-                    $students[$index]["final"] = $stdSessionSumary["note"];
-                    $index ++;
-                }
-                
-            }
-            /*if(!$isModularComputation)
-            {
-                $students[$index]["subject_id"] = $std["unitReportPerSession"]["teachingUnit"]["id"];
-                $students[$index]["subject_name"] = $std["unitReportPerSession"]["unitRegistration"]["teachingUnit"]["code"];
-            }
-            else{
-                $students[$index]["subject_id"] = $std["unitReportPerSession"][0]["unitReportPerExamType"][0]["subject"]["id"];
-                $students[$index]["subject_name"] = $std["unitReportPerSession"][0]["unitReportPerExamType"][0]["subject"]["subjectCode"];                
-            }*/
-            
-
-            
-        }
-        return $students;
-   }
-   
-   private function parseSubject($data)
-   {
-       $subjects = [];       
-       foreach($data as $row)
-       {
-            if(!isset($subjects[$row['subject_id']]))
-            {
-                $subjects[$row['subject_id']] = [
-                    'id' => $row['subject_id'],
-                    'name' => $row['subject_name'],
-                    'types' => []
-                ];
-            }
-            
-            if(!in_array($row['type'],$subjects[$row['subject_id']]['types']))
-            {
-                $subjects[$row['subject_id']]['types'][] = $row['type'];
-                
-            }
-       }
-       return $subjects;
-   }
-   
-   private function parseSubjectValue($data)
-   {
-       $rows = [];
-        foreach($data as $row)
-        {       
-            if(!isset(($rows[$row['student_id']])))
-            {
-
-                $rows[$row['student_id']] =[
-                    'name'=> $row['student_name'],
-                    'values'=> []
-                 ];
-            }
-
-
-            $key = $row['subject_id'].'_'.$row['type'];
-            $rows[$row['student_id']]['values'][$key] = round($row['avg_value'],2);
-            
-            $rows[$row['student_id']]['final'] =  round($row['final'],2); 
-
-
-            
-        }
-        
-        return $rows;
-   }
+   }    
 }

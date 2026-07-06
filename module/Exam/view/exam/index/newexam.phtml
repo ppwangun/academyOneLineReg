@@ -125,8 +125,8 @@ z-index: 120000}
      
         <md-input-container ng-show="$ctrl.showExamSession" style="margin-top:20px;">
             <label>Session d'evaluation</label>
-            <md-select name="session1"  ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id)" 
-                        ng-change="$ctrl.resetSubject()" md-no-asterisk ng-required="$ctrl.showExamSession">
+            <md-select name="session1"  ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id);" 
+                        ng-change="$ctrl.resetSubject();" md-no-asterisk ng-required="$ctrl.showExamSession">
                 <md-option ng-disabled="true"><em>---Choix de la session d'evaluation---</em></md-option>
                <md-option ng-repeat="examSession in $ctrl.examSessions" ng-value="examSession"  >
                 {{examSession.sessionName}}
@@ -145,7 +145,7 @@ z-index: 120000}
         <md-input-container flex="50">
             <label>Unité d'enseignement</label>
             <md-select   name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe"  
-                       ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id,$ctrl.selectedExamSession.id);" 
+                       ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse,$ctrl.selectedSem.id,$ctrl.selectedExamSession.id);$ctrl.setTsubjectToNull();" 
                        ng-change="$ctrl.loadStd();"  md-no-asterisk ng-required="true">
                 <md-option ng-disabled="true"  ng-value="{id:-1}"><em>Choisissez une UE</em></md-option>
               <md-option ng-repeat="ue in $ctrl.ues" ng-value="ue" >
@@ -215,7 +215,7 @@ z-index: 120000}
                                             </thead>
                                             <tbody>
                                                 <tr ng-repeat="std in $ctrl.registeredStd" >
-                                                  <td ng-bind="std.num"></td>
+                                                  <td >{{$index+1}}</td>
                                                   <td ng-bind="std.matricule"></td>
                                                   <td ng-bind="std.nom"></td>
                                                   <td ng-bind="std.studentCurrentClasse"></td>

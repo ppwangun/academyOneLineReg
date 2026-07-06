@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * StudentSemRegistration
  *
- * @ORM\Table(name="student_sem_registration", indexes={@ORM\Index(name="fk_student_sem_registration_student1_idx", columns={"student_id"}), @ORM\Index(name="fk_student_has_semester_semester1_idx", columns={"semester_id"})})
+ * @ORM\Table(name="student_sem_registration", indexes={@ORM\Index(name="fk_student_has_semester_semester1_idx", columns={"semester_id"}), @ORM\Index(name="fk_student_sem_registration_student1_idx", columns={"student_id"})})
  * @ORM\Entity
  */
 class StudentSemRegistration
@@ -674,30 +674,6 @@ class StudentSemRegistration
     }
 
     /**
-     * Set semester.
-     *
-     * @param \Semester|null $semester
-     *
-     * @return StudentSemRegistration
-     */
-    public function setSemester(\Semester $semester = null)
-    {
-        $this->semester = $semester;
-
-        return $this;
-    }
-
-    /**
-     * Get semester.
-     *
-     * @return \Semester|null
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
      * Set student.
      *
      * @param \Student|null $student
@@ -719,5 +695,29 @@ class StudentSemRegistration
     public function getStudent()
     {
         return $this->student;
+    }
+
+    /**
+     * Set semester.
+     *
+     * @param \Semester|null $semester
+     *
+     * @return StudentSemRegistration
+     */
+    public function setSemester(\Semester $semester = null)
+    {
+        $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * Get semester.
+     *
+     * @return \Semester|null
+     */
+    public function getSemester()
+    {
+        return $this->semester;
     }
 }

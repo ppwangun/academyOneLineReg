@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UnitReportPerExamType
  *
- * @ORM\Table(name="unit_report_per_exam_type", indexes={@ORM\Index(name="fk_note_per_exam_type_unit_registration1_idx", columns={"unit_registration_id"}), @ORM\Index(name="fk_note_per_exam_type_exam_type1_idx", columns={"exam_type_id"}), @ORM\Index(name="fk_note_per_exam_type_exam_session1_idx", columns={"exam_session_id"})})
+ * @ORM\Table(name="unit_report_per_exam_type", indexes={@ORM\Index(name="fk_unit_report_per_exam_type_unit_report_per_session1_idx", columns={"unit_report_per_session_id"}), @ORM\Index(name="fk_unit_sumary_exam_type_exam_type1_idx", columns={"exam_type_id"})})
  * @ORM\Entity
  */
 class UnitReportPerExamType
@@ -29,24 +29,14 @@ class UnitReportPerExamType
     private $note;
 
     /**
-     * @var \UnitRegistration
+     * @var \UnitReportPerSession
      *
-     * @ORM\ManyToOne(targetEntity="UnitRegistration")
+     * @ORM\ManyToOne(targetEntity="UnitReportPerSession")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="unit_registration_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="unit_report_per_session_id", referencedColumnName="id")
      * })
      */
-    private $unitRegistration;
-
-    /**
-     * @var \ExamSession
-     *
-     * @ORM\ManyToOne(targetEntity="ExamSession")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
-     * })
-     */
-    private $examSession;
+    private $unitReportPerSession;
 
     /**
      * @var \ExamType
@@ -95,51 +85,27 @@ class UnitReportPerExamType
     }
 
     /**
-     * Set unitRegistration.
+     * Set unitReportPerSession.
      *
-     * @param \UnitRegistration|null $unitRegistration
+     * @param \UnitReportPerSession|null $unitReportPerSession
      *
      * @return UnitReportPerExamType
      */
-    public function setUnitRegistration(\UnitRegistration $unitRegistration = null)
+    public function setUnitReportPerSession(\UnitReportPerSession $unitReportPerSession = null)
     {
-        $this->unitRegistration = $unitRegistration;
+        $this->unitReportPerSession = $unitReportPerSession;
 
         return $this;
     }
 
     /**
-     * Get unitRegistration.
+     * Get unitReportPerSession.
      *
-     * @return \UnitRegistration|null
+     * @return \UnitReportPerSession|null
      */
-    public function getUnitRegistration()
+    public function getUnitReportPerSession()
     {
-        return $this->unitRegistration;
-    }
-
-    /**
-     * Set examSession.
-     *
-     * @param \ExamSession|null $examSession
-     *
-     * @return UnitReportPerExamType
-     */
-    public function setExamSession(\ExamSession $examSession = null)
-    {
-        $this->examSession = $examSession;
-
-        return $this;
-    }
-
-    /**
-     * Get examSession.
-     *
-     * @return \ExamSession|null
-     */
-    public function getExamSession()
-    {
-        return $this->examSession;
+        return $this->unitReportPerSession;
     }
 
     /**

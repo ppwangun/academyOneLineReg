@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * FacultyHasResource
  *
- * @ORM\Table(name="faculty_has_resource", indexes={@ORM\Index(name="fk_faculty_has_resource_faculty1_idx", columns={"faculty_id"}), @ORM\Index(name="fk_faculty_has_resource_resource1_idx", columns={"resource_id"})})
+ * @ORM\Table(name="faculty_has_resource", indexes={@ORM\Index(name="fk_faculty_has_resource_resource1_idx", columns={"resource_id"}), @ORM\Index(name="fk_faculty_has_resource_faculty1_idx", columns={"faculty_id"})})
  * @ORM\Entity
  */
 class FacultyHasResource
@@ -22,16 +22,6 @@ class FacultyHasResource
     private $id;
 
     /**
-     * @var \Resource
-     *
-     * @ORM\ManyToOne(targetEntity="Resource")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
-     * })
-     */
-    private $resource;
-
-    /**
      * @var \Faculty
      *
      * @ORM\ManyToOne(targetEntity="Faculty")
@@ -40,6 +30,16 @@ class FacultyHasResource
      * })
      */
     private $faculty;
+
+    /**
+     * @var \Resource
+     *
+     * @ORM\ManyToOne(targetEntity="Resource")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="resource_id", referencedColumnName="id")
+     * })
+     */
+    private $resource;
 
 
 
@@ -51,30 +51,6 @@ class FacultyHasResource
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set resource.
-     *
-     * @param \Resource|null $resource
-     *
-     * @return FacultyHasResource
-     */
-    public function setResource(\Resource $resource = null)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    /**
-     * Get resource.
-     *
-     * @return \Resource|null
-     */
-    public function getResource()
-    {
-        return $this->resource;
     }
 
     /**
@@ -99,5 +75,29 @@ class FacultyHasResource
     public function getFaculty()
     {
         return $this->faculty;
+    }
+
+    /**
+     * Set resource.
+     *
+     * @param \Resource|null $resource
+     *
+     * @return FacultyHasResource
+     */
+    public function setResource(\Resource $resource = null)
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    /**
+     * Get resource.
+     *
+     * @return \Resource|null
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TeacherPaymentBill
  *
- * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"}), @ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"})})
+ * @ORM\Table(name="teacher_payment_bill", indexes={@ORM\Index(name="fk_teacher_payment_teacher1_idx", columns={"teacher_id"}), @ORM\Index(name="fk_teacher_payment_bill_contract1_idx", columns={"contract_id"}), @ORM\Index(name="fk_teacher_payment_bill_teacher_payment_bill_sumary1_idx", columns={"teacher_payment_bill_sumary_id"})})
  * @ORM\Entity
  */
 class TeacherPaymentBill
@@ -436,30 +436,6 @@ class TeacherPaymentBill
     }
 
     /**
-     * Set teacher.
-     *
-     * @param \Teacher|null $teacher
-     *
-     * @return TeacherPaymentBill
-     */
-    public function setTeacher(\Teacher $teacher = null)
-    {
-        $this->teacher = $teacher;
-
-        return $this;
-    }
-
-    /**
-     * Get teacher.
-     *
-     * @return \Teacher|null
-     */
-    public function getTeacher()
-    {
-        return $this->teacher;
-    }
-
-    /**
      * Set contract.
      *
      * @param \Contract|null $contract
@@ -505,5 +481,29 @@ class TeacherPaymentBill
     public function getTeacherPaymentBillSumary()
     {
         return $this->teacherPaymentBillSumary;
+    }
+
+    /**
+     * Set teacher.
+     *
+     * @param \Teacher|null $teacher
+     *
+     * @return TeacherPaymentBill
+     */
+    public function setTeacher(\Teacher $teacher = null)
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * Get teacher.
+     *
+     * @return \Teacher|null
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
     }
 }

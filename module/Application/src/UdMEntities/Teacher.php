@@ -767,30 +767,6 @@ class Teacher
     }
 
     /**
-     * Set academicRanck.
-     *
-     * @param \AcademicRanck|null $academicRanck
-     *
-     * @return Teacher
-     */
-    public function setAcademicRanck(\AcademicRanck $academicRanck = null)
-    {
-        $this->academicRanck = $academicRanck;
-
-        return $this;
-    }
-
-    /**
-     * Get academicRanck.
-     *
-     * @return \AcademicRanck|null
-     */
-    public function getAcademicRanck()
-    {
-        return $this->academicRanck;
-    }
-
-    /**
      * Set faculty.
      *
      * @param \Faculty|null $faculty
@@ -812,5 +788,29 @@ class Teacher
     public function getFaculty()
     {
         return $this->faculty;
+    }
+
+    /**
+     * Set academicRanck.
+     *
+     * @param \AcademicRanck|null $academicRanck
+     *
+     * @return Teacher
+     */
+    public function setAcademicRanck(\AcademicRanck $academicRanck = null)
+    {
+        $this->academicRanck = $academicRanck;
+
+        return $this;
+    }
+
+    /**
+     * Get academicRanck.
+     *
+     * @return \AcademicRanck|null
+     */
+    public function getAcademicRanck()
+    {
+        return $this->academicRanck;
     }
 }

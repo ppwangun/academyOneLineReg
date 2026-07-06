@@ -4,7 +4,7 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-{{report}}
+
 <?php
 
 
@@ -17,6 +17,192 @@ $width="9%";
 
 $codeUe = $students[0]['codeUe']; 
 $nomUe  = $students[0]['nomUe']; 
+$subjects= $this->subjects;
+$rows = $this->students;
+$html = '
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+            }
+
+            h2 {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 5px;
+                text-align: center;
+            }
+
+            thead th {
+                background: #f2f2f2;
+            }
+
+            .subject-header {
+                font-weight: bold;
+            }
+
+            .final-col {
+                background: #eaeaea;
+                font-weight: bold;
+            }
+
+            .passed {
+                color: green;
+            }
+
+            .failed {
+                color: red;
+            }
+
+.info-table {
+    width: 100%;
+    margin-bottom: 18px;
+    border-collapse: separate;
+    border-spacing: 10px 0;
+}
+
+.info-table td {
+    border: none;
+}
+
+.info-card {
+    border: 1px solid #d9e2f3;
+    background: #f8fbff;
+    border-radius: 6px;
+    padding: 10px 14px;
+}
+
+.info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #5b6b7a;
+    margin-bottom: 4px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 13px;
+    font-weight: bold;
+    color: #1f2d3d;
+}
+            .std-name-column{
+                text-align: left;
+
+            }
+        </style>
+    </head>
+    <body>
+    
+
+<table class="info-table">
+    <tr>
+        <td>
+            <div class="info-card">
+                <div class="info-label">Class</div>
+                <div class="info-value">L2 Info</div>
+            </div>
+        </td>
+
+        <td>
+            <div class="info-card">
+                <div class="info-label">Semester</div>
+                <div class="info-value">S1</div>
+            </div>
+        </td>
+
+        <td>
+            <div class="info-card">
+                <div class="info-label">Session</div>
+                <div class="info-value">Normal</div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+
+    <h2>Module Report</h2>
+
+    <table>
+        <thead>
+
+            <!-- HEADER LEVEL 1 -->
+            <tr>
+                <th rowspan="2">Student</th>';
+
+foreach ($subjects as $subject) {
+        $colspan = count($subject['types']) + 1; // + FINAL
+        $html .= '<th class="subject-header" colspan="' . $colspan . '">'
+              . htmlspecialchars($subject['name']) . '</th>';
+    }
+
+    $html .= '<th rowspan="2">Final</th>';
+    $html .= '</tr>';
+    
+$html .= '<tr>';
+
+    foreach ($subjects as $subject) {
+
+        foreach ($subject['types'] as $type) {
+            $html .= '<th>' . htmlspecialchars($type) . '</th>';
+        }
+
+        $html .= '<th class="final-col">Final</th>';
+    }
+
+    $html .= '</tr>';
+$html .= '</thead><tbody>';
+
+    foreach ($rows as $row) {
+
+        $html .= '<tr>';
+        $html .= '<td class="std-name-column">' . htmlspecialchars($row['name']) . '</td>';
+
+        foreach ($subjects as $subject) {
+
+            $subjectId = $subject['id'];
+
+            // Types
+            foreach ($subject['types'] as $type) {
+
+                $key = $subjectId . '_' . $type;
+                $value = $row['values'][$key] ?? '-';
+
+                $html .= '<td>' . $value . '</td>';
+            }
+
+            // Subject FINAL
+            $finalKey = $subjectId . '_FINAL';
+            $subjectFinal = $row['values'][$finalKey] ?? '-';
+
+            $html .= '<td class="final-col">' . $subjectFinal . '</td>';
+        }
+
+        // Module FINAL
+        $statusClass = ($row['final'] !== null && $row['final'] >= 10)
+            ? 'passed'
+            : 'failed';
+
+        $html .= '<td class="' . $statusClass . '"><strong>'
+              . ($row['final'] ?? '-')
+              . '</strong></td>';
+
+        $html .= '</tr>';
+    }
+
+    $html .= '</tbody></table></body></html>';    
+    
 $tblBody = '
 <html>
 <head>
@@ -266,7 +452,7 @@ $mpdf->watermark_font = 'DejaVuSansCondensed';
 $mpdf->watermarkTextAlpha = 0.1;
 $mpdf->SetDisplayMode('fullpage');
 
-$mpdf->WriteHTML($tblBody);
+$mpdf->WriteHTML($html);
 
 
 

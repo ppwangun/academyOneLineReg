@@ -20,6 +20,18 @@ class ClassOfStudyHasAcademicYear
     private $schoolcertificategenerationstatus = '0';
 
     /**
+     * @var \AcademicYear
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="AcademicYear")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
+     * })
+     */
+    private $academicYear;
+
+    /**
      * @var \ClassOfStudy
      *
      * @ORM\Id
@@ -41,18 +53,6 @@ class ClassOfStudyHasAcademicYear
      * })
      */
     private $classOfStudyHasAcademicYearClassOfStudy;
-
-    /**
-     * @var \AcademicYear
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="AcademicYear")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="academic_year_id", referencedColumnName="id")
-     * })
-     */
-    private $academicYear;
 
 
 

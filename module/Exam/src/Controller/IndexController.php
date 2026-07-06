@@ -338,7 +338,7 @@ class IndexController extends AbstractActionController
         try
         { 
             
-            $data = $this->params()->fromQuery();
+            $data = $this->params()->fromQuery(); 
             $semester = $this->entityManager->getRepository(Semester::class)->find($data["semId"]);
             $ue = $this->entityManager->getRepository(TeachingUnit::class)->find($data["ueId"]);
             if(isset($data["subjectId"]))
@@ -358,15 +358,17 @@ class IndexController extends AbstractActionController
             {
                 //Searching for student
                 $flag = false; 
+                
                 foreach ($examRegistration as $examR)
                 {
+                    
                     if($unitR->getStudent()->getId()==$examR->getStudent()->getId()) 
                     {
                         $flag = true;
                         break;
                     }
                 }
-                if(!$flag)
+                if(!$flag && $exam->getType()!='RAT' )
                 {
                     //Updating the exam_registration table
                     $examR = new ExamRegistration ();
@@ -460,7 +462,7 @@ class IndexController extends AbstractActionController
                 // build rsm here
 
                 $query = $this->entityManager->createQuery('SELECT e.code,e.classe,e.semester,e.subject,e.date FROM Application\Entity\CurrentYearUeExamsView e'
-                        .' WHERE e.code LIKE :code  AND e.status = 1 AND e.isMarkRegistered != 1');
+                        .' WHERE  e.acadYrId = '.$this->crtAdadYr->getId().' AND e.code LIKE :code  AND e.status = 1 AND e.isMarkRegistered != 1');
                 $query->setParameter('code', '%'.$data["id"].'%');
 
                 $subjects = $query->getResult();

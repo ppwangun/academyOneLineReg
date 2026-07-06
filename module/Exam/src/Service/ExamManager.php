@@ -205,9 +205,10 @@ class ExamManager {
     
    //This fucntion computes the MPS (Moyenne pondérée semestrielle) for a given student
    //It takes as parameter, classe,$semester, and student
-    public function markAggregation($ue,$classe,$semester,$acadYr)
+    public function markAggregation($ue,$classe,$semester,$examSession,$acadYr)
     {
-       
+        $this->entityManager->getConnection()->beginTransaction();
+      
         //collect all subjects to which student is registered
         $stdRegisteredToModule = $this->entityManager->getRepository(UnitRegistration::class)->findBy(array("teachingUnit"=>$ue,"semester"=>$semester,"subject"=>[NULL," "] ));
         $subjectDetails = $this->entityManager->getRepository(ClassOfStudyHasSemester::class)->findBy(array("classOfStudy"=>$classe,"semester"=>$semester ));
@@ -221,7 +222,7 @@ class ExamManager {
             $subjects = $this->getSubjectFromUe($ue->getId(), $semester->getId(), $classe->getId(),$acadYr);
             $mark = 0; $markCC =0; $markCCTP=0; $markEXAMTP = 0; $markEXAM=0;
             $weight = 0;
-            $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);
+            $note = round(($std->getNoteExam()),2, PHP_ROUND_HALF_UP);  
             $std->setNoteFinal($note);
             $std->setGrade($this->computeGradeSur100($classe, $note));
             $std->setPoints($this->computePointsSur100($classe, $note));
@@ -248,7 +249,7 @@ class ExamManager {
                     $markEXAMTP += $stdRegisteredToSubject->getNoteExamtp()*$sub["subjectWeight"];
                     $markEXAM += $stdRegisteredToSubject->getNoteExam()*$sub["subjectWeight"];
                     
-                    $mark += $stdRegisteredToSubject->getNoteFinal()*$sub["subjectWeight"];
+                    $mark += $stdRegisteredToSubject->getNoteFinal()*$sub["subjectWeight"]; 
                     $weight += $sub["subjectWeight"];
                 }else  $stdOutput[$i][$sub["subjectCode"]]= NULL;
             }
@@ -256,7 +257,7 @@ class ExamManager {
             {
                 $mark /= $totalWeight; $markCCTP /=$totalWeight; $markEXAMTP /=$totalWeight; $markEXAM /= $totalWeight; $markCC /= $totalWeight; 
             }
-            
+          
             $std->setNoteCctp(round($markCCTP,2,PHP_ROUND_HALF_UP));
             $std->setNoteExamtp(round($markEXAMTP,2,PHP_ROUND_HALF_UP));
             $std->setNoteCc(round($markCC,2,PHP_ROUND_HALF_UP));
@@ -264,20 +265,38 @@ class ExamManager {
             $std->setNoteFinal(round($mark,2, PHP_ROUND_HALF_UP));
             $std->setGrade($this->computeGradeSur100($classe, $mark));
             $std->setPoints($this->computePointsSur100($classe, $mark));
-            $stdOutput[$i]["Note"] = round($mark,2, PHP_ROUND_HALF_UP);
+            $std->setStudentUnitResult($this->resultStatus($classe, $mark));
+            $stdOutput[$i]["Note Finale"] = round($mark,2, PHP_ROUND_HALF_UP);
             $stdOutput[$i]["Grade"] = $this->computeGradeSur100($classe, $mark);
             $stdOutput[$i]["Points"] = $this->computePointsSur100($classe, $mark);
+            $stdOutput[$i]["Statut"]=$this->resultStatus($classe, $mark);
             
             $i++;
         }
-        $this->entityManager->flush();
-        $this->entityManager->commit();
+        //$this->entityManager->flush();
+        //$this->entityManager->commit();
         
        //$std = $this->entityManager->getRepository(SubjectRegistrationView::class)->findBy(array("idUe"=>$ue->getId(),"idSubject"=>$subject->getId()),array("nom"=>"ASC"));
         
         return $stdOutput;
 
-    }    
+    }  
+    
+   private function resultStatus($classe,$moyenne)
+   {
+       //$grade = $this->entityManager->getRepository(Grade::class)->findByClassOfStudy($classe);
+       $gradevalues = $this->entityManager->getRepository(GradeValueRange::class)->findByGrade($classe->getGrade());
+       
+       foreach ($gradevalues as $gv)
+       {
+           $min = $gv->getMinsur100();
+           $max = $gv->getMaxsur100();
+           $resultStatus = $gv->getResultStatus();
+           if ($min <= $moyenne && $moyenne <= $max)
+               return $resultStatus;
+           
+       }
+   }    
         
     //this function checks whether or not user as access to information of a gigen class
     //it takes as parameter current logged in user, classe

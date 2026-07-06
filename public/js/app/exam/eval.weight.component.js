@@ -96,9 +96,13 @@ function evalweightCtrl ($timeout,$http,$location,$mdDialog,$routeParams,$scope,
          }).then(function(){
              $http.get('examtype').then(function(response){
                  $ctrl.examtypes = response.data[0];
-                 
-             });
-         }),500); 
+           }).then(function(){
+             $http.get('getRules').then(function(response){
+                 $ctrl.rules = response.data['rules'];
+
+            });
+        });
+    }),500); 
          
          
          

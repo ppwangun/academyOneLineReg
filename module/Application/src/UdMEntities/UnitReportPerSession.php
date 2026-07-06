@@ -1,11 +1,8 @@
 <?php
 
-namespace Application\Entity;
+
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Application\Entity\ExamSession;
-use Application\Entity\UnitRegistration;
 
 /**
  * UnitReportPerSession
@@ -53,17 +50,7 @@ class UnitReportPerSession
     private $resultStatus = 'FAILED';
 
     /**
-     * @var ExamSession
-     *
-     * @ORM\ManyToOne(targetEntity="ExamSession")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
-     * })
-     */
-    private $examSession;
-
-    /**
-     * @var UnitRegistration
+     * @var \UnitRegistration
      *
      * @ORM\ManyToOne(targetEntity="UnitRegistration")
      * @ORM\JoinColumns({
@@ -71,6 +58,16 @@ class UnitReportPerSession
      * })
      */
     private $unitRegistration;
+
+    /**
+     * @var \ExamSession
+     *
+     * @ORM\ManyToOne(targetEntity="ExamSession")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="exam_session_id", referencedColumnName="id")
+     * })
+     */
+    private $examSession;
 
 
 
@@ -181,37 +178,13 @@ class UnitReportPerSession
     }
 
     /**
-     * Set examSession.
-     *
-     * @param ExamSession|null $examSession
-     *
-     * @return UnitReportPerSession
-     */
-    public function setExamSession(ExamSession $examSession = null)
-    {
-        $this->examSession = $examSession;
-
-        return $this;
-    }
-
-    /**
-     * Get examSession.
-     *
-     * @return ExamSession|null
-     */
-    public function getExamSession()
-    {
-        return $this->examSession;
-    }
-
-    /**
      * Set unitRegistration.
      *
-     * @param UnitRegistration|null $unitRegistration
+     * @param \UnitRegistration|null $unitRegistration
      *
      * @return UnitReportPerSession
      */
-    public function setUnitRegistration(UnitRegistration $unitRegistration = null)
+    public function setUnitRegistration(\UnitRegistration $unitRegistration = null)
     {
         $this->unitRegistration = $unitRegistration;
 
@@ -221,10 +194,34 @@ class UnitReportPerSession
     /**
      * Get unitRegistration.
      *
-     * @return UnitRegistration|null
+     * @return \UnitRegistration|null
      */
     public function getUnitRegistration()
     {
         return $this->unitRegistration;
+    }
+
+    /**
+     * Set examSession.
+     *
+     * @param \ExamSession|null $examSession
+     *
+     * @return UnitReportPerSession
+     */
+    public function setExamSession(\ExamSession $examSession = null)
+    {
+        $this->examSession = $examSession;
+
+        return $this;
+    }
+
+    /**
+     * Get examSession.
+     *
+     * @return \ExamSession|null
+     */
+    public function getExamSession()
+    {
+        return $this->examSession;
     }
 }

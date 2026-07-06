@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UserRole
  *
- * @ORM\Table(name="user_role", indexes={@ORM\Index(name="fk_user_role_role1_idx", columns={"role_id"}), @ORM\Index(name="fk_user_role_user1_idx", columns={"user_id"})})
+ * @ORM\Table(name="user_role", indexes={@ORM\Index(name="fk_user_role_user1_idx", columns={"user_id"}), @ORM\Index(name="fk_user_role_role1_idx", columns={"role_id"})})
  * @ORM\Entity
  */
 class UserRole
@@ -22,16 +22,6 @@ class UserRole
     private $id;
 
     /**
-     * @var \User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     * })
-     */
-    private $user;
-
-    /**
      * @var \Role
      *
      * @ORM\ManyToOne(targetEntity="Role")
@@ -40,6 +30,16 @@ class UserRole
      * })
      */
     private $role;
+
+    /**
+     * @var \User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * })
+     */
+    private $user;
 
 
 
@@ -51,30 +51,6 @@ class UserRole
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set user.
-     *
-     * @param \User|null $user
-     *
-     * @return UserRole
-     */
-    public function setUser(\User $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user.
-     *
-     * @return \User|null
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 
     /**
@@ -99,5 +75,29 @@ class UserRole
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * Set user.
+     *
+     * @param \User|null $user
+     *
+     * @return UserRole
+     */
+    public function setUser(\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return \User|null
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

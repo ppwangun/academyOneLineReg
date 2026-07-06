@@ -64,6 +64,26 @@ class CourseScheduled
     private $isValidated = '0';
 
     /**
+     * @var \Semester
+     *
+     * @ORM\ManyToOne(targetEntity="Semester")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
+     * })
+     */
+    private $semester;
+
+    /**
+     * @var \ClassOfStudy
+     *
+     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
+     * })
+     */
+    private $classOfStudy;
+
+    /**
      * @var \ContractFollowUp
      *
      * @ORM\ManyToOne(targetEntity="ContractFollowUp")
@@ -112,26 +132,6 @@ class CourseScheduled
      * })
      */
     private $teachingUnit;
-
-    /**
-     * @var \Semester
-     *
-     * @ORM\ManyToOne(targetEntity="Semester")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="semester_id", referencedColumnName="id")
-     * })
-     */
-    private $semester;
-
-    /**
-     * @var \ClassOfStudy
-     *
-     * @ORM\ManyToOne(targetEntity="ClassOfStudy")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="class_of_study_id", referencedColumnName="id")
-     * })
-     */
-    private $classOfStudy;
 
 
 

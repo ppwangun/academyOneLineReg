@@ -244,13 +244,13 @@ class SettingsController extends AbstractActionController
                    $sessions = $this->examSessionRepository->getSessionsBySemester($semester);
                    foreach($sessions as $session) $session->removeSemester($semester);
                    $this->entityManager->flush();
-                   
+              
                    //mappind the new session to the semester
                    foreach($data["semSessions"] as $sessionValue)
                    {
                        $session = $this->examSessionRepository->find($sessionValue); 
                        $session->addSemester($semester);
-                       
+                    
                    }
                        
                    

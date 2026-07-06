@@ -4,6 +4,8 @@ namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Application\Entity\Subject;
+
 /**
  * TeachingUnit
  *
@@ -48,6 +50,13 @@ class TeachingUnit
      * @ORM\Column(name="isCompulsory", type="integer", nullable=true)
      */
     private $isCompulsory = '0'; 
+    
+    /**
+     * 
+     * @ORM\OneToMany(targetEntity="Subject", mappedBy="teachingUnit")
+     * 
+     */
+    private $subject;     
     
     /**
      * Get id

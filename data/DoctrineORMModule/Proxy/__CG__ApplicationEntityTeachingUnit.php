@@ -67,10 +67,10 @@ class TeachingUnit extends \Application\Entity\TeachingUnit implements \Doctrine
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'numberOfSubjects', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'isCompulsory'];
+            return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'numberOfSubjects', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'isCompulsory', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'subject'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'numberOfSubjects', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'isCompulsory'];
+        return ['__isInitialized__', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'id', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'code', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'name', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'numberOfSubjects', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'isCompulsory', '' . "\0" . 'Application\\Entity\\TeachingUnit' . "\0" . 'subject'];
     }
 
     /**

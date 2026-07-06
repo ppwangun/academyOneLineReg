@@ -326,15 +326,16 @@ class CampusResourcesController extends AbstractActionController
                 }
             }            
             
-    $categories = $this->entityManager->getRepository(ResourceCategory::class)->findBy([],["id"=>"ASC"]);
-    $tree = $this->buildTree($categories);
+    //$categories = $this->entityManager->getRepository(ResourceCategory::class)->findBy([],["id"=>"ASC"]);
+    //$tree = $this->buildTree($categories);
     
          
 
             
             return new JsonModel([
                // $this->getFaculty($data["school_id"])
-                $tree
+               // $tree
+                $classrooms
                 ]);           
             
             $this->entityManager->getConnection()->comit();

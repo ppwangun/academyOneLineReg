@@ -122,7 +122,7 @@ z-index: 120000}
                 <div layout-gt-sm='column' style="margin-top: -10px;" >
                     <md-input-container>
                         <label>Semestre</label>
-                        <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.asignedExamSession($ctrl.selectedSem.id);$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse)"
+                        <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.asignedExamSession($ctrl.selectedSem.id);$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse);"
                                     md-no-asterisk required >
                             <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
                           <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
@@ -138,7 +138,7 @@ z-index: 120000}
                 <md-input-container ng-show="$ctrl.typePV==='SESSION'?true:false" style="margin-top:20px;">
                     <label>Session d'evaluation</label>
                     <md-select name="session1"   ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id);" 
-                               ng-change="$ctrl.resetSubject()"  md-no-asterisk ng-required='$ctrl.isExamSessionRequired'>
+                               ng-change="$ctrl.resetSubject();"  md-no-asterisk ng-required='$ctrl.isExamSessionRequired'>
                         <md-option ng-disabled="true"  ><em>---Choix de la session d'evaluation---</em></md-option>
                        <md-option ng-repeat="examSession in $ctrl.examSessions" ng-value="examSession"  >
                         {{examSession.sessionName}}
@@ -156,8 +156,8 @@ z-index: 120000}
                     
                     <md-select name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe;" 
                                ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse)" 
-                               ng-change="$ctrl.loadExams($ctrl.selectedUe.id,-1); $ctrl.loadStd($ctrl.selectedUe.id,$ctrl.selectedClasse.id,$ctrl.selectedExamSession.id);$ctrl.isModuleComputation=0" md-no-asterisk ng-required="true">
-                        <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}">
+                               ng-change="$ctrl.loadExams($ctrl.selectedUe.id,-1); $ctrl.loadSubjects($ctrl.selectedUe.id,$ctrl.selectedClasse.id);$ctrl.isModuleComputation=0;" md-no-asterisk ng-required="true">
+                        <md-option ng-disabled="true"  ng-value="{id:-1,code:-1}">
                             <em >Choisissez une UE</em>
                          
                         </md-option>
@@ -289,7 +289,7 @@ z-index: 120000}
                 <div layout-gt-sm='column' style="margin-top: -10px;" >
                     <md-input-container>
                         <label>Semestre</label>
-                        <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse)"
+                        <md-select name="semester" ng-model="$ctrl.selectedSem" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedSemToClasse($ctrl.selectedClasse.code);" ng-change="$ctrl.activateUeSelect(); $ctrl.loadUE($ctrl.selectedClasse);"
                                     md-no-asterisk required >
                             <md-option ng-disabled="true"><em>---Choix du Semestre---</em></md-option>
                           <md-option ng-repeat="sem in $ctrl.semesters" ng-value="sem"  >
@@ -302,15 +302,28 @@ z-index: 120000}
                     </md-input-container>  
                 </div> 
 
+                <md-input-container ng-show="$ctrl.typePV==='SESSION'?true:false" style="margin-top:20px;">
+                    <label>Session d'evaluation</label>
+                    <md-select name="session1"   ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id);" 
+                                ng-change="$ctrl.resetSubject()" md-no-asterisk ng-required='$ctrl.isExamSessionRequired'>
+                        <md-option ng-disabled="true"  ><em>---Choix de la session d'evaluation---</em></md-option>
+                       <md-option ng-repeat="examSession in $ctrl.examSessions" ng-value="examSession"  >
+                        {{examSession.sessionName}}
+                      </md-option>
 
+                    </md-select>
+                    <div class="errors" ng-messages="examForm.session1.$error">
+                      <div ng-message="required">Champ obligatoire</div>
+                    </div>
+                </md-input-container> 
                 <div layout-gt-sm='column' style="padding-top: 15px"  >
                     <md-input-container>
               
                     <label>Module</label>
                     <md-select name="ue" ng-disabled="!$ctrl.isActivatedUeSelect" ng-model="$ctrl.selectedUe;" 
                                ng-model-options="{trackBy: '$value.id'}"  md-on-open="$ctrl.loadUE($ctrl.selectedClasse)" 
-                               ng-change="$ctrl.loadExamsPerModuleStatus($ctrl.selectedUe.id); $ctrl.loadStd($ctrl.selectedUe.id,$ctrl.selectedClasse.id);$ctrl.isModuleComputation=1;" md-no-asterisk ng-required="true">
-                        <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}">
+                               ng-change="$ctrl.loadExamsPerModuleStatus($ctrl.selectedUe.id); $ctrl.loadSubjects($ctrl.selectedUe.id,$ctrl.selectedClasse.id);$ctrl.isModuleComputation=1;" md-no-asterisk ng-required="true">
+                        <md-option ng-disabled="true"  ng-value="{id:-1,code:-1}">
                             <em>Choisissez un module</em>
                         </md-option>
                       <md-option ng-repeat="ue in $ctrl.ues" ng-value="ue" >
@@ -330,8 +343,8 @@ z-index: 120000}
                     <label>Unité d'enseignement</label>
                     <md-select name="subject" ng-disabled="!$ctrl.isActivatedMatiereSelect" ng-model="$ctrl.selectedSubject;" 
                                ng-model-options="{trackBy: '$value.id'}"   
-                               ng-change=" $ctrl.loadExams($ctrl.selectedUe.id,$ctrl.selectedSubject.id); $ctrl.loadStdReg($ctrl.selectedUe.id,$ctrl.selectedExamSession.id);$ctrl.isModuleComputation=0" md-no-asterisk ng-required="true">
-                        <md-option ng-disabled="true" ng-selected="true" ng-value="{id:-1,code:-1}"><em>Choisissez une UE</em></md-option>
+                               ng-change=" $ctrl.loadExams($ctrl.selectedUe.id,$ctrl.selectedSubject.id); $ctrl.isModuleComputation=0;" md-no-asterisk ng-required="true">
+                        <md-option ng-disabled="true"  ng-value="{id:-1,code:-1}"><em>Choisissez une UE</em></md-option>
                       <md-option ng-repeat="subject in $ctrl.subjects" ng-value="subject" >
                         {{subject.subjectCode}}[{{subject.subjectName}}]
 
@@ -348,20 +361,7 @@ z-index: 120000}
 
                 
                 
-                <md-input-container ng-show="$ctrl.typePV==='SESSION'?true:false" style="margin-top:20px;">
-                    <label>Session d'evaluation</label>
-                    <md-select name="session1"   ng-model="$ctrl.selectedExamSession" ng-model-options="{trackBy: '$value.id'}" md-on-open="$ctrl.asignedExamSession($ctrl.selectedSem.id);" 
-                                ng-change="$ctrl.resetSubject()" md-no-asterisk ng-required='$ctrl.isExamSessionRequired'>
-                        <md-option ng-disabled="true"  ><em>---Choix de la session d'evaluation---</em></md-option>
-                       <md-option ng-repeat="examSession in $ctrl.examSessions" ng-value="examSession"  >
-                        {{examSession.sessionName}}
-                      </md-option>
-
-                    </md-select>
-                    <div class="errors" ng-messages="examForm.session1.$error">
-                      <div ng-message="required">Champ obligatoire</div>
-                    </div>
-                </md-input-container>                 
+                
             </div>
 
             <div class = "col-xs-6"  >
@@ -420,7 +420,20 @@ z-index: 120000}
 
                     </table>                
                 </div>
-            </div>           
+                
+                <div layout-gt-sm="column" style="padding-top: 0px; margin-top: -5px;">
+                <md-input-container>
+                    <md-checkbox ng-model="$ctrl.generatePvConsolide"  class="md-primary"              
+                        aria-label="Actif?"
+                        ng-true-value="1"
+                        ng-false-value="0"> 
+                        PV consolidé?
+                    </md-checkbox>
+                </md-input-container>
+
+            </div> 
+            </div> 
+            
         </div>
 
         <div layout-gt-sm='row' >
@@ -428,9 +441,11 @@ z-index: 120000}
                 <button class="btn btn-inverse" ng-click="$ctrl.clotureCalculNotes($ctrl.selectedUe.ue_class_id)" ng-disabled="examFormModule.$invalid||$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-lock" ></i>&nbsp;Clôture</button>&nbsp;&nbsp;
 
             </div>
+            
+             
             <div class="col-md-9 text-right">
-                <button class="btn btn-danger" ng-click="$ctrl.moduleMarkAggregation()" ng-disabled="$ctrl.isModuleComputation===0||$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-refresh" ></i>&nbsp;Générer le PV consolidé</button>&nbsp;&nbsp;&nbsp;
-                <button class="btn btn-danger" ng-click="$ctrl.calculNotes()" ng-disabled="examFormModule.$invalid||$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-refresh" ></i>&nbsp;Générer le PV </button>&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-click="$ctrl.calculNotes($ctrl.generatePvConsolide)" ng-disabled="$ctrl.generatePvConsolide===0"><i class="fa fa-refresh" ></i>&nbsp;Générer le PV consolidé</button>&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-danger" ng-click="$ctrl.calculNotes($ctrl.generatePvConsolide)" ng-disabled="examFormModule.$invalid||$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-refresh" ></i>&nbsp;Générer le PV </button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-primary" ng-click="$ctrl.deliberation()" ng-disabled="$ctrl.selectedUe.mark_calculation_status===1"><i class="fa fa-refresh" ></i>&nbsp;Délibération</button>
             </div>
         </div>        
@@ -488,15 +503,24 @@ z-index: 120000}
                     <div id =" tab1">
                                         <table class="table table-striped table-condensed">
                                             <thead>
-                                                <tr class="bg-primary">
+                                                <tr class="bg-primary"><th></th>
                                                   <th style="vertical-align: middle; align: center" ng-repeat="(key, val) in $ctrl.regStd[0]">{{ key }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr ng-repeat="row in $ctrl.regStd" >
-                                                    <td style="vertical-align: middle; align: center;" ng-repeat="column in row">
-                                                      {{ column }}
-                                                    </td>
+                                    <td>{{$index+1}}</td>
+                                    <td style="vertical-align: middle; align: center;"  ng-repeat="(key,column) in row" 
+                                        ng-class="{
+                                            'zf-red': ((column.isFromDeliberation===1)&& (key==='Note Finale')) || ((column!='PASSED')&& (key==='Statut')),        
+                                            'text-primary':((key==='Grade') ||(key==='Points'))}"
+                                        ng-style="{'font-weight': ((key==='Grade') ||(key==='Points'))?'bold':'normal',
+                                            'background-color': ((column!='PASSED')&& (key==='Statut'))?'#FF0000':(key==='Statut')?'#32CD32':''}"
+                                        >
+                                      {{ (key==='Note Finale')?column.note:(key==='Statut')?'':column }}
+                                      {{ (key==='Note Finale')&&(column.isFromDeliberation===1)?'[D]':'' }}
+                                    
+                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>

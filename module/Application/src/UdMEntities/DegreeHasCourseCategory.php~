@@ -22,6 +22,16 @@ class DegreeHasCourseCategory
     private $id;
 
     /**
+     * @var \CourseCategory
+     *
+     * @ORM\ManyToOne(targetEntity="CourseCategory")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
+     * })
+     */
+    private $courseCategory;
+
+    /**
      * @var \Degree
      *
      * @ORM\ManyToOne(targetEntity="Degree")
@@ -40,16 +50,6 @@ class DegreeHasCourseCategory
      * })
      */
     private $fieldOfStudy;
-
-    /**
-     * @var \CourseCategory
-     *
-     * @ORM\ManyToOne(targetEntity="CourseCategory")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="Course_category_id", referencedColumnName="id")
-     * })
-     */
-    private $courseCategory;
 
 
 }

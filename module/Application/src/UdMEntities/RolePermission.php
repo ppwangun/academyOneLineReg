@@ -85,30 +85,6 @@ class RolePermission
     }
 
     /**
-     * Set permission.
-     *
-     * @param \Permission|null $permission
-     *
-     * @return RolePermission
-     */
-    public function setPermission(\Permission $permission = null)
-    {
-        $this->permission = $permission;
-
-        return $this;
-    }
-
-    /**
-     * Get permission.
-     *
-     * @return \Permission|null
-     */
-    public function getPermission()
-    {
-        return $this->permission;
-    }
-
-    /**
      * Set role.
      *
      * @param \Role|null $role
@@ -130,5 +106,29 @@ class RolePermission
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * Set permission.
+     *
+     * @param \Permission|null $permission
+     *
+     * @return RolePermission
+     */
+    public function setPermission(\Permission $permission = null)
+    {
+        $this->permission = $permission;
+
+        return $this;
+    }
+
+    /**
+     * Get permission.
+     *
+     * @return \Permission|null
+     */
+    public function getPermission()
+    {
+        return $this->permission;
     }
 }
